@@ -29,7 +29,7 @@
         <activity android:name=".module.my.ProblemAct" />
         <activity android:name=".module.my.AccountAct" />
 
-        <activity android:name=".module.login.StartLoginAct" />
+        <activity android:name=".module.login.LoginStartAct" />
 
     </application>
 
