@@ -1,0 +1,36 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    defaultConfig {
+        applicationId "cn.ponko.com.ponko"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled rootProject.minifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(path: ':LIB_Common')
+    implementation project(path: ':LIB_Component')
+    implementation project(path: ':LIB_Media')
+    implementation project(path: ':LIB_IJKPlayer_Sdk')
+    implementation project(path: ':LIB_Pay')
+    implementation project(path: ':LIB_Share')
+    implementation project(path: ':LIB_Statistics')
+    implementation project(path: ':LIB_Web')
+    implementation project(path: ':LIB_Downloader')
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+}
