@@ -1,0 +1,28 @@
+include ':app'
+
+include ':LIB_Common'
+project(':LIB_Common').projectDir = new File('../XMLIb/LIB_Common')
+
+include ':LIB_Component'
+project(':LIB_Component').projectDir = new File('../XMLIb/LIB_Component')
+
+include ':LIB_Media'
+project(':LIB_Media').projectDir = new File('../XMLIb/LIB_Media')
+
+include ':LIB_Pay'
+project(':LIB_Pay').projectDir = new File('../XMLIb/LIB_Pay')
+include ':LIB_IJKPlayer_Sdk'
+project(':LIB_IJKPlayer_Sdk').projectDir = new File('../XMLIb/LIB_IJKPlayer_Sdk')
+
+include ':LIB_Share'
+project(':LIB_Share').projectDir = new File('../XMLIb/LIB_Share')
+
+include ':LIB_Statistics'
+project(':LIB_Statistics').projectDir = new File('../XMLIb/LIB_Statistics')
+
+include ':LIB_Web'
+project(':LIB_Web').projectDir = new File('../XMLIb/LIB_Web')
+
+
+include ':LIB_Downloader'
+project(':LIB_Downloader').projectDir = new File('../XMLIb/LIB_Downloader')
