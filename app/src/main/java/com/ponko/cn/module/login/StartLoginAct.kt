@@ -1,13 +1,13 @@
-package cn.ponko.com.ponko.module.my
+package com.ponko.cn.module.login
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import cn.ponko.com.ponko.R
+import com.ponko.cn.R
 
-class AccountAct : AppCompatActivity() {
+class StartLoginAct : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_account)
+        setContentView(R.layout.activity_start_login)
     }
 }

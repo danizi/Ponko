@@ -1,8 +1,8 @@
-package cn.ponko.com.ponko.module.my
+package com.ponko.cn.module.my
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import cn.ponko.com.ponko.R
+import com.ponko.cn.R
 
 class CacheAct : AppCompatActivity() {
 
