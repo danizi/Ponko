@@ -13,11 +13,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity android:name=".module.my.StoreAct" />
         <activity android:name=".module.my.CacheAct" />
@@ -34,6 +34,14 @@
         <activity android:name=".module.login.LoginRegisterAct" />
         <activity android:name=".module.login.LoginWxAct" />
         <activity android:name=".module.login.LogSmsAct" />
+        <activity android:name=".module.guide.GuideAct" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".module.start.StartAct"></activity>
     </application>
 
 </manifest>
