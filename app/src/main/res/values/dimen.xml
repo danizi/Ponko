@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_big_lar">22sp</dimen>
-    <dimen name="dp_63">63dp</dimen>
+
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_12">12dp</dimen>
+
+    <!--
+        导航文字 34-38px
+        标题文字 28-34px
+        正文文字 26-30px
+        辅助文字 20-24px
+        Tab bar文字 20px
+    -->
+    <dimen name="sp_13">13sp</dimen>
+    <dimen name="sp_14">14sp</dimen>
+    <dimen name="sp_16">16sp</dimen>
+    <dimen name="sp_18">18sp</dimen>
+
 </resources>

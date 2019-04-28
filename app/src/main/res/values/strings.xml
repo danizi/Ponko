@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Ponko</string>
+
+    <!--登录-->
+    <string name="login_tourist">游客模式 >></string>
+    <string name="login_wx">微信登录</string>
+    <string name="login_account">手机号登录</string>
+    <string name="login_register">注册领取大礼包</string>
+    <string name="login_des">微信购买或领取的用户，请选择微信登录</string>
+    <string name="login_find_pwd">找回密码</string>
+    <string name="login_wx_des">同学绑定手机号后可以用手机登录，同时也能使用手机和密码在电脑端学习课程。</string>
+    <string name="login_wx_success">微信登录成功</string>
+    <string name="login_et_account">请输入手机号</string>
+    <string name="login_et_pwd">请输入密码</string>
+    <string name="login_enter">确定</string>
+    <string name="login_phone">手机登录</string>
+    <string name="login_register_new_account">注册新账号</string>
+    <string name="login_phone_number">手机号</string>
+    <string name="login_sms">验证码</string>
+
 </resources>

@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="113dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_course_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:text="职业规划·外贸职场笔记"
+        app:layout_constraintStart_toEndOf="@+id/iv_cover"
+        app:layout_constraintTop_toTopOf="@+id/iv_cover" />
+
+    <TextView
+        android:id="@+id/tv_teacher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="May老师"
+        app:layout_constraintBottom_toTopOf="@+id/course_number"
+        app:layout_constraintStart_toStartOf="@+id/tv_course_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_title" />
+
+    <TextView
+        android:id="@+id/course_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="共28集 | 6.8小时"
+        android:textColor="@color/grey"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_cover"
+        app:layout_constraintStart_toStartOf="@+id/tv_course_title" />
+
+    <ImageView
+        android:layout_width="7dp"
+        android:layout_height="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="8dp"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

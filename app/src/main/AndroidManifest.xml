@@ -4,6 +4,7 @@
     package="com.ponko.cn">
 
     <application
+        android:name=".app.PonkoApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,9 +29,11 @@
         <activity android:name=".module.my.ExchangedAct" />
         <activity android:name=".module.my.ProblemAct" />
         <activity android:name=".module.my.AccountAct" />
-
         <activity android:name=".module.login.LoginStartAct" />
-
+        <activity android:name=".module.login.LoginAccountAct" />
+        <activity android:name=".module.login.LoginRegisterAct" />
+        <activity android:name=".module.login.LoginWxAct" />
+        <activity android:name=".module.login.LogSmsAct" />
     </application>
 
 </manifest>
