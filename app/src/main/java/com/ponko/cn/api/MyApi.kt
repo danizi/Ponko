@@ -1,4 +1,4 @@
 package com.ponko.cn.api
 
-class MyApi {
+interface MyApi {
 }

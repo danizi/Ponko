@@ -26,7 +26,7 @@ class LoginStartAct : MvpActivity<LoginStartContract.Present>(), LoginStartContr
 
     }
 
-    override fun getLayouId(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.activity_login_start
     }
 

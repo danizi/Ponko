@@ -14,6 +14,8 @@ class PonkoApp : Application() {
         var freeApi: FreeApi? = null
         var interflowApi: InterflowApi? = null
         var myApi: MyApi? = null
+        var adApi: AdApi? = null
+        var UI_DEBUG = true
     }
 
     override fun onCreate() {
@@ -26,7 +28,7 @@ class PonkoApp : Application() {
         heads["x-tradestudy-client-version"] = "3.4.6"
         heads["x-tradestudy-client-device"] = "android_phone"
         heads["x-tradestudy-access-key-id"] = "c"
-        heads["x-tradestudy-access-token"] = "token"
+        heads["x-tradestudy-access-token"] = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IjdhV3lyTFlZaHdDZXYwSGgyL2x1cmdUL244S1lOa2hMY3J1YkR2MisrbWZabU1ZY01iRXUydngyWVB4cWZNQWVYWUpkaGU3TGFtbG1aM3VYQlZmRHBRPT0iLCJwaG9uZSI6IjE1MDc0NzcwNzA4IiwiaWQiOiI2NTc4M2IxNWQ0NzcxMWU4OGI0NDAyNDJhYzEzMDAwMyIsInRva2VuIjoiMDczZjVhYmU1M2I5NDNkMGIxZDAyY2YyMTNlOWJhMzcifQ.2150EoXYJ5O-P4xVQW8yFH_hiW9Ty10WTC4ylMmvkZ0"
         retrofitClient = RetrofitClient.intance
                 .setBaseUrl("https://api.tradestudy.cn/v3/")
                 .setHttpCacheDirectory(File(cacheDir, "ponko"))
@@ -38,6 +40,7 @@ class PonkoApp : Application() {
         freeApi = retrofitClient?.retrofit?.create(FreeApi::class.java)
         interflowApi = retrofitClient?.retrofit?.create(InterflowApi::class.java)
         myApi = retrofitClient?.retrofit?.create(MyApi::class.java)
+        adApi = retrofitClient?.retrofit?.create(AdApi::class.java)
     }
 
 }

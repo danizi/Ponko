@@ -1,14 +1,22 @@
-package com.ponko.cn.module.guide
+package com.ponko.cn
 
+import android.content.Intent
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
-import com.ponko.cn.R
+import com.ponko.cn.utils.ActivityUtil
 import com.xm.lib.common.base.BaseActivity
+import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.StatusBarUtil
 
 class GuideAct : BaseActivity() {
+
+    companion object {
+        const val TAG = "GuideAct"
+    }
 
     private var vp: ViewPager? = null
     private val array = arrayOf(
@@ -21,10 +29,14 @@ class GuideAct : BaseActivity() {
     )
 
     override fun setContentViewBefore() {
-
+        // 判断用户是否第一次启动app
+        if (false) {
+            joinStartActivity()
+        }
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
 
-    override fun getLayouId(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.activity_guide
     }
 
@@ -35,6 +47,8 @@ class GuideAct : BaseActivity() {
 
     override fun initDisplay() {
         vp?.isClickable = false
+        // 小米手机设置状态栏白色，显示的字体也是白色所以需要加上如下代码进行设置，才会字显示黑色
+        StatusBarUtil.StatusBarLightMode(this)
     }
 
     override fun iniData() {
@@ -51,6 +65,18 @@ class GuideAct : BaseActivity() {
                 val iv = ImageView(this@GuideAct)
                 iv.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 iv.setImageResource(array[position])
+                iv.scaleType = ImageView.ScaleType.FIT_XY
+                if (iv.parent != null) {
+                    (iv.parent as ViewGroup).removeView(iv)
+                }
+                if (position == array.size - 1) {
+                    iv.setOnClickListener {
+                        //進入启动界面
+                        joinStartActivity()
+                        BKLog.d(TAG, "進入启动界面")
+                    }
+                }
+                container.addView(iv)
                 return iv
             }
 
@@ -62,19 +88,10 @@ class GuideAct : BaseActivity() {
     }
 
     override fun iniEvent() {
-        vp?.setOnClickListener {
-            //進入主界面
-        }
-        vp?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(p0: Int) {
-            }
+    }
 
-            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
-            }
-
-            override fun onPageSelected(p0: Int) {
-                vp?.isClickable = p0 == (array.size - 1)
-            }
-        })
+    private fun joinStartActivity() {
+        ActivityUtil.startActivity(this, Intent(this, StartAct::class.java))
+        finish()
     }
 }

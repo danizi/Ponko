@@ -30,7 +30,7 @@ class LoginAccountAct : MvpActivity<LoginAccountContract.Present>(), LoginAccoun
     override fun setContentViewBefore() {
     }
 
-    override fun getLayouId(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.activity_login_account
     }
 

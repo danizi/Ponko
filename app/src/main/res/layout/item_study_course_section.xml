@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    tools:ignore="NewApi">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView"
@@ -14,6 +16,7 @@
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="94dp"
+            android:scaleType="fitXY"
             android:src="@mipmap/ic_launcher" />
     </android.support.v7.widget.CardView>
 
@@ -21,19 +24,22 @@
         android:id="@+id/tv_course_section1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:lines="1"
         android:text="外贸快速入门"
         android:textColor="@color/black"
         android:textSize="17sp"
-        app:layout_constraintStart_toStartOf="@+id/cardView"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/tv_course_section2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         android:text="从0到优秀"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/tv_course_section1" />
 
