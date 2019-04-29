@@ -4,7 +4,6 @@
     package="com.ponko.cn">
 
     <application
-        android:usesCleartextTraffic="true"
         android:name=".app.PonkoApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,15 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity android:name=".module.my.StoreAct" />
         <activity android:name=".module.my.CacheAct" />
@@ -44,7 +46,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StartAct"></activity>
+        <activity android:name=".StartAct" />
+        <activity android:name=".module.free.FreeDetailsAct"></activity>
     </application>
 
 </manifest>
