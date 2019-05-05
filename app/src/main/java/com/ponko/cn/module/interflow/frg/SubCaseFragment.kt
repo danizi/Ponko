@@ -9,6 +9,7 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.AnalysisCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.RefreshViewHolder
+import com.ponko.cn.module.interflow.adapter.SubCaseAdapter
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener
 import com.xm.lib.common.base.BaseFragment
@@ -74,7 +75,6 @@ class SubCaseFragment : BaseFragment() {
         }
     }
 
-
     fun requestCaseApiSuccess(case: AnalysisCBean?, action: String) {
         when (action) {
             "load" -> {
@@ -95,30 +95,5 @@ class SubCaseFragment : BaseFragment() {
 
     override fun iniData() {
         viewHolder?.srl?.autoRefresh()
-    }
-
-    private class SubCaseViewHolder(view: View?) : BaseViewHolder(view!!) {
-        override fun bindData(d: Any, position: Int) {
-
-        }
-    }
-
-    private class SubCaseAdapter(val data: ArrayList<AnalysisCBean.ActivitiesBean>) : RecyclerView.Adapter<SubCaseViewHolder>() {
-        override fun onCreateViewHolder(p0: ViewGroup, p1: Int): SubCaseViewHolder {
-            val view = ViewUtil.viewById(p0.context, R.layout.item_interflow_case, p0)
-            return SubCaseViewHolder(view)
-        }
-
-        override fun getItemCount(): Int {
-            return if (data.isEmpty()) {
-                0
-            } else {
-                data.size
-            }
-        }
-
-        override fun onBindViewHolder(p0: SubCaseViewHolder, p1: Int) {
-            p0.bindData(data[p1], p1)
-        }
     }
 }
