@@ -75,6 +75,7 @@ class StartAct : BaseActivity() {
             override fun onFailure(call: Call<AdCBean>?, msg: String?) {
                 super.onFailure(call, msg)
                 BKLog.d(TAG, "onFailure : $msg")
+                joinMainActivity()
             }
         })
     }

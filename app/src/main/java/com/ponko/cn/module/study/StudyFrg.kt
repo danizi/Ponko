@@ -1,21 +1,17 @@
 package com.ponko.cn.module.study
 
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.ponko.cn.R
 import com.ponko.cn.bean.*
-import com.ponko.cn.module.RefreshViewHolder
+import com.ponko.cn.module.common.RefreshViewHolder
 import com.ponko.cn.module.study.adapter.StudyAdapter
 import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.module.study.holder.AdViewHolder
 import com.ponko.cn.module.study.holder.BannerViewHolder
 import com.ponko.cn.module.study.holder.CaseViewHolder
 import com.ponko.cn.module.study.holder.CourseTypeViewHolder
-import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.xm.lib.common.base.mvp.MvpFragment
-import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 
 
 class StudyFrg : MvpFragment<StudyContract.Present>(), StudyContract.View{

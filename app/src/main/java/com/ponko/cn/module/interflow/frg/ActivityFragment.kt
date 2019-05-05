@@ -1,21 +1,14 @@
 package com.ponko.cn.module.interflow.frg
 
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.view.ViewGroup
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.ActivityCBean
 import com.ponko.cn.http.HttpCallBack
-import com.ponko.cn.module.RefreshViewHolder
+import com.ponko.cn.module.common.RefreshViewHolder
 import com.ponko.cn.module.interflow.adapter.SubActivityAdapter
-import com.ponko.cn.utils.Glide
-import com.scwang.smartrefresh.layout.api.RefreshLayout
-import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener
 import com.xm.lib.common.base.BaseFragment
-import com.xm.lib.common.base.rv.BaseViewHolder
-import com.xm.lib.common.util.ViewUtil
 import retrofit2.Call
 import retrofit2.Response
 

@@ -1,4 +1,4 @@
-package com.ponko.cn.module
+package com.ponko.cn.module.common
 
 import android.content.Context
 import android.os.Build

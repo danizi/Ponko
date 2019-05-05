@@ -18,6 +18,7 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
         val errorString = response?.errorBody()?.string()
         if (TextUtils.isEmpty(errorString)) {
             BKLog.e(TAG, "errorString is empty")
+            onFailure(null, "")
             return
         }
         val jsonObject = JSONObject(errorString)

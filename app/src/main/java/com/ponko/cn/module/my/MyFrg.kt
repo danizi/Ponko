@@ -1,23 +1,25 @@
 package com.ponko.cn.module.my
 
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.DividerItemDecoration
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.ponko.cn.R
+import com.ponko.cn.bean.MyBean
+import com.ponko.cn.bean.ProfileCBean
+import com.ponko.cn.module.common.RefreshViewHolder
+import com.ponko.cn.module.my.adapter.MyAdapter
+import com.ponko.cn.module.my.constract.MyConstract
+import com.ponko.cn.module.my.holder.MyViewHolder
+import com.ponko.cn.module.my.holder.MyViewHolder2
 import com.xm.lib.common.base.mvp.MvpFragment
-import de.hdodenhof.circleimageview.CircleImageView
 
 
-class MyFrg : MvpFragment<Any>() {
+class MyFrg : MvpFragment<MyConstract.Present>(), MyConstract.View {
 
-    private var viewHolder: ViewHolder? = null
+    private var viewHolder: RefreshViewHolder? = null
+    private var adapter: MyAdapter = MyAdapter()
 
-    override fun presenter(): Any {
-        return Any()
+    override fun presenter(): MyConstract.Present {
+        return MyConstract.Present(context, this)
     }
 
     override fun getLayoutId(): Int {
@@ -26,52 +28,44 @@ class MyFrg : MvpFragment<Any>() {
 
     override fun findViews(view: View) {
         if (viewHolder == null) {
-            viewHolder = ViewHolder.create(view)
+            viewHolder = RefreshViewHolder.create(view)
         }
     }
 
     override fun initDisplay() {
-
+        viewHolder?.addItemDecoration(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder)
     }
 
     override fun iniEvent() {
-
+        viewHolder?.srl?.setOnRefreshListener {
+            //请求加载数据
+            p?.requestMyInfoApi()
+        }
+        viewHolder?.isCanLoad(viewHolder?.rv, viewHolder?.srl)
     }
 
     override fun iniData() {
-
+        viewHolder?.srl?.autoRefresh()
     }
 
-    private class ViewHolder private constructor(val btnWxUnbind: Button, val clUserInfo: ConstraintLayout, val tvName: TextView, val ivVipNoOrYes: ImageView, val tvVipDes: TextView, val ivCircleHead: CircleImageView, val imageView4: ImageView, val clOther: ConstraintLayout, val llCourse: LinearLayout, val tvCourseNumber: TextView, val tvCourseDes: TextView, val llTime: LinearLayout, val tvTimeNumber: TextView, val tvTimeDes: TextView, val llIntegral: LinearLayout, val tvIntegralNumber: TextView, val tvIntegralDes: TextView, val clOpenInvite: ConstraintLayout, val clOpenRoll: ConstraintLayout, val llOpen: LinearLayout, val clInvite: ConstraintLayout, val llInvite: LinearLayout, val rv: RecyclerView) {
-        companion object {
+    override fun requestMyInfoApiSuccess(body: ProfileCBean?) {
+        adapter.addItemViewDelegate(0, MyViewHolder::class.java, MyTopBean::class.java, R.layout.item_my_top)
+        adapter.addItemViewDelegate(1, MyViewHolder2::class.java, MyBean::class.java, R.layout.item_my_rv)
+        adapter.data = multiTypeData(body)
+        //设置适配器
+        viewHolder?.rv?.adapter = adapter
+        viewHolder?.srl?.finishRefresh()
+    }
 
-            fun create(rootView: View): ViewHolder {
-                val btnWxUnbind = rootView.findViewById<View>(R.id.btn_wx_unbind) as Button
-                val clUserInfo = rootView.findViewById<View>(R.id.cl_user_info) as ConstraintLayout
-                val tvName = rootView.findViewById<View>(R.id.tv_name) as TextView
-                val ivVipNoOrYes = rootView.findViewById<View>(R.id.iv_vip_no_or_yes) as ImageView
-                val tvVipDes = rootView.findViewById<View>(R.id.tv_vip_des) as TextView
-                val ivCircleHead = rootView.findViewById<View>(R.id.iv_circle_head) as CircleImageView
-                val imageView4 = rootView.findViewById<View>(R.id.imageView4) as ImageView
-                val clOther = rootView.findViewById<View>(R.id.cl_other) as ConstraintLayout
-                val llCourse = rootView.findViewById<View>(R.id.ll_course) as LinearLayout
-                val tvCourseNumber = rootView.findViewById<View>(R.id.tv_course_number) as TextView
-                val tvCourseDes = rootView.findViewById<View>(R.id.tv_course_des) as TextView
-                val llTime = rootView.findViewById<View>(R.id.ll_time) as LinearLayout
-                val tvTimeNumber = rootView.findViewById<View>(R.id.tv_time_number) as TextView
-                val tvTimeDes = rootView.findViewById<View>(R.id.tv_time_des) as TextView
-                val llIntegral = rootView.findViewById<View>(R.id.ll_integral) as LinearLayout
-                val tvIntegralNumber = rootView.findViewById<View>(R.id.tv_integral_number) as TextView
-                val tvIntegralDes = rootView.findViewById<View>(R.id.tv_integral_des) as TextView
-                val clOpenInvite = rootView.findViewById<View>(R.id.cl_open_invite) as ConstraintLayout
-                val clOpenRoll = rootView.findViewById<View>(R.id.cl_open_roll) as ConstraintLayout
-                val llOpen = rootView.findViewById<View>(R.id.ll_open) as LinearLayout
-                val clInvite = rootView.findViewById<View>(R.id.cl_invite) as ConstraintLayout
-                val llInvite = rootView.findViewById<View>(R.id.ll_invite) as LinearLayout
-                val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
-                return ViewHolder(btnWxUnbind, clUserInfo, tvName, ivVipNoOrYes, tvVipDes, ivCircleHead, imageView4, clOther, llCourse, tvCourseNumber, tvCourseDes, llTime, tvTimeNumber, tvTimeDes, llIntegral, tvIntegralNumber, tvIntegralDes, clOpenInvite, clOpenRoll, llOpen, clInvite, llInvite, rv)
-            }
+    private fun multiTypeData(body: ProfileCBean?): List<Any> {
+        val data = ArrayList<Any>()
+        if (body != null) {
+            data.add(body)
         }
+        data.add(MyBean.create())
+        return data
     }
 
+
+    private class MyTopBean(val profileCBean: ProfileCBean)
 }

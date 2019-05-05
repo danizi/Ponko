@@ -37,7 +37,7 @@ interface MyApi {
      * @return
      */
     @GET("main?type=profile")
-    fun basic_info(): Call<Any>
+    fun basic_info(): Call<ProfileCBean>
 
     /**
      * 上传个人信息，不包括头像
