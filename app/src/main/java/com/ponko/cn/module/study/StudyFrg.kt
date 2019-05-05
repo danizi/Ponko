@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.ponko.cn.R
 import com.ponko.cn.bean.*
+import com.ponko.cn.module.RefreshViewHolder
 import com.ponko.cn.module.study.adapter.StudyAdapter
 import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.module.study.holder.AdViewHolder
@@ -17,11 +18,11 @@ import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 
 
-class StudyFrg : MvpFragment<StudyContract.Present>(), StudyContract.View {
+class StudyFrg : MvpFragment<StudyContract.Present>(), StudyContract.View{
 
-    private var srl: SmartRefreshLayout? = null
-    private var rv: RecyclerView? = null
+    private var viewHolder: RefreshViewHolder? = null
     private var adapter: StudyAdapter = StudyAdapter()
+
 
     override fun presenter(): StudyContract.Present {
         return StudyContract.Present(context, view = this)
@@ -32,26 +33,25 @@ class StudyFrg : MvpFragment<StudyContract.Present>(), StudyContract.View {
     }
 
     override fun findViews(view: View) {
-        srl = view.findViewById(R.id.srl) as SmartRefreshLayout
-        rv = view.findViewById(R.id.rv) as RecyclerView
-    }
-
-    override fun initDisplay() {
-        srl?.autoRefresh(1000)
-        srl?.isEnableRefresh = true
-        srl?.isEnableLoadMore = false
-        rv?.layoutManager = LinearLayoutManager(context)
-        rv?.addItemDecoration(MyItemDecoration.divider(context!!, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
-    }
-
-    override fun iniEvent() {
-        srl?.setOnRefreshListener {
-            //请求加载数据
-            p?.requestStudyApi()
+        if (viewHolder == null) {
+            viewHolder = RefreshViewHolder.create(view)
         }
     }
 
+    override fun initDisplay() {
+        viewHolder?.addItemDecoration(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder)
+    }
+
+    override fun iniEvent() {
+        viewHolder?.srl?.setOnRefreshListener {
+            //请求加载数据
+            p?.requestStudyApi()
+        }
+        viewHolder?.isCanLoad(viewHolder?.rv,viewHolder?.srl)
+    }
+
     override fun iniData() {
+        viewHolder?.srl?.autoRefresh()
     }
 
     override fun requestStudyApiSuccess(body: MainCBean?) {
@@ -62,8 +62,8 @@ class StudyFrg : MvpFragment<StudyContract.Present>(), StudyContract.View {
         adapter.addItemViewDelegate(3, CaseViewHolder::class.java, CaseBean::class.java, R.layout.item_study_case)
         adapter.data = multiTypeData(body)
         //设置适配器
-        rv?.adapter = adapter
-        srl?.finishRefresh()
+        viewHolder?.rv?.adapter = adapter
+        viewHolder?.srl?.finishRefresh()
     }
 
     private fun multiTypeData(body: MainCBean?): List<Any> {

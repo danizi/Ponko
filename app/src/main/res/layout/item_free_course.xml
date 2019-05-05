@@ -12,19 +12,26 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cl_video"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
-            android:layout_width="match_parent"
+            android:id="@+id/iv_avatar"
+            android:layout_width="0dp"
             android:layout_height="195dp"
             android:layout_marginTop="22dp"
             android:scaleType="fitXY"
             android:src="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/iv_play_pause"
             android:layout_width="34dp"
             android:layout_height="34dp"
             android:src="@mipmap/ic_launcher"
@@ -77,6 +84,7 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_des"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"

@@ -1,7 +1,8 @@
 package com.ponko.cn
 
+import android.view.KeyEvent
 import com.ponko.cn.module.free.FreeFrg
-import com.ponko.cn.module.interflow.InterflowFrg
+import com.ponko.cn.module.interflow.frg.InterflowFrg
 import com.ponko.cn.module.my.MyFrg
 import com.ponko.cn.module.study.StudyFrg
 import com.xm.lib.common.base.BaseActivity
@@ -55,5 +56,12 @@ class MainActivity : BaseActivity() {
 
     override fun iniEvent() {
 
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (KeyEvent.KEYCODE_BACK == keyCode) {
+            finish()
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }

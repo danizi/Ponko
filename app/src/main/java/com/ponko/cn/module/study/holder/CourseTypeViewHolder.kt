@@ -59,6 +59,8 @@ class CourseTypeViewHolder(view: View) : BaseViewHolder(view) {
                 .setColorResource(R.color.white)
                 .setShowLastLine(false)
                 .build())
+        v?.vp?.isFocusableInTouchMode = false
+        v?.vp?.requestFocus()
         v?.vp?.adapter = CourseSectionAdapter(typesBeanX.types)
     }
 
