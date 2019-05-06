@@ -1,6 +1,7 @@
 package com.ponko.cn.bean
 
 class InviteFriendsBean {
+
     //课程图标
     var couresResId: Int = 0
     //课程标题

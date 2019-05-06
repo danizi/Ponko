@@ -1,5 +1,6 @@
 package com.ponko.cn.module.my.holder
 
+import android.content.Intent
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -11,6 +12,9 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.MyBean
 import com.ponko.cn.bean.MyTopBean
 import com.ponko.cn.bean.ProfileCBean
+import com.ponko.cn.module.my.option.InviteFriendActivity
+import com.ponko.cn.module.my.option.OpenRollActivity
+import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
@@ -86,9 +90,11 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         }
         viewHolder?.clOpenRoll?.setOnClickListener {
             BKLog.d("点击开通学籍")
+            ActivityUtil.startActivity(context, Intent(context,OpenRollActivity::class.java))
         }
         viewHolder?.clInvite?.setOnClickListener {
             BKLog.d("点击邀请好友")
+            ActivityUtil.startActivity(context, Intent(context,InviteFriendActivity::class.java))
         }
 
     }

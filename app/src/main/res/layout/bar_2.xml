@@ -47,7 +47,7 @@
 
     <TextView
         android:id="@+id/tv_bar_right"
-        android:layout_width="40dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginRight="12dp"

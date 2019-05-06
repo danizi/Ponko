@@ -17,7 +17,7 @@ interface MyApi {
      * @return
      */
     @GET("products")
-    fun products(): Call<Any>
+    fun products(): Call<List<OpenCBean>>
 
     /**
      * 邀请好友

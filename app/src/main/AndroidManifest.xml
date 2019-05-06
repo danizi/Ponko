@@ -48,7 +48,9 @@
         </activity>
         <activity android:name=".StartAct" />
         <activity android:name=".module.free.FreeDetailsAct" />
-        <activity android:name=".WebAct"></activity>
+        <activity android:name=".WebAct" />
+        <activity android:name=".module.my.option.OpenRollActivity" />
+        <activity android:name=".module.my.option.InviteFriendActivity"></activity>
     </application>
 
 </manifest>

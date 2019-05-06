@@ -25,7 +25,7 @@ import com.xm.lib.common.log.BKLog
 abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
 
     protected var page = 1
-    private var viewHolder: ViewHolder? = null
+    protected var viewHolder: ViewHolder? = null
     protected var adapter: BaseRvAdapter? = null
 
     override fun setContentViewBefore() {
@@ -114,7 +114,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     /**
      * 基类ViewHolder
      */
-    private class ViewHolder private constructor(val toolbar: Toolbar, val srl: SmartRefreshLayout, val rv: RecyclerView, val viewState: XmStateView) {
+     class ViewHolder private constructor(val toolbar: Toolbar, val srl: SmartRefreshLayout, val rv: RecyclerView, val viewState: XmStateView) {
         companion object {
 
             fun create(act: AppCompatActivity): ViewHolder {
