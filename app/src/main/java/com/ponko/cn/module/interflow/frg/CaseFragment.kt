@@ -43,10 +43,12 @@ class CaseFragment : BaseFragment() {
                 val frgs = ArrayList<Fragment>()
                 val titls = ArrayList<String>()
 
+                titls.add("首页")
+                frgs.add(SubCaseFragment.create())
                 for (type in analysisCBean?.types!!) {
                     viewHolder?.tl?.addTab(viewHolder?.tl?.newTab()?.setText("")!!)
                     titls.add(type.name)
-                    frgs.add(SubCaseFragment.create())
+                    frgs.add(SubCaseFragment.create(type.id))
                 }
 
                 viewHolder?.vp?.adapter = InterflowCaseAdapter(childFragmentManager, frgs, titls)

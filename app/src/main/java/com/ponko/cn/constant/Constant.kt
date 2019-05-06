@@ -1,4 +1,5 @@
 package com.ponko.cn.constant
 
-class Constant {
+object Constant {
+    val BASE_API="https://api.tradestudy.cn/v3/"
 }

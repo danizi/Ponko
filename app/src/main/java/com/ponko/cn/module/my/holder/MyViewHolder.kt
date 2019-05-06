@@ -9,7 +9,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.MyBean
+import com.ponko.cn.bean.MyTopBean
+import com.ponko.cn.bean.ProfileCBean
+import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.log.BKLog
 import de.hdodenhof.circleimageview.CircleImageView
 
 
@@ -52,7 +56,40 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         if (viewHolder == null) {
             viewHolder = ViewHolder.create(itemView)
         }
-        val myBeans = MyBean.create()
+        val profileCBean = d as ProfileCBean
         val context = itemView.context
+        Glide.with(context,profileCBean.account.avatar, viewHolder?.ivCircleHead)  //头像
+        viewHolder?.tvCourseNumber?.text = "" + profileCBean.account.study_count   //学习课程数量
+        viewHolder?.tvTimeNumber?.text = "" + profileCBean.account.study_duration  //学习时长
+        viewHolder?.tvIntegralNumber?.text = "" + profileCBean.account.integration //当前积分
+        //判断是否绑定
+        var userType = "tourist"
+        if (profileCBean.account.isIs_bind_wechat) {
+            viewHolder?.btnWxUnbind?.visibility = View.GONE
+            viewHolder?.tvName?.text = profileCBean.account.nickname
+            userType = "wxBind"
+        } else {
+            viewHolder?.tvName?.text = profileCBean.account.realName
+        }
+        viewHolder?.ivCircleHead?.setOnClickListener {
+            when (userType) {
+                "tourist" -> {
+                    BKLog.d("游客模式 - 点击头像 - 进入登录页面")
+                }
+                "wxBind" -> {
+                    BKLog.d("微信模式 - 点击头像 - 进入个人信息页面")
+                }
+                "login" -> {
+                    BKLog.d("登录模式 - 点击头像 - 进入个人信息页面")
+                }
+            }
+        }
+        viewHolder?.clOpenRoll?.setOnClickListener {
+            BKLog.d("点击开通学籍")
+        }
+        viewHolder?.clInvite?.setOnClickListener {
+            BKLog.d("点击邀请好友")
+        }
+
     }
 }

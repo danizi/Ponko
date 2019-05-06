@@ -1,13 +1,13 @@
-package com.ponko.cn.module.my
+package com.ponko.cn.module.my.option
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.ponko.cn.R
 
-class AccountAct : AppCompatActivity() {
+class StoreAct : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_account)
+        setContentView(R.layout.activity_store)
     }
 }

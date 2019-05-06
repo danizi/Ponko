@@ -6,9 +6,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
+import com.ponko.cn.bean.CoursesListCBean
 import com.ponko.cn.bean.MyBean
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.log.BKLog
 
 
 class MyViewHolder2(view: View) : BaseViewHolder(view) {
@@ -33,16 +35,10 @@ class MyViewHolder2(view: View) : BaseViewHolder(view) {
         val context = itemView.context
 
         val adapter = Adapter()
-        adapter.data = myBeans.listBeans
+        adapter.data?.addAll(myBeans.listBeans)
         adapter.addItemViewDelegate(0, com.ponko.cn.module.my.holder.ViewHolder::class.java, Any::class.java, R.layout.item_my)
         viewHolder?.rv?.adapter = adapter
         viewHolder?.rv?.layoutManager = GridLayoutManager(context, 4)
-//        viewHolder?.rv?.addItemDecoration(GridItemDecoration.Builder(context)
-//                .setHorizontalSpan(20f)
-//                .setVerticalSpan(20f)
-//                .setColorResource(R.color.white)
-//                .setShowLastLine(false)
-//                .build())
     }
 
 
@@ -72,5 +68,20 @@ class MyViewHolder2(view: View) : BaseViewHolder(view) {
         val myListBean = d as MyBean.MyListBean
         viewHolder?.iv?.setImageResource(myListBean.icon)
         viewHolder?.tv?.text = myListBean.des
+        itemView.setOnClickListener {
+            when(myListBean.des){
+                "积分商城"->{ }
+                "缓存"->{}
+                "收藏"->{}
+                "历史"->{}
+                "提醒"->{}
+                "学习排行"->{}
+                "BK码兑换"->{}
+                "已兑课程"->{}
+                "咨询"->{}
+                "常见问题"->{}
+            }
+            BKLog.d("点击${myListBean.des}")
+        }
     }
 }

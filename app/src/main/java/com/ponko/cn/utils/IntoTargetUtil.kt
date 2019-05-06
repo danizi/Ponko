@@ -1,8 +1,11 @@
 package com.ponko.cn.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
+import com.ponko.cn.WebAct
 import com.xm.lib.common.log.BKLog
 
+@SuppressLint("StaticFieldLeak")
 /**
  * 跳转到指定目标窗口
  */
@@ -25,10 +28,10 @@ object IntoTargetUtil {
                 msg(linkValue)
             }
             linkType.equals("payment", true) or linkType.equals("pay", true) -> {
-                pay(linkValue)
+                pay(context,linkValue)
             }
-            linkType.equals("url", true) -> {
-                url(linkValue)
+            linkType.equals("url", true) or linkType.equals("detail", true) -> {
+                url(context,linkValue)
             }
             linkType.equals("course_type", true) -> {
                 courseType(linkValue)
@@ -110,12 +113,14 @@ object IntoTargetUtil {
         BKLog.d(TAG, "课程分类 linkValue:$linkValue")
     }
 
-    private fun pay(linkValue: String?) {
-        BKLog.d(TAG, "提醒 linkValue:$linkValue")
+    private fun pay(context: Context?,linkValue: String?) {
+        BKLog.d(TAG, "支付网页 linkValue:$linkValue")
+        WebAct.start(context,"pay",linkValue )
     }
 
-    private fun url(linkValue: String?) {
-        BKLog.d(TAG, "网页 linkValue:$linkValue")
+    private fun url(context: Context?,linkValue: String?) {
+        BKLog.d(TAG, "普通网页 linkValue:$linkValue")
+        WebAct.start(context,"pay",linkValue )
     }
 
     private fun msg(linkValue: String?) {

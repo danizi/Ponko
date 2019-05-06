@@ -2,11 +2,11 @@ package com.ponko.cn.app
 
 import android.app.Application
 import com.ponko.cn.api.*
+import com.ponko.cn.constant.Constant.BASE_API
 import com.xm.lib.common.http.RetrofitClient
 import java.io.File
 
 class PonkoApp : Application() {
-
     companion object {
         var retrofitClient: RetrofitClient? = null
         var loginApi: LoginApi? = null
@@ -28,9 +28,9 @@ class PonkoApp : Application() {
         heads["x-tradestudy-client-version"] = "3.4.6"
         heads["x-tradestudy-client-device"] = "android_phone"
         heads["x-tradestudy-access-key-id"] = "c"
-        heads["x-tradestudy-access-token"] = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IjdhV3lyTFlZaHdDZXYwSGgyL2x1cmdUL244S1lOa2hMY3J1YkR2MisrbWZabU1ZY01iRXUydngyWVB4cWZNQWVYWUpkaGU3TGFtbG1aM3VYQlZmRHBRPT0iLCJwaG9uZSI6IjE1MDc0NzcwNzA4IiwiaWQiOiI2NTc4M2IxNWQ0NzcxMWU4OGI0NDAyNDJhYzEzMDAwMyIsInRva2VuIjoiMDczZjVhYmU1M2I5NDNkMGIxZDAyY2YyMTNlOWJhMzcifQ.2150EoXYJ5O-P4xVQW8yFH_hiW9Ty10WTC4ylMmvkZ0"
+        heads["x-tradestudy-access-token"] = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IjdhV3lyTFlZaHdDZXYwSGgyL2x1cmdUL244S1lOa2hMY3J1YkR2MisrbWZabU1ZY01iRXUydngyWVB4cWZNQWVYWUpkaGU3TGFtbG1aM3VYQlZmRHBRPT0iLCJwaG9uZSI6IjE1MDc0NzcwNzA4IiwiaWQiOiI2NTc4M2IxNWQ0NzcxMWU4OGI0NDAyNDJhYzEzMDAwMyIsInRva2VuIjoiOWRiMTk5ZTBjNjhiNGVmNmI1Y2QzMWJkZTM3ZDU3NWUifQ.WpcxOMaEG-MZZlcNRzrhExbyaIzkllPjXXLlypFvKNw"
         retrofitClient = RetrofitClient.intance
-                .setBaseUrl("https://api.tradestudy.cn/v3/")
+                .setBaseUrl(BASE_API)
                 .setHttpCacheDirectory(File(cacheDir, "ponko"))
                 .setTimeout(15000)
                 .setHeaders(heads)

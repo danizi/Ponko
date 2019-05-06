@@ -24,16 +24,16 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".module.my.StoreAct" />
-        <activity android:name=".module.my.CacheAct" />
-        <activity android:name=".module.my.ColoctAct" />
-        <activity android:name=".module.my.StudyRecordAct" />
-        <activity android:name=".module.my.RemindAct" />
-        <activity android:name=".module.my.RankingAct" />
-        <activity android:name=".module.my.ExchangeAct" />
-        <activity android:name=".module.my.ExchangedAct" />
-        <activity android:name=".module.my.ProblemAct" />
-        <activity android:name=".module.my.AccountAct" />
+        <activity android:name=".module.my.option.StoreAct" />
+        <activity android:name=".module.my.option.CacheAct" />
+        <activity android:name=".module.my.option.ColoctAct" />
+        <activity android:name=".module.my.option.StudyRecordAct" />
+        <activity android:name=".module.my.option.RemindAct" />
+        <activity android:name=".module.my.option.RankingAct" />
+        <activity android:name=".module.my.option.ExchangeAct" />
+        <activity android:name=".module.my.option.ExchangedAct" />
+        <activity android:name=".module.my.option.ProblemAct" />
+        <activity android:name=".module.my.option.AccountAct" />
         <activity android:name=".module.login.LoginStartAct" />
         <activity android:name=".module.login.LoginAccountAct" />
         <activity android:name=".module.login.LoginRegisterAct" />
@@ -47,7 +47,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".StartAct" />
-        <activity android:name=".module.free.FreeDetailsAct"></activity>
+        <activity android:name=".module.free.FreeDetailsAct" />
+        <activity android:name=".WebAct"></activity>
     </application>
 
 </manifest>

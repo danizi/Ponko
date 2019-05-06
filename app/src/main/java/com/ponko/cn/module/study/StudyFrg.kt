@@ -1,68 +1,53 @@
 package com.ponko.cn.module.study
 
-import android.support.v7.widget.DividerItemDecoration
 import android.view.View
 import com.ponko.cn.R
 import com.ponko.cn.bean.*
-import com.ponko.cn.module.common.RefreshViewHolder
+import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.study.adapter.StudyAdapter
 import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.module.study.holder.AdViewHolder
 import com.ponko.cn.module.study.holder.BannerViewHolder
 import com.ponko.cn.module.study.holder.CaseViewHolder
 import com.ponko.cn.module.study.holder.CourseTypeViewHolder
-import com.xm.lib.common.base.mvp.MvpFragment
+import com.xm.lib.common.base.rv.BaseRvAdapter
 
+class StudyFrg : RefreshLoadFrg<StudyContract.Present, MainCBean>(), StudyContract.View {
 
-class StudyFrg : MvpFragment<StudyContract.Present>(), StudyContract.View{
-
-    private var viewHolder: RefreshViewHolder? = null
-    private var adapter: StudyAdapter = StudyAdapter()
-
+    override fun initDisplay() {
+        super.initDisplay()
+        addSearchBar(View.OnClickListener { }, View.OnClickListener { }, View.OnClickListener { })
+    }
 
     override fun presenter(): StudyContract.Present {
         return StudyContract.Present(context, view = this)
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.frg_nav_study
+    override fun bindItemViewHolderData(): BindItemViewHolderBean {
+        return BindItemViewHolderBean.create(
+                arrayOf(0, 1, 2, 3),
+                arrayOf(BannerViewHolder::class.java, AdViewHolder::class.java, CourseTypeViewHolder::class.java, CaseViewHolder::class.java),
+                arrayOf(BannerBean::class.java, AdBean2::class.java, CourseTypeBean::class.java, CaseBean::class.java),
+                arrayOf(R.layout.item_study_banner, R.layout.item_study_ad, R.layout.item_study_course_type, R.layout.item_study_case)
+        )
     }
 
-    override fun findViews(view: View) {
-        if (viewHolder == null) {
-            viewHolder = RefreshViewHolder.create(view)
-        }
+    override fun requestMoreApi() {
     }
 
-    override fun initDisplay() {
-        viewHolder?.addItemDecoration(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder)
+    override fun requestRefreshApi() {
+        p?.requestStudyApi()
     }
 
-    override fun iniEvent() {
-        viewHolder?.srl?.setOnRefreshListener {
-            //请求加载数据
-            p?.requestStudyApi()
-        }
-        viewHolder?.isCanLoad(viewHolder?.rv,viewHolder?.srl)
-    }
-
-    override fun iniData() {
-        viewHolder?.srl?.autoRefresh()
+    override fun adapter(): BaseRvAdapter? {
+        return StudyAdapter()
     }
 
     override fun requestStudyApiSuccess(body: MainCBean?) {
-        //绑定ViewHolder
-        adapter.addItemViewDelegate(0, BannerViewHolder::class.java, BannerBean::class.java, R.layout.item_study_banner)
-        adapter.addItemViewDelegate(1, AdViewHolder::class.java, AdBean2::class.java, R.layout.item_study_ad)
-        adapter.addItemViewDelegate(2, CourseTypeViewHolder::class.java, CourseTypeBean::class.java, R.layout.item_study_course_type)
-        adapter.addItemViewDelegate(3, CaseViewHolder::class.java, CaseBean::class.java, R.layout.item_study_case)
-        adapter.data = multiTypeData(body)
-        //设置适配器
-        viewHolder?.rv?.adapter = adapter
-        viewHolder?.srl?.finishRefresh()
+        requestRefreshSuccess(body)
     }
 
-    private fun multiTypeData(body: MainCBean?): List<Any> {
+    override fun multiTypeData(body: MainCBean?): List<Any> {
         val multiData = ArrayList<Any>()
         if (body?.tabbar != null) {
             //横幅 PS:横幅有可能为null

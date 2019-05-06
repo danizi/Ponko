@@ -14,6 +14,6 @@ interface InterflowApi {
     fun getAnalysis(@Query("page") page: Int, @Query("size") size: Int): Call<AnalysisCBean>
 
     @GET("analysis")
-    fun getAnalysis(@Query("typeId") typeId: String, @Query("page") page: Int, @Query("size") size: Int): Call<AnalysisCBean>
+    fun getAnalysis(@Query("typeId") typeId: String="", @Query("page") page: Int, @Query("size") size: Int): Call<AnalysisCBean>
 
 }

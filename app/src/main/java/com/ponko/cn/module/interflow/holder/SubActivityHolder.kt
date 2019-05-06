@@ -4,8 +4,11 @@ import android.view.View
 import android.widget.ImageView
 import com.ponko.cn.R
 import com.ponko.cn.bean.ActivityCBean
+import com.ponko.cn.constant.Constant
 import com.ponko.cn.utils.Glide
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.log.BKLog
 
 class SubActivityHolder(view: View?) : BaseViewHolder(view!!) {
 
@@ -29,7 +32,8 @@ class SubActivityHolder(view: View?) : BaseViewHolder(view!!) {
         val context = itemView.context
         Glide.with(context, activityCBean.image, viewHolder?.ivActivity)
         itemView.setOnClickListener {
-
+            BKLog.d("点击广告")
+            IntoTargetUtil.target(context,"url", activityCBean.url)
         }
     }
 }

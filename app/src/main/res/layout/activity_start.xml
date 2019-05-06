@@ -21,8 +21,10 @@
             android:id="@+id/iv_ad"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="14dp"
             android:scaleType="fitXY"
-            android:src="@mipmap/load_img_default" />
+            android:src="@mipmap/load_img_default"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <FrameLayout
             android:id="@+id/fl_ad_over"
@@ -56,14 +58,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="24dp"
         android:src="@mipmap/start_logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cl_ad" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

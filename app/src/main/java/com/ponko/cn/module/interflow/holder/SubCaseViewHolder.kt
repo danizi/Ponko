@@ -4,7 +4,10 @@ import android.view.View
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.AnalysisCBean
+import com.ponko.cn.constant.Constant.BASE_API
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
 
 
@@ -22,7 +25,9 @@ class SubCaseViewHolder(view: View?) : BaseViewHolder(view!!) {
         viewHolder?.tvSummary?.text = caseBean.brief
         viewHolder?.tvTime?.text = TimeUtil.yyyyMMdd(caseBean.createTime)
         itemView.setOnClickListener {
+            BKLog.d("点击案例"+caseBean.targetType+caseBean.url)
 
+            IntoTargetUtil.target(context,caseBean.targetType, BASE_API + "analysis/detail?id=${caseBean.id}")
         }
     }
 
