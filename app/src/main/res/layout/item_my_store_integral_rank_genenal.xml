@@ -6,80 +6,8 @@
     android:layout_height="wrap_content"
     android:background="#FFF4F4F4">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFFFF"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/tv_rank"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="0"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_head"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/iv_head" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_head"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="15dp"
-            android:src="@mipmap/ic_launcher"
-            app:layout_constraintStart_toEndOf="@+id/tv_rank"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_me"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="4dp"
-            android:text="我"
-            android:textColor="#FF34314C"
-            android:textSize="17sp"
-            app:layout_constraintStart_toEndOf="@+id/iv_head"
-            app:layout_constraintTop_toTopOf="@+id/iv_head" />
-
-        <TextView
-            android:id="@+id/tv_pay_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="学员"
-            android:textColor="#FF7E849D"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_head"
-            app:layout_constraintStart_toStartOf="@+id/tv_me"
-            app:layout_constraintTop_toBottomOf="@+id/tv_me" />
-
-        <TextView
-            android:id="@+id/tv_integral"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:text="300"
-            android:textColor="#FFFF3542"
-            android:textSize="19sp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_head"
-            app:layout_constraintRight_toRightOf="@+id/constraintLayout3"
-            app:layout_constraintTop_toTopOf="@+id/iv_head"
-            app:layout_constraintVertical_bias="0.517" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="13dp"
-            android:background="#FFE1E1E1"
-            app:layout_constraintEnd_toEndOf="@+id/tv_integral"
-            app:layout_constraintStart_toStartOf="@+id/iv_head"
-            app:layout_constraintTop_toBottomOf="@+id/iv_head" />
-
-    </android.support.constraint.ConstraintLayout>
-
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </android.support.constraint.ConstraintLayout>

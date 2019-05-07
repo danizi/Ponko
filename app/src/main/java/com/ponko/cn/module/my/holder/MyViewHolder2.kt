@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.MyBean
 import com.ponko.cn.module.my.option.*
+import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.ponko.cn.module.my.option.store.StoreAct
 import com.ponko.cn.utils.ActivityUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
@@ -96,7 +97,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                     ActivityUtil.startActivity(context,  Intent(context,ExchangeAct::class.java))
                 }
                 "已兑课程" -> {
-                    ActivityUtil.startActivity(context,  Intent(context,ExchangedAct::class.java))
+                    ActivityUtil.startActivity(context,  Intent(context, IntegralExchangedAct::class.java))
                 }
                 "咨询" -> {
                     //intent = Intent(context,StoreAct::class.java)

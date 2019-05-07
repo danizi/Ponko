@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
+import com.ponko.cn.WebAct
 import com.ponko.cn.bean.StoreProfileBean
 import com.ponko.cn.bean.StoreProfileCMoreBean
 import com.ponko.cn.utils.Glide
@@ -42,8 +43,9 @@ class MyBookViewHolder(view: View) : BaseViewHolder(view) {
         val context = itemView.context
         Glide.with(context,storesBean.picture,viewHolder?.ivBook)
         viewHolder?.tvCourseName?.text = storesBean.name
-        viewHolder?.tvIntegralNum?.text = storesBean.scores.toString()
-        viewHolder?.tvExchanged?.text = storesBean.expend.toString()
+        viewHolder?.tvIntegralNum?.text = storesBean.scores.toString()+"积分"
+        viewHolder?.tvExchanged?.text = "已兑课程"+storesBean.expend.toString()
+        itemView.setOnClickListener { WebAct.start(context,"url","")  }
 
     }
 }

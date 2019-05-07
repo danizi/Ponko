@@ -21,7 +21,7 @@ import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
 
 /**
- * 分享 & 支付 & 普通网页
+ * 分享 & 支付 & 普通网页 & 积分兑换(exchange)
  */
 class WebAct : PonkoBaseAct<Any>() {
     companion object {

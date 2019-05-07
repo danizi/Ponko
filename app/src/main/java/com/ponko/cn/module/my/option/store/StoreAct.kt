@@ -1,6 +1,8 @@
 package com.ponko.cn.module.my.option.store
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TabLayout
@@ -9,16 +11,13 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatImageView
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.Toolbar
+import android.support.v7.widget.*
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.ponko.cn.R
+import com.ponko.cn.WebAct
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.StoreProfileBean
@@ -27,12 +26,14 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.my.holder.MyBookViewHolder
 import com.ponko.cn.module.my.holder.MyCourseViewHolder
+import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.BaseActivity
+import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.component.XmAutoViewPager
 import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Response
@@ -54,7 +55,11 @@ class StoreAct : BaseActivity() {
     }
 
     override fun initDisplay() {
-
+        BarUtil.addBar2(this, viewHolder?.toolbar, "积分商城", "规则", View.OnClickListener {
+            BKLog.d("点击规则")
+            WebAct.start(this,"url","")
+        })
+        viewHolder?.toolbar?.setBackgroundColor(Color.parseColor("#FF41434E"))
     }
 
     override fun iniData() {
@@ -76,7 +81,7 @@ class StoreAct : BaseActivity() {
                 var count = 1
                 for (list in storeProfileBean?.list?.iterator()!!) {
                     viewHolder?.tb?.addTab(viewHolder?.tb?.newTab()?.setText(list.name)!!)
-                    frgs.add(ExchangeFrg.create(count++, list.name))
+                    frgs.add(ExchangeFrg.create(count++, list.name, viewHolder?.vp))
                     titls.add(list.name)
                 }
                 viewHolder?.vp?.adapter = Adapter(supportFragmentManager, frgs, titls)
@@ -86,7 +91,37 @@ class StoreAct : BaseActivity() {
     }
 
     override fun iniEvent() {
+        viewHolder?.vp?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(p0: Int) {
 
+            }
+
+            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+
+            }
+
+            override fun onPageSelected(p0: Int) {
+                if (p0 == 1) {
+                    viewHolder?.vp?.layoutParams?.height = 300
+                }
+            }
+        })
+        viewHolder?.llIntegral?.setOnClickListener {
+            BKLog.d("点击赚积分")
+            ActivityUtil.startActivity(this, Intent(this,IntegralTaskActivity::class.java))
+        }
+        viewHolder?.llExchange?.setOnClickListener {
+            BKLog.d("点击兑换记录")
+            ActivityUtil.startActivity(this, Intent(this,IntegralExchangedAct::class.java))
+        }
+        viewHolder?.llRank?.setOnClickListener {
+            BKLog.d("点击积分排行版")
+            ActivityUtil.startActivity(this, Intent(this,IntegralRankingActivity::class.java))
+        }
+        viewHolder?.llRecord?.setOnClickListener {
+            BKLog.d("点击获取记录")
+            ActivityUtil.startActivity(this, Intent(this,IntegralRecordActivity::class.java))
+        }
     }
 
     open class ViewHolder private constructor(val toolbar: Toolbar, val clInfo: ConstraintLayout, val container: ConstraintLayout, val ivHead: CircleImageView, val tvNick: TextView, val tvPayType: TextView, val tvIntegralNum: TextView, val llObtainLog: LinearLayout, val llRecord: LinearLayout, val clAction: ConstraintLayout, val llIntegral: LinearLayout, val ivIntegral: AppCompatImageView, val tvIntegral: TextView, val ivSign: ImageView, val llExchange: LinearLayout, val ivExchange: AppCompatImageView, val tvExchange: TextView, val llRank: LinearLayout, val ivRank: AppCompatImageView, val tvRank: TextView, val tb: TabLayout, val vp: ViewPager) {
@@ -121,83 +156,69 @@ class StoreAct : BaseActivity() {
     }
 
     @SuppressLint("ValidFragment")
-    open class ExchangeFrg : RefreshLoadFrg<Any, ArrayList<StoreProfileCMoreBean>>() {
-
+    open class ExchangeFrg : MvpFragment<Any>() {
+        private var rv: RecyclerView? = null
         private var type: String = "书籍"
         private var cid: String = ""
 
         companion object {
-            fun create(cid: Int, type: String): ExchangeFrg {
+            @SuppressLint("StaticFieldLeak")
+            var viewPager: ViewPager? = null
+
+            fun create(cid: Int, type: String, vp: ViewPager?): ExchangeFrg {
                 val fragment = ExchangeFrg()
                 val bundle = Bundle()
                 bundle.putString("cid", cid.toString())
                 bundle.putString("type", type) //暂时提供两种类型列表 书籍和课程
                 fragment.arguments = bundle
+                viewPager = vp
                 return fragment
             }
+        }
+
+        override fun getLayoutId(): Int {
+            return R.layout.frg_rv
+        }
+
+        override fun findViews(view: View) {
+            rv = view.findViewById(R.id.rv)
+        }
+
+        override fun iniEvent() {
+
         }
 
         override fun iniData() {
             cid = arguments?.getString("cid")!!
             type = arguments?.getString("type")!!
-            super.iniData()
-        }
-
-        override fun initDisplay() {
-            super.initDisplay()
-            viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
             when (type) {
                 "书籍" -> {
-                    viewHolder?.rv?.layoutManager = GridLayoutManager(context, 2)
-                    viewHolder?.rv?.isNestedScrollingEnabled = false
+                    PonkoApp.myApi?.homeMore(cid, 1)?.enqueue(object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
+                        override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
+                            adapter.data?.addAll(response?.body()!![0].stores!!)
+                            adapter.addItemViewDelegate(0, MyBookViewHolder::class.java, Any::class.java, R.layout.item_my_store_book)
+                            rv?.layoutManager = GridLayoutManager(context, 2)
+                            rv?.adapter = adapter
+                        }
+                    })
                 }
-                else -> {
+                "课程" -> {
+                    PonkoApp.myApi?.homeMore(cid, 1)?.enqueue(object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
+                        override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
+                            adapter.data?.addAll(response?.body()!![0].stores!!)
+                            adapter.addItemViewDelegate(0, MyCourseViewHolder::class.java, Any::class.java, R.layout.item_my_store_course)
+                            rv?.layoutManager = LinearLayoutManager(context)
+                            rv?.adapter = adapter
+                        }
+                    })
                 }
             }
         }
 
-        override fun bindItemViewHolderData(): BindItemViewHolderBean {
-            return if (type == "书籍") {
+        private var adapter = object : BaseRvAdapter() {}
 
-                BindItemViewHolderBean.create(
-                        arrayOf(0),
-                        arrayOf(MyBookViewHolder::class.java),
-                        arrayOf(Any::class.java),
-                        arrayOf(R.layout.item_my_store_book)
-                )
+        override fun initDisplay() {
 
-            } else {
-                BindItemViewHolderBean.create(
-                        arrayOf(0),
-                        arrayOf(MyCourseViewHolder::class.java),
-                        arrayOf(Any::class.java),
-                        arrayOf(R.layout.item_my_store_course)
-                )
-            }
-        }
-
-        override fun requestMoreApi() {
-            PonkoApp.myApi?.homeMore(cid, ++page)?.enqueue(object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
-                override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
-                    requestMoreSuccess(response?.body())
-                }
-            })
-        }
-
-        override fun requestRefreshApi() {
-            PonkoApp.myApi?.homeMore(cid, 1)?.enqueue(object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
-                override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
-                    requestRefreshSuccess(response?.body())
-                }
-            })
-        }
-
-        override fun multiTypeData(body: ArrayList<StoreProfileCMoreBean>?): List<Any> {
-            return body!![0].stores!!
-        }
-
-        override fun adapter(): BaseRvAdapter? {
-            return object : BaseRvAdapter() {}
         }
 
         override fun presenter(): Any {

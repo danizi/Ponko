@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
+import com.ponko.cn.WebAct
 import com.ponko.cn.bean.StoreProfileCMoreBean
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -25,7 +26,6 @@ class MyCourseViewHolder(view: View) : BaseViewHolder(view) {
         }
     }
 
-
     private var viewHolder: ViewHolder? = null
 
     override fun bindData(d: Any, position: Int) {
@@ -36,8 +36,8 @@ class MyCourseViewHolder(view: View) : BaseViewHolder(view) {
         val context = itemView.context
         Glide.with(context,storesBean.picture,viewHolder?.ivCourse)
         viewHolder?.tvCourseName?.text = storesBean.name
-        viewHolder?.tvIntegralNum?.text = storesBean.scores.toString()
-        viewHolder?.tvExchanged?.text = storesBean.expend.toString()
-
+        viewHolder?.tvIntegralNum?.text = storesBean.scores.toString()+"积分"
+        viewHolder?.tvExchanged?.text = "已兑课程"+storesBean.expend.toString()
+        itemView.setOnClickListener { WebAct.start(context,"url","") }
     }
 }

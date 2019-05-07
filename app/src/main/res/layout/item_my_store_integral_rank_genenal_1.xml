@@ -6,23 +6,14 @@
     android:layout_height="wrap_content"
     android:background="#FFF4F4F4">
 
-    <View
-        android:id="@+id/line"
-        android:layout_width="match_parent"
-        android:layout_height="12dp"
-        android:background="#fff5f5f5"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#FFFFFFFF"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
+
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/tv_rank"
@@ -39,7 +30,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="15dp"
             android:src="@mipmap/ic_launcher"
             app:layout_constraintStart_toEndOf="@+id/tv_rank"
             app:layout_constraintTop_toTopOf="parent" />
@@ -80,6 +71,14 @@
             app:layout_constraintTop_toTopOf="@+id/iv_head"
             app:layout_constraintVertical_bias="0.517" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="13dp"
+            android:background="#FFE1E1E1"
+            app:layout_constraintEnd_toEndOf="@+id/tv_integral"
+            app:layout_constraintStart_toStartOf="@+id/iv_head"
+            app:layout_constraintTop_toBottomOf="@+id/iv_head" />
 
     </android.support.constraint.ConstraintLayout>
 
