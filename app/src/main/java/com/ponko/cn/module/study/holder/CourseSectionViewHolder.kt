@@ -1,5 +1,6 @@
 package com.ponko.cn.module.study.holder
 
+import android.content.Intent
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -7,7 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.MainCBean
+import com.ponko.cn.module.study.CourseTypeListActivity
+import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.Glide
+import com.xm.lib.common.log.BKLog
 
 class CourseSectionViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
 
@@ -34,13 +38,12 @@ class CourseSectionViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
         val typeBean = data as MainCBean.TypesBeanX.TypesBean
         val context = itemView.context
         Glide.with(context, typeBean.picture, v?.ivCover)
-        v?.tvCourseSection1?.text = typeBean.subtitle!!
+        v?.tvCourseSection1?.text = typeBean.title
         v?.tvCourseSection2?.text = typeBean.subtitle2!!
-
-        //v?.ivCover?.layoutParams?.width =
-        //v?.ivCover?.layoutParams?.height = v?.ivCover?.layoutParams?.width
-
-        v?.ivCover?.setOnClickListener { }
+        v?.ivCover?.setOnClickListener {
+            BKLog.d("点击了课程类目 item")
+            ActivityUtil.startActivity(context, Intent(context, CourseTypeListActivity::class.java))
+        }
     }
 
 }

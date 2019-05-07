@@ -16,6 +16,7 @@ class StudyFrg : RefreshLoadFrg<StudyContract.Present, MainCBean>(), StudyContra
 
     override fun initDisplay() {
         super.initDisplay()
+        disableLoad = true
         addSearchBar(View.OnClickListener { }, View.OnClickListener { }, View.OnClickListener { })
     }
 

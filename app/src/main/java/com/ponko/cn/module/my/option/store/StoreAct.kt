@@ -1,0 +1,222 @@
+package com.ponko.cn.module.my.option.store
+
+import android.annotation.SuppressLint
+import android.os.Bundle
+import android.support.constraint.ConstraintLayout
+import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.AppCompatImageView
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.Toolbar
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.bean.BindItemViewHolderBean
+import com.ponko.cn.bean.StoreProfileBean
+import com.ponko.cn.bean.StoreProfileCMoreBean
+import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.module.common.RefreshLoadFrg
+import com.ponko.cn.module.my.holder.MyBookViewHolder
+import com.ponko.cn.module.my.holder.MyCourseViewHolder
+import com.ponko.cn.utils.Glide
+import com.xm.lib.common.base.BaseActivity
+import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.decoration.MyItemDecoration
+import com.xm.lib.common.log.BKLog
+import com.xm.lib.component.XmAutoViewPager
+import de.hdodenhof.circleimageview.CircleImageView
+import retrofit2.Call
+import retrofit2.Response
+
+class StoreAct : BaseActivity() {
+
+    private var viewHolder: ViewHolder? = null
+
+    override fun setContentViewBefore() {}
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_store
+    }
+
+    override fun findViews() {
+        if (viewHolder == null) {
+            viewHolder = ViewHolder.create(this)
+        }
+    }
+
+    override fun initDisplay() {
+
+    }
+
+    override fun iniData() {
+        PonkoApp.myApi?.home()?.enqueue(object : HttpCallBack<StoreProfileBean>() {
+            @SuppressLint("SetTextI18n")
+            override fun onSuccess(call: Call<StoreProfileBean>?, response: Response<StoreProfileBean>?) {
+                val storeProfileBean = response?.body()
+                Glide.with(baseContext, storeProfileBean?.avatar, viewHolder?.ivHead)
+                viewHolder?.tvNick?.text = storeProfileBean?.name
+                viewHolder?.tvPayType?.text = storeProfileBean?.paid
+                viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"
+                viewHolder?.llRecord?.setOnClickListener { BKLog.d("点击获取记录") }
+                viewHolder?.llIntegral?.setOnClickListener { BKLog.d("点击赚积分") }
+                viewHolder?.llExchange?.setOnClickListener { BKLog.d("点击兑换记录") }
+                viewHolder?.llIntegral?.setOnClickListener { BKLog.d("点击积分排行版") }
+
+                val frgs = ArrayList<Fragment>()
+                val titls = ArrayList<String>()
+                var count = 1
+                for (list in storeProfileBean?.list?.iterator()!!) {
+                    viewHolder?.tb?.addTab(viewHolder?.tb?.newTab()?.setText(list.name)!!)
+                    frgs.add(ExchangeFrg.create(count++, list.name))
+                    titls.add(list.name)
+                }
+                viewHolder?.vp?.adapter = Adapter(supportFragmentManager, frgs, titls)
+                viewHolder?.tb?.setupWithViewPager(viewHolder?.vp)
+            }
+        })
+    }
+
+    override fun iniEvent() {
+
+    }
+
+    open class ViewHolder private constructor(val toolbar: Toolbar, val clInfo: ConstraintLayout, val container: ConstraintLayout, val ivHead: CircleImageView, val tvNick: TextView, val tvPayType: TextView, val tvIntegralNum: TextView, val llObtainLog: LinearLayout, val llRecord: LinearLayout, val clAction: ConstraintLayout, val llIntegral: LinearLayout, val ivIntegral: AppCompatImageView, val tvIntegral: TextView, val ivSign: ImageView, val llExchange: LinearLayout, val ivExchange: AppCompatImageView, val tvExchange: TextView, val llRank: LinearLayout, val ivRank: AppCompatImageView, val tvRank: TextView, val tb: TabLayout, val vp: ViewPager) {
+        companion object {
+
+            fun create(act: AppCompatActivity): ViewHolder {
+                val toolbar = act.findViewById<View>(R.id.toolbar) as Toolbar
+                val clInfo = act.findViewById<View>(R.id.cl_info) as ConstraintLayout
+                val container = act.findViewById<View>(R.id.container) as ConstraintLayout
+                val ivHead = act.findViewById<View>(R.id.iv_head) as CircleImageView
+                val tvNick = act.findViewById<View>(R.id.tv_nick) as TextView
+                val tvPayType = act.findViewById<View>(R.id.tv_pay_type) as TextView
+                val tvIntegralNum = act.findViewById<View>(R.id.tv_integral_num) as TextView
+                val llObtainLog = act.findViewById<View>(R.id.ll_obtain_log) as LinearLayout
+                val llRecord = act.findViewById<View>(R.id.ll_record) as LinearLayout
+                val clAction = act.findViewById<View>(R.id.cl_action) as ConstraintLayout
+                val llIntegral = act.findViewById<View>(R.id.ll_integral) as LinearLayout
+                val ivIntegral = act.findViewById<View>(R.id.iv_integral) as AppCompatImageView
+                val tvIntegral = act.findViewById<View>(R.id.tv_integral) as TextView
+                val ivSign = act.findViewById<View>(R.id.iv_sign) as ImageView
+                val llExchange = act.findViewById<View>(R.id.ll_exchange) as LinearLayout
+                val ivExchange = act.findViewById<View>(R.id.iv_exchange) as AppCompatImageView
+                val tvExchange = act.findViewById<View>(R.id.tv_exchange) as TextView
+                val llRank = act.findViewById<View>(R.id.ll_rank) as LinearLayout
+                val ivRank = act.findViewById<View>(R.id.iv_rank) as AppCompatImageView
+                val tvRank = act.findViewById<View>(R.id.tv_rank) as TextView
+                val tb = act.findViewById<View>(R.id.tb) as TabLayout
+                val vp = act.findViewById<View>(R.id.vp) as ViewPager
+                return ViewHolder(toolbar, clInfo, container, ivHead, tvNick, tvPayType, tvIntegralNum, llObtainLog, llRecord, clAction, llIntegral, ivIntegral, tvIntegral, ivSign, llExchange, ivExchange, tvExchange, llRank, ivRank, tvRank, tb, vp)
+            }
+        }
+    }
+
+    @SuppressLint("ValidFragment")
+    open class ExchangeFrg : RefreshLoadFrg<Any, ArrayList<StoreProfileCMoreBean>>() {
+
+        private var type: String = "书籍"
+        private var cid: String = ""
+
+        companion object {
+            fun create(cid: Int, type: String): ExchangeFrg {
+                val fragment = ExchangeFrg()
+                val bundle = Bundle()
+                bundle.putString("cid", cid.toString())
+                bundle.putString("type", type) //暂时提供两种类型列表 书籍和课程
+                fragment.arguments = bundle
+                return fragment
+            }
+        }
+
+        override fun iniData() {
+            cid = arguments?.getString("cid")!!
+            type = arguments?.getString("type")!!
+            super.iniData()
+        }
+
+        override fun initDisplay() {
+            super.initDisplay()
+            viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
+            when (type) {
+                "书籍" -> {
+                    viewHolder?.rv?.layoutManager = GridLayoutManager(context, 2)
+                    viewHolder?.rv?.isNestedScrollingEnabled = false
+                }
+                else -> {
+                }
+            }
+        }
+
+        override fun bindItemViewHolderData(): BindItemViewHolderBean {
+            return if (type == "书籍") {
+
+                BindItemViewHolderBean.create(
+                        arrayOf(0),
+                        arrayOf(MyBookViewHolder::class.java),
+                        arrayOf(Any::class.java),
+                        arrayOf(R.layout.item_my_store_book)
+                )
+
+            } else {
+                BindItemViewHolderBean.create(
+                        arrayOf(0),
+                        arrayOf(MyCourseViewHolder::class.java),
+                        arrayOf(Any::class.java),
+                        arrayOf(R.layout.item_my_store_course)
+                )
+            }
+        }
+
+        override fun requestMoreApi() {
+            PonkoApp.myApi?.homeMore(cid, ++page)?.enqueue(object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
+                override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
+                    requestMoreSuccess(response?.body())
+                }
+            })
+        }
+
+        override fun requestRefreshApi() {
+            PonkoApp.myApi?.homeMore(cid, 1)?.enqueue(object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
+                override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
+                    requestRefreshSuccess(response?.body())
+                }
+            })
+        }
+
+        override fun multiTypeData(body: ArrayList<StoreProfileCMoreBean>?): List<Any> {
+            return body!![0].stores!!
+        }
+
+        override fun adapter(): BaseRvAdapter? {
+            return object : BaseRvAdapter() {}
+        }
+
+        override fun presenter(): Any {
+            return Any()
+        }
+    }
+
+    open class Adapter(fm: FragmentManager, val frgs: ArrayList<Fragment>, val title: ArrayList<String>) : FragmentPagerAdapter(fm) {
+
+        override fun getItem(p0: Int): Fragment {
+            return frgs[p0]
+        }
+
+        override fun getCount(): Int {
+            return frgs.size
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return title[position]
+        }
+    }
+}

@@ -12,6 +12,8 @@
     <color name="tourist">#BBBBBB</color>
     <color name="grey">#999999</color>
     <color name="blue">#5D8CD3</color>
+    <color name="divider">#F5F5F5</color>
+
 
 
 </resources>

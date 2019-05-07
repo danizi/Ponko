@@ -1,5 +1,8 @@
 package com.ponko.cn.module.my
 
+import android.graphics.Color
+import android.os.Build
+import android.support.annotation.RequiresApi
 import com.ponko.cn.R
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.MyBean
@@ -28,7 +31,7 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
                 arrayOf(MyViewHolder::class.java, MyViewHolder2::class.java),
                 arrayOf(MyTopBean::class.java, MyBean::class.java),
                 arrayOf(R.layout.item_my_top, R.layout.item_my_rv)
-                )
+        )
     }
 
     override fun requestMoreApi() {
@@ -50,5 +53,12 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
         }
         data.add(MyBean.create())
         return data
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun initDisplay() {
+        super.initDisplay()
+        disableLoad = true
+        viewHolder?.clContent?.setBackgroundColor(context?.resources?.getColor(R.color.white)!!)
     }
 }

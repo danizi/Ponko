@@ -12,6 +12,8 @@ import com.ponko.cn.module.study.adapter.CourseSectionAdapter
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.GridItemDecoration
+import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.ScreenUtil
 
 class CourseTypeViewHolder(view: View) : BaseViewHolder(view) {
 
@@ -41,21 +43,21 @@ class CourseTypeViewHolder(view: View) : BaseViewHolder(view) {
             v?.ivDetails?.visibility = View.GONE
             v?.btnPayCourse?.text = "已购"
             v?.btnPayCourse?.setOnClickListener {
-
+                BKLog.d("点击已购按钮")
             }
         } else {
             v?.ivDetails?.visibility = View.VISIBLE
             v?.btnPayCourse?.text = "未购"
             Glide.with(context, typesBeanX.avatar, v?.ivDetails)
             v?.btnPayCourse?.setOnClickListener {
-
+                BKLog.d("点击未购按钮")
             }
         }
         v?.tvTitle?.text = typesBeanX.title
         v?.vp?.layoutManager = GridLayoutManager(context, 2)
         v?.vp?.addItemDecoration(GridItemDecoration.Builder(context)
-                .setHorizontalSpan(20f)
-                .setVerticalSpan(20f)
+                .setHorizontalSpan(ScreenUtil.dip2px(context,15).toFloat())
+                .setVerticalSpan(ScreenUtil.dip2px(context,15).toFloat())
                 .setColorResource(R.color.white)
                 .setShowLastLine(false)
                 .build())

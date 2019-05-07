@@ -45,6 +45,7 @@ class InviteFriendActivity : RefreshLoadAct<Any, InviteFriendsBean>() {
         addBar2(viewHolder?.toolbar, "邀请好友", "邀请记录", View.OnClickListener {
             BKLog.d("点击邀请记录")
         })
+        viewHolder?.clContent?.setBackgroundColor(resources?.getColor(R.color.divider)!!)
     }
 
     override fun requestMoreApi() {}

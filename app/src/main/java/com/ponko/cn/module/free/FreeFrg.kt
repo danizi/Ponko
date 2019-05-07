@@ -23,6 +23,7 @@ class FreeFrg : RefreshLoadFrg<FreeConstract.Present,CoursesCBean>(), FreeConstr
 
     override fun initDisplay() {
         super.initDisplay()
+        disableLoad = true
         addBar3("免费体验","兑换", View.OnClickListener {})
     }
 

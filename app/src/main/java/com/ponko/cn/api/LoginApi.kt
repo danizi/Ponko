@@ -1,8 +1,8 @@
 package com.ponko.cn.api
 
+import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface LoginApi {
 
@@ -26,4 +26,23 @@ interface LoginApi {
 
     @POST("user/login/oauth/bind")
     fun wxbind(@Query("phone") phone: String, @Query("password") password: String, @Query("code") code: String, @Query("token") token: String, @Query("type") type: String="wechat")
+
+
+    ////////////////////////////////////
+    ///        账号绑定相关           //
+    ////////////////////////////////////
+    /**
+     * 微信绑定
+     * @param map  params.put("token", unionId!!)
+     *              params.put("type", "wechat")
+     */
+    @POST("user/bind-oauth")
+    fun wechatBind(@QueryMap map: Map<String, String>): Call<ResponseBody>
+
+    /**
+     * 微信解绑
+     * @param type wechat
+     */
+    @HTTP(method = "DELETE", path = "user/bind-oauth", hasBody = true)
+    fun wechatUnBint(@Query("type") type: String): Call<ResponseBody>
 }

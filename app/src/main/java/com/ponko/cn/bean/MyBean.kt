@@ -5,16 +5,16 @@ import com.ponko.cn.R
 class MyBean(val listBeans: ArrayList<MyListBean>) {
     companion object {
         val icons = arrayOf(
-                R.mipmap.me_service_shop,
-                R.mipmap.me_my_cache,
-                R.mipmap.me_my_colect,
-                R.mipmap.me_my_history,
-                R.mipmap.me_my_remind,
-                R.mipmap.me_my_rank,
-                R.mipmap.me_service_bk,
-                R.mipmap.me_service_bk_ed,
-                R.mipmap.me_service_advisory,
-                R.mipmap.me_service_problem
+                R.mipmap.my_shop,
+                R.mipmap.my_cache,
+                R.mipmap.my_colect,
+                R.mipmap.my_history,
+                R.mipmap.my_remind,
+                R.mipmap.my_rank,
+                R.mipmap.my_bk,
+                R.mipmap.my_bk_ed,
+                R.mipmap.my_advisory,
+                R.mipmap.my_problem
         )
         val des = arrayOf(
                 "积分商城",

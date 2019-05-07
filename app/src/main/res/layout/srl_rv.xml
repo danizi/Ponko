@@ -16,6 +16,7 @@
 
         <android.support.constraint.ConstraintLayout
             android:background="#F5F5F5"
+            android:id="@+id/cl_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -35,7 +36,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/rv" />
         </android.support.constraint.ConstraintLayout>
-
 
         <com.scwang.smartrefresh.layout.footer.ClassicsFooter
             android:layout_width="match_parent"

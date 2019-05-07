@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    tools:ignore="MissingConstraints">
+
+    <!--屏幕竖向平分线-->
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <!--前三名头像-->
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_number_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline_center"
+        app:layout_constraintRight_toRightOf="@+id/guideline_center"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_number_one"
+            android:layout_width="66dp"
+            android:layout_height="40dp"
+
+            android:src="@mipmap/my_store_number_one"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_head_1"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="33dp"
+            android:src="@mipmap/ic_launcher"
+            app:civ_border_color="#FFFBA287"
+            app:civ_border_width="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/iv_number_one"
+            app:layout_constraintStart_toStartOf="@+id/iv_number_one"
+            app:layout_constraintTop_toTopOf="@+id/iv_number_one" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_number_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/cl_number_one"
+        app:layout_constraintEnd_toStartOf="@+id/cl_number_one"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_number_two"
+            android:layout_width="52dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:src="@mipmap/my_store_number_two"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_head_2"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="26dp"
+            android:src="@mipmap/ic_launcher"
+            app:civ_border_color="#FFE1DDDD"
+            app:civ_border_width="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/iv_number_two"
+            app:layout_constraintStart_toStartOf="@+id/iv_number_two"
+            app:layout_constraintTop_toTopOf="@+id/iv_number_two" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_number_three"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/cl_number_one"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cl_number_one">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_number_three"
+            android:layout_width="52dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:src="@mipmap/my_store_number_three"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_head_3"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="26dp"
+            android:src="@mipmap/ic_launcher"
+            app:civ_border_color="#FFFCDC9D"
+            app:civ_border_width="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/iv_number_three"
+            app:layout_constraintStart_toStartOf="@+id/iv_number_three"
+            app:layout_constraintTop_toTopOf="@+id/iv_number_three" />
+    </android.support.constraint.ConstraintLayout>
+
+    <!--前三名用户信息-->
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline_center"
+        app:layout_constraintRight_toRightOf="@id/guideline_center"
+        app:layout_constraintTop_toBottomOf="@+id/cl_number_one">
+
+        <TextView
+            android:id="@+id/tv_1_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="铁头娃"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_1_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:text="帮课学员"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_1_name" />
+
+        <TextView
+            android:id="@+id/tv_1_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="5345"
+            android:textColor="#FFFF3542"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_1_type" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/cl_number_two"
+        app:layout_constraintStart_toStartOf="@+id/cl_number_two"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout2">
+
+        <TextView
+            android:id="@+id/tv_2_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="铁头娃"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_2_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:text="帮课学员"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_2_name" />
+
+        <TextView
+            android:id="@+id/tv_2_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="5345"
+            android:textColor="#FFFF3542"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_2_type" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/cl_number_three"
+        app:layout_constraintStart_toStartOf="@+id/cl_number_three"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout2">
+
+        <TextView
+            android:id="@+id/tv_3_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="铁头娃"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_3_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:text="帮课学员"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_3_name" />
+
+        <TextView
+            android:id="@+id/tv_3_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="5345"
+            android:textColor="#FFFF3542"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_3_type" />
+    </android.support.constraint.ConstraintLayout>
+
+
+    <!--个人排名-->
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="10dp"
+        android:background="#FFFFFFFF"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+
+        <!--信息竖向说明： 排名、昵称、积分-->
+        <TextView
+            android:id="@+id/tv_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="排名"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_2" />
+
+        <TextView
+            android:id="@+id/tv_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="昵称"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/line"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="积分"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_2" />
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="16dp"
+            android:background="#FFDDDDDD"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_2" />
+
+        <!--个人排名所在位置-->
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5241"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_head"
+            app:layout_constraintStart_toStartOf="@+id/tv_1"
+            app:layout_constraintTop_toTopOf="@+id/iv_head" />
+
+        <com.ponko.cn.widget.CircleImageView
+            android:id="@+id/iv_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView7"
+            app:layout_constraintTop_toBottomOf="@+id/line" />
+
+        <TextView
+            android:id="@+id/tv_me"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:text="我"
+            app:layout_constraintStart_toEndOf="@+id/iv_head"
+            app:layout_constraintTop_toTopOf="@+id/iv_head" />
+
+        <TextView
+            android:id="@+id/tv_pay_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全站学员"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_head"
+            app:layout_constraintStart_toStartOf="@+id/tv_me"
+            app:layout_constraintTop_toBottomOf="@+id/tv_me" />
+
+        <TextView
+            android:id="@+id/tv_integral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="300"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_head"
+            app:layout_constraintEnd_toEndOf="@+id/tv_3"
+            app:layout_constraintStart_toStartOf="@+id/tv_3"
+            app:layout_constraintTop_toTopOf="@+id/iv_head" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_marginTop="10dp"
+        android:background="#fff5f5f5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+
+</android.support.constraint.ConstraintLayout>

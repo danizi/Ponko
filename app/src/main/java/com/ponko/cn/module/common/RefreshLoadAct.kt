@@ -1,6 +1,7 @@
 package com.ponko.cn.module.common
 
 import android.os.Build
+import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -114,7 +115,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     /**
      * 基类ViewHolder
      */
-     class ViewHolder private constructor(val toolbar: Toolbar, val srl: SmartRefreshLayout, val rv: RecyclerView, val viewState: XmStateView) {
+     class ViewHolder private constructor(val toolbar: Toolbar, val srl: SmartRefreshLayout, val rv: RecyclerView, val viewState: XmStateView,val clContent:ConstraintLayout) {
         companion object {
 
             fun create(act: AppCompatActivity): ViewHolder {
@@ -122,7 +123,8 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
                 val srl = act.findViewById<View>(R.id.srl) as SmartRefreshLayout
                 val rv = act.findViewById<View>(R.id.rv) as RecyclerView
                 val viewState = act.findViewById<View>(R.id.view_state) as XmStateView
-                return ViewHolder(toolbar, srl, rv, viewState)
+                val clContent = act.findViewById<View>(R.id.cl_content) as ConstraintLayout
+                return ViewHolder(toolbar, srl, rv, viewState,clContent)
             }
         }
 

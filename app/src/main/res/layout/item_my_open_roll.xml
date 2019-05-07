@@ -3,22 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/divider"
+    tools:ignore="HardcodedText,ContentDescription,SmallSp">
 
     <ImageView
         android:id="@+id/iv_bk"
         android:layout_width="match_parent"
         android:layout_height="175dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="15dp"
         android:scaleType="fitXY"
-         />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="66dp"
         android:layout_height="66dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="25dp"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,9 +35,8 @@
         android:id="@+id/cl_right"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_logo"
@@ -37,11 +44,12 @@
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:lines="1"
             android:text="外贸B2B课程"
             android:textColor="#333333"
             android:textSize="20sp"
@@ -50,10 +58,10 @@
 
         <ImageView
             android:id="@+id/iv_vip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
             android:layout_marginTop="10dp"
-            android:src="@mipmap/my_info_vip"
+            android:src="@mipmap/vip_red"
             app:layout_constraintStart_toStartOf="@+id/tv_title"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
@@ -61,6 +69,7 @@
             android:id="@+id/tv_expire_in"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:text="有效期至2018-10-12"
             app:layout_constraintBottom_toBottomOf="@+id/iv_vip"
@@ -69,36 +78,75 @@
 
         <Button
             android:id="@+id/btn_pay"
-            android:background="@color/red"
-            android:textColor="@color/white"
-            android:textSize="10sp"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
+            android:background="@color/red"
             android:text="续费"
+            android:textColor="@color/white"
+            android:textSize="10sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/tv_summaries"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:textColor="#802327"
-        android:text="
-        · 1368节外贸课程             · 500人微信校友群
 
-        · 在线答疑线下活动          · 入学即送400积分"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/cl_right"
         app:layout_constraintStart_toStartOf="@+id/iv_logo"
-        app:layout_constraintTop_toBottomOf="@+id/iv_logo"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo">
+
+        <TextView
+            android:id="@+id/tv_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="8dp"
+            android:text="· 1368节外贸课程"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="· 500人微信校友群"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_1"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/tv_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="8dp"
+            android:text="· 1368节外贸课程"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_1" />
+
+        <TextView
+            android:id="@+id/tv_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="· 500人微信校友群"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_3"
+            app:layout_constraintVertical_bias="0.0" />
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

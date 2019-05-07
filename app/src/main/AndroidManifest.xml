@@ -24,12 +24,12 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".module.my.option.StoreAct" />
+        <activity android:name=".module.my.option.store.StoreAct" />
         <activity android:name=".module.my.option.CacheAct" />
         <activity android:name=".module.my.option.ColoctAct" />
         <activity android:name=".module.my.option.StudyRecordAct" />
         <activity android:name=".module.my.option.RemindAct" />
-        <activity android:name=".module.my.option.RankingAct" />
+        <activity android:name=".module.my.option.LearnRankingAct" />
         <activity android:name=".module.my.option.ExchangeAct" />
         <activity android:name=".module.my.option.ExchangedAct" />
         <activity android:name=".module.my.option.ProblemAct" />
@@ -50,7 +50,10 @@
         <activity android:name=".module.free.FreeDetailsAct" />
         <activity android:name=".WebAct" />
         <activity android:name=".module.my.option.OpenRollActivity" />
-        <activity android:name=".module.my.option.InviteFriendActivity"></activity>
+        <activity android:name=".module.my.option.InviteFriendActivity" />
+        <activity android:name=".module.my.option.HistoryActivity" />
+        <activity android:name=".module.study.CourseTypeListActivity" />
+        <activity android:name=".module.study.StudyCourseDetailActivity"></activity>
     </application>
 
 </manifest>
