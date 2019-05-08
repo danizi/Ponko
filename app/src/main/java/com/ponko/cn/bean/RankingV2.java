@@ -180,6 +180,7 @@ public class RankingV2 {
          */
 
         private String headPicture;
+        @Deprecated
         private String product_level_name;
         private int scores;
         private String nickname;

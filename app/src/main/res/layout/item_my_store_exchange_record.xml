@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:background="#FFFFFFFF"
     android:paddingBottom="14dp"
+    android:fitsSystemWindows="true"
     tools:ignore="MissingConstraints">
 
     <View

@@ -154,9 +154,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
             android:text="5345"
             android:textColor="#FFFF3542"
             android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_1_type" />
@@ -245,7 +247,7 @@
     </android.support.constraint.ConstraintLayout>
 
 
-    <!--个人排名-->
+    <!--个人排名 ps:废弃-->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout3"
         android:layout_width="0dp"
@@ -317,7 +319,7 @@
             app:layout_constraintStart_toStartOf="@+id/tv_1"
             app:layout_constraintTop_toTopOf="@+id/iv_head" />
 
-        <com.ponko.cn.widget.CircleImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_head"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -361,6 +363,7 @@
 
 
     <View
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="12dp"
         android:layout_marginTop="10dp"

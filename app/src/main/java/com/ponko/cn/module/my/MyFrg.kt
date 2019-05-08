@@ -1,19 +1,20 @@
 package com.ponko.cn.module.my
 
-import android.graphics.Color
 import android.os.Build
 import android.support.annotation.RequiresApi
 import com.ponko.cn.R
-import com.ponko.cn.bean.BindItemViewHolderBean
-import com.ponko.cn.bean.MyBean
-import com.ponko.cn.bean.MyTopBean
-import com.ponko.cn.bean.ProfileCBean
+import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.bean.*
+import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.my.adapter.MyAdapter
 import com.ponko.cn.module.my.constract.MyConstract
 import com.ponko.cn.module.my.holder.MyViewHolder
 import com.ponko.cn.module.my.holder.MyViewHolder2
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.log.BKLog
+import retrofit2.Call
+import retrofit2.Response
 
 class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.View {
 
@@ -44,6 +45,17 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
 
     override fun requestMyInfoApiSuccess(body: ProfileCBean?) {
         requestRefreshSuccess(body)
+        //再请求签到接口
+        PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
+            override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
+                val storeTaskBean = response?.body()
+                PonkoApp.signInfo = storeTaskBean
+                if (storeTaskBean?.isCompleted != true) {
+                    //未签到状态
+                    BKLog.d("未签到状态,商城图片晃动")
+                }
+            }
+        })
     }
 
     override fun multiTypeData(body: ProfileCBean?): List<Any> {
@@ -60,5 +72,6 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
         super.initDisplay()
         disableLoad = true
         viewHolder?.clContent?.setBackgroundColor(context?.resources?.getColor(R.color.white)!!)
+        isFocusableInTouchMode()
     }
 }

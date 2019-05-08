@@ -1,39 +1,100 @@
 package com.ponko.cn.module.my.option.store
 
+import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
+import android.view.View
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
+import com.ponko.cn.bean.StoreObtainLogBean
+import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
+import com.ponko.cn.module.my.holder.MyIntegralRecordViewHolder
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import retrofit2.Call
+import retrofit2.Response
+import android.widget.TextView
+import android.widget.LinearLayout
+import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.TimeUtil
 
-class IntegralRecordActivity : RefreshLoadAct<Any, Any>() {
+/**
+ * 积分获取记录
+ */
+class IntegralRecordActivity : RefreshLoadAct<Any, StoreObtainLogBean>() {
+    private var v: ViewHolder? = null
+
+    override fun initDisplay() {
+        addItemDecoration = false
+        super.initDisplay()
+        addBar1(viewHolder?.toolbar, "积分获取记录")
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_integral_record
+    }
+
+    override fun findViews() {
+        super.findViews()
+        if (v == null) {
+            v = ViewHolder.create(this)
+        }
+    }
+
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return BindItemViewHolderBean.create(
+                arrayOf(0),
+                arrayOf(MyIntegralRecordViewHolder::class.java),
+                arrayOf(Any::class.java),
+                arrayOf(R.layout.item_my_store_integral_record))
     }
 
     override fun requestMoreApi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        PonkoApp.myApi?.integralObtainRecord(++page)?.enqueue(object : HttpCallBack<StoreObtainLogBean>() {
+            @SuppressLint("SetTextI18n")
+            override fun onSuccess(call: Call<StoreObtainLogBean>?, response: Response<StoreObtainLogBean>?) {
+                val storeObtainLogBean = response?.body()
+                requestMoreSuccess(storeObtainLogBean)
+            }
+        })
     }
 
     override fun requestRefreshApi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        PonkoApp.myApi?.integralObtainRecord()?.enqueue(object : HttpCallBack<StoreObtainLogBean>() {
+            override fun onSuccess(call: Call<StoreObtainLogBean>?, response: Response<StoreObtainLogBean>?) {
+                val storeObtainLogBean = response?.body()
+                requestRefreshSuccess(storeObtainLogBean)
+                v?.tvIntegralExpiration?.text = "当前有${storeObtainLogBean?.soon_expired_scores}积分将在${TimeUtil.unixStr("yyy-MM-dd", storeObtainLogBean?.soon_expired_time!!)}日过期，"
+                v?.llIntegralExpiration?.setOnClickListener {
+                    BKLog.d("点击积分过期提示")
+                    finish()
+                }
+            }
+        })
     }
 
-    override fun multiTypeData(body: Any?): List<Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun multiTypeData(body: StoreObtainLogBean?): List<Any> {
+        return body?.list!!
     }
 
     override fun adapter(): BaseRvAdapter? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return object : BaseRvAdapter() {}
     }
 
     override fun presenter(): Any {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Any()
     }
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_integral_record)
-//    }
+    private class ViewHolder private constructor(val llIntegralExpiration: LinearLayout, val tvIntegralExpiration: TextView) {
+        companion object {
+
+            fun create(act: AppCompatActivity): ViewHolder {
+                val llIntegralExpiration = act.findViewById<View>(R.id.ll_integral_expiration) as LinearLayout
+                val tvIntegralExpiration = act.findViewById<View>(R.id.tv_integral_expiration) as TextView
+                return ViewHolder(llIntegralExpiration, tvIntegralExpiration)
+            }
+        }
+    }
+
+
 }

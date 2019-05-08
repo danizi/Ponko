@@ -29,4 +29,8 @@ abstract class PonkoBaseAct<P>: MvpActivity<P>() {
         BarUtil.addBar3(this,toolbar,title,barRight,barRightlistener)
     }
 
+    protected fun addWhiteBar(toolbar:Toolbar?,title: String,barRight:String?="",barRightlistener: View.OnClickListener){
+        BarUtil.addWhiteBar(this,toolbar,title,barRight,barRightlistener)
+    }
+
 }

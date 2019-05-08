@@ -1,39 +1,58 @@
 package com.ponko.cn.module.my.option.store
 
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
+import com.ponko.cn.bean.ExchangedHistoriesCBean
+import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
+import com.ponko.cn.module.my.holder.MyExchangedViewHolder
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import retrofit2.Call
+import retrofit2.Response
 
-class IntegralExchangedAct : RefreshLoadAct<Any,Any>() {
+class IntegralExchangedAct : RefreshLoadAct<Any, ArrayList<ExchangedHistoriesCBean>>() {
+
+    override fun initDisplay() {
+        addItemDecoration=false
+        super.initDisplay()
+        addBar1(viewHolder?.toolbar,"兑换记录")
+    }
+
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return BindItemViewHolderBean.create(
+                arrayOf(0),
+                arrayOf(MyExchangedViewHolder::class.java),
+                arrayOf(Any::class.java),
+                arrayOf(R.layout.item_my_store_exchange_record)
+        )
     }
 
     override fun requestMoreApi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        PonkoApp.myApi?.integralObtainExchanged(++page)?.enqueue(object : HttpCallBack<ArrayList<ExchangedHistoriesCBean>>() {
+            override fun onSuccess(call: Call<ArrayList<ExchangedHistoriesCBean>>?, response: Response<ArrayList<ExchangedHistoriesCBean>>?) {
+                requestMoreSuccess(response?.body())
+            }
+        })
     }
 
     override fun requestRefreshApi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        PonkoApp.myApi?.integralObtainExchanged()?.enqueue(object : HttpCallBack<ArrayList<ExchangedHistoriesCBean>>() {
+            override fun onSuccess(call: Call<ArrayList<ExchangedHistoriesCBean>>?, response: Response<ArrayList<ExchangedHistoriesCBean>>?) {
+                requestRefreshSuccess(response?.body())
+            }
+        })
     }
 
-    override fun multiTypeData(body: Any?): List<Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun multiTypeData(body: ArrayList<ExchangedHistoriesCBean>?): List<Any> {
+        return body!!
     }
 
     override fun adapter(): BaseRvAdapter? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return object : BaseRvAdapter() {}
     }
 
     override fun presenter(): Any {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Any()
     }
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_exchanged)
-//    }
 }

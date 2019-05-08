@@ -28,6 +28,9 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     protected var page = 1
     protected var viewHolder: ViewHolder? = null
     protected var adapter: BaseRvAdapter? = null
+    protected var disableRefresh = false
+    protected var disableLoad = false
+    protected var addItemDecoration = true
 
     override fun setContentViewBefore() {
 
@@ -44,9 +47,12 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     }
 
     override fun initDisplay() {
-        viewHolder?.srl?.isEnableRefresh = true
+        viewHolder?.srl?.isEnableRefresh = false
+        viewHolder?.srl?.isEnableLoadMore = false
         viewHolder?.rv?.layoutManager = LinearLayoutManager(this)
-        viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(this, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
+        if (addItemDecoration) {
+            viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(this, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
+        }
         viewHolder?.viewState?.showLoading("正在加载中...")
     }
 
@@ -61,6 +67,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     // RecyclerView 绑定item的ViewHolder
     //////////////////////////
     abstract fun bindItemViewHolderData(): BindItemViewHolderBean
+
     private fun bindItemViewHolder(bindItemViewHolderBean: BindItemViewHolderBean) {
         for (i in 0..(bindItemViewHolderBean.viewType.size - 1)) {
             adapter?.addItemViewDelegate(bindItemViewHolderBean.viewType[i], bindItemViewHolderBean.viewHolderClass[i], bindItemViewHolderBean.beanClass[i], bindItemViewHolderBean.itemViewLayoutId[i])
@@ -72,6 +79,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     // 加载
     //////////////////////////
     abstract fun requestMoreApi()
+
     open fun requestMoreSuccess(body: D?) {
         val data = body as ArrayList<Any>
         adapter?.data?.addAll(data)
@@ -80,6 +88,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
         adapter?.notifyItemRangeChanged(positionStart!!, itemCount)
         viewHolder?.srl?.finishLoadMore()
     }
+
     open fun requestMoreFailure() {
 
     }
@@ -89,6 +98,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     // 刷新
     //////////////////////////
     abstract fun requestRefreshApi()
+
     open fun requestRefreshSuccess(body: D?) {
         viewHolder?.srl?.finishRefresh()
         adapter?.data?.clear()
@@ -96,11 +106,17 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
         //设置适配器
         viewHolder?.rv?.adapter = adapter
         viewHolder?.viewState?.hide()
-        viewHolder?.isCanLoad(viewHolder?.rv, viewHolder?.srl) //判断RecyclerView内容的长度是否可以触发上拉加载
+        if (!disableRefresh) {
+            viewHolder?.srl?.isEnableRefresh = true
+        }
+        if (!disableLoad) {
+            viewHolder?.isCanLoad(viewHolder?.rv, viewHolder?.srl) //判断RecyclerView内容的长度是否可以触发上拉加载
+        }
     }
-    open fun requestRefreshFailure() {
 
+    open fun requestRefreshFailure() {
     }
+
     abstract fun multiTypeData(body: D?): List<Any>
     abstract fun adapter(): BaseRvAdapter?
     override fun iniEvent() {
@@ -112,10 +128,15 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
         }
     }
 
+    protected fun isFocusableInTouchMode() {
+        viewHolder?.rv?.isFocusableInTouchMode = false
+        viewHolder?.rv?.requestFocus()
+    }
+
     /**
      * 基类ViewHolder
      */
-     class ViewHolder private constructor(val toolbar: Toolbar, val srl: SmartRefreshLayout, val rv: RecyclerView, val viewState: XmStateView,val clContent:ConstraintLayout) {
+    class ViewHolder private constructor(val toolbar: Toolbar, val srl: SmartRefreshLayout, val rv: RecyclerView, val viewState: XmStateView, val clContent: ConstraintLayout) {
         companion object {
 
             fun create(act: AppCompatActivity): ViewHolder {
@@ -124,7 +145,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
                 val rv = act.findViewById<View>(R.id.rv) as RecyclerView
                 val viewState = act.findViewById<View>(R.id.view_state) as XmStateView
                 val clContent = act.findViewById<View>(R.id.cl_content) as ConstraintLayout
-                return ViewHolder(toolbar, srl, rv, viewState,clContent)
+                return ViewHolder(toolbar, srl, rv, viewState, clContent)
             }
         }
 

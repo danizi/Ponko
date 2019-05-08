@@ -41,6 +41,7 @@ import retrofit2.Response
 class StoreAct : BaseActivity() {
 
     private var viewHolder: ViewHolder? = null
+    private var storeProfileBean: StoreProfileBean? = null
 
     override fun setContentViewBefore() {}
 
@@ -55,10 +56,11 @@ class StoreAct : BaseActivity() {
     }
 
     override fun initDisplay() {
-        BarUtil.addBar2(this, viewHolder?.toolbar, "积分商城", "规则", View.OnClickListener {
+        BarUtil.addWhiteBar(this, viewHolder?.toolbar, "积分商城", "规则", View.OnClickListener {
             BKLog.d("点击规则")
-            WebAct.start(this,"url","")
+            WebAct.start(this, "url", storeProfileBean?.score_rule)
         })
+        com.jaeger.library.StatusBarUtil.setColor(this, Color.parseColor("#FF41434E"), 0)
         viewHolder?.toolbar?.setBackgroundColor(Color.parseColor("#FF41434E"))
     }
 
@@ -66,16 +68,11 @@ class StoreAct : BaseActivity() {
         PonkoApp.myApi?.home()?.enqueue(object : HttpCallBack<StoreProfileBean>() {
             @SuppressLint("SetTextI18n")
             override fun onSuccess(call: Call<StoreProfileBean>?, response: Response<StoreProfileBean>?) {
-                val storeProfileBean = response?.body()
+                storeProfileBean = response?.body()
                 Glide.with(baseContext, storeProfileBean?.avatar, viewHolder?.ivHead)
                 viewHolder?.tvNick?.text = storeProfileBean?.name
                 viewHolder?.tvPayType?.text = storeProfileBean?.paid
                 viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"
-                viewHolder?.llRecord?.setOnClickListener { BKLog.d("点击获取记录") }
-                viewHolder?.llIntegral?.setOnClickListener { BKLog.d("点击赚积分") }
-                viewHolder?.llExchange?.setOnClickListener { BKLog.d("点击兑换记录") }
-                viewHolder?.llIntegral?.setOnClickListener { BKLog.d("点击积分排行版") }
-
                 val frgs = ArrayList<Fragment>()
                 val titls = ArrayList<String>()
                 var count = 1
@@ -101,26 +98,25 @@ class StoreAct : BaseActivity() {
             }
 
             override fun onPageSelected(p0: Int) {
-                if (p0 == 1) {
-                    viewHolder?.vp?.layoutParams?.height = 300
-                }
+
             }
         })
+
         viewHolder?.llIntegral?.setOnClickListener {
             BKLog.d("点击赚积分")
-            ActivityUtil.startActivity(this, Intent(this,IntegralTaskActivity::class.java))
+            ActivityUtil.startActivity(this, Intent(this, IntegralTaskActivity::class.java))
         }
         viewHolder?.llExchange?.setOnClickListener {
             BKLog.d("点击兑换记录")
-            ActivityUtil.startActivity(this, Intent(this,IntegralExchangedAct::class.java))
+            ActivityUtil.startActivity(this, Intent(this, IntegralExchangedAct::class.java))
         }
         viewHolder?.llRank?.setOnClickListener {
             BKLog.d("点击积分排行版")
-            ActivityUtil.startActivity(this, Intent(this,IntegralRankingActivity::class.java))
+            ActivityUtil.startActivity(this, Intent(this, IntegralRankingActivity::class.java))
         }
         viewHolder?.llRecord?.setOnClickListener {
             BKLog.d("点击获取记录")
-            ActivityUtil.startActivity(this, Intent(this,IntegralRecordActivity::class.java))
+            ActivityUtil.startActivity(this, Intent(this, IntegralRecordActivity::class.java))
         }
     }
 
@@ -185,7 +181,8 @@ class StoreAct : BaseActivity() {
         }
 
         override fun iniEvent() {
-
+            rv?.isFocusableInTouchMode = false
+            rv?.requestFocus()
         }
 
         override fun iniData() {

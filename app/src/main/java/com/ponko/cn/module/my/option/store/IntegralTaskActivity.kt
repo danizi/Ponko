@@ -1,39 +1,71 @@
 package com.ponko.cn.module.my.option.store
 
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
+import android.graphics.Color
+import android.os.Build
+import android.support.annotation.RequiresApi
+import android.view.View
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
+import com.ponko.cn.bean.MyTaskBean
+import com.ponko.cn.bean.MyTaskSignBean
+import com.ponko.cn.bean.StoreTaskBean
+import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
+import com.ponko.cn.module.my.holder.MyTaskSignViewHolder
+import com.ponko.cn.module.my.holder.MyTaskViewHolder
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import retrofit2.Call
+import retrofit2.Response
 
-class IntegralTaskActivity : RefreshLoadAct<Any, Any>() {
+class IntegralTaskActivity : RefreshLoadAct<Any, StoreTaskBean>() {
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun initDisplay() {
+        super.initDisplay()
+        addBar2(viewHolder?.toolbar, "赚积分", "规则", View.OnClickListener { })
+        viewHolder?.toolbar?.setBackgroundColor(Color.parseColor("#EFF7FE"))
+        viewHolder?.toolbar?.elevation = 0f
+        addItemDecoration=false
+        com.jaeger.library.StatusBarUtil.setColor(this, Color.parseColor("#EFF7FE"), 0)
+    }
+
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return BindItemViewHolderBean.create(
+                arrayOf(0, 1),
+                arrayOf(MyTaskSignViewHolder::class.java, MyTaskViewHolder::class.java),
+                arrayOf(MyTaskSignBean::class.java, MyTaskBean::class.java),
+                arrayOf(R.layout.item_my_store_integral_sign, R.layout.item_my_store_integral_task_rv)
+        )
     }
 
     override fun requestMoreApi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        PonkoApp.myApi?.tasks(++page)?.enqueue(object : HttpCallBack<StoreTaskBean>() {
+            override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
+                requestMoreSuccess(response?.body())
+            }
+        })
     }
 
     override fun requestRefreshApi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //Ps:我的页面已经预先请求了
+        if (PonkoApp.signInfo != null) {
+            requestRefreshSuccess(PonkoApp.signInfo)
+        }
     }
 
-    override fun multiTypeData(body: Any?): List<Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun multiTypeData(body: StoreTaskBean?): List<Any> {
+        val data = ArrayList<Any>()
+        data.add(MyTaskSignBean(body?.isCompleted, body?.days, body?.scores))
+        data.add(MyTaskBean(body?.tasks!!))
+        return data
     }
 
     override fun adapter(): BaseRvAdapter? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return object : BaseRvAdapter() {}
     }
 
     override fun presenter(): Any {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Any()
     }
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_integral_task)
-//    }
 }

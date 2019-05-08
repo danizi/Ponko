@@ -141,6 +141,11 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
         BarUtil.addBar3(context, viewHolder?.toolbar, title, barRight, barRightlistener)
     }
 
+    protected fun isFocusableInTouchMode(){
+        viewHolder?.rv?.isFocusableInTouchMode = false
+        viewHolder?.rv?.requestFocus()
+    }
+
     /**
      * 刷新的ViewHolder
      */

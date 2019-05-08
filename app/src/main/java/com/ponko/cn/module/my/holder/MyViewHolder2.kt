@@ -43,6 +43,8 @@ class MyViewHolder2(view: View) : BaseViewHolder(view) {
         adapter.addItemViewDelegate(0, com.ponko.cn.module.my.holder.ViewHolder::class.java, Any::class.java, R.layout.item_my)
         viewHolder?.rv?.adapter = adapter
         viewHolder?.rv?.layoutManager = GridLayoutManager(context, 4)
+        viewHolder?.rv?.isFocusableInTouchMode=false
+        viewHolder?.rv?.requestFocus()
     }
 
 

@@ -25,6 +25,21 @@ object BarUtil {
         ivHelp?.setOnClickListener(helpListener)
     }
 
+    fun addWhiteBar(context: Context?, toolbar: Toolbar?,title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
+        val barView = ViewUtil.viewById(context, R.layout.bar_white, null)
+        toolbar?.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        toolbar?.visibility = View.VISIBLE
+        val flBack: FrameLayout? = barView?.findViewById(R.id.fl_back) as FrameLayout
+        val tvTitle: TextView? = barView.findViewById(R.id.tv_title) as TextView
+        val tvBarRight: TextView? = barView.findViewById(R.id.tv_bar_right) as TextView
+        flBack?.setOnClickListener {
+            (context as Activity).finish()
+        }
+        tvBarRight?.setOnClickListener(barRightlistener)
+        tvTitle?.text = title
+        tvBarRight?.text = barRight
+    }
+
     fun addBar1(context: Context?, toolbar: Toolbar?, title: String) {
         val barView = ViewUtil.viewById(context, R.layout.bar_1, null)
         toolbar?.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))

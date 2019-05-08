@@ -63,13 +63,13 @@ interface MyApi {
      * 积分 '获取' 记录
      */
     @GET("scores/histories/acquisition")
-    fun integralObtainRecord(@Query("pn") page: String?): Call<StoreObtainLogBean>
+    fun integralObtainRecord(@Query("pn") page: Int? = 1): Call<StoreObtainLogBean>
 
     /**
      * 积分 '兑换' 记录
      */
     @GET("scores/histories/exchanged")
-    fun integralObtainExchanged(@Query("pn") page: String?): Call<Any>
+    fun integralObtainExchanged(@Query("pn") page: Int?=1): Call<ArrayList<ExchangedHistoriesCBean>>
 
     /**
      * 积分排行榜
@@ -95,7 +95,7 @@ interface MyApi {
      * 积分任务
      */
     @GET("scores/tasks")
-    fun tasks(@Query("pn") page: String?): Call<StoreTaskBean>
+    fun tasks(@Query("pn") page: Int?=1): Call<StoreTaskBean>
 
     /**
      * 签到
@@ -145,14 +145,14 @@ interface MyApi {
     ///        学习历史               //
     ////////////////////////////////////
     @GET("study/histories")
-    fun getRecordList(@Query("page") pageIndex: Int?=1): Call<RecordCBean>
+    fun getRecordList(@Query("page") pageIndex: Int? = 1): Call<RecordCBean>
 
 
     ////////////////////////////////////
     ///        消息提醒               //
     ////////////////////////////////////
     @GET("message")
-    fun getRemindList(@Query("np") query: String?="1"): Call<ArrayList<RemindCBean>>
+    fun getRemindList(@Query("np") query: String? = "1"): Call<ArrayList<RemindCBean>>
 
     @POST("message/read")
     @FormUrlEncoded
@@ -173,9 +173,11 @@ interface MyApi {
     @FormUrlEncoded
     fun exchangeCode(@Field("code") code: String): Call<GeneralBean>
 
+    @Deprecated("")
     @GET("exchange/courses")
     fun exchangedCourse(): Call<MutableList<InternalCourseCBean>>
 
+    @Deprecated("使用scores/histories/exchanged这个接口")
     @GET("exchange_list")
     fun exchangedProducts(): Call<MutableList<ExchangeProductCBean>>
 
