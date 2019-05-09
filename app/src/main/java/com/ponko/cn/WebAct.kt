@@ -38,6 +38,8 @@ import com.xm.lib.pay.Channel
 import com.xm.lib.pay.OnPayListener
 import com.xm.lib.pay.ali.AliPay
 import com.xm.lib.pay.wx.WxPay
+import com.xm.lib.share.AbsShare
+import com.xm.lib.share.wx.WxShare
 import retrofit2.Call
 import retrofit2.Response
 
@@ -98,18 +100,18 @@ class WebAct : PonkoBaseAct<Any>() {
     private var tvBarRight: TextView? = null
     private var tvTitle: TextView? = null
     private fun addBar(context: Context?, toolbar: Toolbar?) {
-        val barView = ViewUtil.viewById(context, R.layout.bar_1, null)
+        val barView = ViewUtil.viewById(context, R.layout.bar_2, null)
         toolbar?.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         toolbar?.visibility = View.VISIBLE
         val flBack: FrameLayout? = barView?.findViewById(R.id.fl_back) as FrameLayout
         tvTitle = barView.findViewById(R.id.tv_title) as TextView
-        //tvBarRight = barView.findViewById(R.id.tv_bar_right) as TextView
+        tvBarRight = barView.findViewById(R.id.tv_bar_right) as TextView
         flBack?.setOnClickListener {
             (context as Activity).finish()
         }
-//        tvBarRight?.setOnClickListener {
-//
-//        }
+        tvBarRight?.setOnClickListener {
+            share()
+        }
         tvTitle?.text = title
         tvBarRight?.text = "分享"
         tvBarRight?.visibility = View.GONE
@@ -243,39 +245,52 @@ class WebAct : PonkoBaseAct<Any>() {
         viewHolder?.web?.loadUrl(loadUrl(linkValue), heads)
         webView?.addJavascriptInterface(InJavaScriptLocalObj(object : InJavaScriptLocalObj.OnInJavaScriptLocalObjListener {
             override fun onShare(t: String, des: String, l: String) {
-                BKLog.d(TAG, "t:$t des:$des l:$l")
-                tvBarRight?.visibility = View.VISIBLE
+                this@WebAct.runOnUiThread {
+                    BKLog.d(TAG, "t:$t des:$des l:$l")
+                    tvBarRight?.visibility = View.VISIBLE
+                }
+
             }
 
             override fun onProductId(value: String) {
-                BKLog.d(TAG, "productId:$value")
-                productId = value
-                tvBarRight?.visibility = View.GONE
+                this@WebAct.runOnUiThread {
+                    BKLog.d(TAG, "productId:$value")
+                    productId = value
+                    tvBarRight?.visibility = View.GONE
+                }
             }
 
             override fun onPayGuide(have: String?, guideATitle: String?/*课程表*/, guideAUrl: String, guideBTitle: String/*老师介绍*/, guideBUrl: String, guideCTitle: String) {
-                BKLog.d(TAG, "have:$have guideATitle:$guideATitle guideAUrl:$guideAUrl guideBTitle:$guideBTitle guideBUrl:$guideBUrl guideCTitle:$guideCTitle")
-                tvBarRight?.visibility = View.GONE
-                when (have) {
-                    "0" -> {
-                        //只显示支付按钮
-                        payViewHolder?.btnPay?.visibility = View.VISIBLE
-                    }
-                    "1" -> {
-                        //显示课程信息课程介绍
-                        payViewHolder?.btnCourse?.visibility = View.VISIBLE
-                        payViewHolder?.btnIntroduce?.visibility = View.VISIBLE
-                        payViewHolder?.btnPay?.visibility = View.VISIBLE
-                        payViewHolder?.btnCourse?.setOnClickListener {
-                            start(this@WebAct, "url", guideAUrl, guideATitle)
+                this@WebAct.runOnUiThread {
+                    BKLog.d(TAG, "have:$have guideATitle:$guideATitle guideAUrl:$guideAUrl guideBTitle:$guideBTitle guideBUrl:$guideBUrl guideCTitle:$guideCTitle")
+                    tvBarRight?.visibility = View.GONE
+                    when (have) {
+                        "0" -> {
+                            //只显示支付按钮
+                            payViewHolder?.btnPay?.visibility = View.VISIBLE
                         }
-                        payViewHolder?.btnIntroduce?.setOnClickListener {
-                            start(this@WebAct, "url", guideBUrl, guideBTitle)
+                        "1" -> {
+                            //显示课程信息课程介绍
+                            payViewHolder?.btnCourse?.visibility = View.VISIBLE
+                            payViewHolder?.btnIntroduce?.visibility = View.VISIBLE
+                            payViewHolder?.btnPay?.visibility = View.VISIBLE
+                            payViewHolder?.btnCourse?.setOnClickListener {
+                                start(this@WebAct, "url", guideAUrl, guideATitle)
+                            }
+                            payViewHolder?.btnIntroduce?.setOnClickListener {
+                                start(this@WebAct, "url", guideBUrl, guideBTitle)
+                            }
                         }
                     }
                 }
             }
         }), javascriptInterfaceName)
+    }
+
+    private fun share() {
+        val absShare = WxShare(this)
+        absShare.init(APP_ID)
+        absShare.shareWebPage()
     }
 
     private fun enterPay() {
@@ -329,7 +344,7 @@ class WebAct : PonkoBaseAct<Any>() {
                     dialog.dismiss()
                 }
             })
-        }
+        }.show()
     }
 
     private fun enterExchange() {

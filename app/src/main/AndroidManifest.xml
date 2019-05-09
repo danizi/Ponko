@@ -57,6 +57,18 @@
         <activity android:name=".module.my.option.store.IntegralTaskActivity" />
         <activity android:name=".module.my.option.store.IntegralRankingActivity" />
         <activity android:name=".module.my.option.store.IntegralRecordActivity"/>
+
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:theme="@style/wx_theme"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="wxd37fb8ce51a02360" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
