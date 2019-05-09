@@ -2,4 +2,6 @@ package com.ponko.cn.constant
 
 object Constant {
     val BASE_API="https://api.tradestudy.cn/v3/"
+    val TOKEN="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IllRSmtrSVJZcitDMkl5aVZ0TTg5bXJVbTZIODhsOGw1ZEtzcXBpaHV2VzFoZHQ5V1ZJV1l1cWlISnp3YjJTQnRlbVJuUmZ5UHRHcXVsWTlrb3VqY21BPT0iLCJwaG9uZSI6IjE1MDc0NzcwNzA4IiwiaWQiOiI2NTc4M2IxNWQ0NzcxMWU4OGI0NDAyNDJhYzEzMDAwMyIsInRva2VuIjoiOGI5NTk4NGJkOGRjNGQ5ZjkwYzkxYTBmNDc5YWY1NWIifQ._Qx3x2tj62o3XN-UYXaRspf8mXYa88RksDBpcj-S0CA"
+
 }

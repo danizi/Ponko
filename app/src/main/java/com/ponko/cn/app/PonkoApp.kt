@@ -4,6 +4,7 @@ import android.app.Application
 import com.ponko.cn.api.*
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constant.BASE_API
+import com.ponko.cn.constant.Constant.TOKEN
 import com.xm.lib.common.http.RetrofitClient
 import java.io.File
 
@@ -16,8 +17,9 @@ class PonkoApp : Application() {
         var interflowApi: InterflowApi? = null
         var myApi: MyApi? = null
         var adApi: AdApi? = null
+        var payApi: PayApi? = null
         var UI_DEBUG = true
-
+        var APP_ID = "wxd37fb8ce51a02360"
         var signInfo: StoreTaskBean? = null
     }
 
@@ -31,7 +33,7 @@ class PonkoApp : Application() {
         heads["x-tradestudy-client-version"] = "3.4.6"
         heads["x-tradestudy-client-device"] = "android_phone"
         heads["x-tradestudy-access-key-id"] = "c"
-        heads["x-tradestudy-access-token"] = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IllRSmtrSVJZcitDMkl5aVZ0TTg5bXJVbTZIODhsOGw1ZEtzcXBpaHV2VzFoZHQ5V1ZJV1l1cWlISnp3YjJTQnRlbVJuUmZ5UHRHcXVsWTlrb3VqY21BPT0iLCJwaG9uZSI6IjE1MDc0NzcwNzA4IiwiaWQiOiI2NTc4M2IxNWQ0NzcxMWU4OGI0NDAyNDJhYzEzMDAwMyIsInRva2VuIjoiOGI5NTk4NGJkOGRjNGQ5ZjkwYzkxYTBmNDc5YWY1NWIifQ._Qx3x2tj62o3XN-UYXaRspf8mXYa88RksDBpcj-S0CA"
+        heads["x-tradestudy-access-token"] = TOKEN
         retrofitClient = RetrofitClient.intance
                 .setBaseUrl(BASE_API)
                 .setHttpCacheDirectory(File(cacheDir, "ponko"))
@@ -44,6 +46,7 @@ class PonkoApp : Application() {
         interflowApi = retrofitClient?.retrofit?.create(InterflowApi::class.java)
         myApi = retrofitClient?.retrofit?.create(MyApi::class.java)
         adApi = retrofitClient?.retrofit?.create(AdApi::class.java)
+        payApi = retrofitClient?.retrofit?.create(PayApi::class.java)
     }
 
 }

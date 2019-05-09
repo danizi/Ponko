@@ -5,20 +5,19 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.WebAct
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.StoreProfileBean
 import com.ponko.cn.bean.StoreProfileCMoreBean
+import com.ponko.cn.bean.StoreTaskBean
+import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
+import retrofit2.Call
+import retrofit2.Response
 
 
 class MyBookViewHolder(view: View) : BaseViewHolder(view) {
 
-    /**
-     * ViewHolder class for layout.<br></br>
-     * <br></br>
-     * Auto-created on 2019-05-07 18:01:29 by Android Layout Finder
-     * (http://www.buzzingandroid.com/tools/android-layout-finder)
-     */
     private class ViewHolder private constructor(val ivBook: ImageView, val tvCourseName: TextView, val tvIntegralNum: TextView, val tvExchanged: TextView) {
         companion object {
 
@@ -41,11 +40,16 @@ class MyBookViewHolder(view: View) : BaseViewHolder(view) {
         }
         val storesBean = d as StoreProfileCMoreBean.StoresBean
         val context = itemView.context
-        Glide.with(context,storesBean.picture,viewHolder?.ivBook)
+        Glide.with(context, storesBean.picture, viewHolder?.ivBook)
         viewHolder?.tvCourseName?.text = storesBean.name
-        viewHolder?.tvIntegralNum?.text = storesBean.scores.toString()+"积分"
-        viewHolder?.tvExchanged?.text = "已兑课程"+storesBean.expend.toString()
-        itemView.setOnClickListener { WebAct.start(context,"url","")  }
-
+        viewHolder?.tvIntegralNum?.text = storesBean.scores.toString() + "积分"
+        viewHolder?.tvExchanged?.text = "已兑课程" + storesBean.expend.toString()+"件"
+        itemView.setOnClickListener {
+            PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
+                override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
+                    WebAct.startExChange(context, "exchange", storesBean.url, storesBean.name, storesBean.id, needScore = storesBean.scores.toString(),aggregateScore=response?.body()?.scores.toString())
+                }
+            })
+        }
     }
 }

@@ -14,6 +14,8 @@
     <color name="blue">#5D8CD3</color>
     <color name="divider">#F5F5F5</color>
 
+    <color name="login_button_bg">#FF5A5E</color>
+    <color name="enable_false_color">#C3C3C3</color>
 
 
 </resources>

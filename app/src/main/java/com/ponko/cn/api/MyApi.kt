@@ -1,5 +1,6 @@
 package com.ponko.cn.api
 
+import android.provider.SyncStateContract
 import com.ponko.cn.bean.*
 import com.xm.lib.common.http.NetBean
 import okhttp3.MultipartBody
@@ -172,6 +173,13 @@ interface MyApi {
     @POST("exchange")
     @FormUrlEncoded
     fun exchangeCode(@Field("code") code: String): Call<GeneralBean>
+
+    /**
+     * 兑换商品
+     */
+    @FormUrlEncoded
+    @POST("store/exchange")
+    fun exchangeProduct( @Field("id") id:String): Call<GeneralBean>
 
     @Deprecated("")
     @GET("exchange/courses")

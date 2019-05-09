@@ -56,7 +56,7 @@
         <activity android:name=".module.study.StudyCourseDetailActivity" />
         <activity android:name=".module.my.option.store.IntegralTaskActivity" />
         <activity android:name=".module.my.option.store.IntegralRankingActivity" />
-        <activity android:name=".module.my.option.store.IntegralRecordActivity"></activity>
+        <activity android:name=".module.my.option.store.IntegralRecordActivity"/>
     </application>
 
 </manifest>
