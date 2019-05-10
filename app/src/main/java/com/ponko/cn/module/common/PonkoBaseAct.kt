@@ -17,20 +17,4 @@ abstract class PonkoBaseAct<P>: MvpActivity<P>() {
 
     override fun iniEvent() {}
 
-    protected fun addBar1(toolbar:Toolbar?,title: String){
-        BarUtil.addBar1(this,toolbar,title)
-    }
-
-    protected fun addBar2(toolbar:Toolbar?,title: String,barRight:String?="",barRightlistener: View.OnClickListener){
-        BarUtil.addBar2(this,toolbar,title,barRight,barRightlistener)
-    }
-
-    protected fun addBar3(toolbar:Toolbar?,title: String,barRight:String?="",barRightlistener: View.OnClickListener){
-        BarUtil.addBar3(this,toolbar,title,barRight,barRightlistener)
-    }
-
-    protected fun addWhiteBar(toolbar:Toolbar?,title: String,barRight:String?="",barRightlistener: View.OnClickListener){
-        BarUtil.addWhiteBar(this,toolbar,title,barRight,barRightlistener)
-    }
-
 }

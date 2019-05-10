@@ -120,7 +120,7 @@ object IntoTargetUtil {
 
     private fun url(context: Context?,linkValue: String?) {
         BKLog.d(TAG, "普通网页 linkValue:$linkValue")
-        WebAct.start(context,"pay",linkValue )
+        WebAct.start(context,"url",linkValue )
     }
 
     private fun msg(linkValue: String?) {

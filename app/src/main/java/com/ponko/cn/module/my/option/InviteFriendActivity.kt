@@ -42,7 +42,7 @@ class InviteFriendActivity : RefreshLoadAct<Any, InviteFriendsBean>() {
 
     override fun initDisplay() {
         super.initDisplay()
-        addBar2(viewHolder?.toolbar, "邀请好友", "邀请记录", View.OnClickListener {
+        addBar2("邀请好友", "邀请记录", View.OnClickListener {
             BKLog.d("点击邀请记录")
         })
         viewHolder?.clContent?.setBackgroundColor(resources?.getColor(R.color.divider)!!)

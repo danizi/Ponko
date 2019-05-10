@@ -16,7 +16,7 @@ class IntegralRankingActivity : RefreshLoadAct<Any, RankingV2>() {
 
     override fun initDisplay() {
         super.initDisplay()
-        addBar1(viewHolder?.toolbar,"积分排行版")
+        addBar1("积分排行版")
         viewHolder?.clContent?.setBackgroundColor(resources.getColor(R.color.white))
         disableLoad=true
         isFocusableInTouchMode()

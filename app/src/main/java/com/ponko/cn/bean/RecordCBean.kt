@@ -7,9 +7,9 @@ import com.google.gson.annotations.SerializedName
 class RecordCBean() : Parcelable {
 
     @SerializedName("today")//几天的数据
-    var recordWithToday: MutableList<HistoryRecordBean>? = null
+    var recordWithToday: ArrayList<HistoryRecordBean>? = null
     @SerializedName("earlier")//往日的数据
-    var recordWithEarlier: MutableList<HistoryRecordBean>? = null
+    var recordWithEarlier: ArrayList<HistoryRecordBean>? = null
 
     constructor(parcel: Parcel) : this() {
         recordWithToday = parcel.createTypedArrayList(HistoryRecordBean)

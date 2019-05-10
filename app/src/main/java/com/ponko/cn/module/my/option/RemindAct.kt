@@ -1,35 +1,59 @@
 package com.ponko.cn.module.my.option
 
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
+import com.ponko.cn.bean.RemindCBean
+import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.common.RefreshLoadFrg
+import com.ponko.cn.module.my.holder.MyRemindHolder
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import retrofit2.Call
+import retrofit2.Response
 
-class RemindAct : RefreshLoadFrg<Any,Any>() {
+class RemindAct : RefreshLoadAct<Any, ArrayList<RemindCBean>>() {
+
+    override fun initDisplay() {
+        addBar1("消息提醒")
+        super.initDisplay()
+    }
+
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return BindItemViewHolderBean.create(
+                arrayOf(0),
+                arrayOf(MyRemindHolder::class.java),
+                arrayOf(Any::class.java),
+                arrayOf(R.layout.item_my_msg_remind)
+        )
     }
 
     override fun requestMoreApi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        PonkoApp.myApi?.getRemindList(++page)?.enqueue(object : HttpCallBack<ArrayList<RemindCBean>>() {
+            override fun onSuccess(call: Call<ArrayList<RemindCBean>>?, response: Response<ArrayList<RemindCBean>>?) {
+                requestMoreSuccess(response?.body())
+            }
+        })
     }
 
     override fun requestRefreshApi() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        PonkoApp.myApi?.getRemindList()?.enqueue(object : HttpCallBack<ArrayList<RemindCBean>>() {
+            override fun onSuccess(call: Call<ArrayList<RemindCBean>>?, response: Response<ArrayList<RemindCBean>>?) {
+                requestRefreshSuccess(response?.body())
+            }
+        })
     }
 
-    override fun multiTypeData(body: Any?): List<Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun multiTypeData(body: ArrayList<RemindCBean>?): List<Any> {
+        return body!!
     }
 
     override fun adapter(): BaseRvAdapter? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return object : BaseRvAdapter() {}
     }
 
     override fun presenter(): Any {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Any()
     }
 
 //    override fun onCreate(savedInstanceState: Bundle?) {

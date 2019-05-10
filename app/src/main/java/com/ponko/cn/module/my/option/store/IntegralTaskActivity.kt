@@ -23,7 +23,7 @@ class IntegralTaskActivity : RefreshLoadAct<Any, StoreTaskBean>() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun initDisplay() {
         super.initDisplay()
-        addBar2(viewHolder?.toolbar, "赚积分", "规则", View.OnClickListener { })
+        addBar2("赚积分", "规则", View.OnClickListener { })
         viewHolder?.toolbar?.setBackgroundColor(Color.parseColor("#EFF7FE"))
         viewHolder?.toolbar?.elevation = 0f
         addItemDecoration=false

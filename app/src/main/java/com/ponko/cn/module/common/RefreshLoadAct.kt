@@ -15,6 +15,7 @@ import android.view.ViewTreeObserver
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import android.widget.FrameLayout
 import com.ponko.cn.bean.BindItemViewHolderBean
+import com.ponko.cn.utils.BarUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
@@ -131,6 +132,22 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     protected fun isFocusableInTouchMode() {
         viewHolder?.rv?.isFocusableInTouchMode = false
         viewHolder?.rv?.requestFocus()
+    }
+
+    protected fun addBar1(title: String) {
+        BarUtil.addBar1(this, viewHolder?.toolbar, title)
+    }
+
+    protected fun addBar2(title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
+        BarUtil.addBar2(this, viewHolder?.toolbar, title, barRight, barRightlistener)
+    }
+
+    protected fun addBar3(title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
+        BarUtil.addBar3(this, viewHolder?.toolbar, title, barRight, barRightlistener)
+    }
+
+    protected fun addWhiteBar(title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
+        BarUtil.addWhiteBar(this, viewHolder?.toolbar, title, barRight, barRightlistener)
     }
 
     /**

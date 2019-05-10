@@ -153,7 +153,7 @@ interface MyApi {
     ///        消息提醒               //
     ////////////////////////////////////
     @GET("message")
-    fun getRemindList(@Query("np") query: String? = "1"): Call<ArrayList<RemindCBean>>
+    fun getRemindList(@Query("np") query: Int? = 1): Call<ArrayList<RemindCBean>>
 
     @POST("message/read")
     @FormUrlEncoded

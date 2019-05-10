@@ -16,7 +16,7 @@ class IntegralExchangedAct : RefreshLoadAct<Any, ArrayList<ExchangedHistoriesCBe
     override fun initDisplay() {
         addItemDecoration=false
         super.initDisplay()
-        addBar1(viewHolder?.toolbar,"兑换记录")
+        addBar1("兑换记录")
     }
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {

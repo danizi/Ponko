@@ -1,20 +1,27 @@
 package com.ponko.cn.module.my.holder
 
+import android.Manifest
 import android.content.Intent
+import android.net.Uri
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.MyBean
 import com.ponko.cn.module.my.option.*
 import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.ponko.cn.module.my.option.store.StoreAct
 import com.ponko.cn.utils.ActivityUtil
+import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.downloader.task.DownTask
 
 
 class MyViewHolder2(view: View) : BaseViewHolder(view) {
@@ -102,16 +109,20 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                     ActivityUtil.startActivity(context,  Intent(context, IntegralExchangedAct::class.java))
                 }
                 "咨询" -> {
-                    //intent = Intent(context,StoreAct::class.java)
-//                    val rx = RxPermissions(context)
-//                    rx.request(Manifest.permission.CALL_PHONE)
-//                            .subscribe { agree ->
-//                                if (agree) {
-//                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + BaseData.instance.data?.public_phone))
-//                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                                    activity.startActivity(intent)
-//                                }
-//                            }
+                    RxPermissions(context as AppCompatActivity)
+                            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .subscribe { aBoolean ->
+                                if (aBoolean!!) {
+                                    //当所有权限都允许之后，返回true
+                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + 15074770708))
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    context.startActivity(intent)
+                                } else {
+                                    //只要有一个权限禁止，返回false，
+                                    //下一次申请只申请没通过申请的权限
+                                    Log.i("permissions", "btn_more_sametime：$aBoolean")
+                                }
+                            }
                 }
                 "常见问题" -> {
                     ActivityUtil.startActivity(context, Intent(context,ProblemAct::class.java))

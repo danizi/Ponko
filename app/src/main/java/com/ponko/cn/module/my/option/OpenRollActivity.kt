@@ -24,7 +24,7 @@ class OpenRollActivity : RefreshLoadAct<Any, List<OpenCBean>>() {
 
     override fun initDisplay() {
         super.initDisplay()
-        addBar2(viewHolder?.toolbar, "开通学籍", "", View.OnClickListener { })
+        addBar2("开通学籍", "", View.OnClickListener { })
         viewHolder?.clContent?.setBackgroundColor(resources?.getColor(R.color.divider)!!)
     }
 

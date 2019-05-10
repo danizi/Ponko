@@ -27,7 +27,7 @@ class IntegralRecordActivity : RefreshLoadAct<Any, StoreObtainLogBean>() {
     override fun initDisplay() {
         addItemDecoration = false
         super.initDisplay()
-        addBar1(viewHolder?.toolbar, "积分获取记录")
+        addBar1("积分获取记录")
     }
 
     override fun getLayoutId(): Int {

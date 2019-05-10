@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="15dp"
@@ -32,14 +32,14 @@
         app:layout_constraintTop_toTopOf="@+id/tv_title" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/tv_des"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:lineSpacingExtra="3dp"
         android:text="下周日在深圳维也纳酒店将会举办"
         android:textColor="#666666"
-        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="@+id/tv_time"
         app:layout_constraintStart_toStartOf="@+id/tv_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
         tools:ignore="HardcodedText" />
@@ -47,20 +47,20 @@
     <View
         android:layout_width="0dp"
         android:layout_height="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/textView5"
-        app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintEnd_toEndOf="@+id/tv_des"
+        app:layout_constraintStart_toStartOf="@+id/tv_des"
+        app:layout_constraintTop_toBottomOf="@+id/tv_des" />
 
     <!--详情-->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/ll_detail"
-        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView5">
+        app:layout_constraintStart_toStartOf="@+id/tv_des"
+        app:layout_constraintTop_toBottomOf="@+id/tv_des">
 
         <View
             android:layout_width="match_parent"
