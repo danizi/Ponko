@@ -25,7 +25,7 @@
         <activity android:name=".module.my.option.ExchangeAct" />
         <activity android:name=".module.my.option.store.IntegralExchangedAct" />
         <activity android:name=".module.my.option.ProblemAct" />
-        <activity android:name=".module.my.option.AccountAct" />
+        <activity android:name=".module.my.option.acount.AccountAct" />
         <activity android:name=".module.login.LoginStartAct">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -78,7 +78,9 @@
         <activity android:name=".module.login.LoginUpdateAct" />
         <activity android:name=".module.login.LoginResetPhoneAct" />
         <activity android:name=".module.study.CourseTypeGridActivity" />
-        <activity android:name=".module.study.SearchActivity"></activity>
+        <activity android:name=".module.study.SearchActivity" />
+        <activity android:name=".module.my.option.acount.AddressActivity" />
+        <activity android:name=".module.my.option.acount.PersonalActivity"></activity>
     </application>
 
 </manifest>

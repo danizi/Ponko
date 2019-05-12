@@ -12,12 +12,15 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.MyBean
 import com.ponko.cn.bean.MyTopBean
 import com.ponko.cn.bean.ProfileCBean
+import com.ponko.cn.module.login.LoginAccountAct
 import com.ponko.cn.module.my.option.HistoryActivity
 import com.ponko.cn.module.my.option.InviteFriendActivity
 import com.ponko.cn.module.my.option.OpenRollActivity
+import com.ponko.cn.module.my.option.acount.AccountAct
 import com.ponko.cn.module.my.option.store.IntegralRankingActivity
 import com.ponko.cn.module.my.option.store.IntegralTaskActivity
 import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.CacheUtil.isUserTypeLogin
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
@@ -67,28 +70,33 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         val context = itemView.context
         Glide.with(context, profileCBean.account.avatar, viewHolder?.ivCircleHead)  //头像
         viewHolder?.tvCourseNumber?.text = "" + profileCBean.account.study_count   //学习课程数量
-        viewHolder?.tvTimeNumber?.text = "" + profileCBean.account.study_duration/60  //学习时长
+        viewHolder?.tvTimeNumber?.text = "" + profileCBean.account.study_duration / 60  //学习时长
         viewHolder?.tvIntegralNumber?.text = "" + profileCBean.account.integration //当前积分
-        //判断是否绑定
-        var userType = "tourist"
-        if (profileCBean.account.isIs_bind_wechat) {
-            viewHolder?.btnWxUnbind?.visibility = View.GONE
-            viewHolder?.tvName?.text = profileCBean.account.nickname
-            userType = "wxBind"
-        } else {
-            viewHolder?.tvName?.text = profileCBean.account.realName
-        }
 
+        // 用户是否订购
+        val (name, vipDes) = infoPair(profileCBean)
+        viewHolder?.tvName?.text = name
+        viewHolder?.tvVipDes?.text = vipDes
+
+        // 判断是否微信绑定
+        val userType = userType(profileCBean)
+
+        // 监听
         viewHolder?.ivCircleHead?.setOnClickListener {
             when (userType) {
                 "tourist" -> {
                     BKLog.d("游客模式 - 点击头像 - 进入登录页面")
+                    val intent = Intent(context, LoginAccountAct::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    ActivityUtil.startActivity(context, intent)
                 }
                 "wxBind" -> {
                     BKLog.d("微信模式 - 点击头像 - 进入个人信息页面")
+                    ActivityUtil.startActivity(context, Intent(context,AccountAct::class.java))
                 }
                 "login" -> {
-                    BKLog.d("登录模式 - 点击头像 - 进入个人信息页面")
+                    BKLog.d("登录模式 - 点击头像 - (未綁定先綁定綁定成功) - 进入个人信息页面")
+                    ActivityUtil.startActivity(context, Intent(context,AccountAct::class.java))
                 }
             }
         }
@@ -112,6 +120,39 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
             BKLog.d("点击获取积分")
             ActivityUtil.startActivity(context, Intent(context, IntegralTaskActivity::class.java))
         }
+    }
 
+    private fun userType(profileCBean: ProfileCBean): String {
+        var userType = "tourist"
+        if (profileCBean.account.isIs_bind_wechat) {
+            viewHolder?.btnWxUnbind?.visibility = View.GONE
+            viewHolder?.tvName?.text = profileCBean.account.nickname
+            userType = "wxBind"
+        } else {
+            viewHolder?.tvName?.text = profileCBean.account.realName
+            userType = "login"
+        }
+        return userType
+    }
+
+    private fun infoPair(profileCBean: ProfileCBean): Pair<String, String> {
+        var name = ""
+        var vipDes = ""
+        if (isUserTypeLogin()) {
+            // 登录模式
+            name = profileCBean.account.realName
+            if (profileCBean.account.expiredTime > 0) {
+                vipDes = "已加入帮课大学"
+                viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
+            } else {
+                vipDes = "未入学"
+                viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
+            }
+        } else {
+            // 游客模式
+            name = "同学，请登录"
+            vipDes = "登录后可以多终端同步您的所有信息"
+        }
+        return Pair(name, vipDes)
     }
 }

@@ -1,0 +1,82 @@
+package com.ponko.cn.module.my.option.acount
+
+import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import com.ponko.cn.R
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
+import android.widget.Button
+import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.BaseViewHolder
+import android.widget.EditText
+import de.hdodenhof.circleimageview.CircleImageView
+import android.widget.TextView
+import com.github.gongw.VerifyCodeView
+import com.xm.lib.common.log.BKLog
+
+
+class AddressActivity : AppCompatActivity() {
+
+    private class ViewHolder private constructor(val toolbar: Toolbar, val rv: RecyclerView) {
+        companion object {
+            fun create(rootView: AppCompatActivity): ViewHolder {
+                val toolbar = rootView.findViewById<View>(R.id.toolbar) as Toolbar
+                val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
+                return ViewHolder(toolbar, rv)
+            }
+        }
+    }
+
+    private var viewHolder: ViewHolder? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_address)
+
+        if (viewHolder == null) {
+            viewHolder = ViewHolder.create(this)
+        }
+        val adapter = object : BaseRvAdapter() {}
+        adapter.data?.add(ItemBean("手机", "请输入你的手机号码"))
+        adapter.data?.add(ItemBean("姓名", "请输入你的真实姓名"))
+        adapter.data?.add(ItemBean("地址", "请输入你的详细地址"))
+        adapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my_edit)
+        viewHolder?.rv?.adapter = adapter
+        viewHolder?.rv?.layoutManager = LinearLayoutManager(this)
+
+        findViewById<Button>(R.id.btn).setOnClickListener {
+            val a = viewHolder?.rv?.layoutManager?.getChildAt(0)?.findViewById<EditText>(R.id.et)?.text.toString()
+            val b = viewHolder?.rv?.layoutManager?.getChildAt(1)?.findViewById<EditText>(R.id.et)?.text.toString()
+            BKLog.d(a +"-"+b)
+        }
+    }
+
+    private class ItemBean(var content: String, var hint: String)
+    private class ItemViewHolder(view: View) : BaseViewHolder(view) {
+
+        private class ViewHolder private constructor(val tv: TextView, val ivArrow: CircleImageView, val et: EditText, val divider: View) {
+            companion object {
+
+                fun create(rootView: View): ViewHolder {
+                    val tv = rootView.findViewById<View>(R.id.tv) as TextView
+                    val ivArrow = rootView.findViewById<View>(R.id.iv_arrow) as CircleImageView
+                    val et = rootView.findViewById<View>(R.id.et) as EditText
+                    val divider = rootView.findViewById(R.id.divider) as View
+                    return ViewHolder(tv, ivArrow, et, divider)
+                }
+            }
+        }
+
+        private var viewHolder: ViewHolder? = null
+
+        override fun bindData(d: Any, position: Int) {
+            if (viewHolder == null) {
+                viewHolder = ViewHolder.create(itemView)
+            }
+        }
+    }
+}

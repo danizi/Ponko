@@ -18,4 +18,22 @@ object CacheUtil {
         return token
     }
 
+    fun putUserTypeTourist() {
+        BKLog.d("put TypeTourist")
+        SPUtil.put(PonkoApp.app, SP_FILE_NAME, "UserType", "Tourist")
+    }
+
+    fun putUserTypeLogin() {
+        BKLog.d("put TypeLogin")
+        SPUtil.put(PonkoApp.app, SP_FILE_NAME, "UserType", "Login")
+    }
+
+    fun isUserTypeLogin(): Boolean {
+        val type = SPUtil.get(PonkoApp.app, SP_FILE_NAME, "UserType", "UserType").toString()
+        BKLog.d("UserType : $type")
+        if (type == "Tourist") {
+            return false
+        }
+        return true
+    }
 }
