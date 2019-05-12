@@ -7,6 +7,8 @@ import com.ponko.cn.R
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.Editable
+import android.text.SpannableString
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
@@ -15,8 +17,16 @@ import com.xm.lib.common.base.rv.BaseViewHolder
 import android.widget.EditText
 import de.hdodenhof.circleimageview.CircleImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.github.gongw.VerifyCodeView
+import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.bean.AddressBean
+import com.ponko.cn.bean.GeneralBean
+import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.utils.BarUtil
 import com.xm.lib.common.log.BKLog
+import retrofit2.Call
+import retrofit2.Response
 
 
 class AddressActivity : AppCompatActivity() {
@@ -40,22 +50,52 @@ class AddressActivity : AppCompatActivity() {
         if (viewHolder == null) {
             viewHolder = ViewHolder.create(this)
         }
-        val adapter = object : BaseRvAdapter() {}
-        adapter.data?.add(ItemBean("手机", "请输入你的手机号码"))
-        adapter.data?.add(ItemBean("姓名", "请输入你的真实姓名"))
-        adapter.data?.add(ItemBean("地址", "请输入你的详细地址"))
-        adapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my_edit)
-        viewHolder?.rv?.adapter = adapter
-        viewHolder?.rv?.layoutManager = LinearLayoutManager(this)
 
-        findViewById<Button>(R.id.btn).setOnClickListener {
-            val a = viewHolder?.rv?.layoutManager?.getChildAt(0)?.findViewById<EditText>(R.id.et)?.text.toString()
-            val b = viewHolder?.rv?.layoutManager?.getChildAt(1)?.findViewById<EditText>(R.id.et)?.text.toString()
-            BKLog.d(a +"-"+b)
-        }
+        BarUtil.addBar1(this, viewHolder?.toolbar, "收件地址", "保存", View.OnClickListener {
+            val phone = viewHolder?.rv?.layoutManager?.getChildAt(0)?.findViewById<EditText>(R.id.et)?.text.toString()
+            val name = viewHolder?.rv?.layoutManager?.getChildAt(1)?.findViewById<EditText>(R.id.et)?.text.toString()
+            val address = viewHolder?.rv?.layoutManager?.getChildAt(2)?.findViewById<EditText>(R.id.et)?.text.toString()
+            BKLog.d("保存地址信息 phone:$phone neme$name address$address")
+            var canSava = true
+            if (TextUtils.isEmpty(phone)) {
+                canSava = false
+                Toast.makeText(this@AddressActivity, "手机号码为空", Toast.LENGTH_SHORT).show()
+            }
+            if (TextUtils.isEmpty(name)) {
+                canSava = false
+                Toast.makeText(this@AddressActivity, "姓名为空", Toast.LENGTH_SHORT).show()
+            }
+            if (TextUtils.isEmpty(address)) {
+                canSava = false
+                Toast.makeText(this@AddressActivity, "收件地址为空", Toast.LENGTH_SHORT).show()
+            }
+            if (canSava) {
+                val params = HashMap<String, String>()
+                params["tel"] = phone
+                params["recipient"] = name
+                params["address"] = address
+                PonkoApp.myApi?.saveAddress(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
+                    override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                        Toast.makeText(this@AddressActivity, "保存收货地址成功", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+        })
+        PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
+            override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
+                val addressBean = response?.body()
+                val adapter = object : BaseRvAdapter() {}
+                adapter.data?.add(ItemBean("手机", "请输入你的手机号码", addressBean?.tel))
+                adapter.data?.add(ItemBean("姓名", "请输入你的真实姓名", addressBean?.recipient))
+                adapter.data?.add(ItemBean("地址", "请输入你的详细地址", addressBean?.address))
+                adapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my_edit)
+                viewHolder?.rv?.adapter = adapter
+                viewHolder?.rv?.layoutManager = LinearLayoutManager(this@AddressActivity)
+            }
+        })
     }
 
-    private class ItemBean(var content: String, var hint: String)
+    private class ItemBean(var content: String, var hint: String, var et: String? = "")
     private class ItemViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val tv: TextView, val ivArrow: CircleImageView, val et: EditText, val divider: View) {
@@ -77,6 +117,10 @@ class AddressActivity : AppCompatActivity() {
             if (viewHolder == null) {
                 viewHolder = ViewHolder.create(itemView)
             }
+            val itemBean = d as ItemBean
+            viewHolder?.tv?.text = itemBean.content
+            viewHolder?.et?.hint = SpannableString(itemBean.hint)
+            viewHolder?.et?.setText(itemBean.et)
         }
     }
 }
