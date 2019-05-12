@@ -15,15 +15,7 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTask">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:launchMode="singleTask" />
         <activity android:name=".module.my.option.store.StoreAct" />
         <activity android:name=".module.my.option.CacheAct" />
         <activity android:name=".module.my.option.ColoctAct" />
@@ -34,41 +26,59 @@
         <activity android:name=".module.my.option.store.IntegralExchangedAct" />
         <activity android:name=".module.my.option.ProblemAct" />
         <activity android:name=".module.my.option.AccountAct" />
-        <activity android:name=".module.login.LoginStartAct" />
-        <activity android:name=".module.login.LoginAccountAct" />
-        <activity android:name=".module.login.LoginRegisterAct" />
-        <activity android:name=".module.login.LoginWxAct" />
-        <activity android:name=".module.login.LogSmsAct" />
-        <activity android:name=".GuideAct">
+        <activity android:name=".module.login.LoginStartAct">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".module.login.LoginAccountAct" />
+        <activity android:name=".module.login.LoginRegisterAct" />
+        <activity android:name=".module.login.LoginWxAct" />
+        <activity android:name=".module.login.LogSmsAct" />
+        <activity android:name=".GuideAct" />
         <activity android:name=".StartAct" />
         <activity android:name=".module.free.FreeDetailsAct" />
         <activity android:name=".WebAct" />
         <activity android:name=".module.my.option.OpenRollActivity" />
         <activity android:name=".module.my.option.InviteFriendActivity" />
         <activity android:name=".module.my.option.HistoryActivity" />
-        <activity android:name=".module.study.CourseTypeListActivity" />
+        <activity android:name=".module.study.CourseTypeLinearActivity" />
         <activity android:name=".module.study.StudyCourseDetailActivity" />
         <activity android:name=".module.my.option.store.IntegralTaskActivity" />
         <activity android:name=".module.my.option.store.IntegralRankingActivity" />
-        <activity android:name=".module.my.option.store.IntegralRecordActivity"/>
-
+        <activity android:name=".module.my.option.store.IntegralRecordActivity" />
         <activity
             android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
-            android:theme="@style/wx_theme"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/wx_theme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="wxd37fb8ce51a02360" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="wxd37fb8ce51a02360" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".module.login.LoginFindPwdAct" />
+        <activity android:name=".module.login.LoginUpdateAct" />
+        <activity android:name=".module.login.LoginResetPhoneAct" />
+        <activity android:name=".module.study.CourseTypeGridActivity" />
+        <activity android:name=".module.study.SearchActivity"></activity>
     </application>
 
 </manifest>

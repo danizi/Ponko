@@ -69,8 +69,9 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun initDisplay() {
-        super.initDisplay()
         disableLoad = true
+        addItemDecoration = false
+        super.initDisplay()
         viewHolder?.clContent?.setBackgroundColor(context?.resources?.getColor(R.color.white)!!)
         isFocusableInTouchMode()
     }

@@ -57,9 +57,9 @@ class LoginAccountAct : MvpActivity<LoginAccountContract.Present>(), LoginAccoun
         tvFindPwd?.setOnClickListener {
             p?.clickFindPwd()
         }
-        etAccount?.addTextChangedListener(object : TextWatcher {
+       etAccount?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                BKLog.d(TAG, "afterTextChanged:" + s.toString())
+                btnEnter?.isEnabled = s.toString().isNotEmpty()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -71,6 +71,9 @@ class LoginAccountAct : MvpActivity<LoginAccountContract.Present>(), LoginAccoun
         etPwd?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 BKLog.d(TAG, "afterTextChanged:" + s.toString())
+                if (s.toString().isNotEmpty()) {
+                    btnEnter?.isEnabled = true
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -79,8 +82,15 @@ class LoginAccountAct : MvpActivity<LoginAccountContract.Present>(), LoginAccoun
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
+
+        tvFindPwd?.setOnClickListener {
+            BKLog.d("点击找回密码")
+            p?.clickFindPwd()
+        }
+
         btnEnter?.setOnClickListener {
-            p?.clickEnter()
+            BKLog.d("点击登录")
+            p?.clickEnter(etAccount?.text.toString(),etPwd?.text.toString())
         }
     }
 }

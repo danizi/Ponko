@@ -8,10 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.ponko.cn.MainActivity
 import com.ponko.cn.R
 import com.ponko.cn.bean.CaseBean
 import com.ponko.cn.bean.MainCBean
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.common.util.ViewUtil
 import kotlinx.android.synthetic.main.item_study_sub_case.view.*
 
@@ -38,7 +42,11 @@ class CaseViewHolder(view: View) : BaseViewHolder(view) {
         }
         val caseBean = d as CaseBean
         val context = itemView.context
-
+        v?.tvAdTitle?.text = "外贸案例"
+        v?.tvMore?.setOnClickListener {
+            BKLog.d("跳转到交流页面")
+            MainActivity.bottomMenu.select(2)
+        }
         val linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
         v?.rv?.layoutManager = linearLayoutManager
@@ -89,9 +97,12 @@ class CaseViewHolder(view: View) : BaseViewHolder(view) {
             val listBean = d as MainCBean.CasesBean.ListBean
             val context = itemView.context
             itemView.groupView.setBackgroundColor(Color.parseColor(listBean.color))
-            v?.dateTextView?.text = listBean.createTime.toString()
+            v?.dateTextView?.text = TimeUtil.unixStr("yyyy/MM/dd HH:mm:ss", listBean.createTime)
             v?.contentTextView?.text = listBean.brief
             itemView.contentFromTextView.text = "——" + listBean.author
+            itemView.setOnClickListener {
+                IntoTargetUtil.target(context, listBean.targetType, "/analysis/detail?id=" + listBean.id)
+            }
         }
     }
 }

@@ -28,6 +28,7 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
     protected var adapter: BaseRvAdapter? = null
     protected var disableRefresh = false
     protected var disableLoad = false
+    protected var addItemDecoration = true
 
     override fun getLayoutId(): Int {
         return R.layout.activity_base_refresh_load
@@ -43,7 +44,9 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
         viewHolder?.srl?.isEnableRefresh = false
         viewHolder?.srl?.isEnableLoadMore = false
         viewHolder?.rv?.layoutManager = LinearLayoutManager(context)
-        viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
+        if (addItemDecoration) {
+            viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
+        }
         viewHolder?.viewState?.showLoading("正在加载中...")
     }
 
@@ -141,7 +144,7 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
         BarUtil.addBar3(context, viewHolder?.toolbar, title, barRight, barRightlistener)
     }
 
-    protected fun isFocusableInTouchMode(){
+    protected fun isFocusableInTouchMode() {
         viewHolder?.rv?.isFocusableInTouchMode = false
         viewHolder?.rv?.requestFocus()
     }

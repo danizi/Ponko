@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
     tools:context=".module.login.LogSmsAct">
 
     <android.support.constraint.ConstraintLayout
@@ -86,6 +88,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cl_timer">
 
         <com.github.gongw.VerifyCodeView
+            android:id="@+id/view_code"
             android:layout_width="0dp"
             android:layout_height="50dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -108,7 +111,7 @@
         android:layout_width="0dp"
         android:layout_height="38dp"
         android:layout_marginTop="22dp"
-        android:background="@drawable/login_enter_btn_un_bk"
+        android:background="@drawable/login_button_enable"
         android:text="@string/login_enter"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"

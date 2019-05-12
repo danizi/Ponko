@@ -51,17 +51,7 @@ class ExchangeAct : AppCompatActivity() {
 
                 override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
                     super.onFailure(call, msg)
-                    when (msg) {
-                        "RepeatExchange" ->
-                            showToast("不可以重复兑换")
-                        "CDKeyNotFound" ->
-                            showToast("兑换码不存在")
-                        "CouponNotFound" ->
-                            showToast("兑换码不存在")
-                        else -> {
-                            showToast(msg)
-                        }
-                    }
+                    showToast(msg)
                 }
             })
         }
@@ -82,5 +72,4 @@ class ExchangeAct : AppCompatActivity() {
             }
         }
     }
-
 }

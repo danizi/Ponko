@@ -1,5 +1,7 @@
 package com.ponko.cn.module.study.holder
 
+import android.content.Context
+import android.content.Intent
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -8,8 +10,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.CourseTypeBean
+import com.ponko.cn.bean.MainCBean
+import com.ponko.cn.module.study.CourseTypeGridActivity
 import com.ponko.cn.module.study.adapter.CourseSectionAdapter
+import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.Glide
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.GridItemDecoration
 import com.xm.lib.common.log.BKLog
@@ -43,7 +49,8 @@ class CourseTypeViewHolder(view: View) : BaseViewHolder(view) {
             v?.ivDetails?.visibility = View.GONE
             v?.btnPayCourse?.text = "已购"
             v?.btnPayCourse?.setOnClickListener {
-                BKLog.d("点击已购按钮")
+                BKLog.d("点击已购按钮,跳转到课程分类列表")
+                CourseTypeGridActivity.start(context,typesBeanX.title,typesBeanX.type_id)
             }
         } else {
             v?.ivDetails?.visibility = View.VISIBLE
@@ -51,19 +58,33 @@ class CourseTypeViewHolder(view: View) : BaseViewHolder(view) {
             Glide.with(context, typesBeanX.avatar, v?.ivDetails)
             v?.btnPayCourse?.setOnClickListener {
                 BKLog.d("点击未购按钮")
+                IntoTargetUtil.target(context, "pay", typesBeanX.url)
+            }
+            v?.ivDetails?.setOnClickListener {
+                IntoTargetUtil.target(context, "pay", typesBeanX.url)
+                BKLog.d("跳转到支付页面")
             }
         }
         v?.tvTitle?.text = typesBeanX.title
+
+        //展示分类课程
+        courseSection(context,typesBeanX)
+    }
+
+    private fun courseSection(context:Context,typesBeanX: MainCBean.TypesBeanX){
         v?.vp?.layoutManager = GridLayoutManager(context, 2)
         v?.vp?.addItemDecoration(GridItemDecoration.Builder(context)
-                .setHorizontalSpan(ScreenUtil.dip2px(context,15).toFloat())
-                .setVerticalSpan(ScreenUtil.dip2px(context,15).toFloat())
+                .setHorizontalSpan(ScreenUtil.dip2px(context, 15).toFloat())
+                .setVerticalSpan(ScreenUtil.dip2px(context, 15).toFloat())
                 .setColorResource(R.color.white)
                 .setShowLastLine(false)
                 .build())
         v?.vp?.isFocusableInTouchMode = false
         v?.vp?.requestFocus()
-        v?.vp?.adapter = CourseSectionAdapter(typesBeanX.types)
+        val adapter = CourseSectionAdapter()
+        adapter.data?.addAll(typesBeanX.types)
+        adapter.addItemViewDelegate(0,CourseSectionViewHolder::class.java,Any::class.java,R.layout.item_study_course_section)
+        v?.vp?.adapter = adapter
     }
 
 }

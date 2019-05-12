@@ -23,6 +23,7 @@ class StudyContract {
         fun requestStudyApi() {
             model.requestStudyApi(object : HttpCallBack<MainCBean>() {
                 override fun onSuccess(call: Call<MainCBean>?, response: Response<MainCBean>?) {
+                    PonkoApp.mainCBean = response?.body()
                     view?.requestStudyApiSuccess(response?.body())
                 }
             })

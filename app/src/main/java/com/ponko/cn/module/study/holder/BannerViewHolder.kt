@@ -8,8 +8,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BannerBean
 import com.ponko.cn.bean.MainCBean
+import com.ponko.cn.module.study.CourseTypeGridActivity
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -82,10 +84,19 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
         v?.tvB2b?.text = b2b?.icon_text
         v?.tvB2c?.text = b2c?.icon_text
         v?.llB2b?.setOnClickListener {
-            IntoTargetUtil.target(context, b2b?.link_type, b2b?.link_value)
+            if (PonkoApp.mainCBean?.types!![0].isIs_vip) {
+                CourseTypeGridActivity.start(context, PonkoApp.mainCBean?.types!![0].title, PonkoApp.mainCBean?.types!![0].type_id)
+            } else {
+                IntoTargetUtil.target(context, b2b?.link_type, b2b?.link_value)
+            }
         }
         v?.llB2c?.setOnClickListener {
-            IntoTargetUtil.target(context, b2c?.link_type, b2c?.link_value)
+            if (PonkoApp.mainCBean?.types!![1].isIs_vip) {
+                CourseTypeGridActivity.start(context, PonkoApp.mainCBean?.types!![1].title, PonkoApp.mainCBean?.types!![1].type_id)
+            } else {
+                IntoTargetUtil.target(context, b2c?.link_type, b2c?.link_value)
+            }
+
         }
     }
 }

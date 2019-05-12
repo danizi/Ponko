@@ -129,7 +129,11 @@ class WebAct : PonkoBaseAct<Any>() {
                 exchangeViewHolder?.exchangeProductId = intent.getStringExtra("exchange_product_id")
             }
             "pay" -> {
-                payViewHolder?.payProductId = intent.getStringExtra("pay_product_id")
+                try {
+                    payViewHolder?.payProductId = intent.getStringExtra("pay_product_id")
+                }catch (e:Exception){
+                    e.printStackTrace()
+                }
             }
             "url" -> {
                 viewHolder?.flBottomBtn?.visibility = View.GONE

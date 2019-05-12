@@ -31,10 +31,21 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:layout_width="0dp"
+            android:layout_height="195dp"
+            android:layout_marginTop="22dp"
+            android:background="#88323232"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/iv_play_pause"
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:src="@mipmap/ic_launcher"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@mipmap/media_play"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

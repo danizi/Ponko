@@ -116,6 +116,9 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     }
 
     open fun requestRefreshFailure() {
+        viewHolder?.viewState?.showError("网络开小差了....", View.OnClickListener {
+            requestRefreshApi()
+        })
     }
 
     abstract fun multiTypeData(body: D?): List<Any>

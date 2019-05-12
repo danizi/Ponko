@@ -8,12 +8,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.MainCBean
-import com.ponko.cn.module.study.CourseTypeListActivity
+import com.ponko.cn.module.study.CourseTypeLinearActivity
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.Glide
+import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 
-class CourseSectionViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
+class CourseSectionViewHolder(view: View?) : BaseViewHolder(view!!) {
+
 
     private class ViewHolder private constructor(val cardView: CardView, val ivCover: ImageView, val tvCourseSection1: TextView, val tvCourseSection2: TextView) {
         companion object {
@@ -30,19 +32,19 @@ class CourseSectionViewHolder(view: View?) : RecyclerView.ViewHolder(view!!) {
 
     private var v: ViewHolder? = null
 
-    fun bind(data: Any, pos: Int) {
+    override fun bindData(d: Any, position: Int) {
         if (v == null) {
             v = ViewHolder.create(itemView)
         }
 
-        val typeBean = data as MainCBean.TypesBeanX.TypesBean
+        val typeBean = d as MainCBean.TypesBeanX.TypesBean
         val context = itemView.context
         Glide.with(context, typeBean.picture, v?.ivCover)
         v?.tvCourseSection1?.text = typeBean.title
         v?.tvCourseSection2?.text = typeBean.subtitle2!!
         v?.ivCover?.setOnClickListener {
-            BKLog.d("点击了课程类目 item")
-            ActivityUtil.startActivity(context, Intent(context, CourseTypeListActivity::class.java))
+            BKLog.d("点击了课程专题")
+            ActivityUtil.startActivity(context, Intent(context, CourseTypeLinearActivity::class.java))
         }
     }
 

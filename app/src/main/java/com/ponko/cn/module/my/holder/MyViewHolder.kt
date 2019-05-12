@@ -12,8 +12,11 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.MyBean
 import com.ponko.cn.bean.MyTopBean
 import com.ponko.cn.bean.ProfileCBean
+import com.ponko.cn.module.my.option.HistoryActivity
 import com.ponko.cn.module.my.option.InviteFriendActivity
 import com.ponko.cn.module.my.option.OpenRollActivity
+import com.ponko.cn.module.my.option.store.IntegralRankingActivity
+import com.ponko.cn.module.my.option.store.IntegralTaskActivity
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -62,9 +65,9 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         }
         val profileCBean = d as ProfileCBean
         val context = itemView.context
-        Glide.with(context,profileCBean.account.avatar, viewHolder?.ivCircleHead)  //头像
+        Glide.with(context, profileCBean.account.avatar, viewHolder?.ivCircleHead)  //头像
         viewHolder?.tvCourseNumber?.text = "" + profileCBean.account.study_count   //学习课程数量
-        viewHolder?.tvTimeNumber?.text = "" + profileCBean.account.study_duration  //学习时长
+        viewHolder?.tvTimeNumber?.text = "" + profileCBean.account.study_duration/60  //学习时长
         viewHolder?.tvIntegralNumber?.text = "" + profileCBean.account.integration //当前积分
         //判断是否绑定
         var userType = "tourist"
@@ -75,6 +78,7 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         } else {
             viewHolder?.tvName?.text = profileCBean.account.realName
         }
+
         viewHolder?.ivCircleHead?.setOnClickListener {
             when (userType) {
                 "tourist" -> {
@@ -90,11 +94,23 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         }
         viewHolder?.clOpenRoll?.setOnClickListener {
             BKLog.d("点击开通学籍")
-            ActivityUtil.startActivity(context, Intent(context,OpenRollActivity::class.java))
+            ActivityUtil.startActivity(context, Intent(context, OpenRollActivity::class.java))
         }
         viewHolder?.clInvite?.setOnClickListener {
             BKLog.d("点击邀请好友")
-            ActivityUtil.startActivity(context, Intent(context,InviteFriendActivity::class.java))
+            ActivityUtil.startActivity(context, Intent(context, InviteFriendActivity::class.java))
+        }
+        viewHolder?.llCourse?.setOnClickListener {
+            BKLog.d("点击学习课程")
+            ActivityUtil.startActivity(context, Intent(context, HistoryActivity::class.java))
+        }
+        viewHolder?.llTime?.setOnClickListener {
+            BKLog.d("点击学习记录")
+            ActivityUtil.startActivity(context, Intent(context, HistoryActivity::class.java))
+        }
+        viewHolder?.llIntegral?.setOnClickListener {
+            BKLog.d("点击获取积分")
+            ActivityUtil.startActivity(context, Intent(context, IntegralTaskActivity::class.java))
         }
 
     }

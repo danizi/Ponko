@@ -1,23 +1,38 @@
 package com.ponko.cn.module.study
 
+import android.content.Intent
 import android.view.View
 import com.ponko.cn.R
 import com.ponko.cn.bean.*
 import com.ponko.cn.module.common.RefreshLoadFrg
+import com.ponko.cn.module.my.option.HistoryActivity
+import com.ponko.cn.module.my.option.ProblemAct
+import com.ponko.cn.module.my.option.StudyRecordAct
 import com.ponko.cn.module.study.adapter.StudyAdapter
 import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.module.study.holder.AdViewHolder
 import com.ponko.cn.module.study.holder.BannerViewHolder
 import com.ponko.cn.module.study.holder.CaseViewHolder
 import com.ponko.cn.module.study.holder.CourseTypeViewHolder
+import com.ponko.cn.utils.ActivityUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.log.BKLog
 
 class StudyFrg : RefreshLoadFrg<StudyContract.Present, MainCBean>(), StudyContract.View {
 
     override fun initDisplay() {
         super.initDisplay()
         disableLoad = true
-        addSearchBar(View.OnClickListener { }, View.OnClickListener { }, View.OnClickListener { })
+        addSearchBar(View.OnClickListener {
+            BKLog.d("点击搜索框")
+            ActivityUtil.startActivity(context, Intent(context,SearchActivity::class.java))
+        }, View.OnClickListener {
+            BKLog.d("点击学习历史")
+            ActivityUtil.startActivity(context, Intent(context,HistoryActivity::class.java))
+        }, View.OnClickListener {
+            BKLog.d("点击帮助")
+            ActivityUtil.startActivity(context, Intent(context,ProblemAct::class.java))
+        })
     }
 
     override fun presenter(): StudyContract.Present {
