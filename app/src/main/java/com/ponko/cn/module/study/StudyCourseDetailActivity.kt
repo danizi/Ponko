@@ -80,6 +80,7 @@ class StudyCourseDetailActivity : AppCompatActivity() {
                 val courseInfo = response?.body()
                 //预览页面
                 val playUrl = courseInfo?.chapters!![0].sections[0].hls1
+                BKLog.d("playUrl:$playUrl")
                 val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
                 attachmentPre.load(playUrl, courseInfo.image!!)
 
