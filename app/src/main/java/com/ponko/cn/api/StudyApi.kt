@@ -1,8 +1,6 @@
 package com.ponko.cn.api
 
-import com.ponko.cn.bean.MainCBean
-import com.ponko.cn.bean.OutInternalCourse
-import com.ponko.cn.bean.StudyCourseBean
+import com.ponko.cn.bean.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -24,7 +22,13 @@ interface StudyApi {
      * 获取专题下的所有课程
      */
     @GET("course/all")
-    fun getInternalCourse(@Query("typeId") typeId: String): Call<ArrayList<OutInternalCourse>>
+    fun getSpecialAllCourse(@Query("typeId") typeId: String): Call<ArrayList<OutInternalCourse>>
+
+    /**
+     * 课程详情
+     */
+    @GET("course")
+    fun getCourseDetail(@Query("courseId") courseId: String): Call<CourseDetailCBean>
 
     /**
      * 收藏

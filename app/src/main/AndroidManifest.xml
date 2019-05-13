@@ -45,7 +45,7 @@
         <activity android:name=".module.my.option.InviteFriendActivity" />
         <activity android:name=".module.my.option.HistoryActivity" />
         <activity android:name=".module.study.CourseTypeLinearActivity" />
-        <activity android:name=".module.study.StudyCourseDetailActivity" />
+        <activity android:name=".module.study.StudyCourseDetailActivity" android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"/>
         <activity android:name=".module.my.option.store.IntegralTaskActivity" />
         <activity android:name=".module.my.option.store.IntegralRankingActivity" />
         <activity android:name=".module.my.option.store.IntegralRecordActivity" />

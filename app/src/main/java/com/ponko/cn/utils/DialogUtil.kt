@@ -19,7 +19,7 @@ object DialogUtil {
                     .setMsg(msg)
                     .setTitle(title)
                     .setCancelable(isCancelable)
-                    .setSize(800, 400)
+                    .setSize(600, 400)
                     .setOnEnterListener(enterListener)
                     .setOnCancelListener(cancelListener)
                     .build()
@@ -31,13 +31,11 @@ object DialogUtil {
                     .setMsg(msg)
                     .setTitle(title)
                     .setCancelable(isCancelable)
-                    .setSize(800, 400)
+                    .setSize(600, 400)
                     .setOnEnterListener(enterListener)
                     .setOnCancelListener(cancelListener)
                     .build()
             dlg?.show()
         }
     }
-
-
 }

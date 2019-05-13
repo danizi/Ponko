@@ -44,7 +44,7 @@ class CourseSectionViewHolder(view: View?) : BaseViewHolder(view!!) {
         v?.tvCourseSection2?.text = typeBean.subtitle2!!
         v?.ivCover?.setOnClickListener {
             BKLog.d("点击了课程专题")
-            ActivityUtil.startActivity(context, Intent(context, CourseTypeLinearActivity::class.java))
+            CourseTypeLinearActivity.start(context,typeBean.title,typeBean.id)
         }
     }
 
