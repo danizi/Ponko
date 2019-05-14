@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import com.ponko.cn.bean.CourseDetailCBean
+import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.module.media.control.viewholder.LandscapeViewHolder
 import com.ponko.cn.module.media.control.viewholder.PortraitViewHolder
 import com.xm.lib.common.log.BKLog
@@ -25,7 +26,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
     var controlViewHolder: ControlViewHolder? = null
     private val period: Int = 1000
     private val delay: Int = 5000
-    var courseDetail: CourseDetailCBean?=null
+    var courseDetail: CoursesDetailCBean?=null
 
     companion object {
         const val TAG = "AttachmentControl"

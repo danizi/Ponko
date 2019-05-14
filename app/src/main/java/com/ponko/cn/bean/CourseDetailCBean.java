@@ -2,6 +2,7 @@ package com.ponko.cn.bean;
 
 import java.util.List;
 
+@Deprecated
 public class CourseDetailCBean {
 
     /**

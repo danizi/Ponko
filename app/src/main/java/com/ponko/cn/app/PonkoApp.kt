@@ -8,6 +8,9 @@ import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constant.BASE_API
 import com.ponko.cn.constant.Constant.TOKEN
+import com.ponko.cn.db.CacheContract
+import com.ponko.cn.db.PonkoDBHelp
+import com.ponko.cn.db.dao.CourseSpecialDao
 import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import java.io.File
@@ -26,8 +29,9 @@ class PonkoApp : Application() {
         var APP_ID = "wxd37fb8ce51a02360"
         var signInfo: StoreTaskBean? = null
         var activityManager = ActManager()
-        var app:Application?=null
-        var mainCBean: MainCBean?=null
+        var app: Application? = null
+        var mainCBean: MainCBean? = null
+        var dbHelp: PonkoDBHelp? = null
     }
 
     override fun onCreate() {
@@ -35,6 +39,7 @@ class PonkoApp : Application() {
         app = this
         initNetWork()
         initActivityManage()
+        initDb()
     }
 
     private fun initNetWork() {
@@ -58,8 +63,8 @@ class PonkoApp : Application() {
         payApi = retrofitClient?.retrofit?.create(PayApi::class.java)
     }
 
-    private fun initActivityManage(){
-        registerActivityLifecycleCallbacks(object :ActivityLifecycleCallbacks{
+    private fun initActivityManage() {
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityPaused(activity: Activity?) {
                 activityManager.onActivityPaused(activity)
             }
@@ -77,7 +82,7 @@ class PonkoApp : Application() {
             }
 
             override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
-                activityManager.onActivitySaveInstanceState(activity,outState)
+                activityManager.onActivitySaveInstanceState(activity, outState)
             }
 
             override fun onActivityStopped(activity: Activity?) {
@@ -85,9 +90,12 @@ class PonkoApp : Application() {
             }
 
             override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-                activityManager.onActivityCreated(activity,savedInstanceState)
+                activityManager.onActivityCreated(activity, savedInstanceState)
             }
         })
     }
 
+    private fun initDb() {
+        dbHelp = PonkoDBHelp(this, "Ponko.db", null, 101)
+    }
 }

@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.gson.Gson
 import com.ponko.cn.bean.CourseDetailCBean
+import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.module.media.control.ControlViewHolder
 import com.xm.lib.common.log.BKLog
@@ -292,7 +293,7 @@ class LandscapeViewHolder : ControlViewHolder {
         })
     }
 
-    fun setPlayList(courseDetail: CourseDetailCBean?) {
+    fun setPlayList(courseDetail: CoursesDetailCBean?) {
         val body = Gson().toJson(courseDetail)
         val mediaListEnt = Gson().fromJson(body, MediaListEnt::class.java)
 

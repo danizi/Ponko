@@ -28,7 +28,7 @@ interface StudyApi {
      * 课程详情
      */
     @GET("course")
-    fun getCourseDetail(@Query("courseId") courseId: String): Call<CourseDetailCBean>
+    fun getCourseDetail(@Query("courseId") courseId: String): Call<CoursesDetailCBean>
 
     /**
      * 收藏

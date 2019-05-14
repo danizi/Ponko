@@ -45,7 +45,9 @@
         <activity android:name=".module.my.option.InviteFriendActivity" />
         <activity android:name=".module.my.option.HistoryActivity" />
         <activity android:name=".module.study.CourseTypeLinearActivity" />
-        <activity android:name=".module.study.StudyCourseDetailActivity" android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"/>
+        <activity
+            android:name=".module.study.StudyCourseDetailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard" />
         <activity android:name=".module.my.option.store.IntegralTaskActivity" />
         <activity android:name=".module.my.option.store.IntegralRankingActivity" />
         <activity android:name=".module.my.option.store.IntegralRecordActivity" />
@@ -80,7 +82,10 @@
         <activity android:name=".module.study.CourseTypeGridActivity" />
         <activity android:name=".module.study.SearchActivity" />
         <activity android:name=".module.my.option.acount.AddressActivity" />
-        <activity android:name=".module.my.option.acount.PersonalActivity"></activity>
+        <activity android:name=".module.my.option.acount.PersonalActivity" />
+        <activity android:name=".module.study.CacheActivity" />
+        <activity android:name=".module.my.option.CacheListAct" />
+        <activity android:name=".module.m3u8downer.M3u8DownerTextAct"></activity>
     </application>
 
 </manifest>

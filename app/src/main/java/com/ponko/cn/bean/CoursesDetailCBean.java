@@ -4,122 +4,59 @@ import java.util.List;
 
 public class CoursesDetailCBean {
 
+
     /**
-     * id : 0347e9dda34c46fdb7bfff13af7a20cc
-     * teacher : May
-     * count : 8
-     * duration : 202
-     * summary_url : https://api.tradestudy.cn/v3/courses/trial/detail/info?id=0347e9dda34c46fdb7bfff13af7a20cc
-     * course_id : 21c6db049a2211e88b440242ac130003
-     * share_title : 客户分析七大途径
-     * share_description : 从客户背景、产品、上下游、采购行为、信用分析等五个维度全方位了解客户，配合多种实用工具及实战技巧，快速找准用户痛点！
-     * share_url : https://api.tradestudy.cn/v3/wx/product?productId=bfd7f85c6f0a11e8a93a67b75eb469f2
+     * image : http://cdn.tradestudy.cn/upload/product/20170204/ac5ddedba3cad3c2659489dbfefe2487.jpg
+     * chapters : [{"sequence":0,"chapter_name":"第一章 外贸新人之准备-心态篇","id":"0cf8b6d2845511e5a95900163e000c35","sections":[{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/6/26de49f8c22abafd8adc1b49246262c6_3_b.jpg","collection":false,"vid":"","duration":"741","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_2.m3u8","filesize1":30592657,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_3.m3u8","filesize2":54891832,"filesize3":117855820,"name":"致迷茫的外贸销售员 该选择什么样的公司-1","id":"1fc6e2ae845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/a/26de49f8c2bd219013a0a441f4bc8a6a_3_b.jpg","collection":false,"vid":"","duration":"903","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bd219013a0a441f4bc8a6a_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bd219013a0a441f4bc8a6a_2.m3u8","filesize1":36504670,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bd219013a0a441f4bc8a6a_3.m3u8","filesize2":65076729,"filesize3":143813553,"name":"致迷茫的外贸销售员 该选择什么样的公司-2","id":"26f09938845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/2/26de49f8c2e6d5f2affffcdc54a5ce92_3_b.jpg","collection":false,"vid":"","duration":"748","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2e6d5f2affffcdc54a5ce92_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2e6d5f2affffcdc54a5ce92_2.m3u8","filesize1":30335396,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2e6d5f2affffcdc54a5ce92_3.m3u8","filesize2":54174105,"filesize3":118862833,"name":"May的面试小故事分享","id":"2fa18c80845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/6/26de49f8c257cbb4c0d080a92a824ff6_3_b.jpg","collection":false,"vid":"","duration":"1034","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c257cbb4c0d080a92a824ff6_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c257cbb4c0d080a92a824ff6_2.m3u8","filesize1":42061576,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c257cbb4c0d080a92a824ff6_3.m3u8","filesize2":75357519,"filesize3":164333330,"name":"斯通定理 ：态度决定结果及蘑菇定律","id":"34b8fc27845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/e/26de49f8c2298a482086dff1619fa96e_3_b.jpg","collection":false,"vid":"","duration":"564","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2298a482086dff1619fa96e_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2298a482086dff1619fa96e_2.m3u8","filesize1":22541579,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2298a482086dff1619fa96e_3.m3u8","filesize2":40036018,"filesize3":89878047,"name":"不浮躁 调整心态","id":"3b40993f845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/5/26de49f8c253b3715148ea0ebbb2ad95_3_b.jpg","collection":false,"vid":"","duration":"735","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c253b3715148ea0ebbb2ad95_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c253b3715148ea0ebbb2ad95_2.m3u8","filesize1":28999426,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c253b3715148ea0ebbb2ad95_3.m3u8","filesize2":51450474,"filesize3":116845020,"name":"成功的秘诀就是坚持到底","id":"4068d2fb845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/c/26de49f8c2bcd0df345c24f7ceaf5a8c_3_b.jpg","collection":false,"vid":"","duration":"614","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bcd0df345c24f7ceaf5a8c_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bcd0df345c24f7ceaf5a8c_2.m3u8","filesize1":27252099,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bcd0df345c24f7ceaf5a8c_3.m3u8","filesize2":51279772,"filesize3":97718921,"name":"为什么说外贸3年是个分水岭-1","id":"44c572bd845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/7/26de49f8c227abadb360f573cf2349b7_3_b.jpg","collection":false,"vid":"","duration":"966","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c227abadb360f573cf2349b7_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c227abadb360f573cf2349b7_2.m3u8","filesize1":40647703,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c227abadb360f573cf2349b7_3.m3u8","filesize2":73779727,"filesize3":153699336,"name":"为什么说外贸3年是个分水岭-2","id":"4b940a06845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/0/26de49f8c29432f3998d6add0660dd70_3_b.jpg","collection":false,"vid":"","duration":"1038","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c29432f3998d6add0660dd70_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c29432f3998d6add0660dd70_2.m3u8","filesize1":42262232,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c29432f3998d6add0660dd70_3.m3u8","filesize2":76231341,"filesize3":165015502,"name":"什么是优质客户及工作上别怕吃亏","id":"5427e73e845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c24122f0f4d088e8134ba269_3_b.jpg","collection":false,"vid":"","duration":"1237","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24122f0f4d088e8134ba269_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24122f0f4d088e8134ba269_2.m3u8","filesize1":49540658,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24122f0f4d088e8134ba269_3.m3u8","filesize2":88020592,"filesize3":197092926,"name":"弱者找理由 强者找方法","id":"5a8490cb845511e5a95900163e000c35","free":false}]},{"sequence":0,"chapter_name":"第二章 外贸销售之准备-产品篇","id":"5f646e52845511e5a95900163e000c35","sections":[{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/4/26de49f8c24fa5591b245fa4465fdcc4_3_b.jpg","collection":false,"vid":"","duration":"1136","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24fa5591b245fa4465fdcc4_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24fa5591b245fa4465fdcc4_2.m3u8","filesize1":47340534,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24fa5591b245fa4465fdcc4_3.m3u8","filesize2":85130210,"filesize3":180596616,"name":"产品 产品 还是产品-1","id":"65e8d983845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c28f975abaa4ae9d5e5c9059_3_b.jpg","collection":false,"vid":"","duration":"1082","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c28f975abaa4ae9d5e5c9059_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c28f975abaa4ae9d5e5c9059_2.m3u8","filesize1":52006845,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c28f975abaa4ae9d5e5c9059_3.m3u8","filesize2":98524861,"filesize3":172184999,"name":"产品 产品 还是产品-2","id":"6abaaa01845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/5/26de49f8c2d6ea317e4cded48dd3c625_3_b.jpg","collection":false,"vid":"","duration":"667","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2d6ea317e4cded48dd3c625_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2d6ea317e4cded48dd3c625_2.m3u8","filesize1":29493982,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2d6ea317e4cded48dd3c625_3.m3u8","filesize2":52867657,"filesize3":104717873,"name":"产品篇案例：同一个产品对于不同买家的卖点 利益点","id":"70aa0c1d845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/e/26de49f8c2ca965fae439f739bf7990e_3_b.jpg","collection":false,"vid":"26de49f8c2ca965fae439f739bf7990e_2","duration":"1304","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ca965fae439f739bf7990e_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ca965fae439f739bf7990e_2.m3u8","filesize1":52893284,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ca965fae439f739bf7990e_3.m3u8","filesize2":94841149,"filesize3":208043041,"name":"产品篇工具：了解产品在目标市场的销售情况 零售价","id":"75311819845511e5a95900163e000c35","free":true}]},{"sequence":0,"chapter_name":"第三章 外贸销售之准备-市场信息篇","id":"7906ff7c845511e5a95900163e000c35","sections":[{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/0/26de49f8c269813df41e6e7d369180e0_3_b.jpg","collection":false,"vid":"","duration":"576","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c269813df41e6e7d369180e0_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c269813df41e6e7d369180e0_2.m3u8","filesize1":24134242,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c269813df41e6e7d369180e0_3.m3u8","filesize2":43691930,"filesize3":91591240,"name":"信息 信息 还是信息","id":"7e1f7ad4845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/d/26de49f8c280bf444938dcfbf93459ad_3_b.jpg","collection":false,"vid":"","duration":"800","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c280bf444938dcfbf93459ad_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c280bf444938dcfbf93459ad_2.m3u8","filesize1":54726850,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c280bf444938dcfbf93459ad_3.m3u8","filesize2":106345423,"filesize3":124048245,"name":"对于目标市场的宏观了解","id":"8891e43b845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c2ec0e8278b7a744317c1ab9_3_b.jpg","collection":false,"vid":"","duration":"839","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ec0e8278b7a744317c1ab9_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ec0e8278b7a744317c1ab9_2.m3u8","filesize1":34728405,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ec0e8278b7a744317c1ab9_3.m3u8","filesize2":61619870,"filesize3":133285339,"name":"对于目标市场需求的了解","id":"8dd8873a845511e5a95900163e000c35","free":false}]},{"sequence":0,"chapter_name":"第四章 外贸销售之准备-自我加强篇","id":"91e97f72845511e5a95900163e000c35","sections":[{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/8/26de49f8c26da5ac4713fb263f0db9c8_3_b.jpg","collection":false,"vid":"","duration":"646","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c26da5ac4713fb263f0db9c8_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c26da5ac4713fb263f0db9c8_2.m3u8","filesize1":26258242,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c26da5ac4713fb263f0db9c8_3.m3u8","filesize2":47161727,"filesize3":102560492,"name":"时间管理及清楚并提炼你公司的卖点","id":"99456dbc845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/3/26de49f8c2ebc20edf3b2fdf36e1eac3_3_b.jpg","collection":false,"vid":"","duration":"1375","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ebc20edf3b2fdf36e1eac3_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ebc20edf3b2fdf36e1eac3_2.m3u8","filesize1":56270798,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ebc20edf3b2fdf36e1eac3_3.m3u8","filesize2":100583280,"filesize3":218650155,"name":"如何应对客户询问是工厂还是贸易公司","id":"05610f42845611e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/2/26de49f8c24be732b279dbfc0678f6b2_3_b.jpg","collection":false,"vid":"","duration":"712","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24be732b279dbfc0678f6b2_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24be732b279dbfc0678f6b2_2.m3u8","filesize1":29061309,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24be732b279dbfc0678f6b2_3.m3u8","filesize2":52025915,"filesize3":113374157,"name":"做好客户的定位","id":"0bf440b8845611e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/d/26de49f8c2d559fbfca0c5344012d06d_3_b.jpg","collection":false,"vid":"","duration":"844","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2d559fbfca0c5344012d06d_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2d559fbfca0c5344012d06d_2.m3u8","filesize1":34418221,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2d559fbfca0c5344012d06d_3.m3u8","filesize2":60926492,"filesize3":134420042,"name":"英语提高","id":"11047bf9845611e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c241af984449570ff0ee11d9_3_b.jpg","collection":false,"vid":"","duration":"951","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c241af984449570ff0ee11d9_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c241af984449570ff0ee11d9_2.m3u8","filesize1":47346714,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c241af984449570ff0ee11d9_3.m3u8","filesize2":92113629,"filesize3":149978274,"name":"量化日常工作及其它相关知识的掌握","id":"1903298e845611e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/c/26de49f8c25868555e76f01305facc2c_3_b.jpg","collection":false,"vid":"","duration":"752","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c25868555e76f01305facc2c_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c25868555e76f01305facc2c_2.m3u8","filesize1":31777089,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c25868555e76f01305facc2c_3.m3u8","filesize2":57333948,"filesize3":119666942,"name":"买手不喜欢什么样的供应商","id":"2d22697d845611e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/2/26de49f8c25a38d9ce418dbc6cca98e2_3_b.jpg","collection":false,"vid":"","duration":"645","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c25a38d9ce418dbc6cca98e2_1.m3u8","hls2":"","filesize1":24471562,"hls3":"","filesize2":0,"filesize3":0,"name":"买手喜欢什么样的供应商","id":"36497cee845611e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/e/26de49f8c2583d7d934eee3db55f11be_3_b.jpg","collection":false,"vid":"","duration":"1422","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2583d7d934eee3db55f11be_1.m3u8","hls2":"","filesize1":44533568,"hls3":"","filesize2":0,"filesize3":0,"name":"如何建立客户的忠诚度","id":"3da02639845611e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/3/26de49f8c223a3a51c374ce66be27673_3_b.jpg","collection":false,"vid":"","duration":"595","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c223a3a51c374ce66be27673_1.m3u8","hls2":"","filesize1":23143557,"hls3":"","filesize2":0,"filesize3":0,"name":"我是如何让客户觉得我细致 专业的","id":"4bf91352845611e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/8/26de49f8c2d84404b5b081b445b80868_3_b.jpg","collection":false,"vid":"","duration":"713","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2d84404b5b081b445b80868_1.m3u8","hls2":"","filesize1":25240284,"hls3":"","filesize2":0,"filesize3":0,"name":"我是如何让客户觉得我站在其角度为其着想的","id":"35ae333d845911e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c2ee615e1dd7e2633f26cd89_3_b.jpg","collection":false,"vid":"","duration":"760","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2ee615e1dd7e2633f26cd89_1.m3u8","hls2":"","filesize1":24334554,"hls3":"","filesize2":0,"filesize3":0,"name":"各国客户习惯 以便了解后更多帮助指导谈判","id":"3b49f373845911e5a95900163e000c35","free":false}]}]
+     * possess : false
+     * share_base_url : http://my.tradestudy.cn/app_share
+     * ppts : []
+     * title : 外贸职场笔记
      * pay_url : /product/detail?productId=bfd7f85c6f0a11e8a93a67b75eb469f2
-     * pay_btn : 立即入学，即可学习本课及B2B所有课程
-     * title : 客户分析七大途径
-     * chapters : [{"id":"3e38123e9a2211e88b440242ac130003","chapterName":"精准分析客户","sequence":0,"createTime":0,"hasDelete":false,"free":false,"sections":[{"id":"6056dbea9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"1.客户分析七大途径有哪些","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2a6a16b2b8f41f88045f7b4_2","avatar":"http://cdn.tradestudy.cn/app/section/7.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1043","completedStatus":0,"progressDuration":0,"collection":false},{"id":"5e241b2f9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"2.买家背景分析方法","sequence":0,"createTime":0,"hasDelete":false,"free":true,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2cb798078ca8a8890e4e5aa_2","avatar":"http://cdn.tradestudy.cn/app/section/27.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1460","completedStatus":0,"progressDuration":0,"collection":false},{"id":"5bdcef1e9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"3.如何寻找客户的关注点和痛点","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2bdb10f536d0705f1e8c006_2","avatar":"http://cdn.tradestudy.cn/app/section/3.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"843","completedStatus":0,"progressDuration":0,"collection":false},{"id":"59ac39fc9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"4.买家产品分析法","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2b99d5fa44276754a02b9e6_2","avatar":"http://cdn.tradestudy.cn/app/section/8.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1375","completedStatus":0,"progressDuration":0,"collection":false},{"id":"574b41f29a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"5.分析客户2个实用工具","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2a94de8e24635a0095c4fa9_2","avatar":"http://cdn.tradestudy.cn/app/section/35.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"819","completedStatus":0,"progressDuration":0,"collection":false},{"id":"5428707a9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"6.社交平台分析客户法","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2de81f3f93be69bd4820801_2","avatar":"http://cdn.tradestudy.cn/app/section/36.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1224","completedStatus":0,"progressDuration":0,"collection":false},{"id":"5110c8ff9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"7.不可忽视的对人的分析","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c28ffbd79364a05e4cfc8846_2","avatar":"http://cdn.tradestudy.cn/app/section/10.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1040","completedStatus":0,"progressDuration":0,"collection":false},{"id":"4e812db99a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"8.买家国际信用评级","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c22940e46d4881a920e08f77_2","avatar":"http://cdn.tradestudy.cn/app/section/29.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"740","completedStatus":0,"progressDuration":0,"collection":false}]}]
+     * pay_text : 立即入学
+     * features : <p><span style="font-size: 13px; white-space: normal;">（1）4个篇章详解外贸入门所需的准备（2）15条给外贸新人的建议（3）3个方面为外贸销售打下基础（4）老师结合案例分享建议和经验</span></p>
+     * ppt : true
+     * product_id : bfd7f85c6f0a11e8a93a67b75eb469f2
+     * playing : 75311819845511e5a95900163e000c35
+     * id : e90b1cbc845411e5a95900163e000c35
      */
 
-    private String id;
-    private String teacher;
-    private int count;
-    private int duration;
-    private String summary_url;
-    private String course_id;
-    private String share_title;
-    private String share_description;
-    private String share_url;
-    private String pay_url;
-    private String pay_btn;
+    private String image;
+    private boolean possess;
+    private String share_base_url;
     private String title;
+    private String pay_url;
+    private String pay_text;
+    private String features;
+    private boolean ppt;
+    private String product_id;
+    private String playing;
+    private String id;
     private List<ChaptersBean> chapters;
+    private List<?> ppts;
 
-    public String getId() {
-        return id;
+    public String getImage() {
+        return image;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getTeacher() {
-        return teacher;
+    public boolean isPossess() {
+        return possess;
     }
 
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
+    public void setPossess(boolean possess) {
+        this.possess = possess;
     }
 
-    public int getCount() {
-        return count;
+    public String getShare_base_url() {
+        return share_base_url;
     }
 
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public String getSummary_url() {
-        return summary_url;
-    }
-
-    public void setSummary_url(String summary_url) {
-        this.summary_url = summary_url;
-    }
-
-    public String getCourse_id() {
-        return course_id;
-    }
-
-    public void setCourse_id(String course_id) {
-        this.course_id = course_id;
-    }
-
-    public String getShare_title() {
-        return share_title;
-    }
-
-    public void setShare_title(String share_title) {
-        this.share_title = share_title;
-    }
-
-    public String getShare_description() {
-        return share_description;
-    }
-
-    public void setShare_description(String share_description) {
-        this.share_description = share_description;
-    }
-
-    public String getShare_url() {
-        return share_url;
-    }
-
-    public void setShare_url(String share_url) {
-        this.share_url = share_url;
-    }
-
-    public String getPay_url() {
-        return pay_url;
-    }
-
-    public void setPay_url(String pay_url) {
-        this.pay_url = pay_url;
-    }
-
-    public String getPay_btn() {
-        return pay_btn;
-    }
-
-    public void setPay_btn(String pay_btn) {
-        this.pay_btn = pay_btn;
+    public void setShare_base_url(String share_base_url) {
+        this.share_base_url = share_base_url;
     }
 
     public String getTitle() {
@@ -130,6 +67,62 @@ public class CoursesDetailCBean {
         this.title = title;
     }
 
+    public String getPay_url() {
+        return pay_url;
+    }
+
+    public void setPay_url(String pay_url) {
+        this.pay_url = pay_url;
+    }
+
+    public String getPay_text() {
+        return pay_text;
+    }
+
+    public void setPay_text(String pay_text) {
+        this.pay_text = pay_text;
+    }
+
+    public String getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(String features) {
+        this.features = features;
+    }
+
+    public boolean isPpt() {
+        return ppt;
+    }
+
+    public void setPpt(boolean ppt) {
+        this.ppt = ppt;
+    }
+
+    public String getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
+    }
+
+    public String getPlaying() {
+        return playing;
+    }
+
+    public void setPlaying(String playing) {
+        this.playing = playing;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public List<ChaptersBean> getChapters() {
         return chapters;
     }
@@ -138,40 +131,26 @@ public class CoursesDetailCBean {
         this.chapters = chapters;
     }
 
+    public List<?> getPpts() {
+        return ppts;
+    }
+
+    public void setPpts(List<?> ppts) {
+        this.ppts = ppts;
+    }
+
     public static class ChaptersBean {
         /**
-         * id : 3e38123e9a2211e88b440242ac130003
-         * chapterName : 精准分析客户
          * sequence : 0
-         * createTime : 0
-         * hasDelete : false
-         * free : false
-         * sections : [{"id":"6056dbea9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"1.客户分析七大途径有哪些","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2a6a16b2b8f41f88045f7b4_2","avatar":"http://cdn.tradestudy.cn/app/section/7.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1043","completedStatus":0,"progressDuration":0,"collection":false},{"id":"5e241b2f9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"2.买家背景分析方法","sequence":0,"createTime":0,"hasDelete":false,"free":true,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2cb798078ca8a8890e4e5aa_2","avatar":"http://cdn.tradestudy.cn/app/section/27.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1460","completedStatus":0,"progressDuration":0,"collection":false},{"id":"5bdcef1e9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"3.如何寻找客户的关注点和痛点","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2bdb10f536d0705f1e8c006_2","avatar":"http://cdn.tradestudy.cn/app/section/3.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"843","completedStatus":0,"progressDuration":0,"collection":false},{"id":"59ac39fc9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"4.买家产品分析法","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2b99d5fa44276754a02b9e6_2","avatar":"http://cdn.tradestudy.cn/app/section/8.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1375","completedStatus":0,"progressDuration":0,"collection":false},{"id":"574b41f29a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"5.分析客户2个实用工具","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2a94de8e24635a0095c4fa9_2","avatar":"http://cdn.tradestudy.cn/app/section/35.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"819","completedStatus":0,"progressDuration":0,"collection":false},{"id":"5428707a9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"6.社交平台分析客户法","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c2de81f3f93be69bd4820801_2","avatar":"http://cdn.tradestudy.cn/app/section/36.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1224","completedStatus":0,"progressDuration":0,"collection":false},{"id":"5110c8ff9a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"7.不可忽视的对人的分析","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c28ffbd79364a05e4cfc8846_2","avatar":"http://cdn.tradestudy.cn/app/section/10.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"1040","completedStatus":0,"progressDuration":0,"collection":false},{"id":"4e812db99a2211e88b440242ac130003","chapterId":"3e38123e9a2211e88b440242ac130003","sectionName":"8.买家国际信用评级","sequence":0,"createTime":0,"hasDelete":false,"free":false,"watch":0,"video":{"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"},"durationForSecond":0,"vid":"26de49f8c22940e46d4881a920e08f77_2","avatar":"http://cdn.tradestudy.cn/app/section/29.jpg","filesize1":0,"filesize2":0,"filesize3":0,"duration":"740","completedStatus":0,"progressDuration":0,"collection":false}]
+         * chapter_name : 第一章 外贸新人之准备-心态篇
+         * id : 0cf8b6d2845511e5a95900163e000c35
+         * sections : [{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/6/26de49f8c22abafd8adc1b49246262c6_3_b.jpg","collection":false,"vid":"","duration":"741","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_2.m3u8","filesize1":30592657,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_3.m3u8","filesize2":54891832,"filesize3":117855820,"name":"致迷茫的外贸销售员 该选择什么样的公司-1","id":"1fc6e2ae845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/a/26de49f8c2bd219013a0a441f4bc8a6a_3_b.jpg","collection":false,"vid":"","duration":"903","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bd219013a0a441f4bc8a6a_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bd219013a0a441f4bc8a6a_2.m3u8","filesize1":36504670,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bd219013a0a441f4bc8a6a_3.m3u8","filesize2":65076729,"filesize3":143813553,"name":"致迷茫的外贸销售员 该选择什么样的公司-2","id":"26f09938845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/2/26de49f8c2e6d5f2affffcdc54a5ce92_3_b.jpg","collection":false,"vid":"","duration":"748","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2e6d5f2affffcdc54a5ce92_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2e6d5f2affffcdc54a5ce92_2.m3u8","filesize1":30335396,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2e6d5f2affffcdc54a5ce92_3.m3u8","filesize2":54174105,"filesize3":118862833,"name":"May的面试小故事分享","id":"2fa18c80845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/6/26de49f8c257cbb4c0d080a92a824ff6_3_b.jpg","collection":false,"vid":"","duration":"1034","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c257cbb4c0d080a92a824ff6_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c257cbb4c0d080a92a824ff6_2.m3u8","filesize1":42061576,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c257cbb4c0d080a92a824ff6_3.m3u8","filesize2":75357519,"filesize3":164333330,"name":"斯通定理 ：态度决定结果及蘑菇定律","id":"34b8fc27845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/e/26de49f8c2298a482086dff1619fa96e_3_b.jpg","collection":false,"vid":"","duration":"564","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2298a482086dff1619fa96e_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2298a482086dff1619fa96e_2.m3u8","filesize1":22541579,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2298a482086dff1619fa96e_3.m3u8","filesize2":40036018,"filesize3":89878047,"name":"不浮躁 调整心态","id":"3b40993f845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/5/26de49f8c253b3715148ea0ebbb2ad95_3_b.jpg","collection":false,"vid":"","duration":"735","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c253b3715148ea0ebbb2ad95_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c253b3715148ea0ebbb2ad95_2.m3u8","filesize1":28999426,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c253b3715148ea0ebbb2ad95_3.m3u8","filesize2":51450474,"filesize3":116845020,"name":"成功的秘诀就是坚持到底","id":"4068d2fb845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/c/26de49f8c2bcd0df345c24f7ceaf5a8c_3_b.jpg","collection":false,"vid":"","duration":"614","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bcd0df345c24f7ceaf5a8c_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bcd0df345c24f7ceaf5a8c_2.m3u8","filesize1":27252099,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c2bcd0df345c24f7ceaf5a8c_3.m3u8","filesize2":51279772,"filesize3":97718921,"name":"为什么说外贸3年是个分水岭-1","id":"44c572bd845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/7/26de49f8c227abadb360f573cf2349b7_3_b.jpg","collection":false,"vid":"","duration":"966","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c227abadb360f573cf2349b7_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c227abadb360f573cf2349b7_2.m3u8","filesize1":40647703,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c227abadb360f573cf2349b7_3.m3u8","filesize2":73779727,"filesize3":153699336,"name":"为什么说外贸3年是个分水岭-2","id":"4b940a06845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/0/26de49f8c29432f3998d6add0660dd70_3_b.jpg","collection":false,"vid":"","duration":"1038","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c29432f3998d6add0660dd70_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c29432f3998d6add0660dd70_2.m3u8","filesize1":42262232,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c29432f3998d6add0660dd70_3.m3u8","filesize2":76231341,"filesize3":165015502,"name":"什么是优质客户及工作上别怕吃亏","id":"5427e73e845511e5a95900163e000c35","free":false},{"avatar":"http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c24122f0f4d088e8134ba269_3_b.jpg","collection":false,"vid":"","duration":"1237","progress_duration":0,"sequence":0,"completed_status":0,"hls1":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24122f0f4d088e8134ba269_1.m3u8","hls2":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24122f0f4d088e8134ba269_2.m3u8","filesize1":49540658,"hls3":"http://hls.videocc.net/26de49f8c2/2/26de49f8c24122f0f4d088e8134ba269_3.m3u8","filesize2":88020592,"filesize3":197092926,"name":"弱者找理由 强者找方法","id":"5a8490cb845511e5a95900163e000c35","free":false}]
          */
 
-        private String id;
-        private String chapterName;
         private int sequence;
-        private int createTime;
-        private boolean hasDelete;
-        private boolean free;
+        private String chapter_name;
+        private String id;
         private List<SectionsBean> sections;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getChapterName() {
-            return chapterName;
-        }
-
-        public void setChapterName(String chapterName) {
-            this.chapterName = chapterName;
-        }
 
         public int getSequence() {
             return sequence;
@@ -181,28 +160,20 @@ public class CoursesDetailCBean {
             this.sequence = sequence;
         }
 
-        public int getCreateTime() {
-            return createTime;
+        public String getChapter_name() {
+            return chapter_name;
         }
 
-        public void setCreateTime(int createTime) {
-            this.createTime = createTime;
+        public void setChapter_name(String chapter_name) {
+            this.chapter_name = chapter_name;
         }
 
-        public boolean isHasDelete() {
-            return hasDelete;
+        public String getId() {
+            return id;
         }
 
-        public void setHasDelete(boolean hasDelete) {
-            this.hasDelete = hasDelete;
-        }
-
-        public boolean isFree() {
-            return free;
-        }
-
-        public void setFree(boolean free) {
-            this.free = free;
+        public void setId(String id) {
+            this.id = id;
         }
 
         public List<SectionsBean> getSections() {
@@ -215,125 +186,55 @@ public class CoursesDetailCBean {
 
         public static class SectionsBean {
             /**
-             * id : 6056dbea9a2211e88b440242ac130003
-             * chapterId : 3e38123e9a2211e88b440242ac130003
-             * sectionName : 1.客户分析七大途径有哪些
-             * sequence : 0
-             * createTime : 0
-             * hasDelete : false
-             * free : false
-             * watch : 0
-             * video : {"createTime":0,"deleted":false,"durationForSecond":0,"state":"UN_HANDLE"}
-             * durationForSecond : 0
-             * vid : 26de49f8c2a6a16b2b8f41f88045f7b4_2
-             * avatar : http://cdn.tradestudy.cn/app/section/7.jpg
-             * filesize1 : 0
-             * filesize2 : 0
-             * filesize3 : 0
-             * duration : 1043
-             * completedStatus : 0
-             * progressDuration : 0
+             * avatar : http://img.videocc.net/uimage/2/26de49f8c2/6/26de49f8c22abafd8adc1b49246262c6_3_b.jpg
              * collection : false
+             * vid :
+             * duration : 741
+             * progress_duration : 0
+             * sequence : 0
+             * completed_status : 0
+             * hls1 : http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_1.m3u8
+             * hls2 : http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_2.m3u8
+             * filesize1 : 30592657
+             * hls3 : http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_3.m3u8
+             * filesize2 : 54891832
+             * filesize3 : 117855820
+             * name : 致迷茫的外贸销售员 该选择什么样的公司-1
+             * id : 1fc6e2ae845511e5a95900163e000c35
+             * free : false
              */
 
-            private String id;
-            private String chapterId;
-            private String sectionName;
-            private int sequence;
-            private int createTime;
-            private boolean hasDelete;
-            private boolean free;
-            private int watch;
-            private VideoBean video;
-            private int durationForSecond;
-            private String vid;
             private String avatar;
+            private boolean collection;
+            private String vid;
+            private String duration;
+            private int progress_duration;
+            private int sequence;
+            private int completed_status;
+            private String hls1;
+            private String hls2;
             private int filesize1;
+            private String hls3;
             private int filesize2;
             private int filesize3;
-            private String duration;
-            private int completedStatus;
-            private int progressDuration;
-            private boolean collection;
+            private String name;
+            private String id;
+            private boolean free;
 
-            public String getId() {
-                return id;
+            public String getAvatar() {
+                return avatar;
             }
 
-            public void setId(String id) {
-                this.id = id;
+            public void setAvatar(String avatar) {
+                this.avatar = avatar;
             }
 
-            public String getChapterId() {
-                return chapterId;
+            public boolean isCollection() {
+                return collection;
             }
 
-            public void setChapterId(String chapterId) {
-                this.chapterId = chapterId;
-            }
-
-            public String getSectionName() {
-                return sectionName;
-            }
-
-            public void setSectionName(String sectionName) {
-                this.sectionName = sectionName;
-            }
-
-            public int getSequence() {
-                return sequence;
-            }
-
-            public void setSequence(int sequence) {
-                this.sequence = sequence;
-            }
-
-            public int getCreateTime() {
-                return createTime;
-            }
-
-            public void setCreateTime(int createTime) {
-                this.createTime = createTime;
-            }
-
-            public boolean isHasDelete() {
-                return hasDelete;
-            }
-
-            public void setHasDelete(boolean hasDelete) {
-                this.hasDelete = hasDelete;
-            }
-
-            public boolean isFree() {
-                return free;
-            }
-
-            public void setFree(boolean free) {
-                this.free = free;
-            }
-
-            public int getWatch() {
-                return watch;
-            }
-
-            public void setWatch(int watch) {
-                this.watch = watch;
-            }
-
-            public VideoBean getVideo() {
-                return video;
-            }
-
-            public void setVideo(VideoBean video) {
-                this.video = video;
-            }
-
-            public int getDurationForSecond() {
-                return durationForSecond;
-            }
-
-            public void setDurationForSecond(int durationForSecond) {
-                this.durationForSecond = durationForSecond;
+            public void setCollection(boolean collection) {
+                this.collection = collection;
             }
 
             public String getVid() {
@@ -344,12 +245,52 @@ public class CoursesDetailCBean {
                 this.vid = vid;
             }
 
-            public String getAvatar() {
-                return avatar;
+            public String getDuration() {
+                return duration;
             }
 
-            public void setAvatar(String avatar) {
-                this.avatar = avatar;
+            public void setDuration(String duration) {
+                this.duration = duration;
+            }
+
+            public int getProgress_duration() {
+                return progress_duration;
+            }
+
+            public void setProgress_duration(int progress_duration) {
+                this.progress_duration = progress_duration;
+            }
+
+            public int getSequence() {
+                return sequence;
+            }
+
+            public void setSequence(int sequence) {
+                this.sequence = sequence;
+            }
+
+            public int getCompleted_status() {
+                return completed_status;
+            }
+
+            public void setCompleted_status(int completed_status) {
+                this.completed_status = completed_status;
+            }
+
+            public String getHls1() {
+                return hls1;
+            }
+
+            public void setHls1(String hls1) {
+                this.hls1 = hls1;
+            }
+
+            public String getHls2() {
+                return hls2;
+            }
+
+            public void setHls2(String hls2) {
+                this.hls2 = hls2;
             }
 
             public int getFilesize1() {
@@ -358,6 +299,14 @@ public class CoursesDetailCBean {
 
             public void setFilesize1(int filesize1) {
                 this.filesize1 = filesize1;
+            }
+
+            public String getHls3() {
+                return hls3;
+            }
+
+            public void setHls3(String hls3) {
+                this.hls3 = hls3;
             }
 
             public int getFilesize2() {
@@ -376,82 +325,28 @@ public class CoursesDetailCBean {
                 this.filesize3 = filesize3;
             }
 
-            public String getDuration() {
-                return duration;
+            public String getName() {
+                return name;
             }
 
-            public void setDuration(String duration) {
-                this.duration = duration;
+            public void setName(String name) {
+                this.name = name;
             }
 
-            public int getCompletedStatus() {
-                return completedStatus;
+            public String getId() {
+                return id;
             }
 
-            public void setCompletedStatus(int completedStatus) {
-                this.completedStatus = completedStatus;
+            public void setId(String id) {
+                this.id = id;
             }
 
-            public int getProgressDuration() {
-                return progressDuration;
+            public boolean isFree() {
+                return free;
             }
 
-            public void setProgressDuration(int progressDuration) {
-                this.progressDuration = progressDuration;
-            }
-
-            public boolean isCollection() {
-                return collection;
-            }
-
-            public void setCollection(boolean collection) {
-                this.collection = collection;
-            }
-
-            public static class VideoBean {
-                /**
-                 * createTime : 0
-                 * deleted : false
-                 * durationForSecond : 0
-                 * state : UN_HANDLE
-                 */
-
-                private int createTime;
-                private boolean deleted;
-                private int durationForSecond;
-                private String state;
-
-                public int getCreateTime() {
-                    return createTime;
-                }
-
-                public void setCreateTime(int createTime) {
-                    this.createTime = createTime;
-                }
-
-                public boolean isDeleted() {
-                    return deleted;
-                }
-
-                public void setDeleted(boolean deleted) {
-                    this.deleted = deleted;
-                }
-
-                public int getDurationForSecond() {
-                    return durationForSecond;
-                }
-
-                public void setDurationForSecond(int durationForSecond) {
-                    this.durationForSecond = durationForSecond;
-                }
-
-                public String getState() {
-                    return state;
-                }
-
-                public void setState(String state) {
-                    this.state = state;
-                }
+            public void setFree(boolean free) {
+                this.free = free;
             }
         }
     }

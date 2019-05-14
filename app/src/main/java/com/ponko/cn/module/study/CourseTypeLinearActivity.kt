@@ -156,7 +156,7 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
             viewHolder?.tvTeacher?.text = "${teachers}老师"
             viewHolder?.courseNumber?.text = "共${internalCourse.num}集 | ${NumUtil.getDecimalPoint(internalCourse.duration?.toFloat()!! / 60f/60f)}小时"
             itemView.setOnClickListener {
-                StudyCourseDetailActivity.start(context, internalCourse.id)
+                StudyCourseDetailActivity.start(context, internalCourse.id,teachers,internalCourse.num,internalCourse.duration!!)
             }
         }
     }
