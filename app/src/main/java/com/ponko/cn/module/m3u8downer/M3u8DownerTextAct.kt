@@ -1,6 +1,7 @@
 package com.ponko.cn.module.m3u8downer
 
 import android.os.Bundle
+import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -13,6 +14,8 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.db.bean.CourseDbBean
 import com.ponko.cn.db.dao.CourseDao
 import com.ponko.cn.module.m3u8downer.M3u8Utils.analysis
+import com.ponko.cn.module.m3u8downer.M3u8Utils.copyInputStream
+import com.ponko.cn.module.m3u8downer.M3u8Utils.m3u8FileName
 import com.ponko.cn.module.m3u8downer.M3u8Utils.writeLocal
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -43,9 +46,6 @@ class M3u8DownerTextAct : AppCompatActivity() {
         rv?.layoutManager = LinearLayoutManager(this)
 
         // 请求网络
-//        for (course in datas){
-//            course.column_m3u8_url
-//        }
         val m3u8 = datas[0].column_m3u8_url
         val okHttpClient = OkHttpClient()
         val request = Request.Builder().url(m3u8).get().build()
@@ -55,16 +55,18 @@ class M3u8DownerTextAct : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val inputStream = response.body()?.byteStream()
-                val (m3u8Key, m3u8Ts) = analysis(inputStream)
-                writeLocal(inputStream, m3u8, "XmDowm", m3u8Key, m3u8Ts)
+                val (stream1, stream2) = copyInputStream(response.body()?.byteStream())
+                val (m3u8Key, m3u8Ts) = analysis(stream1)
+                writeLocal(stream2, m3u8, "XmDown", m3u8Key, m3u8Ts)
+                down("XmDown/${m3u8FileName(m3u8)}", m3u8Key, m3u8Ts)
             }
         })
     }
 
-    private fun down(m3u8Key: String, m3u8Ts: ArrayList<String>) {
+    private fun down(dir: String, m3u8Key: String, m3u8Ts: ArrayList<String>) {
         //开启下载的线程
         val downManager = DownManager.createDownManager(this@M3u8DownerTextAct)
+        downManager.downConfig()?.dir = dir
         val task = DownTask()
         task.url = m3u8Key
         downManager.createDownTasker(task).enqueue()
@@ -73,13 +75,11 @@ class M3u8DownerTextAct : AppCompatActivity() {
             task.url = ts
             downManager.createDownTasker(task).enqueue()
         }
-
-        downManager.pauseAllDownTasker()
-
         //进度
         downManager.downObserverable()?.registerObserver(object : DownObserver {
             override fun onComplete(tasker: DownTasker, total: Long) {
-                BKLog.d(task.fileName + "total:$total")
+                tasker.task.url
+                BKLog.d(task.fileName + "total:$total thread:${Looper.getMainLooper()==Looper.getMainLooper()}")
             }
 
             override fun onError(tasker: DownTasker, typeError: DownErrorType, s: String) {
@@ -130,7 +130,6 @@ class M3u8DownerTextAct : AppCompatActivity() {
 
         private class ViewHolder private constructor(val imageView5: ImageView, val tvCourseName: TextView, val pb: ProgressBar, val tvState: TextView, val tvProcessTotal: TextView) {
             companion object {
-
                 fun create(rootView: View): ViewHolder {
                     val imageView5 = rootView.findViewById<View>(R.id.imageView5) as ImageView
                     val tvCourseName = rootView.findViewById<View>(R.id.tv_course_name) as TextView

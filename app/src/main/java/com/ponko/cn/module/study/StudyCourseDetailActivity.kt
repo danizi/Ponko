@@ -3,6 +3,7 @@ package com.ponko.cn.module.study
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
@@ -21,6 +22,7 @@ import com.xm.lib.common.log.BKLog
 import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
 import retrofit2.Response
+import java.io.File
 
 class StudyCourseDetailActivity : AppCompatActivity() {
 
@@ -80,7 +82,8 @@ class StudyCourseDetailActivity : AppCompatActivity() {
             override fun onSuccess(call: Call<CoursesDetailCBean>?, response: Response<CoursesDetailCBean>?) {
                 courseInfo = response?.body()
                 //预览页面
-                val playUrl = courseInfo?.chapters!![0].sections[0].hls1
+                //val playUrl = courseInfo?.chapters!![0].sections[0].hls1
+                val playUrl = Environment.getExternalStorageDirectory().toString() + File.separator + "XmDown/26de49f8c22abafd8adc1b49246262c6_1/26de49f8c22abafd8adc1b49246262c6_1.m3u8"
                 BKLog.d("playUrl:$playUrl")
                 val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
                 attachmentPre.load(playUrl, courseInfo?.image!!)

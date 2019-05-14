@@ -34,7 +34,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
 
     fun update(bean: CourseDbBean) {
         if (db?.isOpen == true) {
-            db?.execSQL(CacheContract.CourseSpecialTable.SQL_UPDATE_BY_ID, arrayOf(
+            db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_ID, arrayOf(
                     bean.column_uid,
                     bean.column_special_id,
                     bean.column_course_id,
@@ -45,7 +45,27 @@ class CourseDao(private var db: SQLiteDatabase?) {
                     bean.column_complete,
                     bean.column_m3u8_url,
                     bean.column_key_ts_url,
-                    bean.column_down_path))
+                    bean.column_down_path,bean.column_course_id))
+            //db?.close()
+        } else {
+            BKLog.d("数据库未打开")
+        }
+    }
+
+    fun updateProgressByUrl(bean: CourseDbBean){
+        if (db?.isOpen == true) {
+            db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_ID, arrayOf(
+                    bean.column_uid,
+                    bean.column_special_id,
+                    bean.column_course_id,
+                    bean.column_cover,
+                    bean.column_title,
+                    bean.column_total,
+                    bean.column_progress,
+                    bean.column_complete,
+                    bean.column_m3u8_url,
+                    bean.column_key_ts_url,
+                    bean.column_down_path,bean.column_course_id))
             //db?.close()
         } else {
             BKLog.d("数据库未打开")

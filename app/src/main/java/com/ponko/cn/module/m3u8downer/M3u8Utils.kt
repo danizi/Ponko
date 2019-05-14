@@ -56,11 +56,13 @@ object M3u8Utils {
             if (line == null) break
             if(line.startsWith("#EXT-X-KEY")){
                 val oldKey = m3u8Key
-                val newKey =Environment.getExternalStorageDirectory().canonicalPath+"$dir/${M3u8Utils.m3u8FileName(oldKey)}.key"
-                line.replace(oldKey,newKey)
+                val newKey =Environment.getExternalStorageDirectory().canonicalPath+"/$dir/${M3u8Utils.m3u8FileName(m3u8)}/${M3u8Utils.m3u8FileName(oldKey)}.key"
+                line = line.replace(oldKey,newKey)
             }
             if (line.startsWith("http://")) {
-                line = m3u8Ts[index++]
+                val oldTs =  m3u8Ts[index++]
+                val newTs = Environment.getExternalStorageDirectory().canonicalPath+"/$dir/${M3u8Utils.m3u8FileName(m3u8)}/${M3u8Utils.m3u8FileName(oldTs)}.ts"
+                line = line.replace(oldTs,newTs)
             }
             bw.write(line + "\r\n")
         }
@@ -77,5 +79,22 @@ object M3u8Utils {
         val name = url.substring(start, end)
         BKLog.d("${url}解析m3u8文件名称：$name")
         return name
+    }
+
+    /**
+     * copyInputStream
+     */
+    fun copyInputStream(input: InputStream?):Pair<InputStream,InputStream> {
+        val baos = ByteArrayOutputStream()
+        val buffer = ByteArray(1024)
+        var len = input?.read(buffer)!!
+        while (len > -1) {
+            baos.write(buffer, 0, len)
+            len = input.read(buffer)
+        }
+        baos.flush()
+        val stream1 = ByteArrayInputStream(baos.toByteArray())
+        val stream2 = ByteArrayInputStream(baos.toByteArray())
+        return Pair(stream1,stream2)
     }
 }
