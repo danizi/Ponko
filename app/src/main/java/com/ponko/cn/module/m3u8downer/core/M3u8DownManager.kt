@@ -46,9 +46,9 @@ class M3u8DownManager internal constructor(builder: Builder?, context: Context) 
         private var dbHelp: M3u8DBHelp? = null
 
         init {
-            dispatcher = M3u8Dispatcher()
-            dao = M3u8DbContract.Dao(dbHelp?.writableDatabase)
+            this.dispatcher = M3u8Dispatcher()
             this.dbHelp = M3u8DBHelp(context, "M3u8Down.db", null, 100)
+            dao = M3u8DbContract.Dao(dbHelp?.writableDatabase)
         }
     }
 }

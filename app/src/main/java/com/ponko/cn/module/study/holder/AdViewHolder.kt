@@ -33,11 +33,11 @@ class AdViewHolder(view: View) : BaseViewHolder(view) {
             v = ViewHolder.create(itemView)
         }
         val adBean = d as AdBean2
-        val ad = adBean.ad!![position]
+        val ad = adBean.ad
         val context = itemView.context
 
         //图片高度自适应
-        val present = adBean.ad!![position].height.toFloat() / adBean.ad!![position].width.toFloat()
+        val present = adBean.ad.height.toFloat() / adBean.ad.width.toFloat()
         val layoutParams = v?.ivAd?.layoutParams
         layoutParams?.height = ((ScreenUtil.getNormalWH(context as Activity)[0] - ScreenUtil.dip2px(context, 28)) * present).toInt()
 

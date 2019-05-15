@@ -71,7 +71,9 @@ class StudyFrg : RefreshLoadFrg<StudyContract.Present, MainCBean>(), StudyContra
         }
         if (body?.ad != null && body.ad.isNotEmpty()) {
             //广告
-            multiData.add(AdBean2(body.ad))
+            for (ad in body.ad){
+                multiData.add(AdBean2(ad))
+            }
         }
         if (body?.types != null && body.types.isNotEmpty()) {
             //课程类别

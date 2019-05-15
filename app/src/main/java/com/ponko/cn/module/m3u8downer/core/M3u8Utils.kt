@@ -1,13 +1,9 @@
 package com.ponko.cn.module.m3u8downer.core
 
 import android.os.Environment
-import com.tencent.wxop.stat.event.i
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.utils.FileUtil
 import java.io.*
-import java.util.*
-import java.util.Arrays.asList
-import kotlin.collections.ArrayList
 
 
 object M3u8Utils {
@@ -106,17 +102,21 @@ object M3u8Utils {
     /**
      * str转集合 1,2,3,4
      */
-    fun strToList(args: String):List<String>{
-        val list = ArrayList<String>()
-        return args.split(",")
+    fun strToList(args: String?):ArrayList<String>?{
+        val l = args?.split(",")
+        val ls=ArrayList<String>()
+        for (s in l?.iterator()!!){
+            ls.add(s)
+        }
+        return ls
     }
 
     /**
      * 集合转str 1,2,3,4
      */
-    fun listToStr(list:List<String>):String{
+    fun listToStr(list:List<String>?):String?{
         val sb = StringBuilder()
-        for (i in 0..(list.size-1)){
+        for (i in 0..(list?.size!!-1)){
             if(i==list.size-1){
                 sb.append("${list[i]}")
             }else{
@@ -125,4 +125,12 @@ object M3u8Utils {
         }
         return sb.toString()
     }
+
+//    @JvmStatic
+//    fun main(args: Array<String>) {
+//        val str = "1,2,3,4,5"
+//        val list = strToList(str)
+//        val str2 = listToStr(list)
+//        println(str2)
+//    }
 }

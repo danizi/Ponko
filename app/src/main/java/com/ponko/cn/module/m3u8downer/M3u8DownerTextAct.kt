@@ -2,6 +2,7 @@ package com.ponko.cn.module.m3u8downer
 
 import android.Manifest
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -77,9 +78,10 @@ class M3u8DownerTextAct : AppCompatActivity() {
                     .fileSize(course.column_total.toLong())
                     .build()
             m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(object : OnDownListener {
-                override fun onStart(m3u8Key: String, m3u8Ts: ArrayList<String>) {
+                override fun onStart(m3u8Analysis: ArrayList<String>) {
                     BKLog.d("M3u8DownTasker 开始下载")
                 }
+
 
                 override fun onComplete(url: String) {
                     BKLog.d("M3u8DownTasker $url 下载完成")
@@ -111,7 +113,15 @@ class M3u8DownerTextAct : AppCompatActivity() {
                 break
             }
         }
-        adapter?.notifyItemChanged(progressIndex)
+//        Looper.prepare();//增加部分
+//        val handler = Handler()
+//        val r = Runnable {  adapter?.notifyItemChanged(progressIndex) }
+//        handler.post(r)
+//        Looper.loop()
+        this.runOnUiThread {
+            adapter?.notifyItemChanged(progressIndex)
+        }
+
     }
 
     private fun updataUIComplete(m3u8: String) {
@@ -124,7 +134,11 @@ class M3u8DownerTextAct : AppCompatActivity() {
                 break
             }
         }
-        adapter?.notifyItemChanged(progressIndex)
+
+        this.runOnUiThread {
+            adapter?.notifyItemChanged(progressIndex)
+        }
+
     }
 
     private fun updateCompleteItem() {
@@ -229,6 +243,5 @@ class M3u8DownerTextAct : AppCompatActivity() {
                 }
             }
         }
-
     }
 }

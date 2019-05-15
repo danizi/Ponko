@@ -1,8 +1,9 @@
 package com.ponko.cn.module.m3u8downer.core
 
 import android.text.TextUtils
-import com.google.gson.Gson
 import com.ponko.cn.module.m3u8downer.core.M3u8Utils.listToStr
+import com.ponko.cn.module.m3u8downer.core.M3u8Utils.strToList
+import com.xm.lib.common.log.BKLog
 
 /**
  * 下载者
@@ -20,22 +21,40 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
     }
 
     override fun enqueue(listener: OnDownListener?) {
+        // 检查本地数据库未下载ts key 和进度，有缓存则设置
+        val cacheBean = m3u8DownManager?.dao?.select(downTask?.m3u8!!)
+        if (!TextUtils.isEmpty(cacheBean?.not_download_ts)) {
+            this.m3u8DownRunnable?.notDownloadM3u8AnalysisUrls = strToList(cacheBean?.not_download_ts)!!
+            this.m3u8DownRunnable?.progress = cacheBean?.progress?.toLong()!!
+            BKLog.d("-> 数据库中缓存的信息")
+            BKLog.d("m3u8           : ${cacheBean.m3u8}")
+            BKLog.d("notDownloadUrl : ${cacheBean.not_download_ts}")
+            BKLog.d("progress       : ${cacheBean.progress}")
+            BKLog.d("total          : ${cacheBean.total}")
+            BKLog.d("-----------------------------------")
+        }
+
+        // 下载任务回调
         this.m3u8DownRunnable?.setOnDownListener(object : OnDownListener {
 
-            override fun onStart(m3u8Key: String, m3u8Ts: ArrayList<String>) {
+            override fun onStart(m3u8Analysis: ArrayList<String>) {
                 // 插入数据库
                 val daoBean = m3u8DownManager?.dao?.select(downTask?.m3u8!!)
                 if (TextUtils.isEmpty(daoBean?.m3u8)) {
                     //数据库中不存在该任务则添加到数据库中
                     daoBean?.m3u8 = downTask?.m3u8!!
-                    daoBean?.need_download_ts = listToStr(m3u8Ts)
-                    daoBean?.need_download_key = m3u8Key
-                    daoBean?.not_download_ts = ""
-                    daoBean?.have_download_ts = ""
-                    daoBean?.hava_key = 0
+                    daoBean?.need_download_ts = listToStr(m3u8Analysis)!!
+                    daoBean?.not_download_ts = listToStr(m3u8Analysis)!!
                     daoBean?.progress = 0
                     daoBean?.total = downTask?.fileSize?.toInt()!!
                     m3u8DownManager?.dao?.insert(daoBean!!)
+                    BKLog.d("-> 插入数据库的信息")
+                    BKLog.d("m3u8             : ${daoBean?.m3u8}")
+                    BKLog.d("need_download_ts : ${daoBean?.need_download_ts}")
+                    BKLog.d("not_download_ts  : ${daoBean?.not_download_ts}")
+                    BKLog.d("progress         : ${daoBean?.progress}")
+                    BKLog.d("total            : ${daoBean?.total}")
+                    BKLog.d("-----------------------------------")
                 }
             }
 
@@ -46,7 +65,15 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
                 val daoBean = m3u8DownManager?.dao?.select(downTask?.m3u8!!)
                 if (!TextUtils.isEmpty(daoBean?.m3u8)) {
                     daoBean?.progress = daoBean?.total!!
+                    daoBean.not_download_ts = getDownload_ts(daoBean.not_download_ts, url)!!
                     m3u8DownManager?.dao?.update(daoBean)
+                    BKLog.d("-> 插入数据库的信息 ps:<>是修改过的值")
+                    BKLog.d("m3u8               : ${daoBean?.m3u8}")
+                    BKLog.d("need_download_ts   : ${daoBean?.need_download_ts}")
+                    BKLog.d("<not_download_ts>  : ${daoBean?.not_download_ts}")
+                    BKLog.d("<progress>         : ${daoBean?.progress}")
+                    BKLog.d("total              : ${daoBean?.total}")
+                    BKLog.d("-----------------------------------")
                 }
 
                 // 任务下载完成回调
@@ -58,16 +85,24 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
                 val daoBean = m3u8DownManager?.dao?.select(downTask?.m3u8!!)
                 if (!TextUtils.isEmpty(daoBean?.m3u8)) {
                     daoBean?.progress = progress
-                    if(url.endsWith(".key")){
-                        daoBean?.hava_key = 1
-                        daoBean?.need_download_key = url
-                    }else if(url.endsWith(".ts")){
-                        daoBean?.have_download_ts +="$url,"
-                    }
+                    daoBean?.not_download_ts = getDownload_ts(daoBean?.not_download_ts, url)!!
                     m3u8DownManager?.dao?.update(daoBean!!)
+                    BKLog.d("-> 更新数据库的信息 ps:<>是修改过的值")
+                    BKLog.d("m3u8               : ${daoBean?.m3u8}")
+                    BKLog.d("need_download_ts   : ${daoBean?.need_download_ts}")
+                    BKLog.d("<not_download_ts>  : ${daoBean?.not_download_ts}")
+                    BKLog.d("<progress>         : ${daoBean?.progress}")
+                    BKLog.d("total              : ${daoBean?.total}")
+                    BKLog.d("-----------------------------------")
                 }
                 // 回调任务进度
                 listener?.onProcess(downTask?.m3u8!!, progress)
+            }
+
+            private fun getDownload_ts(not_download_ts: String?, downloadedUrl: String): String? {
+                val notDownloadUrl = strToList(not_download_ts)
+                notDownloadUrl?.remove(downloadedUrl)
+                return listToStr(notDownloadUrl)
             }
 
             override fun onError(msg: String) {
@@ -75,6 +110,8 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
                 listener?.onError(msg)
             }
         })
+
+        // 添加到下载队列中
         m3u8DownManager?.dispatcher?.enqueue(this)
     }
 
