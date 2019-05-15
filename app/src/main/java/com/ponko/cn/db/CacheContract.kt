@@ -103,7 +103,7 @@ class CacheContract {
 
         //删
         const val SQL_DEL_BY_ID="DELETE FORM $TABLE_NAME WHERE $$COLUMN_COURSE_ID"
-        const val SQL_DEL_ALL=""
+        const val SQL_DEL_ALL="DELETE FORM $TABLE_NAME"
 
         //改
         const val SQL_UPDATE_BY_ID="UPDATE $TABLE_NAME SET " +

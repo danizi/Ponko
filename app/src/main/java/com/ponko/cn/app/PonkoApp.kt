@@ -8,9 +8,8 @@ import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constant.BASE_API
 import com.ponko.cn.constant.Constant.TOKEN
-import com.ponko.cn.db.CacheContract
 import com.ponko.cn.db.PonkoDBHelp
-import com.ponko.cn.db.dao.CourseSpecialDao
+import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
 import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import java.io.File
@@ -32,14 +31,24 @@ class PonkoApp : Application() {
         var app: Application? = null
         var mainCBean: MainCBean? = null
         var dbHelp: PonkoDBHelp? = null
+        var m3u8DownManager: M3u8DownManager? = null
     }
 
     override fun onCreate() {
         super.onCreate()
         app = this
+        //初始化网络请求
         initNetWork()
-        initActivityManage()
+        //初始化窗口管理
+        initActivityManager()
+        //初始化数据库
         initDb()
+        //初始化m3u8文件下载器
+        initDownManager()
+    }
+
+    private fun initDownManager() {
+        m3u8DownManager = M3u8DownManager(this)
     }
 
     private fun initNetWork() {
@@ -63,7 +72,7 @@ class PonkoApp : Application() {
         payApi = retrofitClient?.retrofit?.create(PayApi::class.java)
     }
 
-    private fun initActivityManage() {
+    private fun initActivityManager() {
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityPaused(activity: Activity?) {
                 activityManager.onActivityPaused(activity)

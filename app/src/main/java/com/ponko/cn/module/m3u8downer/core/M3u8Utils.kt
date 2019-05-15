@@ -1,9 +1,14 @@
-package com.ponko.cn.module.m3u8downer
+package com.ponko.cn.module.m3u8downer.core
 
 import android.os.Environment
+import com.tencent.wxop.stat.event.i
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.utils.FileUtil
 import java.io.*
+import java.util.*
+import java.util.Arrays.asList
+import kotlin.collections.ArrayList
+
 
 object M3u8Utils {
 
@@ -33,12 +38,12 @@ object M3u8Utils {
                 ts.add(line)
             }
         }
-        BKLog.d("********************")
+        BKLog.d("===================================================")
         BKLog.d("mu38文件截取key:$key")
         for (t in ts?.iterator()) {
             BKLog.d("mu38文件截取ts:$t")
         }
-        BKLog.d("********************")
+        BKLog.d("===================================================")
         return Pair(key, ts)
     }
 
@@ -46,7 +51,7 @@ object M3u8Utils {
      * m3u8文件写入本地，并且修改文件中key ts 地址，指向本地
      */
     fun writeLocal(inputStream: InputStream?, m3u8: String, dir: String, m3u8Key: String, m3u8Ts: ArrayList<String>) {
-        val outFile = FileUtil.createNewFile(Environment.getExternalStorageDirectory().canonicalPath, "$dir/${M3u8Utils.m3u8FileName(m3u8)}", "${M3u8Utils.m3u8FileName(m3u8)}.m3u8")
+        val outFile = FileUtil.createNewFile(Environment.getExternalStorageDirectory().canonicalPath, "$dir/${m3u8FileName(m3u8)}", "${m3u8FileName(m3u8)}.m3u8")
         val br = BufferedReader(InputStreamReader(inputStream))
         val bw = BufferedWriter(OutputStreamWriter(FileOutputStream(outFile)))
         var line: String? = null
@@ -56,12 +61,12 @@ object M3u8Utils {
             if (line == null) break
             if(line.startsWith("#EXT-X-KEY")){
                 val oldKey = m3u8Key
-                val newKey =Environment.getExternalStorageDirectory().canonicalPath+"/$dir/${M3u8Utils.m3u8FileName(m3u8)}/${M3u8Utils.m3u8FileName(oldKey)}.key"
+                val newKey =Environment.getExternalStorageDirectory().canonicalPath+"/$dir/${m3u8FileName(m3u8)}/${m3u8FileName(oldKey)}.key"
                 line = line.replace(oldKey,newKey)
             }
             if (line.startsWith("http://")) {
                 val oldTs =  m3u8Ts[index++]
-                val newTs = Environment.getExternalStorageDirectory().canonicalPath+"/$dir/${M3u8Utils.m3u8FileName(m3u8)}/${M3u8Utils.m3u8FileName(oldTs)}.ts"
+                val newTs = Environment.getExternalStorageDirectory().canonicalPath+"/$dir/${m3u8FileName(m3u8)}/${m3u8FileName(oldTs)}.ts"
                 line = line.replace(oldTs,newTs)
             }
             bw.write(line + "\r\n")
@@ -75,7 +80,7 @@ object M3u8Utils {
      */
     fun m3u8FileName(url: String): String {
         val start = url.lastIndexOf("/") + 1
-        val end = url.lastIndexOf(".")
+        val end = url.lastIndexOf("")
         val name = url.substring(start, end)
         BKLog.d("${url}解析m3u8文件名称：$name")
         return name
@@ -96,5 +101,28 @@ object M3u8Utils {
         val stream1 = ByteArrayInputStream(baos.toByteArray())
         val stream2 = ByteArrayInputStream(baos.toByteArray())
         return Pair(stream1,stream2)
+    }
+
+    /**
+     * str转集合 1,2,3,4
+     */
+    fun strToList(args: String):List<String>{
+        val list = ArrayList<String>()
+        return args.split(",")
+    }
+
+    /**
+     * 集合转str 1,2,3,4
+     */
+    fun listToStr(list:List<String>):String{
+        val sb = StringBuilder()
+        for (i in 0..(list.size-1)){
+            if(i==list.size-1){
+                sb.append("${list[i]}")
+            }else{
+                sb.append("${list[i]},")
+            }
+        }
+        return sb.toString()
     }
 }
