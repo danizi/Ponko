@@ -9,6 +9,8 @@ import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constant.BASE_API
 import com.ponko.cn.db.PonkoDBHelp
+import com.ponko.cn.db.dao.CourseDao
+import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
 import com.ponko.cn.utils.CacheUtil
 import com.xm.lib.common.base.ActManager
@@ -33,6 +35,9 @@ class PonkoApp : Application() {
         var payApi: PayApi? = null
 
         var dbHelp: PonkoDBHelp? = null
+        var courseSpecialDao: CourseSpecialDao?=null
+        var courseDao: CourseDao?=null
+
         var activityManager = ActManager()
         @SuppressLint("StaticFieldLeak")
         var m3u8DownManager: M3u8DownManager? = null
@@ -110,5 +115,7 @@ class PonkoApp : Application() {
 
     private fun initDb() {
         dbHelp = PonkoDBHelp(this, "Ponko.db", null, 101)
+        courseSpecialDao = CourseSpecialDao(PonkoApp.dbHelp?.writableDatabase)
+        courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
     }
 }

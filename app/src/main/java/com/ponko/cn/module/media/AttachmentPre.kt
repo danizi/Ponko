@@ -4,7 +4,11 @@ import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.bean.VideoInfoCBean
+import com.xm.lib.common.log.BKLog
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
 import com.xm.lib.media.base.IXmMediaPlayer
@@ -12,8 +16,14 @@ import com.xm.lib.media.event.GestureObserver
 import com.xm.lib.media.event.PhoneStateObserver
 import com.xm.lib.media.event.PlayerObserver
 
+/**
+ * 预览页面
+ */
+class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseAttachmentView(context!!) {
+    companion object {
+        private const val TAG = "AttachmentPre"
+    }
 
-class AttachmentPre(context: Context?, private var preUrl: String ?= "") : BaseAttachmentView(context!!) {
     private var ivStart: ImageView? = null
     private var pbLoading: ProgressBar? = null
     var url: String? = ""
@@ -34,7 +44,7 @@ class AttachmentPre(context: Context?, private var preUrl: String ?= "") : BaseA
         Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ivPre)//加载图片
     }
 
-    fun load(playUrl:String,preUrl: String){
+    fun load(playUrl: String, preUrl: String) {
         this.url = playUrl
         this.preUrl = preUrl
         Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ivPre)//加载图片

@@ -11,6 +11,8 @@ import android.widget.TextView
 import com.google.gson.Gson
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.app.PonkoApp.Companion.courseDao
+import com.ponko.cn.app.PonkoApp.Companion.courseSpecialDao
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.M3u8InfoBean
@@ -33,7 +35,7 @@ import retrofit2.Call
 import retrofit2.Response
 
 /**
- * 课程缓存页面
+ * 专题-选集缓存页面
  */
 class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
 
@@ -41,11 +43,12 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         /**
          * 日志标识
          */
-        private const val TAG="CacheActivity"
+        private const val TAG = "CacheActivity"
         /**
          * 选中专题下的课程数量
          */
         val SleSections = ArrayList<CoursesDetailCBean.ChaptersBean.SectionsBean>()
+
         /**
          * @param context  上下文对象
          * @param typeId   专题唯一标识
@@ -63,12 +66,34 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         }
     }
 
+    /**
+     * 专题唯一标识
+     */
     private var typeId: String = ""
+    /**
+     * 专题老师
+     */
     private var teachers: String = ""
+    /**
+     * 专题课程数量
+     */
     private var num: Int = 0
+    /**
+     * 专题课程总时长
+     */
     private var duration: Int = 0
+    /**
+     * 全选按钮
+     */
     private var btnAllSelect: Button? = null
+    /**
+     * 下载按钮
+     */
     private var btnDown: Button? = null
+    /**
+     * 专题-选集返回实体
+     */
+    private var coursesDetailCBean: CoursesDetailCBean? = null
 
     override fun getLayoutId(): Int {
         return R.layout.activity_cache2
@@ -91,19 +116,20 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
     override fun iniEvent() {
         super.iniEvent()
         btnAllSelect?.setOnClickListener {
-            BKLog.d(TAG,"点击全选")
+            BKLog.d(TAG, "点击全选")
         }
         btnDown?.setOnClickListener {
-            BKLog.d(TAG,"下载")
+            BKLog.d(TAG, "下载")
             //跳转到下载测试页面
-            M3u8DownerTextAct.start(this,typeId,teachers,num.toLong(),duration.toLong())
+            M3u8DownerTextAct.start(this, typeId, teachers, num.toLong(), duration.toLong())
             //专题加入数据库中
             insertToCourseDb()
         }
     }
 
     private fun insertToCourseDb() {
-        val courseSpecialDao = CourseSpecialDao(PonkoApp.dbHelp?.writableDatabase)
+        //下载专题存入数据
+        //val courseSpecialDao = CourseSpecialDao(PonkoApp.dbHelp?.writableDatabase)
         val courseSpecialDbBean = CourseSpecialDbBean()
         courseSpecialDbBean.uid = "uid"
         courseSpecialDbBean.special_id = typeId
@@ -111,10 +137,11 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         courseSpecialDbBean.cover = coursesDetailCBean?.image!!
         courseSpecialDbBean.teacher = teachers
         courseSpecialDbBean.num = num
-        courseSpecialDao.insert(courseSpecialDbBean)
+        courseSpecialDao?.insert(courseSpecialDbBean)
+        //BKLog.d(TAG, ">专题数据库内容:" + courseSpecialDao?.selectAll()?.toArray())
 
-        //课程保存到数据库中
-        val courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
+        //下载专题下的课程列表
+        //val courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
         for (section in SleSections) {
             val courseDbBean = CourseDbBean()
             courseDbBean.column_uid = "uuid"
@@ -125,19 +152,14 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
             courseDbBean.column_total = section.filesize1
             courseDbBean.column_progress = 0
             courseDbBean.column_complete = 0
-            courseDbBean.column_m3u8_url = section.hls1
+            courseDbBean.column_m3u8_url = ""
             courseDbBean.column_key_ts_url = Gson().toJson(M3u8InfoBean())
-            courseDbBean.column_down_path = "XmDown/sadfasdfsdaf"
-            courseDao.insert(courseDbBean)
+            courseDbBean.column_down_path = ""
+            courseDbBean.column_state = "点击下载"
+            courseDbBean.column_vid = section.vid
+            courseDao?.insert(courseDbBean)
         }
-        BKLog.d(TAG, "专题数据库内容:" + courseSpecialDao.selectAll().toArray())
-        BKLog.d(TAG, "课程数据库内容:" + courseDao.selectAll().toArray())
-
-        //下载
-        //            val downManager=  DownManager.createDownManager(this)
-        //            val task = DownTask()
-        //            task.url = ""
-        //            downManager.createDownTasker(task)
+        //BKLog.d(TAG, "课程数据库内容:" + courseDao?.selectAll()?.toArray())
         SleSections.clear()
     }
 
@@ -146,7 +168,7 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         teachers = intent.getStringExtra("teachers")
         num = intent.getLongExtra("num", 0L).toInt()
         duration = intent.getLongExtra("duration", 0).toInt()
-        BKLog.d(TAG,"接受课程详情页发送过来的信息，专题id:$typeId 老师$teachers 集数$num 总时长${duration / 60f / 60f}小时")
+        BKLog.d(TAG, "接受课程详情页发送过来的信息，专题id:$typeId 老师$teachers 集数$num 总时长${duration / 60f / 60f}小时")
         super.iniData()
     }
 
@@ -161,7 +183,6 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
 
     override fun requestMoreApi() {}
 
-    private var coursesDetailCBean: CoursesDetailCBean? = null
     override fun requestRefreshApi() {
         PonkoApp.studyApi?.getCourseDetail(typeId)?.enqueue(object : HttpCallBack<CoursesDetailCBean>() {
             override fun onSuccess(call: Call<CoursesDetailCBean>?, response: Response<CoursesDetailCBean>?) {
@@ -184,7 +205,7 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
     }
 
     /**
-     * 缓存列表
+     * 专题-课程ViewHolder
      */
     private class CacheListViewHolder(view: View) : BaseViewHolder(view) {
 
@@ -216,7 +237,7 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
     }
 
     /**
-     * 缓存item列表
+     * 课程item列表ViewHolder
      */
     private class CacheItemViewHolder(view: View) : BaseViewHolder(view) {
 
@@ -246,16 +267,16 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
                 //viewHolder?.textView2?.setBackgroundResource(R.mipmap.collection_p_check)
                 //viewHolder?.textView2?.setBackgroundResource(R.drawable.gray_circle)
                 if (viewHolder?.textView2?.isChecked == true) {
-                    BKLog.d(TAG,"取消选择")
+                    BKLog.d(TAG, "取消选择")
                     viewHolder?.textView2?.isChecked = false
                     SleSections.remove(sectionsBean)
                 } else {
-                    BKLog.d(TAG,"选择")
+                    BKLog.d(TAG, "选择")
                     viewHolder?.textView2?.isChecked = true
                     SleSections.add(sectionsBean)
                 }
 
-                BKLog.d(TAG,"点击了${sectionsBean.name}")
+                BKLog.d(TAG, "点击了${sectionsBean.name}")
             }
         }
     }

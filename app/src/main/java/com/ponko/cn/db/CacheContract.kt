@@ -58,19 +58,23 @@ class CacheContract {
      * 缓存课程表
      */
     object CourseTable {
-        private const val TABLE_NAME = "CourseTable"         //表名称
-        private const val PRIMARY_ID = "_id"                 //主键ID
-        private const val COLUMN_UID = "uid"                 //用户唯一标识
-        private const val COLUMN_SPECIAL_ID = "special_id"   //专题id         PS : 关联缓存专题表，是一对多的关系
-        private const val COLUMN_COURSE_ID = "course_id"     //课程id
-        private const val COLUMN_COVER = "cover"             //封面
-        private const val COLUMN_TITLE = "title"             //课程标题
-        private const val COLUMN_TOTAL = "total"             //单个课程大小 单位（B）
-        private const val COLUMN_PROGRESS = "progress"       //单个课程下载进度 单位（B）
-        private const val COLUMN_COMPLETE = "complete"       //是否下载完成
-        private const val COLUMN_M3U8_URL = "m3u8_url"       //下载的m3u8地址
-        private const val COLUMN_KEY_TS_URL = "key_ts_url"   //key ts 地址
-        private const val COLUMN_DOWN_PATH = "down_path"     //下载路径
+        private const val TABLE_NAME = "CourseTable"           //表名称
+        private const val PRIMARY_ID = "_id"                   //主键ID
+        private const val COLUMN_UID = "uid"                   //用户唯一标识
+        private const val COLUMN_SPECIAL_ID = "special_id"     //专题id         PS : 关联缓存专题表，是一对多的关系
+        private const val COLUMN_COURSE_ID = "course_id"       //课程id
+        private const val COLUMN_COVER = "cover"               //封面
+        private const val COLUMN_TITLE = "title"               //课程标题
+        private const val COLUMN_TOTAL = "total"               //单个课程大小 单位（B）
+        private const val COLUMN_PROGRESS = "progress"         //单个课程下载进度 单位（B）
+        private const val COLUMN_COMPLETE = "complete"         //是否下载完成
+        private const val COLUMN_M3U8_URL = "m3u8_url"         //下载的m3u8地址
+        @Deprecated("")
+        private const val COLUMN_KEY_TS_URL = "key_ts_url"     //key ts 地址
+        private const val COLUMN_DOWN_PATH = "down_path"       //下载路径
+        private const val COLUMN_COLUMN_STATE = "column_state" //下载路径
+        private const val COLUMN_COLUMN_VID = "column_vid"     //下载路径
+
         //创建
         const val SQL_CREATE_TABLE="CREATE TABLE $TABLE_NAME( " +
                 "$PRIMARY_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -84,7 +88,9 @@ class CacheContract {
                 "$COLUMN_COMPLETE INTEGER NOT NULL DEFAULT 0," +
                 "$COLUMN_M3U8_URL TEXT NOT NULL," +
                 "$COLUMN_KEY_TS_URL TEXT NOT NULL," +
-                "$COLUMN_DOWN_PATH TEXT NOT NULL" +
+                "$COLUMN_DOWN_PATH TEXT NOT NULL," +
+                "$COLUMN_COLUMN_STATE TEXT NOT NULL," +
+                "$COLUMN_COLUMN_VID TEXT NOT NULL" +
                 ");"
         //增
         const val SQL_INSERT="INSERT INTO $TABLE_NAME(" +
@@ -98,8 +104,10 @@ class CacheContract {
                 "$COLUMN_COMPLETE," +
                 "$COLUMN_M3U8_URL," +
                 "$COLUMN_KEY_TS_URL," +
-                "$COLUMN_DOWN_PATH" +
-                ") VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+                "$COLUMN_DOWN_PATH," +
+                "$COLUMN_COLUMN_STATE," +
+                "$COLUMN_COLUMN_VID" +
+                ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
         //删
         const val SQL_DEL_BY_ID="DELETE FORM $TABLE_NAME WHERE $$COLUMN_COURSE_ID"
@@ -117,9 +125,12 @@ class CacheContract {
                 "$COLUMN_COMPLETE=?," +
                 "$COLUMN_M3U8_URL=?," +
                 "$COLUMN_KEY_TS_URL=?," +
-                "$COLUMN_DOWN_PATH=? WHERE $COLUMN_COURSE_ID=?;"
+                "$COLUMN_DOWN_PATH=?," +
+                "$COLUMN_COLUMN_STATE=?," +
+                "$COLUMN_COLUMN_VID=? WHERE $COLUMN_COURSE_ID=?;"
         //查
         const val SQL_SELECT_BY_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
+        const val SQL_SELECT_BY_VID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COLUMN_VID = ?;"
         const val SQL_SELECT_ALL="SELECT * FROM $TABLE_NAME;"
     }
 }

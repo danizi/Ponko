@@ -6,7 +6,7 @@ import com.ponko.cn.db.bean.CourseSpecialDbBean
 import com.xm.lib.common.log.BKLog
 
 /**
- * dao
+ * 专题操作类数据库类
  */
 class CourseSpecialDao(private var db: SQLiteDatabase?) {
 
@@ -111,5 +111,12 @@ class CourseSpecialDao(private var db: SQLiteDatabase?) {
             BKLog.d("数据库未打开")
         }
         return queryAllData
+    }
+
+    /**
+     * 判断是否存在
+     */
+    fun exist(){
+
     }
 }

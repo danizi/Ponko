@@ -2,9 +2,13 @@ package com.ponko.cn.db.dao
 
 import android.database.sqlite.SQLiteDatabase
 import com.ponko.cn.db.CacheContract
+import com.ponko.cn.db.CacheContract.CourseTable.SQL_SELECT_BY_VID
 import com.ponko.cn.db.bean.CourseDbBean
 import com.xm.lib.common.log.BKLog
 
+/**
+ * 专题-课程操作类数据库类
+ */
 class CourseDao(private var db: SQLiteDatabase?) {
 
     fun insert(bean: CourseDbBean) {
@@ -51,6 +55,43 @@ class CourseDao(private var db: SQLiteDatabase?) {
             BKLog.d("数据库未打开")
         }
     }
+
+    fun update(vid: String) {
+        val bean =  select(vid)[0]
+        if (bean!=null){
+            db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_VID, arrayOf(
+                    bean.column_uid,
+                    bean.column_special_id,
+                    bean.column_course_id,
+                    bean.column_cover,
+                    bean.column_title,
+                    bean.column_total,
+                    bean.column_progress,
+                    bean.column_complete,
+                    bean.column_m3u8_url,
+                    bean.column_key_ts_url,
+                    bean.column_down_path,bean.column_course_id))
+        }
+    }
+
+    fun update(vid: String,cacheM3u8:String,complete:Int){
+        val bean =  select(vid)[0]
+        if (bean!=null){
+            db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_VID, arrayOf(
+                    bean.column_uid,
+                    bean.column_special_id,
+                    bean.column_course_id,
+                    bean.column_cover,
+                    bean.column_title,
+                    bean.column_total,
+                    bean.column_progress,
+                    bean.column_complete,
+                    bean.column_m3u8_url,
+                    bean.column_key_ts_url,
+                    bean.column_down_path,bean.column_course_id))
+        }
+    }
+
 
     fun updateProgressByUrl(bean: CourseDbBean){
         if (db?.isOpen == true) {
@@ -110,6 +151,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
                 courseDbBean.column_m3u8_url = cursor.getString(9)
                 courseDbBean.column_key_ts_url = cursor.getString(10)
                 courseDbBean.column_down_path = cursor.getString(11)
+                courseDbBean.column_vid = cursor.getString(12)
                 queryData.add(courseDbBean)
             }
             //db?.close()
@@ -117,6 +159,33 @@ class CourseDao(private var db: SQLiteDatabase?) {
             BKLog.d("数据库未打开")
         }
         return queryData
+    }
+
+    fun select(vid:String?): ArrayList<CourseDbBean>{
+        val data = ArrayList<CourseDbBean>()
+        val cursor = db?.rawQuery(SQL_SELECT_BY_VID, arrayOf(vid))
+        if(cursor!=null){
+            while (cursor.moveToNext()){
+                val courseDbBean = CourseDbBean()
+                val id = cursor.getString(0)
+                courseDbBean.column_uid = cursor.getString(1)
+                courseDbBean.column_special_id = cursor.getString(2)
+                courseDbBean.column_course_id = cursor.getString(3)
+                courseDbBean.column_cover = cursor.getString(4)
+                courseDbBean.column_title = cursor.getString(5)
+                courseDbBean.column_total = cursor.getInt(6)
+                courseDbBean.column_progress = cursor.getInt(7)
+                courseDbBean.column_complete = cursor.getInt(8)
+                courseDbBean.column_m3u8_url = cursor.getString(9)
+                courseDbBean.column_key_ts_url = cursor.getString(10)
+                courseDbBean.column_down_path = cursor.getString(11)
+                courseDbBean.column_vid = cursor.getString(12)
+                data.add(courseDbBean)
+            }
+        }else{
+            BKLog.e("数据库中未查询到")
+        }
+        return data
     }
 
     fun selectAll(): ArrayList<CourseDbBean> {
@@ -139,6 +208,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
                 courseDbBean.column_m3u8_url = cursor.getString(9)
                 courseDbBean.column_key_ts_url = cursor.getString(10)
                 courseDbBean.column_down_path = cursor.getString(11)
+                courseDbBean.column_vid = cursor.getString(12)
                 queryAllData.add(courseDbBean)
             }
             //db?.close()
@@ -146,5 +216,12 @@ class CourseDao(private var db: SQLiteDatabase?) {
             BKLog.d("数据库未打开")
         }
         return queryAllData
+    }
+
+    /**
+     * 判断是否存在
+     */
+    fun exist(vid:String?):Boolean{
+        return select(vid).size>0
     }
 }

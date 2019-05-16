@@ -16,16 +16,20 @@ import android.widget.Toast
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.m3u8DownManager
+import com.ponko.cn.bean.VideoInfoCBean
 import com.ponko.cn.db.bean.CourseDbBean
 import com.ponko.cn.db.dao.CourseDao
 import com.ponko.cn.module.m3u8downer.core.M3u8DownTask
+import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.module.m3u8downer.core.OnDownListener
+import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.study.StudyCourseDetailActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.utils.FileUtil
+import java.io.File
 
 class M3u8DownerTextAct : AppCompatActivity() {
 
@@ -34,12 +38,11 @@ class M3u8DownerTextAct : AppCompatActivity() {
         private const val UPDATE_PROCESS = 1
         private const val UPDATE_COMPLETE = 2
         private const val UPDATE_STATE = 3
-        private const val UPDATE_SATART = 4
-        val DOWN_STATE_START = "下载准备中...."
-        val DOWN_STATE_COMPLETE = "下载完成"
-        val DOWN_STATE_PROCESS = "下载中..."
-        val DOWN_STATE_ERROR = "下载错误"
-        val DOWN_STATE_PAUSE = "暂停"
+        private const val DOWN_STATE_START = "下载准备中...."
+        private const val DOWN_STATE_COMPLETE = "下载完成"
+        private const val DOWN_STATE_PROCESS = "下载中..."
+        private const val DOWN_STATE_ERROR = "下载错误"
+        private const val DOWN_STATE_PAUSE = "暂停"
 
         private var value_typeId = ""
         private var value_teachers = ""
@@ -52,10 +55,6 @@ class M3u8DownerTextAct : AppCompatActivity() {
             value_teachers = teachers
             value_num = num
             value_duration = duration
-//            intent.putExtra("typeId", typeId)
-//            intent.putExtra("teachers", teachers)
-//            intent.putExtra("num", num)
-//            intent.putExtra("duration", duration)
             context.startActivity(intent)
         }
     }
@@ -70,7 +69,8 @@ class M3u8DownerTextAct : AppCompatActivity() {
         rv = findViewById<RecyclerView>(R.id.rv)
 
         //设置rv
-        val dao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
+        //val dao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
+        val dao = PonkoApp.courseDao!!
         val datas = setRv(dao)
 
         //检查权限
@@ -110,12 +110,29 @@ class M3u8DownerTextAct : AppCompatActivity() {
 
     fun down(datas: ArrayList<CourseDbBean>) {
         for (course in datas.iterator()) {
-            val m3u8DownTask = M3u8DownTask.Builder()
-                    .m3u8(course.column_m3u8_url)
-                    .name(course.column_title)
-                    .fileSize(course.column_total.toLong())
-                    .build()
-            m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
+
+            val vid = course.column_vid
+            MediaUitl.getUrlByVid(vid, PonkoApp.mainCBean?.polyv?.user_id!!, PonkoApp.mainCBean?.polyv?.secret_key!!, object : MediaUitl.OnVideoInfoListener {
+                override fun onFailure() {
+                    BKLog.d(TAG, "通过vid${vid}获取m3u8地址失败")
+                    Toast.makeText(this@M3u8DownerTextAct, "请检查您的网络", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onSuccess(videoInfo: VideoInfoCBean) {
+                    BKLog.d(TAG, "通过vid${vid}获取m3u8地址成功${videoInfo.toString()}")
+                    val m3u8 = videoInfo.data[0].hls[3]
+                    //存入数据库
+                    PonkoApp.courseDao?.update(vid)
+
+                    val m3u8DownTask = M3u8DownTask.Builder()
+                            .m3u8(course.column_m3u8_url)
+                            .name(course.column_title)
+                            .fileSize(course.column_total.toLong())
+                            .build()
+                    m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
+                }
+            })
+
         }
 
         m3u8DownManager?.listener = object : OnDownListener {
@@ -133,6 +150,9 @@ class M3u8DownerTextAct : AppCompatActivity() {
                 courseDbBean.column_state = DOWN_STATE_COMPLETE
                 updateRv(url, courseDbBean, UPDATE_COMPLETE)
                 //updataUIComplete(url)
+
+                val cacheM3u8 = PonkoApp.m3u8DownManager?.path + File.separator + PonkoApp.m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(url) +File.separator+ M3u8Utils.m3u8FileName(url)
+                PonkoApp.courseDao?.update(url,cacheM3u8,1)
 
             }
 
@@ -184,38 +204,6 @@ class M3u8DownerTextAct : AppCompatActivity() {
         }
     }
 
-//    private fun updateUIProcess(m3u8: String, progress: Long) {
-//        var progressIndex = -1
-//        for (i in 0..(adapter?.data?.size!! - 1)) {
-//            val courseDbBean = adapter?.data!![i] as CourseDbBean
-//            if (m3u8 == courseDbBean.column_m3u8_url) {
-//                progressIndex = i
-//                courseDbBean.column_progress = progress.toInt()
-//                break
-//            }
-//        }
-//        this.runOnUiThread {
-//            adapter?.notifyItemChanged(progressIndex)
-//        }
-//
-//    }
-//
-//    private fun updataUIComplete(m3u8: String) {
-//        var progressIndex = -1
-//        for (i in 0..(adapter?.data?.size!! - 1)) {
-//            val courseDbBean = adapter?.data!![i] as CourseDbBean
-//            if (m3u8 == courseDbBean.column_m3u8_url) {
-//                progressIndex = i
-//                courseDbBean.column_complete = 1
-//                break
-//            }
-//        }
-//
-//        this.runOnUiThread {
-//            adapter?.notifyItemChanged(progressIndex)
-//        }
-//    }
-
     /**
      * 下载任务页面
      */
@@ -234,10 +222,10 @@ class M3u8DownerTextAct : AppCompatActivity() {
             progress(courseDbBean)                                     //下载修改“进度提示字”和“进度条”
             viewHolder?.tvCourseName?.text = courseDbBean.column_title //任务名称
             when (courseDbBean.column_complete) {
-                0->{
+                0 -> {
                     viewHolder?.tvState?.text = courseDbBean.column_state
                 }
-                1->{
+                1 -> {
                     viewHolder?.tvState?.text = DOWN_STATE_COMPLETE    //下载状态提示字
                 }
             }
@@ -257,7 +245,7 @@ class M3u8DownerTextAct : AppCompatActivity() {
         }
 
         private fun downComplete(context: Context, courseDbBean: CourseDbBean) {
-            StudyCourseDetailActivity.start(context, value_typeId, value_teachers, value_num, value_duration)
+            StudyCourseDetailActivity.startFromCacheCourse(context, value_typeId, value_teachers, value_num, value_duration, courseDbBean.column_vid)
         }
 
         private fun notDownComplete(courseDbBean: CourseDbBean) {
