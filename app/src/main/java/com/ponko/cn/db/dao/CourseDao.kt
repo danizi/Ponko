@@ -94,8 +94,9 @@ class CourseDao(private var db: SQLiteDatabase?) {
             val cursor = db?.rawQuery(CacheContract.CourseTable.SQL_SELECT_BY_ID, arrayOf(bean.column_special_id))
             if (cursor == null) {
                 BKLog.e("从数据库中未查找到内容")
+                return queryData
             }
-            while (cursor?.moveToNext()!!) {
+            while (cursor.moveToNext()) {
                 val courseDbBean = CourseDbBean()
                 val id = cursor.getString(0)
                 courseDbBean.column_uid = cursor.getString(1)

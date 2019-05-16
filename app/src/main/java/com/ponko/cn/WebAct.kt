@@ -9,6 +9,7 @@ import android.net.http.SslError
 import android.os.Build
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.AppCompatButton
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.View
@@ -17,20 +18,17 @@ import android.webkit.*
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.ponko.cn.constant.Constant
-import com.ponko.cn.module.common.PonkoBaseAct
-import com.xm.lib.common.log.BKLog
-import com.xm.lib.common.util.ViewUtil
-import android.support.v7.widget.AppCompatButton
 import com.google.gson.Gson
-import com.ponko.cn.R.id.view
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
 import com.ponko.cn.bean.AddressBean
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.bean.OrderCBean
 import com.ponko.cn.http.HttpCallBack
-import com.xm.lib.component.XmIOSDialog.ViewHolder.tvTitle
+import com.ponko.cn.module.common.PonkoBaseAct
+import com.ponko.cn.utils.CacheUtil.getToken
+import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.XmPopWindow
 import com.xm.lib.pay.AbsPay
 import com.xm.lib.pay.Channel
@@ -327,7 +325,7 @@ class WebAct : PonkoBaseAct<Any>() {
             heads["x-tradestudy-client-version"] = "3.4.6"
             heads["x-tradestudy-client-device"] = "android_phone"
             heads["x-tradestudy-access-key-id"] = "c"
-            heads["x-tradestudy-access-token"] = Constant.TOKEN
+            heads["x-tradestudy-access-token"] = getToken()!!
             return heads
         }
 

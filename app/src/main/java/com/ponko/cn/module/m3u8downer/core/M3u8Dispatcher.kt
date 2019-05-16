@@ -50,6 +50,32 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
         }
     }
 
+    fun remove(url:String){
+        for (tasker in runningQueue?.iterator()!!){
+            if(url==tasker.downTask?.m3u8){
+                tasker.m3u8DownRunnable?.stop()
+                runningQueue?.remove(tasker)
+                return
+            }
+        }
+        for (tasker in readyQueue?.iterator()!!){
+            if(url==tasker.downTask?.m3u8){
+                readyQueue?.remove(tasker)
+                tasker.m3u8DownRunnable?.stop()
+                return
+            }
+        }
+    }
+
+    fun isRun(url:String):Boolean{
+        for (tasker in runningQueue?.iterator()!!){
+            if(url==tasker.downTask?.m3u8){
+                return true
+            }
+        }
+        return false
+    }
+
     /**
      * 建造者
      */

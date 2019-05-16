@@ -38,7 +38,21 @@ import retrofit2.Response
 class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
 
     companion object {
+        /**
+         * 日志标识
+         */
+        private const val TAG="CacheActivity"
+        /**
+         * 选中专题下的课程数量
+         */
         val SleSections = ArrayList<CoursesDetailCBean.ChaptersBean.SectionsBean>()
+        /**
+         * @param context  上下文对象
+         * @param typeId   专题唯一标识
+         * @param teachers 专题老师
+         * @param num      专题课程数量
+         * @param duration 专题课程总时长
+         */
         fun start(context: Context, typeId: String, teachers: String, num: Long, duration: Long) {
             val intent = Intent(context, CacheActivity::class.java)
             intent.putExtra("typeId", typeId)
@@ -77,59 +91,62 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
     override fun iniEvent() {
         super.iniEvent()
         btnAllSelect?.setOnClickListener {
-            BKLog.d("点击全选")
+            BKLog.d(TAG,"点击全选")
         }
         btnDown?.setOnClickListener {
-            BKLog.d("下载")
-
-            startActivity(Intent(this,M3u8DownerTextAct::class.java))
-
+            BKLog.d(TAG,"下载")
+            //跳转到下载测试页面
+            M3u8DownerTextAct.start(this,typeId,teachers,num.toLong(),duration.toLong())
             //专题加入数据库中
-            val courseSpecialDao = CourseSpecialDao(PonkoApp.dbHelp?.writableDatabase)
-            val courseSpecialDbBean = CourseSpecialDbBean()
-            courseSpecialDbBean.uid = "uid"
-            courseSpecialDbBean.special_id = typeId
-            courseSpecialDbBean.title = coursesDetailCBean?.title!!
-            courseSpecialDbBean.cover = coursesDetailCBean?.image!!
-            courseSpecialDbBean.teacher = teachers
-            courseSpecialDbBean.num = num
-            courseSpecialDao.insert(courseSpecialDbBean)
-
-            //课程保存到数据库中
-            val courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
-            for (section in SleSections) {
-                val courseDbBean = CourseDbBean()
-                courseDbBean.column_uid = "uuid"
-                courseDbBean.column_special_id = typeId
-                courseDbBean.column_course_id = section.id
-                courseDbBean.column_cover = section.avatar
-                courseDbBean.column_title = section.name
-                courseDbBean.column_total = section.filesize1
-                courseDbBean.column_progress = 0
-                courseDbBean.column_complete = 0
-                courseDbBean.column_m3u8_url = section.hls1
-                courseDbBean.column_key_ts_url = Gson().toJson(M3u8InfoBean())
-                courseDbBean.column_down_path = "XmDown/sadfasdfsdaf"
-                courseDao.insert(courseDbBean)
-            }
-            BKLog.d("专题数据库内容:" + courseSpecialDao.selectAll().toArray())
-            BKLog.d("课程数据库内容:" + courseDao.selectAll().toArray())
-
-            //下载
-//            val downManager=  DownManager.createDownManager(this)
-//            val task = DownTask()
-//            task.url = ""
-//            downManager.createDownTasker(task)
-            SleSections.clear()
+            insertToCourseDb()
         }
+    }
+
+    private fun insertToCourseDb() {
+        val courseSpecialDao = CourseSpecialDao(PonkoApp.dbHelp?.writableDatabase)
+        val courseSpecialDbBean = CourseSpecialDbBean()
+        courseSpecialDbBean.uid = "uid"
+        courseSpecialDbBean.special_id = typeId
+        courseSpecialDbBean.title = coursesDetailCBean?.title!!
+        courseSpecialDbBean.cover = coursesDetailCBean?.image!!
+        courseSpecialDbBean.teacher = teachers
+        courseSpecialDbBean.num = num
+        courseSpecialDao.insert(courseSpecialDbBean)
+
+        //课程保存到数据库中
+        val courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
+        for (section in SleSections) {
+            val courseDbBean = CourseDbBean()
+            courseDbBean.column_uid = "uuid"
+            courseDbBean.column_special_id = typeId
+            courseDbBean.column_course_id = section.id
+            courseDbBean.column_cover = section.avatar
+            courseDbBean.column_title = section.name
+            courseDbBean.column_total = section.filesize1
+            courseDbBean.column_progress = 0
+            courseDbBean.column_complete = 0
+            courseDbBean.column_m3u8_url = section.hls1
+            courseDbBean.column_key_ts_url = Gson().toJson(M3u8InfoBean())
+            courseDbBean.column_down_path = "XmDown/sadfasdfsdaf"
+            courseDao.insert(courseDbBean)
+        }
+        BKLog.d(TAG, "专题数据库内容:" + courseSpecialDao.selectAll().toArray())
+        BKLog.d(TAG, "课程数据库内容:" + courseDao.selectAll().toArray())
+
+        //下载
+        //            val downManager=  DownManager.createDownManager(this)
+        //            val task = DownTask()
+        //            task.url = ""
+        //            downManager.createDownTasker(task)
+        SleSections.clear()
     }
 
     override fun iniData() {
         typeId = intent.getStringExtra("typeId")
         teachers = intent.getStringExtra("teachers")
-        num = intent.getIntExtra("num", 0)
-        duration = intent.getIntExtra("duration", 0)
-        BKLog.d("接受课程详情页发送过来的信息，专题id:$typeId 老师$teachers 集数$num 总时长${duration / 60f / 60f}小时")
+        num = intent.getLongExtra("num", 0L).toInt()
+        duration = intent.getLongExtra("duration", 0).toInt()
+        BKLog.d(TAG,"接受课程详情页发送过来的信息，专题id:$typeId 老师$teachers 集数$num 总时长${duration / 60f / 60f}小时")
         super.iniData()
     }
 
@@ -229,16 +246,16 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
                 //viewHolder?.textView2?.setBackgroundResource(R.mipmap.collection_p_check)
                 //viewHolder?.textView2?.setBackgroundResource(R.drawable.gray_circle)
                 if (viewHolder?.textView2?.isChecked == true) {
-                    BKLog.d("取消选择")
+                    BKLog.d(TAG,"取消选择")
                     viewHolder?.textView2?.isChecked = false
                     SleSections.remove(sectionsBean)
                 } else {
-                    BKLog.d("选择")
+                    BKLog.d(TAG,"选择")
                     viewHolder?.textView2?.isChecked = true
                     SleSections.add(sectionsBean)
                 }
 
-                BKLog.d("点击了${sectionsBean.name}")
+                BKLog.d(TAG,"点击了${sectionsBean.name}")
             }
         }
     }

@@ -38,9 +38,14 @@ interface StudyApi {
     fun addCollection(@Field("courseId") courseId: String, @Field("sectionId") sectionId: String): Call<Any>
 
     /**
-     * 上传课程播放信息
+     * 上传课程播放信息 userid    保利威视提供的唯一标识
+     *                  secretKey 保利威视提供的key
+     *                  vid       播放器视频的唯一标识
+     * @param params format = "json"
+     *                ptime  = Long.toString(System.currentTimeMillis());
+     *                sign   = "format=" + format + "&ptime=" + ptime + "&vid=" + vid + secretKey; SHA1签名方式
      */
     @FormUrlEncoded
-    @POST("study/histories/update")
+    @POST("http://api.polyv.net/v2/video/{userid}/get-video-msg")
     fun updateVideoInfo(@FieldMap params: Map<String, String>): Call<Any>
 }

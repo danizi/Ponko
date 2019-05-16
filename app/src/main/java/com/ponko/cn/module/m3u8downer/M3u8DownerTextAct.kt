@@ -1,13 +1,13 @@
 package com.ponko.cn.module.m3u8downer
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -18,190 +18,203 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.m3u8DownManager
 import com.ponko.cn.db.bean.CourseDbBean
 import com.ponko.cn.db.dao.CourseDao
-import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
 import com.ponko.cn.module.m3u8downer.core.M3u8DownTask
-import com.ponko.cn.module.m3u8downer.core.M3u8Utils.analysis
-import com.ponko.cn.module.m3u8downer.core.M3u8Utils.copyInputStream
-import com.ponko.cn.module.m3u8downer.core.M3u8Utils.m3u8FileName
-import com.ponko.cn.module.m3u8downer.core.M3u8Utils.writeLocal
 import com.ponko.cn.module.m3u8downer.core.OnDownListener
+import com.ponko.cn.module.study.StudyCourseDetailActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.downloader.DownManager
-import com.xm.lib.downloader.enum_.DownErrorType
-import com.xm.lib.downloader.event.DownObserver
-import com.xm.lib.downloader.task.DownTask
-import com.xm.lib.downloader.task.DownTasker
 import com.xm.lib.downloader.utils.FileUtil
-import okhttp3.*
-import java.io.IOException
 
 class M3u8DownerTextAct : AppCompatActivity() {
 
+    companion object {
+        private const val TAG = "M3u8DownerTextAct"
+        private const val UPDATE_PROCESS = 1
+        private const val UPDATE_COMPLETE = 2
+        private const val UPDATE_STATE = 3
+        private const val UPDATE_SATART = 4
+        val DOWN_STATE_START = "下载准备中...."
+        val DOWN_STATE_COMPLETE = "下载完成"
+        val DOWN_STATE_PROCESS = "下载中..."
+        val DOWN_STATE_ERROR = "下载错误"
+        val DOWN_STATE_PAUSE = "暂停"
+
+        private var value_typeId = ""
+        private var value_teachers = ""
+        private var value_num = 0L
+        private var value_duration = 0L
+
+        fun start(context: Context, typeId: String, teachers: String, num: Long, duration: Long) {
+            val intent = Intent(context, M3u8DownerTextAct::class.java)
+            value_typeId = typeId
+            value_teachers = teachers
+            value_num = num
+            value_duration = duration
+//            intent.putExtra("typeId", typeId)
+//            intent.putExtra("teachers", teachers)
+//            intent.putExtra("num", num)
+//            intent.putExtra("duration", duration)
+            context.startActivity(intent)
+        }
+    }
+
     private var rv: RecyclerView? = null
     private var adapter: BaseRvAdapter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_m3u8_downer_text)
         //获取需要下载的课程
-        val dao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
-        val datas = dao.selectAll()
         rv = findViewById<RecyclerView>(R.id.rv)
+
+        //设置rv
+        val dao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
+        val datas = setRv(dao)
+
+        //检查权限
+        checkPermission()
+
+        //开始下载
+        down(datas)
+    }
+
+    private fun setRv(dao: CourseDao): ArrayList<CourseDbBean> {
+        val datas = dao.selectAll()
         adapter = object : BaseRvAdapter() {}
         adapter?.data?.addAll(datas)
         adapter?.addItemViewDelegate(0, M3u8ViewHolder::class.java, CourseDbBean::class.java, R.layout.item_down_m3u8)
         rv?.adapter = adapter
         rv?.layoutManager = LinearLayoutManager(this)
+        return datas
+    }
 
-        rv?.adapter?.notifyItemChanged(1)
+    @SuppressLint("CheckResult")
+    private fun checkPermission() {
+        RxPermissions(this)
+                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe { aBoolean ->
+                    if (aBoolean!!) {
+                        //当所有权限都允许之后，返回true
+                        Toast.makeText(this, "文件授权成功", Toast.LENGTH_SHORT).show()
 
-//        RxPermissions(this)
-//                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                .subscribe { aBoolean ->
-//                    if (aBoolean!!) {
-//                        //当所有权限都允许之后，返回true
-//                        Toast.makeText(this,"文件授权成功",Toast.LENGTH_SHORT).show()
-//
-//                    } else {
-//                        //只要有一个权限禁止，返回false，
-//                        //下一次申请只申请没通过申请的权限
-//                        Log.i("permissions", "btn_more_sametime：$aBoolean")
-//                    }
-//                }
-        //val m3u8DownManager = M3u8DownManager(this)
+                    } else {
+                        //只要有一个权限禁止，返回false，
+                        //下一次申请只申请没通过申请的权限
+                        BKLog.d("permissions", "btn_more_sametime：$aBoolean")
+                    }
+                }
+    }
+
+
+    fun down(datas: ArrayList<CourseDbBean>) {
         for (course in datas.iterator()) {
             val m3u8DownTask = M3u8DownTask.Builder()
                     .m3u8(course.column_m3u8_url)
                     .name(course.column_title)
                     .fileSize(course.column_total.toLong())
                     .build()
-            m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(object : OnDownListener {
-                override fun onStart(m3u8Analysis: ArrayList<String>) {
-                    BKLog.d("M3u8DownTasker 开始下载")
-                }
+            m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
+        }
 
+        m3u8DownManager?.listener = object : OnDownListener {
+            override fun onStart(url: String, m3u8Analysis: ArrayList<String>) {
+                BKLog.d(TAG, "M3u8DownTasker 下载准备中....")
+                val courseDbBean = CourseDbBean()
+                courseDbBean.column_state = DOWN_STATE_START
+                updateRv(url, courseDbBean, UPDATE_STATE)
+            }
 
-                override fun onComplete(url: String) {
-                    BKLog.d("M3u8DownTasker $url 下载完成")
-                    updataUIComplete(url)
-                }
+            override fun onComplete(url: String) {
+                BKLog.d(TAG, "M3u8DownTasker $url 下载完成")
+                val courseDbBean = CourseDbBean()
+                courseDbBean.column_complete = 1
+                courseDbBean.column_state = DOWN_STATE_COMPLETE
+                updateRv(url, courseDbBean, UPDATE_COMPLETE)
+                //updataUIComplete(url)
 
-                override fun onProcess(url: String, progress: Int) {
-                    BKLog.d("M3u8DownTasker $url 下载进度")
-                    updateUIProcess(url, progress.toLong())
-                }
+            }
 
-                override fun onError(msg: String) {
-                    BKLog.d("M3u8DownTasker下载错误")
-                }
-            })
+            override fun onProcess(url: String, progress: Int) {
+                BKLog.d(TAG, "M3u8DownTasker $url 下载进度")
+                val courseDbBean = CourseDbBean()
+                courseDbBean.column_progress = progress
+                courseDbBean.column_state = DOWN_STATE_PROCESS
+                updateRv(url, courseDbBean, UPDATE_PROCESS)
+                //updateUIProcess(url, progress.toLong())
+            }
+
+            override fun onError(url: String, msg: String) {
+                BKLog.d(TAG, "M3u8DownTasker下载错误")
+                val courseDbBean = CourseDbBean()
+                courseDbBean.column_state = DOWN_STATE_ERROR
+                updateRv(url, courseDbBean, UPDATE_STATE)
+            }
         }
     }
 
     /**
-     * 更新item进度
+     * 更新Rv界面
      */
-    private fun updateUIProcess(m3u8: String, progress: Long) {
+    private fun updateRv(m3u8: String, value: CourseDbBean?, type: Int) {
         var progressIndex = -1
         for (i in 0..(adapter?.data?.size!! - 1)) {
             val courseDbBean = adapter?.data!![i] as CourseDbBean
             if (m3u8 == courseDbBean.column_m3u8_url) {
                 progressIndex = i
-                courseDbBean.column_progress = progress.toInt()
+                when (type) {
+                    UPDATE_PROCESS -> {
+                        courseDbBean.column_progress = value?.column_progress!!
+                        courseDbBean.column_state = value.column_state
+                    }
+                    UPDATE_COMPLETE -> {
+                        courseDbBean.column_complete = value?.column_complete!! //1
+                        courseDbBean.column_state = value.column_state
+                    }
+                    UPDATE_STATE -> {
+                        courseDbBean.column_state = value?.column_state!!
+                    }
+                }
                 break
             }
         }
-//        Looper.prepare();//增加部分
-//        val handler = Handler()
-//        val r = Runnable {  adapter?.notifyItemChanged(progressIndex) }
-//        handler.post(r)
-//        Looper.loop()
         this.runOnUiThread {
             adapter?.notifyItemChanged(progressIndex)
         }
-
     }
 
-    private fun updataUIComplete(m3u8: String) {
-        var progressIndex = -1
-        for (i in 0..(adapter?.data?.size!! - 1)) {
-            val courseDbBean = adapter?.data!![i] as CourseDbBean
-            if (m3u8 == courseDbBean.column_m3u8_url) {
-                progressIndex = i
-                courseDbBean.column_complete = 1
-                break
-            }
-        }
-
-        this.runOnUiThread {
-            adapter?.notifyItemChanged(progressIndex)
-        }
-
-    }
-
-    private fun updateCompleteItem() {
-        rv?.adapter
-    }
-
-
-    private fun test(datas: ArrayList<CourseDbBean>) {
-        val m3u8 = datas[0].column_m3u8_url
-        val okHttpClient = OkHttpClient()
-        val request = Request.Builder().url(m3u8).get().build()
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                BKLog.d("请求m3u8失败")
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val (stream1, stream2) = copyInputStream(response.body()?.byteStream())
-                val (m3u8Key, m3u8Ts) = analysis(stream1)
-                writeLocal(stream2, m3u8, "XmDown", m3u8Key, m3u8Ts)
-                down("XmDown/${m3u8FileName(m3u8)}", m3u8Key, m3u8Ts)
-            }
-        })
-    }
-
-    private fun down(dir: String, m3u8Key: String, m3u8Ts: ArrayList<String>) {
-        //开启下载的线程
-        val downManager = DownManager.createDownManager(this@M3u8DownerTextAct)
-        downManager.downConfig()?.dir = dir
-        //key url
-        val task = DownTask()
-        task.url = m3u8Key
-        downManager.createDownTasker(task).enqueue()
-
-        //ts url
-        for (ts in m3u8Ts) {
-            val task = DownTask()
-            task.url = ts
-            downManager.createDownTasker(task).enqueue()
-        }
-        //进度
-        downManager.downObserverable()?.registerObserver(object : DownObserver {
-            override fun onComplete(tasker: DownTasker, total: Long) {
-                BKLog.d(task.fileName + "total:$total thread:${Looper.getMainLooper() == Looper.getMainLooper()}")
-            }
-
-            override fun onError(tasker: DownTasker, typeError: DownErrorType, s: String) {
-
-            }
-
-            override fun onProcess(tasker: DownTasker, process: Long, total: Long, present: Float) {
-                // BKLog.d(task.fileName+"process:$process")
-            }
-
-            override fun onPause(tasker: DownTasker) {
-
-            }
-
-            override fun onDelete(tasker: DownTasker) {
-
-            }
-        })
-    }
+//    private fun updateUIProcess(m3u8: String, progress: Long) {
+//        var progressIndex = -1
+//        for (i in 0..(adapter?.data?.size!! - 1)) {
+//            val courseDbBean = adapter?.data!![i] as CourseDbBean
+//            if (m3u8 == courseDbBean.column_m3u8_url) {
+//                progressIndex = i
+//                courseDbBean.column_progress = progress.toInt()
+//                break
+//            }
+//        }
+//        this.runOnUiThread {
+//            adapter?.notifyItemChanged(progressIndex)
+//        }
+//
+//    }
+//
+//    private fun updataUIComplete(m3u8: String) {
+//        var progressIndex = -1
+//        for (i in 0..(adapter?.data?.size!! - 1)) {
+//            val courseDbBean = adapter?.data!![i] as CourseDbBean
+//            if (m3u8 == courseDbBean.column_m3u8_url) {
+//                progressIndex = i
+//                courseDbBean.column_complete = 1
+//                break
+//            }
+//        }
+//
+//        this.runOnUiThread {
+//            adapter?.notifyItemChanged(progressIndex)
+//        }
+//    }
 
     /**
      * 下载任务页面
@@ -209,25 +222,74 @@ class M3u8DownerTextAct : AppCompatActivity() {
     class M3u8ViewHolder(view: View) : BaseViewHolder(view) {
         private var viewHolder: ViewHolder? = null
 
+        @SuppressLint("SetTextI18n")
         override fun bindData(d: Any, position: Int) {
             if (viewHolder == null) {
                 viewHolder = ViewHolder.create(itemView)
             }
             val courseDbBean = d as CourseDbBean
             val context = itemView.context
-            viewHolder?.tvCourseName?.text = courseDbBean.column_title
-            viewHolder?.pb?.max = courseDbBean.column_total
+
+            //设置界面内容
+            progress(courseDbBean)                                     //下载修改“进度提示字”和“进度条”
+            viewHolder?.tvCourseName?.text = courseDbBean.column_title //任务名称
+            when (courseDbBean.column_complete) {
+                0->{
+                    viewHolder?.tvState?.text = courseDbBean.column_state
+                }
+                1->{
+                    viewHolder?.tvState?.text = DOWN_STATE_COMPLETE    //下载状态提示字
+                }
+            }
+
+            //监听
+            itemView.setOnClickListener {
+                BKLog.d(TAG, "点击下载任务item")
+                when (courseDbBean.column_complete) {
+                    0 -> {
+                        notDownComplete(courseDbBean)          //未完成点击处理
+                    }
+                    1 -> {
+                        downComplete(context, courseDbBean)    //完成点击处理
+                    }
+                }
+            }
+        }
+
+        private fun downComplete(context: Context, courseDbBean: CourseDbBean) {
+            StudyCourseDetailActivity.start(context, value_typeId, value_teachers, value_num, value_duration)
+        }
+
+        private fun notDownComplete(courseDbBean: CourseDbBean) {
+            if (m3u8DownManager?.isRun(courseDbBean.column_m3u8_url) == true) {
+                m3u8DownManager?.pause(courseDbBean.column_m3u8_url)
+                viewHolder?.tvState?.text = DOWN_STATE_PAUSE     //点击暂停后
+            } else {
+                m3u8DownManager?.resume(
+                        M3u8DownTask.Builder()
+                                .name(courseDbBean.column_title)
+                                .m3u8(courseDbBean.column_m3u8_url)
+                                .fileSize(courseDbBean.column_total.toLong())
+                                .build())
+                viewHolder?.tvState?.text = DOWN_STATE_PROCESS
+            }
+        }
+
+        @SuppressLint("SetTextI18n")
+        fun progress(courseDbBean: CourseDbBean) {
+            viewHolder?.pb?.max = courseDbBean.column_total//进度条最大值设置
+            val total = FileUtil.getSizeUnit(courseDbBean.column_total.toLong())
+            val progress = FileUtil.getSizeUnit(courseDbBean.column_progress.toLong())
             if (courseDbBean.column_complete == 1) {
                 //完成
+                //viewHolder?.tvState?.text = "下载完成"
                 viewHolder?.pb?.progress = courseDbBean.column_total
-                viewHolder?.tvProcessTotal?.text = "${FileUtil.getSizeUnit(courseDbBean.column_total.toLong())} | ${FileUtil.getSizeUnit(courseDbBean.column_total.toLong())}"
+                viewHolder?.tvProcessTotal?.text = "$total | $total"
             } else {
                 //未完成
+                //viewHolder?.tvState?.text = "下载中"
                 viewHolder?.pb?.progress = courseDbBean.column_progress
-                viewHolder?.tvProcessTotal?.text = "${FileUtil.getSizeUnit(courseDbBean.column_progress.toLong())} | ${FileUtil.getSizeUnit(courseDbBean.column_total.toLong())}"
-            }
-            itemView.setOnClickListener {
-                BKLog.d("点击下载任务item")
+                viewHolder?.tvProcessTotal?.text = "$progress | $total"
             }
         }
 

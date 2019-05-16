@@ -12,7 +12,11 @@ import android.widget.ImageView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesDetailCBean
+import com.ponko.cn.db.dao.CourseDao
 import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.module.m3u8downer.core.M3u8DbContract
+import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
+import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.module.media.AttachmentComplete
 import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.media.AttachmentPre
@@ -23,6 +27,7 @@ import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
 import retrofit2.Response
 import java.io.File
+import java.nio.file.Files.exists
 
 class StudyCourseDetailActivity : AppCompatActivity() {
 
@@ -82,20 +87,24 @@ class StudyCourseDetailActivity : AppCompatActivity() {
             override fun onSuccess(call: Call<CoursesDetailCBean>?, response: Response<CoursesDetailCBean>?) {
                 courseInfo = response?.body()
                 //预览页面
-                //val playUrl = courseInfo?.chapters!![0].sections[0].hls1
-                val playUrl = Environment.getExternalStorageDirectory().toString() + File.separator + "XmDown/26de49f8c22abafd8adc1b49246262c6_1/26de49f8c22abafd8adc1b49246262c6_1.m3u8"
+                var playUrl = courseInfo?.chapters!![0].sections[0].hls1
+
+                if (PonkoApp.m3u8DownManager?.dao?.exists(courseInfo?.chapters!![0].sections[0].hls1) == true) {
+                    //播放本地视频
+                    playUrl = PonkoApp.m3u8DownManager?.path + File.separator + PonkoApp.m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(playUrl) +File.separator+ M3u8Utils.m3u8FileName(playUrl)
+                }
+                //然后请求视频地址
                 BKLog.d("playUrl:$playUrl")
                 val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
                 attachmentPre.load(playUrl, courseInfo?.image!!)
 
-                //查看控制界面
+                //传递视频列表到横向控制界面
                 for (i in 0..(viewHolder?.video?.childCount!! - 1)) {
                     if (viewHolder?.video?.getChildAt(i) is AttachmentControl) {
                         (viewHolder?.video?.getChildAt(i) as AttachmentControl).courseDetail = courseInfo
                         break
                     }
                 }
-
                 //视频列表展示设置
             }
         })

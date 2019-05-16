@@ -2,7 +2,6 @@ package com.ponko.cn
 
 import android.view.KeyEvent
 import com.ponko.cn.app.PonkoApp
-import com.ponko.cn.constant.Constant.TOKEN
 import com.ponko.cn.module.free.FreeFrg
 import com.ponko.cn.module.interflow.frg.InterflowFrg
 import com.ponko.cn.module.my.MyFrg
@@ -57,9 +56,9 @@ class MainActivity : BaseActivity() {
     override fun iniData() {
         //2019-05-12 10:57:37.142 14041-14041/com.ponko.cn D/XmLib: token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IllRSmtrSVJZcitDMkl5aVZ0TTg5bXJVbTZIODhsOGw1ZEtzcXBpaHV2VzFoZHQ5V1ZJV1l1cWlISnp3YjJTQnRlbVJuUmZ5UHRHcXVsWTlrb3VqY21BPT0iLCJwaG9uZSI6IjE1MDc0NzcwNzA4IiwiaWQiOiI2NTc4M2IxNWQ0NzcxMWU4OGI0NDAyNDJhYzEzMDAwMyIsInRva2VuIjoiYzc5M2NlZTkxOTAyNGJlNjljMjNjY2E3MTkzYmRmNjQifQ.MdoLdsQvqIeGn2TswSPtMC5pImp_cXaMi26-Ev6Rjig
         //ogHau0f97BAJNmuu2tpqaolHKYTk
-        TOKEN = CacheUtil.getToken()!!
-        PonkoApp.retrofitClient?.headers?.put("x-tradestudy-access-token", TOKEN)
-        BKLog.d("token:$TOKEN")
+        //TOKEN = CacheUtil.getToken()!!
+        PonkoApp.retrofitClient?.headers?.put("x-tradestudy-access-token", CacheUtil.getToken()!!)
+        //BKLog.d("token:$TOKEN")
     }
 
     override fun iniEvent() {

@@ -18,7 +18,12 @@ object M3u8Utils {
         while (true) {
             val line = br.readLine()
             if (line == null) {
-                BKLog.d("文件读取完成")
+                BKLog.d("> m3u8文件解析完成")
+                BKLog.d(" key : $key")
+                for (t in ts.iterator()) {
+                    BKLog.d(" ts  : $t")
+                }
+                BKLog.d("-----------------------------------")
                 return Pair(key, ts)
             }
 
@@ -34,20 +39,20 @@ object M3u8Utils {
                 ts.add(line)
             }
         }
-        BKLog.d("===================================================")
-        BKLog.d("mu38文件截取key:$key")
-        for (t in ts?.iterator()) {
-            BKLog.d("mu38文件截取ts:$t")
-        }
-        BKLog.d("===================================================")
-        return Pair(key, ts)
+//        BKLog.d("===================================================")
+//        BKLog.d("mu38文件截取key:$key")
+//        for (t in ts?.iterator()) {
+//            BKLog.d("mu38文件截取ts:$t")
+//        }
+//        BKLog.d("===================================================")
+//        return Pair(key, ts)
     }
 
     /**
      * m3u8文件写入本地，并且修改文件中key ts 地址，指向本地
      */
-    fun writeLocal(inputStream: InputStream?, m3u8: String, dir: String, m3u8Key: String, m3u8Ts: ArrayList<String>) {
-        val outFile = FileUtil.createNewFile(Environment.getExternalStorageDirectory().canonicalPath, "$dir/${m3u8FileName(m3u8)}", "${m3u8FileName(m3u8)}.m3u8")
+    fun writeLocal(inputStream: InputStream?, m3u8: String, path:String,dir: String, m3u8Key: String, m3u8Ts: ArrayList<String>) {
+        val outFile = FileUtil.createNewFile(path, dir, "${m3u8FileName(m3u8)}")
         val br = BufferedReader(InputStreamReader(inputStream))
         val bw = BufferedWriter(OutputStreamWriter(FileOutputStream(outFile)))
         var line: String? = null
@@ -55,15 +60,15 @@ object M3u8Utils {
         while (true) {
             line = br.readLine()
             if (line == null) break
-            if(line.startsWith("#EXT-X-KEY")){
+            if (line.startsWith("#EXT-X-KEY")) {
                 val oldKey = m3u8Key
-                val newKey =Environment.getExternalStorageDirectory().canonicalPath+"/$dir/${m3u8FileName(m3u8)}/${m3u8FileName(oldKey)}.key"
-                line = line.replace(oldKey,newKey)
+                val newKey ="$path/$dir/${m3u8FileName(oldKey)}"
+                line = line.replace(oldKey, newKey)
             }
             if (line.startsWith("http://")) {
-                val oldTs =  m3u8Ts[index++]
-                val newTs = Environment.getExternalStorageDirectory().canonicalPath+"/$dir/${m3u8FileName(m3u8)}/${m3u8FileName(oldTs)}.ts"
-                line = line.replace(oldTs,newTs)
+                val oldTs = m3u8Ts[index++]
+                val newTs = "$path/$dir/${m3u8FileName(oldTs)}"
+                line = line.replace(oldTs, newTs)
             }
             bw.write(line + "\r\n")
         }
@@ -76,16 +81,21 @@ object M3u8Utils {
      */
     fun m3u8FileName(url: String): String {
         val start = url.lastIndexOf("/") + 1
-        val end = url.lastIndexOf("")
-        val name = url.substring(start, end)
-        BKLog.d("${url}解析m3u8文件名称：$name")
-        return name
+        val end = url.lastIndexOf("") + 1
+        return url.substring(start, end)
+    }
+
+    /**
+     * 获取m3u8唯一标志
+     */
+    fun m3u8Unique(m3u8: String): String {
+        return m3u8FileName(m3u8).replace(".m3u8", "")
     }
 
     /**
      * copyInputStream
      */
-    fun copyInputStream(input: InputStream?):Pair<InputStream,InputStream> {
+    fun copyInputStream(input: InputStream?): Pair<InputStream, InputStream> {
         val baos = ByteArrayOutputStream()
         val buffer = ByteArray(1024)
         var len = input?.read(buffer)!!
@@ -96,16 +106,16 @@ object M3u8Utils {
         baos.flush()
         val stream1 = ByteArrayInputStream(baos.toByteArray())
         val stream2 = ByteArrayInputStream(baos.toByteArray())
-        return Pair(stream1,stream2)
+        return Pair(stream1, stream2)
     }
 
     /**
      * str转集合 1,2,3,4
      */
-    fun strToList(args: String?):ArrayList<String>?{
+    fun strToList(args: String?): ArrayList<String>? {
         val l = args?.split(",")
-        val ls=ArrayList<String>()
-        for (s in l?.iterator()!!){
+        val ls = ArrayList<String>()
+        for (s in l?.iterator()!!) {
             ls.add(s)
         }
         return ls
@@ -114,12 +124,12 @@ object M3u8Utils {
     /**
      * 集合转str 1,2,3,4
      */
-    fun listToStr(list:List<String>?):String?{
+    fun listToStr(list: List<String>?): String? {
         val sb = StringBuilder()
-        for (i in 0..(list?.size!!-1)){
-            if(i==list.size-1){
+        for (i in 0..(list?.size!! - 1)) {
+            if (i == list.size - 1) {
                 sb.append("${list[i]}")
-            }else{
+            } else {
                 sb.append("${list[i]},")
             }
         }

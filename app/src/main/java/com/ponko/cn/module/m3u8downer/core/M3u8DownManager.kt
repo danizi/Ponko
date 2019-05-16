@@ -1,6 +1,9 @@
 package com.ponko.cn.module.m3u8downer.core
 
 import android.content.Context
+import android.os.Environment
+import com.ponko.cn.app.PonkoApp.Companion.dbHelp
+import java.io.File
 
 /**
  * 下载任务管理器
@@ -12,11 +15,20 @@ class M3u8DownManager internal constructor(builder: Builder?, context: Context) 
     var context: Context? = null
     var dispatcher: M3u8Dispatcher? = null
     var dao: M3u8DbContract.Dao? = null
+    var path: String = ""
+    var dir: String? = ""
+
+    /**
+     * 可接受所有任务的回调
+     */
+    var listener: OnDownListener? = null
 
     init {
         this.context = context
         this.dispatcher = builder?.dispatcher
         this.dao = builder?.dao
+        this.path = builder?.path!!
+        this.dir = builder.dir
     }
 
     override fun newTasker(downTask: M3u8DownTask): M3u8DownTasker {
@@ -26,6 +38,44 @@ class M3u8DownManager internal constructor(builder: Builder?, context: Context) 
                 .build()
     }
 
+    override fun isRun(url: String): Boolean {
+        return dispatcher?.isRun(url)!!
+    }
+
+    override fun pause(url: String) {
+        dispatcher?.remove(url)
+    }
+
+    override fun pause(urls: List<String>) {
+        for (url in urls) {
+            pause(url)
+        }
+    }
+
+    override fun resume(downTask: M3u8DownTask) {
+        val tasker = M3u8DownTasker.Builder()
+                .m3u8DownManager(this)
+                .downTask(downTask)
+                .build()
+        tasker.enqueue(null)
+    }
+
+    override fun resume(downTasks: List<M3u8DownTask>) {
+        for (task in downTasks) {
+            resume(task)
+        }
+    }
+
+    override fun delete(url: String) {
+        dispatcher?.remove(url)
+        //todo 删除文件缓存以及数据库中的信息
+    }
+
+    override fun delete(urls: List<String>) {
+        for (url in urls) {
+            delete(url)
+        }
+    }
 
     /**
      * 建造者
@@ -43,11 +93,24 @@ class M3u8DownManager internal constructor(builder: Builder?, context: Context) 
          *  数据库操作Dao，缓存进度
          */
         var dao: M3u8DbContract.Dao? = null
+        /**
+         *  数据库创建帮助类
+         */
         private var dbHelp: M3u8DBHelp? = null
+        /**
+         * 路径
+         */
+        var path: String? = ""
+        /**
+         *  文件目录
+         */
+        var dir: String? = ""
 
         init {
             this.dispatcher = M3u8Dispatcher()
             this.dbHelp = M3u8DBHelp(context, "M3u8Down.db", null, 100)
+            this.path = Environment.getExternalStorageDirectory().canonicalPath
+            this.dir = "XmDown"
             dao = M3u8DbContract.Dao(dbHelp?.writableDatabase)
         }
     }

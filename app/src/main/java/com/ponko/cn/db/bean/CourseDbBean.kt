@@ -12,4 +12,5 @@ class CourseDbBean {
      var column_m3u8_url = ""       //下载的m3u8地址
      var column_key_ts_url = ""   //key ts 地址
      var column_down_path = ""     //下载路径
+     var column_state = ""      //课程状态( 下载中 暂停 队列 错误 )
 }

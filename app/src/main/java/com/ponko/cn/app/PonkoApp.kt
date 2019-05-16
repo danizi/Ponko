@@ -1,5 +1,6 @@
 package com.ponko.cn.app
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
@@ -7,15 +8,21 @@ import com.ponko.cn.api.*
 import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constant.BASE_API
-import com.ponko.cn.constant.Constant.TOKEN
 import com.ponko.cn.db.PonkoDBHelp
 import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
+import com.ponko.cn.utils.CacheUtil
 import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import java.io.File
 
 class PonkoApp : Application() {
     companion object {
+        var APP_ID = "wxd37fb8ce51a02360"
+        var app: Application? = null
+        var mainCBean: MainCBean? = null
+        var signInfo: StoreTaskBean? = null
+        var UI_DEBUG = true
+
         var retrofitClient: RetrofitClient? = null
         var loginApi: LoginApi? = null
         var studyApi: StudyApi? = null
@@ -24,13 +31,10 @@ class PonkoApp : Application() {
         var myApi: MyApi? = null
         var adApi: AdApi? = null
         var payApi: PayApi? = null
-        var UI_DEBUG = true
-        var APP_ID = "wxd37fb8ce51a02360"
-        var signInfo: StoreTaskBean? = null
-        var activityManager = ActManager()
-        var app: Application? = null
-        var mainCBean: MainCBean? = null
+
         var dbHelp: PonkoDBHelp? = null
+        var activityManager = ActManager()
+        @SuppressLint("StaticFieldLeak")
         var m3u8DownManager: M3u8DownManager? = null
     }
 
@@ -56,7 +60,7 @@ class PonkoApp : Application() {
         heads["x-tradestudy-client-version"] = "3.4.6"
         heads["x-tradestudy-client-device"] = "android_phone"
         heads["x-tradestudy-access-key-id"] = "c"
-        heads["x-tradestudy-access-token"] = TOKEN
+        heads["x-tradestudy-access-token"] = CacheUtil.getToken()!!
         retrofitClient = RetrofitClient.intance
                 .setBaseUrl(BASE_API)
                 .setHttpCacheDirectory(File(cacheDir, "ponko"))
