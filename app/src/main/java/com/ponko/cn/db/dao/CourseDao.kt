@@ -25,7 +25,9 @@ class CourseDao(private var db: SQLiteDatabase?) {
                         bean.column_complete,
                         bean.column_m3u8_url,
                         bean.column_key_ts_url,
-                        bean.column_down_path
+                        bean.column_down_path,
+                        bean.column_state,
+                        bean.column_vid
                 ))
                 //db?.close()
             } else {
@@ -36,6 +38,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
         }
     }
 
+    @Deprecated("")
     fun update(bean: CourseDbBean) {
         if (db?.isOpen == true) {
             db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_ID, arrayOf(
@@ -49,15 +52,19 @@ class CourseDao(private var db: SQLiteDatabase?) {
                     bean.column_complete,
                     bean.column_m3u8_url,
                     bean.column_key_ts_url,
-                    bean.column_down_path,bean.column_course_id))
+                    bean.column_down_path,
+                    bean.column_state,
+                    bean.column_vid,bean.column_course_id))
             //db?.close()
         } else {
             BKLog.d("数据库未打开")
         }
     }
 
-    fun update(vid: String) {
+    @Deprecated("")
+    fun update(vid: String,cacheM3u8:String) {
         val bean =  select(vid)[0]
+        bean.column_m3u8_url = cacheM3u8
         if (bean!=null){
             db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_VID, arrayOf(
                     bean.column_uid,
@@ -70,12 +77,21 @@ class CourseDao(private var db: SQLiteDatabase?) {
                     bean.column_complete,
                     bean.column_m3u8_url,
                     bean.column_key_ts_url,
-                    bean.column_down_path,bean.column_course_id))
+                    bean.column_down_path,
+                    bean.column_state,
+                    bean.column_vid,vid))
         }
     }
 
-    fun update(vid: String,cacheM3u8:String,complete:Int){
+    /**
+     * 课程下载完成调用该方法进行状态更新
+     * 更新状态
+     */
+    fun downCompleteUpdate(vid: String,cacheM3u8:String,m3u8:String,complete:Int){
         val bean =  select(vid)[0]
+        bean.column_down_path = cacheM3u8
+        bean.column_m3u8_url = m3u8
+        bean.column_complete = complete
         if (bean!=null){
             db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_VID, arrayOf(
                     bean.column_uid,
@@ -88,11 +104,37 @@ class CourseDao(private var db: SQLiteDatabase?) {
                     bean.column_complete,
                     bean.column_m3u8_url,
                     bean.column_key_ts_url,
-                    bean.column_down_path,bean.column_course_id))
+                    bean.column_down_path,
+                    bean.column_state,
+                    bean.column_vid,vid))
         }
     }
 
+    /**
+     * 课程下载过程中调用该方法进行状态更新
+     */
+    fun downProgressUpdate(vid: String,progress:Int){
+        val bean =  select(vid)[0]
+        bean.column_progress = progress
+        if (bean!=null){
+            db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_VID, arrayOf(
+                    bean.column_uid,
+                    bean.column_special_id,
+                    bean.column_course_id,
+                    bean.column_cover,
+                    bean.column_title,
+                    bean.column_total,
+                    bean.column_progress,
+                    bean.column_complete,
+                    bean.column_m3u8_url,
+                    bean.column_key_ts_url,
+                    bean.column_down_path,
+                    bean.column_state,
+                    bean.column_vid,vid))
+        }
+    }
 
+    @Deprecated("")
     fun updateProgressByUrl(bean: CourseDbBean){
         if (db?.isOpen == true) {
             db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_ID, arrayOf(
@@ -106,7 +148,9 @@ class CourseDao(private var db: SQLiteDatabase?) {
                     bean.column_complete,
                     bean.column_m3u8_url,
                     bean.column_key_ts_url,
-                    bean.column_down_path,bean.column_course_id))
+                    bean.column_down_path,
+                    bean.column_state,
+                    bean.column_vid,bean.column_course_id))
             //db?.close()
         } else {
             BKLog.d("数据库未打开")
@@ -151,7 +195,8 @@ class CourseDao(private var db: SQLiteDatabase?) {
                 courseDbBean.column_m3u8_url = cursor.getString(9)
                 courseDbBean.column_key_ts_url = cursor.getString(10)
                 courseDbBean.column_down_path = cursor.getString(11)
-                courseDbBean.column_vid = cursor.getString(12)
+                courseDbBean.column_state=  cursor.getString(12)
+                courseDbBean.column_vid = cursor.getString(13)
                 queryData.add(courseDbBean)
             }
             //db?.close()
@@ -179,7 +224,8 @@ class CourseDao(private var db: SQLiteDatabase?) {
                 courseDbBean.column_m3u8_url = cursor.getString(9)
                 courseDbBean.column_key_ts_url = cursor.getString(10)
                 courseDbBean.column_down_path = cursor.getString(11)
-                courseDbBean.column_vid = cursor.getString(12)
+                courseDbBean.column_state=  cursor.getString(12)
+                courseDbBean.column_vid = cursor.getString(13)
                 data.add(courseDbBean)
             }
         }else{
@@ -208,7 +254,8 @@ class CourseDao(private var db: SQLiteDatabase?) {
                 courseDbBean.column_m3u8_url = cursor.getString(9)
                 courseDbBean.column_key_ts_url = cursor.getString(10)
                 courseDbBean.column_down_path = cursor.getString(11)
-                courseDbBean.column_vid = cursor.getString(12)
+                courseDbBean.column_state=  cursor.getString(12)
+                courseDbBean.column_vid = cursor.getString(13)
                 queryAllData.add(courseDbBean)
             }
             //db?.close()

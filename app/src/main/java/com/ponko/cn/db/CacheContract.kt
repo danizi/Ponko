@@ -128,6 +128,21 @@ class CacheContract {
                 "$COLUMN_DOWN_PATH=?," +
                 "$COLUMN_COLUMN_STATE=?," +
                 "$COLUMN_COLUMN_VID=? WHERE $COLUMN_COURSE_ID=?;"
+
+        const val SQL_UPDATE_BY_VID="UPDATE $TABLE_NAME SET " +
+                "$COLUMN_UID=?," +
+                "$COLUMN_SPECIAL_ID=?," +
+                "$COLUMN_COURSE_ID=?," +
+                "$COLUMN_COVER=?," +
+                "$COLUMN_TITLE=?," +
+                "$COLUMN_TOTAL=?," +
+                "$COLUMN_PROGRESS=?," +
+                "$COLUMN_COMPLETE=?," +
+                "$COLUMN_M3U8_URL=?," +
+                "$COLUMN_KEY_TS_URL=?," +
+                "$COLUMN_DOWN_PATH=?," +
+                "$COLUMN_COLUMN_STATE=?," +
+                "$COLUMN_COLUMN_VID=? WHERE $COLUMN_COLUMN_VID=?;"
         //查
         const val SQL_SELECT_BY_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
         const val SQL_SELECT_BY_VID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COLUMN_VID = ?;"

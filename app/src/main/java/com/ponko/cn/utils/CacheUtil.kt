@@ -36,4 +36,12 @@ object CacheUtil {
         }
         return true
     }
+
+    fun putPolyvConfig(configJsonStr: String) {
+        SPUtil.put(PonkoApp.app, SP_FILE_NAME, "PolyvConfig", configJsonStr)
+    }
+
+    fun getPolycConfig(): String {
+        return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "PolyvConfig", "PolyvConfig").toString()
+    }
 }

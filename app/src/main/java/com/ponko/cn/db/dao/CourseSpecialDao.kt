@@ -88,10 +88,10 @@ class CourseSpecialDao(private var db: SQLiteDatabase?) {
         return queryData
     }
 
-    fun selectAll(): ArrayList<CourseSpecialDbBean> {
-        val queryAllData = ArrayList<CourseSpecialDbBean>()
+    fun select(specialId: String): ArrayList<CourseSpecialDbBean> {
+        val queryData = ArrayList<CourseSpecialDbBean>()
         if (db?.isOpen == true) {
-            val cursor = db?.rawQuery(CacheContract.CourseSpecialTable.SQL_SELECT_ALL, null)
+            val cursor = db?.rawQuery(CacheContract.CourseSpecialTable.SQL_SELECT_BY_ID, arrayOf(specialId))
             if (cursor == null) {
                 BKLog.e("从数据库中未查找到内容")
             }
@@ -104,9 +104,34 @@ class CourseSpecialDao(private var db: SQLiteDatabase?) {
                 courseSpecialDbBean.num = cursor.getInt(4)
                 courseSpecialDbBean.cover = cursor.getString(5)
                 courseSpecialDbBean.title = cursor.getString(6)
-                queryAllData.add(courseSpecialDbBean)
+                queryData.add(courseSpecialDbBean)
             }
             //db?.close()
+        } else {
+            BKLog.d("数据库未打开")
+        }
+        return queryData
+    }
+
+    fun selectAll(): ArrayList<CourseSpecialDbBean> {
+        val queryAllData = ArrayList<CourseSpecialDbBean>()
+        if (db?.isOpen == true) {
+            val cursor = db?.rawQuery(CacheContract.CourseSpecialTable.SQL_SELECT_ALL, null)
+            if (cursor == null) {
+                BKLog.e("从数据库中未查找到内容")
+                return queryAllData
+            }
+            while (cursor.moveToNext()) {
+                val courseSpecialDbBean = CourseSpecialDbBean()
+                val id = cursor.getString(0)
+                courseSpecialDbBean.uid = cursor.getString(1)
+                courseSpecialDbBean.special_id = cursor.getString(2)
+                courseSpecialDbBean.teacher = cursor.getString(3)
+                courseSpecialDbBean.num = cursor.getInt(4)
+                courseSpecialDbBean.cover = cursor.getString(5)
+                courseSpecialDbBean.title = cursor.getString(6)
+                queryAllData.add(courseSpecialDbBean)
+            }
         } else {
             BKLog.d("数据库未打开")
         }

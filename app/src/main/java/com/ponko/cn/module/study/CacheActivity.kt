@@ -8,14 +8,17 @@ import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import com.google.gson.Gson
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.courseDao
 import com.ponko.cn.app.PonkoApp.Companion.courseSpecialDao
+import com.ponko.cn.app.PonkoApp.Companion.m3u8DownManager
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.M3u8InfoBean
+import com.ponko.cn.bean.VideoInfoCBean
 import com.ponko.cn.db.bean.CourseDbBean
 import com.ponko.cn.db.bean.CourseSpecialDbBean
 import com.ponko.cn.db.dao.CourseDao
@@ -23,6 +26,8 @@ import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.m3u8downer.M3u8DownerTextAct
+import com.ponko.cn.module.m3u8downer.core.M3u8DownTask
+import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
@@ -121,9 +126,45 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         btnDown?.setOnClickListener {
             BKLog.d(TAG, "下载")
             //跳转到下载测试页面
-            M3u8DownerTextAct.start(this, typeId, teachers, num.toLong(), duration.toLong())
+            //M3u8DownerTextAct.start(this, typeId, teachers, num.toLong(), duration.toLong())
             //专题加入数据库中
             insertToCourseDb()
+            //开始下载
+            down(PonkoApp.courseDao?.selectAll())
+        }
+    }
+
+    private fun down(datas:ArrayList<CourseDbBean>?){
+        for (course in datas?.iterator()!!) {
+            val m3u8DownTask = M3u8DownTask.Builder()
+                    .vid(course.column_vid)
+                    .m3u8(course.column_m3u8_url)
+                    .name(course.column_title)
+                    .fileSize(course.column_total.toLong())
+                    .build()
+            m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
+
+//            MediaUitl.getUrlByVid(course.column_vid, "", "", object : MediaUitl.OnVideoInfoListener {
+//                override fun onFailure() {
+//                    BKLog.d(TAG, "通过vid${course.column_vid}获取m3u8地址失败")
+//                    this@CacheActivity.runOnUiThread {
+//                        Toast.makeText(this@CacheActivity, "请检查您的网络", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//
+//                override fun onSuccess(videoInfo: VideoInfoCBean) {
+//                    BKLog.d(TAG, "通过vid${course.column_vid}获取m3u8地址成功${videoInfo.toString()}")
+//                    val m3u8 = videoInfo.data[0].hls[0]
+//
+//                    val m3u8DownTask = M3u8DownTask.Builder()
+//                            .vid(course.column_vid)
+//                            .m3u8(m3u8/*course.column_m3u8_url*/)
+//                            .name(course.column_title)
+//                            .fileSize(course.column_total.toLong())
+//                            .build()
+//                    m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
+//                }
+//            })
         }
     }
 
@@ -143,6 +184,9 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         //下载专题下的课程列表
         //val courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
         for (section in SleSections) {
+            if(section.filesize1==0){
+                BKLog.e(TAG,"文件大小为0${section.name}")
+            }
             val courseDbBean = CourseDbBean()
             courseDbBean.column_uid = "uuid"
             courseDbBean.column_special_id = typeId
@@ -153,7 +197,7 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
             courseDbBean.column_progress = 0
             courseDbBean.column_complete = 0
             courseDbBean.column_m3u8_url = ""
-            courseDbBean.column_key_ts_url = Gson().toJson(M3u8InfoBean())
+            courseDbBean.column_key_ts_url = ""
             courseDbBean.column_down_path = ""
             courseDbBean.column_state = "点击下载"
             courseDbBean.column_vid = section.vid

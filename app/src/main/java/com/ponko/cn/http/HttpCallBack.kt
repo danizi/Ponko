@@ -19,22 +19,25 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
     private val TAG = "HttpCallBack"
 
     override fun onFailure(call: Call<T>?, msg: String?) {
-        BKLog.e(TAG, "HttpCallBack onFailure")
-        DialogUtil.show(
-                PonkoApp.activityManager.getTopActivity()!!,
-                "提示"
-                , msg!!
-                , true,
-                object : OnEnterListener {
-                    override fun onEnter(dlg: AlertDialog) {
-                        val act =   PonkoApp.activityManager.getTopActivity()
-                        val intent = Intent(act,LoginStartAct::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        ActivityUtil.startActivity(act,intent)
-                        dlg.dismiss()
+        BKLog.e(TAG, "HttpCallBack onFailure msg$msg")
+        if(!TextUtils.isEmpty(msg)){
+            DialogUtil.show(
+                    PonkoApp.activityManager.getTopActivity()!!,
+                    "提示"
+                    , msg!!
+                    , true,
+                    object : OnEnterListener {
+                        override fun onEnter(dlg: AlertDialog) {
+                            val act =   PonkoApp.activityManager.getTopActivity()
+                            val intent = Intent(act,LoginStartAct::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            ActivityUtil.startActivity(act,intent)
+                            dlg.dismiss()
+                        }
                     }
-                }
-                , null)
+                    , null)
+        }
+
     }
 
     override fun errorMsg(response: Response<T>?) {

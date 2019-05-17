@@ -1,6 +1,5 @@
 package com.ponko.cn.module.m3u8downer.core
 
-import android.os.Environment
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.utils.FileUtil
 import java.io.*

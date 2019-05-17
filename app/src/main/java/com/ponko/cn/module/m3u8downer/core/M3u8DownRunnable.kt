@@ -2,6 +2,7 @@ package com.ponko.cn.module.m3u8downer.core
 
 import android.os.Looper
 import com.ponko.cn.module.m3u8downer.core.M3u8Utils.writeLocal
+import com.ponko.cn.module.media.MediaUitl
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.DownManager
 import com.xm.lib.downloader.enum_.DownErrorType
@@ -53,6 +54,22 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
         isRuning = AtomicBoolean(true)
         //解析m3u8地址中的 key 和ts
         m3u8 = m3u8DownTasker.downTask?.m3u8!!
+
+        MediaUitl.getM3u8Url(m3u8DownTasker.downTask?.vid,object :MediaUitl.OnPlayUrlListener{
+
+            override fun onFailure() {
+                callbackError("请检查您的网络")
+            }
+
+            override fun onSuccess(url: String, size: Int?) {
+                m3u8DownTasker.downTask?.m3u8 = url
+                m3u8 = url
+                analysisM3u8()
+            }
+        })
+    }
+
+    private fun analysisM3u8() {
         val okHttpClient = OkHttpClient()
         val request = Request.Builder().url(m3u8).get().build()
         okHttpClient.newCall(request).enqueue(object : Callback {
@@ -66,7 +83,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
                 val (m3u8Key, m3u8Ts) = M3u8Utils.analysis(stream1)
                 val path = m3u8DownTasker.m3u8DownManager?.path!!
                 val dir = "${m3u8DownTasker.m3u8DownManager?.dir!!}/${M3u8Utils.m3u8Unique(m3u8)}"
-                writeLocal(stream2, m3u8,path, dir, m3u8Key, m3u8Ts)
+                writeLocal(stream2, m3u8, path, dir, m3u8Key, m3u8Ts)
 
                 //解析地址存入集合
                 val m3u8AnalysisUrls = ArrayList<String>()
@@ -137,9 +154,9 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
     /**
      * 任务下载进度回调
      */
-    fun callBackProcess(analysisUrl: String, total: Long) {
+    private fun callBackProcess(analysisUrl: String, total: Long) {
         progress += total
-        listener?.onProcess(analysisUrl, progress.toInt())
+        listener?.onProcess(m3u8DownTasker.downTask?.vid!!,analysisUrl, progress.toInt())
         //m3u8DownTasker.m3u8DownManager?.listener?.onProcess(m3u8, progress.toInt())
     }
 
@@ -147,7 +164,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
      * 任务下载错误回调
      */
     private fun callbackError(error: String) {
-        listener?.onError("", error)
+        listener?.onError(m3u8DownTasker.downTask?.vid!!,"", error)
         //m3u8DownTasker.m3u8DownManager?.listener?.onError(m3u8, "解析m3u8失败")
     }
 
@@ -155,7 +172,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
      * 任务下载完成回调
      */
     private fun callBackComplete(analysisUrl: String) {
-        listener?.onComplete(analysisUrl)
+        listener?.onComplete(m3u8DownTasker.downTask?.vid!!,analysisUrl)
         //m3u8DownTasker.m3u8DownManager?.listener?.onComplete(m3u8)
     }
 
@@ -163,7 +180,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
      * 任务准备回调
      */
     private fun callBackStart(m3u8Ts: ArrayList<String>) {
-        listener?.onStart("", m3u8Ts)
+        listener?.onStart(m3u8DownTasker.downTask?.vid!!,"", m3u8Ts)
         //m3u8DownTasker.m3u8DownManager?.listener?.onStart(m3u8,m3u8Ts)
     }
 
@@ -201,27 +218,27 @@ interface OnDownListener {
      * @param url m3u8
      * @param m3u8Analysis m3u8解析的key,ts
      */
-    fun onStart(url: String, m3u8Analysis: ArrayList<String>)
+    fun onStart(vid:String,url: String, m3u8Analysis: ArrayList<String>)
 
     /**
      * 下载完成回调
      * @param url m3u8
      */
-    fun onComplete(url: String)
+    fun onComplete(vid:String,url: String)
 
     /**
      * 下载进度回调
      * @param url m3u8
      * @param progress 进度
      */
-    fun onProcess(url: String, progress: Int)
+    fun onProcess(vid:String,url: String, progress: Int)
 
     /**
      * 下载错误
      * @param url m3u8
      * @param msg 下载错误信息
      */
-    fun onError(url: String, msg: String)
+    fun onError(vid:String,url: String, msg: String)
 
 
 }

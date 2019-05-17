@@ -1,5 +1,6 @@
 package com.ponko.cn.module.my.option
 
+import android.content.Intent
 import android.support.v7.widget.DividerItemDecoration
 import android.view.View
 import android.widget.ImageView
@@ -10,6 +11,7 @@ import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.db.bean.CourseSpecialDbBean
 import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.module.common.RefreshLoadAct
+import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseRvAdapter
@@ -58,6 +60,9 @@ class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
     }
 
 
+    /**
+     * 专题列表
+     */
     private class ItemViewHolder(view: View) : BaseViewHolder(view) {
         private var viewHolder: ViewHolder? = null
         override fun bindData(d: Any, position: Int) {
@@ -70,8 +75,10 @@ class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
             viewHolder?.tvCourseTitle?.text = courseSpecialDbBean.title
             viewHolder?.tvTeacher?.text = "${courseSpecialDbBean.teacher}老师"
             viewHolder?.courseNumber?.text = "共${courseSpecialDbBean.num}集 | 已缓存0"
+            courseSpecialDbBean.special_id
             itemView.setOnClickListener {
                 BKLog.d("跳转到专题缓存课程列表")
+                ActivityUtil.startActivity(context, Intent(context, CacheListAct::class.java))
             }
         }
 

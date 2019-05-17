@@ -44,7 +44,7 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
         // 下载任务回调
         this.m3u8DownRunnable?.setOnDownListener(object : OnDownListener {
 
-            override fun onStart(url:String,m3u8Analysis: ArrayList<String>) {
+            override fun onStart(vid:String,url:String,m3u8Analysis: ArrayList<String>) {
                 // 插入数据库
                 insertDb(m3u8Analysis)
                 // 任务开始回调
@@ -73,7 +73,7 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
                 }
             }
 
-            override fun onComplete(url: String) {
+            override fun onComplete(vid:String,url: String) {
                 // 移除分发器中已经下载完成的任务，并执行准备队列中的任务
                 m3u8DownManager?.dispatcher?.remove(this@M3u8DownTasker)
                 // 更新数据库中的进度字段
@@ -100,7 +100,7 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
                 }
             }
 
-            override fun onProcess(url: String, progress: Int) {
+            override fun onProcess(vid:String,url: String, progress: Int) {
                 // 更新数据库中的进度字段
                 updateProcessDb(progress, url)
                 // 回调任务进度
@@ -136,7 +136,7 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
                 return listToStr(notDownloadUrl)
             }
 
-            override fun onError(url:String,msg: String) {
+            override fun onError(vid:String,url:String,msg: String) {
                 // 移除分发器中已经下载完成的任务，并执行准备队列中的任务
                 m3u8DownManager?.dispatcher?.remove(this@M3u8DownTasker)
                 // 回调任务下载错误信息
@@ -147,32 +147,32 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
              * 任务开始回调
              */
             fun callBackStart(m3u8Analysis: ArrayList<String>) {
-                listener?.onStart(downTask?.m3u8!!, m3u8Analysis)
-                m3u8DownManager?.listener?.onStart(downTask?.m3u8!!, m3u8Analysis)
+                listener?.onStart(downTask?.vid!!,downTask?.m3u8!!, m3u8Analysis)
+                m3u8DownManager?.listener?.onStart(downTask?.vid!!,downTask?.m3u8!!, m3u8Analysis)
             }
 
             /**
              * 任务完成回调
              */
             fun callBackComplete() {
-                listener?.onComplete(downTask?.m3u8!!)
-                m3u8DownManager?.listener?.onComplete(downTask?.m3u8!!)
+                listener?.onComplete(downTask?.vid!!,downTask?.m3u8!!)
+                m3u8DownManager?.listener?.onComplete(downTask?.vid!!,downTask?.m3u8!!)
             }
 
             /**
              * 任务下载进度回调
              */
             fun callBackProcess(progress: Int) {
-                listener?.onProcess(downTask?.m3u8!!, progress)
-                m3u8DownManager?.listener?.onProcess(downTask?.m3u8!!, progress)
+                listener?.onProcess(downTask?.vid!!,downTask?.m3u8!!, progress)
+                m3u8DownManager?.listener?.onProcess(downTask?.vid!!,downTask?.m3u8!!, progress)
             }
 
             /**
              * 下载错误回调
              */
             fun callBackError(url: String, msg: String) {
-                listener?.onError(downTask?.m3u8!!, msg)
-                m3u8DownManager?.listener?.onError(downTask?.m3u8!!, msg)
+                listener?.onError(downTask?.vid!!,downTask?.m3u8!!, msg)
+                m3u8DownManager?.listener?.onError(downTask?.vid!!,downTask?.m3u8!!, msg)
             }
         })
 

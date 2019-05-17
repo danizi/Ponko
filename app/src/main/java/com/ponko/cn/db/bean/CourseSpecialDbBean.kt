@@ -28,4 +28,8 @@ class CourseSpecialDbBean {
      * 专题标题
      */
     var title = ""
+    /**
+     * 专题课程总时长
+     */
+    var duration=-1
 }

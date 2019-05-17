@@ -60,8 +60,8 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     override fun iniData() {
         //viewHolder?.srl?.autoRefresh(0)  //PS:展现效果没有原生的好。
         requestRefreshApi() //请求刷新数据
-        adapter = adapter()
-        bindItemViewHolder(bindItemViewHolderData())
+//        adapter = adapter()
+//        bindItemViewHolder(bindItemViewHolderData())
     }
 
     //////////////////////////
@@ -102,10 +102,12 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
 
     open fun requestRefreshSuccess(body: D?) {
         viewHolder?.srl?.finishRefresh()
+        adapter = adapter()
+        bindItemViewHolder(bindItemViewHolderData())
+        viewHolder?.rv?.adapter = adapter
         adapter?.data?.clear()
         adapter?.data?.addAll(multiTypeData(body))
         //设置适配器
-        viewHolder?.rv?.adapter = adapter
         viewHolder?.viewState?.hide()
         if (!disableRefresh) {
             viewHolder?.srl?.isEnableRefresh = true

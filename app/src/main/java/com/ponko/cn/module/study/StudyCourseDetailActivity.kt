@@ -13,9 +13,7 @@ import android.widget.Toast
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesDetailCBean
-import com.ponko.cn.bean.VideoInfoCBean
 import com.ponko.cn.http.HttpCallBack
-import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.module.media.AttachmentComplete
 import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.media.AttachmentPre
@@ -26,7 +24,6 @@ import com.xm.lib.common.log.BKLog
 import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
 import retrofit2.Response
-import java.io.File
 
 class StudyCourseDetailActivity : AppCompatActivity() {
 
@@ -160,15 +157,13 @@ class StudyCourseDetailActivity : AppCompatActivity() {
                 //专题下课程信息保存
                 courseInfo = response?.body()
 
-                //预览页面
-                val vid = getVid()
                 //设置预览界面
-                setPre(vid)
+                setPre(getVid())
+
                 //设置控制界面，传递视频列表到横向控制界面
                 setControl()
 
                 //视频列表展示设置
-
             }
 
             fun setControl() {
@@ -181,38 +176,51 @@ class StudyCourseDetailActivity : AppCompatActivity() {
             }
 
             fun setPre(vid: String?) {
-                if (PonkoApp.courseDao?.exist(vid) == true) {
-                    val courses = PonkoApp.courseDao?.select(vid)
-                    if (courses.isNullOrEmpty() && courses?.size == 1) {
-                        val cacheM3u8 = courses[0].column_down_path
-                        BKLog.d(TAG, "播放缓存视频 : $cacheM3u8 ")
+                MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
+                    override fun onFailure() {
+                        Toast.makeText(this@StudyCourseDetailActivity, "获取播放地址失败 - ", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onSuccess(url: String,size:Int?) {
                         //然后请求视频地址
                         val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
-                        attachmentPre.load(cacheM3u8, courseInfo?.image!!)
+                        this@StudyCourseDetailActivity.runOnUiThread {
+                            attachmentPre.load(url, courseInfo?.image!!)
+                        }
                     }
-                } else {
-                    MediaUitl.getUrlByVid(vid, PonkoApp.mainCBean?.polyv?.user_id!!, PonkoApp.mainCBean?.polyv?.secret_key!!, object : MediaUitl.OnVideoInfoListener {
-                        override fun onFailure() {
-                            BKLog.d(TAG, "通过vid${vid}获取m3u8地址失败")
-                            Toast.makeText(context, "请检查您的网络", Toast.LENGTH_SHORT).show()
-                        }
-
-                        override fun onSuccess(videoInfo: VideoInfoCBean) {
-                            BKLog.d(TAG, "通过vid${vid}获取m3u8地址成功${videoInfo.toString()}")
-                            val m3u8 = videoInfo.data[0].hls[3]
-                            BKLog.d(TAG, "播放网络视频 : $m3u8 ")
-
-                            //然后请求视频地址
-                            val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
-                            attachmentPre.load(m3u8, courseInfo?.image!!)
-                        }
-                    })
-                }
+                })
+//                if (PonkoApp.courseDao?.exist(vid) == true) {
+//                    val courses = PonkoApp.courseDao?.select(vid)
+//                    if (courses.isNullOrEmpty() && courses?.size == 1 && !TextUtils.isEmpty(courses[0].column_down_path)) {
+//                        val cacheM3u8 = courses[0].column_down_path
+//                        BKLog.d(TAG, "播放缓存视频 : $cacheM3u8 ")
+//                        //然后请求视频地址
+//                        val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
+//                        attachmentPre.load(cacheM3u8, courseInfo?.image!!)
+//                    }
+//                } else {
+//                    MediaUitl.getUrlByVid(vid, PonkoApp.mainCBean?.polyv?.user_id!!, PonkoApp.mainCBean?.polyv?.secret_key!!, object : MediaUitl.OnVideoInfoListener {
+//                        override fun onFailure() {
+//                            BKLog.d(TAG, "通过vid${vid}获取m3u8地址失败")
+//                            Toast.makeText(context, "请检查您的网络", Toast.LENGTH_SHORT).show()
+//                        }
+//
+//                        override fun onSuccess(videoInfo: VideoInfoCBean) {
+//                            BKLog.d(TAG, "通过vid${vid}获取m3u8地址成功${videoInfo.toString()}")
+//                            val m3u8 = videoInfo.data[0].hls[3]
+//                            BKLog.d(TAG, "播放网络视频 : $m3u8 ")
+//
+//                            //然后请求视频地址
+//                            val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
+//                            attachmentPre.load(m3u8, courseInfo?.image!!)
+//                        }
+//                    })
+//                }
             }
 
             fun getVid(): String? {
                 val playUrl = if (TextUtils.isEmpty(vid)) {
-                    courseInfo?.chapters!![0].sections[0].vid
+                    courseInfo?.chapters!![0].sections[0].vid  //PS 游客模式vid获取不到
                 } else {
                     vid
                 }
