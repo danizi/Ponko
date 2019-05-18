@@ -32,4 +32,10 @@ class CourseSpecialDbBean {
      * 专题课程总时长
      */
     var duration=-1
+
+    override fun toString(): String {
+        return "CourseSpecialDbBean(uid='$uid', special_id='$special_id', teacher='$teacher', num=$num, cover='$cover', title='$title', duration=$duration)"
+    }
+
+
 }

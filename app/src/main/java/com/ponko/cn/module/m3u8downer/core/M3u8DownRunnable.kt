@@ -1,6 +1,5 @@
 package com.ponko.cn.module.m3u8downer.core
 
-import android.os.Looper
 import com.ponko.cn.module.m3u8downer.core.M3u8Utils.writeLocal
 import com.ponko.cn.module.media.MediaUitl
 import com.xm.lib.common.log.BKLog
@@ -34,10 +33,6 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
      */
     var notDownloadM3u8AnalysisUrls: ArrayList<String>? = ArrayList<String>()
     /**
-     * 需要下载的m3u8地址
-     */
-    private var m3u8 = ""
-    /**
      * 下载进度
      */
     var progress: Long = 0L
@@ -52,9 +47,6 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
 
     override fun run() {
         isRuning = AtomicBoolean(true)
-        //解析m3u8地址中的 key 和ts
-        m3u8 = m3u8DownTasker.downTask?.m3u8!!
-
         MediaUitl.getM3u8Url(m3u8DownTasker.downTask?.vid,object :MediaUitl.OnPlayUrlListener{
 
             override fun onFailure() {
@@ -63,13 +55,13 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
 
             override fun onSuccess(url: String, size: Int?) {
                 m3u8DownTasker.downTask?.m3u8 = url
-                m3u8 = url
-                analysisM3u8()
+                //m3u8 = url
+                analysisM3u8(url)
             }
         })
     }
 
-    private fun analysisM3u8() {
+    private fun analysisM3u8(m3u8:String) {
         val okHttpClient = OkHttpClient()
         val request = Request.Builder().url(m3u8).get().build()
         okHttpClient.newCall(request).enqueue(object : Callback {
@@ -93,7 +85,6 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
             }
         })
     }
-
 
     private fun down(path: String, dir: String, m3u8AnalysisUrls: ArrayList<String>, m3u8Ts: ArrayList<String>) {
         // 配置缓存路径
@@ -143,6 +134,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
             }
 
             override fun onPause(tasker: DownTasker) {
+
             }
 
             override fun onDelete(tasker: DownTasker) {
@@ -192,20 +184,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
     override fun setOnDownListener(listener: OnDownListener?) {
         this.listener = listener
     }
-
-//    fun exit() {
-//        isRuning.set(false)
-//        downManager?.pauseAllDownTasker()
-//    }
 }
-
-///**
-// * m3u8解析bean
-// */
-//private class m3u8AnalysisBean {
-//    var key = ""
-//    var m3u8ts = ArrayList<String>()
-//}
 
 /**
  * 回调监听

@@ -70,7 +70,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         //检查权限
         checkPermission()
         //开始下载
-        down(datas)
+        //down(datas)
         //下载监听
         downListener()
     }
@@ -101,28 +101,6 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                     .fileSize(course.column_total.toLong())
                     .build()
             m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
-
-//            MediaUitl.getUrlByVid(course.column_vid, "", "", object : MediaUitl.OnVideoInfoListener {
-//                override fun onFailure() {
-//                    BKLog.d(TAG, "通过vid${course.column_vid}获取m3u8地址失败")
-//                    this@CacheListAct.runOnUiThread {
-//                        Toast.makeText(this@CacheListAct, "请检查您的网络", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//
-//                override fun onSuccess(videoInfo: VideoInfoCBean) {
-//                    BKLog.d(TAG, "通过vid${course.column_vid}获取m3u8地址成功${videoInfo.toString()}")
-//                    val m3u8 = videoInfo.data[0].hls[0]
-//
-//                    val m3u8DownTask = M3u8DownTask.Builder()
-//                            .vid(course.column_vid)
-//                            .m3u8(m3u8/*course.column_m3u8_url*/)
-//                            .name(course.column_title)
-//                            .fileSize(course.column_total.toLong())
-//                            .build()
-//                    m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
-//                }
-//            })
         }
     }
 
@@ -130,8 +108,9 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         m3u8DownManager?.listener = object : OnDownListener {
             override fun onStart(vid: String, url: String, m3u8Analysis: ArrayList<String>) {
                 BKLog.d(TAG, "M3u8DownTasker 下载准备中....")
-
                 val courseDbBean = CourseDbBean()
+                courseDbBean.column_vid = vid
+                courseDbBean.column_m3u8_url = url
                 courseDbBean.column_state = DOWN_STATE_START
                 updateRv(vid, url, courseDbBean, UPDATE_STATE)
             }
@@ -140,6 +119,8 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                 BKLog.d(TAG, "M3u8DownTasker $url 下载完成")
 
                 val courseDbBean = CourseDbBean()
+                courseDbBean.column_vid = vid
+                courseDbBean.column_m3u8_url = url
                 courseDbBean.column_complete = 1
                 courseDbBean.column_state = DOWN_STATE_COMPLETE
                 updateRv(vid, url, courseDbBean, UPDATE_COMPLETE)
@@ -149,6 +130,8 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                 BKLog.d(TAG, "M3u8DownTasker $url 下载进度")
 
                 val courseDbBean = CourseDbBean()
+                courseDbBean.column_vid = vid
+                courseDbBean.column_m3u8_url = url
                 courseDbBean.column_progress = progress
                 courseDbBean.column_state = DOWN_STATE_PROCESS
                 updateRv(vid, url, courseDbBean, UPDATE_PROCESS)
@@ -156,8 +139,9 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
 
             override fun onError(vid: String, url: String, msg: String) {
                 BKLog.d(TAG, "M3u8DownTasker下载错误")
-
                 val courseDbBean = CourseDbBean()
+                courseDbBean.column_vid = vid
+                courseDbBean.column_m3u8_url = url
                 courseDbBean.column_state = DOWN_STATE_ERROR
                 updateRv(vid, url, courseDbBean, UPDATE_STATE)
             }
@@ -180,7 +164,6 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                         courseDbBean.column_state = value.column_state
                         courseDbBean.column_vid = vid
                         courseDbBean.column_m3u8_url = m3u8
-                        courseDbBean.column_title
                         //下载中状态更新到数据库当中
                         PonkoApp.courseDao?.downProgressUpdate(vid,value.column_progress)
                     }
@@ -320,6 +303,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             }
         }
     }
+
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_cache_list)

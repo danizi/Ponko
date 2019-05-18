@@ -8,8 +8,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
-import android.widget.Toast
-import com.google.gson.Gson
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.courseDao
@@ -17,25 +15,21 @@ import com.ponko.cn.app.PonkoApp.Companion.courseSpecialDao
 import com.ponko.cn.app.PonkoApp.Companion.m3u8DownManager
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.CoursesDetailCBean
-import com.ponko.cn.bean.M3u8InfoBean
-import com.ponko.cn.bean.VideoInfoCBean
 import com.ponko.cn.db.bean.CourseDbBean
 import com.ponko.cn.db.bean.CourseSpecialDbBean
-import com.ponko.cn.db.dao.CourseDao
-import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
-import com.ponko.cn.module.m3u8downer.M3u8DownerTextAct
 import com.ponko.cn.module.m3u8downer.core.M3u8DownTask
 import com.ponko.cn.module.media.MediaUitl
+import com.ponko.cn.module.media.MediaUitl.fileSize
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.NumUtil
-import com.xm.lib.downloader.DownManager
-import com.xm.lib.downloader.task.DownTask
+import com.xm.lib.common.util.TimeUtil
+import com.xm.lib.common.util.TimerHelper
 import retrofit2.Call
 import retrofit2.Response
 
@@ -99,6 +93,10 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
      * 专题-选集返回实体
      */
     private var coursesDetailCBean: CoursesDetailCBean? = null
+    /**
+     * 定时器
+     */
+    private var timerHelper: TimerHelper? = TimerHelper()
 
     override fun getLayoutId(): Int {
         return R.layout.activity_cache2
@@ -129,12 +127,16 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
             //M3u8DownerTextAct.start(this, typeId, teachers, num.toLong(), duration.toLong())
             //专题加入数据库中
             insertToCourseDb()
-            //开始下载
-            down(PonkoApp.courseDao?.selectAll())
+            timerHelper?.start(object : TimerHelper.OnDelayTimerListener {
+                override fun onDelayTimerFinish() {
+                    //开始下载
+                    down(PonkoApp.courseDao?.selectAll())
+                }
+            }, 1000)
         }
     }
 
-    private fun down(datas:ArrayList<CourseDbBean>?){
+    private fun down(datas: ArrayList<CourseDbBean>?) {
         for (course in datas?.iterator()!!) {
             val m3u8DownTask = M3u8DownTask.Builder()
                     .vid(course.column_vid)
@@ -143,28 +145,6 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
                     .fileSize(course.column_total.toLong())
                     .build()
             m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
-
-//            MediaUitl.getUrlByVid(course.column_vid, "", "", object : MediaUitl.OnVideoInfoListener {
-//                override fun onFailure() {
-//                    BKLog.d(TAG, "通过vid${course.column_vid}获取m3u8地址失败")
-//                    this@CacheActivity.runOnUiThread {
-//                        Toast.makeText(this@CacheActivity, "请检查您的网络", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//
-//                override fun onSuccess(videoInfo: VideoInfoCBean) {
-//                    BKLog.d(TAG, "通过vid${course.column_vid}获取m3u8地址成功${videoInfo.toString()}")
-//                    val m3u8 = videoInfo.data[0].hls[0]
-//
-//                    val m3u8DownTask = M3u8DownTask.Builder()
-//                            .vid(course.column_vid)
-//                            .m3u8(m3u8/*course.column_m3u8_url*/)
-//                            .name(course.column_title)
-//                            .fileSize(course.column_total.toLong())
-//                            .build()
-//                    m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
-//                }
-//            })
         }
     }
 
@@ -179,31 +159,56 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         courseSpecialDbBean.teacher = teachers
         courseSpecialDbBean.num = num
         courseSpecialDao?.insert(courseSpecialDbBean)
-        //BKLog.d(TAG, ">专题数据库内容:" + courseSpecialDao?.selectAll()?.toArray())
+        BKLog.d(TAG, ">专题信息插入数据库:" + courseSpecialDbBean.toString())
 
-        //下载专题下的课程列表
+        //下载专题下的课程列表 PS:后台有些视频信息大小会有值，有些没有值-蛋疼
         //val courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
         for (section in SleSections) {
-            if(section.filesize1==0){
-                BKLog.e(TAG,"文件大小为0${section.name}")
+            if (fileSize(section) == 0) {
+                MediaUitl.getUrlByVid(section.vid, object : MediaUitl.OnPlayUrlListener {
+                    override fun onFailure() {
+                        BKLog.e(TAG, "获取视频信息失败")
+                    }
+
+                    override fun onSuccess(url: String, size: Int?) {
+                        val courseDbBean = CourseDbBean()
+                        courseDbBean.column_uid = "uuid"
+                        courseDbBean.column_special_id = typeId
+                        courseDbBean.column_course_id = section.id
+                        courseDbBean.column_cover = section.avatar
+                        courseDbBean.column_title = section.name
+                        courseDbBean.column_total = size!!
+                        courseDbBean.column_progress = 0               //ps:进度回调中更新此字段
+                        courseDbBean.column_complete = 0               //ps:完成回调中更新此字段
+                        courseDbBean.column_m3u8_url = ""              //ps:调用保利威视接口时，更新此字段，其实不填也没有关，系详细请查看MediaUitl.getUrlByVid(...)
+                        courseDbBean.column_key_ts_url = ""
+                        courseDbBean.column_down_path = ""             //ps:完成回调中更新此字段
+                        courseDbBean.column_state = "点击下载"
+                        courseDbBean.column_vid = section.vid
+                        courseDao?.insert(courseDbBean)
+                        BKLog.d(TAG, "课程信息插入数据库，接口返回的大小为0，所以请求了视频信息接口" + courseDbBean.toString())
+                    }
+                })
+            } else {
+                val courseDbBean = CourseDbBean()
+                courseDbBean.column_uid = "uuid"
+                courseDbBean.column_special_id = typeId
+                courseDbBean.column_course_id = section.id
+                courseDbBean.column_cover = section.avatar
+                courseDbBean.column_title = section.name
+                courseDbBean.column_total = fileSize(section)
+                courseDbBean.column_progress = 0               //ps:进度回调中更新此字段
+                courseDbBean.column_complete = 0               //ps:完成回调中更新此字段
+                courseDbBean.column_m3u8_url = ""              //ps:调用保利威视接口时，更新此字段，其实不填也没有关，系详细请查看MediaUitl.getUrlByVid(...)
+                courseDbBean.column_key_ts_url = ""
+                courseDbBean.column_down_path = ""             //ps:完成回调中更新此字段
+                courseDbBean.column_state = "点击下载"
+                courseDbBean.column_vid = section.vid
+                courseDao?.insert(courseDbBean)
+                BKLog.d(TAG, "课程信息插入数据库:" + courseDbBean.toString())
+
             }
-            val courseDbBean = CourseDbBean()
-            courseDbBean.column_uid = "uuid"
-            courseDbBean.column_special_id = typeId
-            courseDbBean.column_course_id = section.id
-            courseDbBean.column_cover = section.avatar
-            courseDbBean.column_title = section.name
-            courseDbBean.column_total = section.filesize1
-            courseDbBean.column_progress = 0
-            courseDbBean.column_complete = 0
-            courseDbBean.column_m3u8_url = ""
-            courseDbBean.column_key_ts_url = ""
-            courseDbBean.column_down_path = ""
-            courseDbBean.column_state = "点击下载"
-            courseDbBean.column_vid = section.vid
-            courseDao?.insert(courseDbBean)
         }
-        //BKLog.d(TAG, "课程数据库内容:" + courseDao?.selectAll()?.toArray())
         SleSections.clear()
     }
 
@@ -333,5 +338,6 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
     override fun onDestroy() {
         super.onDestroy()
         SleSections.clear()
+        timerHelper?.stop()
     }
 }
