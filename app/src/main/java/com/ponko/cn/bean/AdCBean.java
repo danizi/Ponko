@@ -1,6 +1,8 @@
 package com.ponko.cn.bean;
 
-public class AdCBean {
+import com.xm.lib.common.http.NetBean;
+
+public class AdCBean extends NetBean {
     private String id;
     private String picture;
     private String type;

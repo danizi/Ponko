@@ -12,30 +12,27 @@ object DialogUtil {
     @SuppressLint("StaticFieldLeak")
     private var dlg: AlertDialog? = null
 
-    fun show(context: Context,  title: String, msg: String,isCancelable: Boolean, enterListener: OnEnterListener?, cancelListener: OnCancelListener?) {
-        if (dlg == null) {
-            dlg = XmIOSDialog(context)
-                    .setType(Type.GENERAL)
-                    .setMsg(msg)
-                    .setTitle(title)
-                    .setCancelable(isCancelable)
-                    .setSize(600, 400)
-                    .setOnEnterListener(enterListener)
-                    .setOnCancelListener(cancelListener)
-                    .build()
+    fun show(context: Context, title: String, msg: String, isCancelable: Boolean, enterListener: OnEnterListener?, cancelListener: OnCancelListener?) {
+        try {
+            if (dlg != null && dlg?.isShowing!!) {
+                dlg?.dismiss()
+            }
+            dlg = newXmIOSDialog(context, title, msg, isCancelable, enterListener, cancelListener)
             dlg?.show()
-        } else {
-            dlg?.dismiss()
-            dlg = XmIOSDialog(context)
-                    .setType(Type.GENERAL)
-                    .setMsg(msg)
-                    .setTitle(title)
-                    .setCancelable(isCancelable)
-                    .setSize(600, 400)
-                    .setOnEnterListener(enterListener)
-                    .setOnCancelListener(cancelListener)
-                    .build()
-            dlg?.show()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+    }
+
+    private fun newXmIOSDialog(context: Context, title: String, msg: String, isCancelable: Boolean, enterListener: OnEnterListener?, cancelListener: OnCancelListener?): AlertDialog {
+        return XmIOSDialog(context)
+                .setType(Type.GENERAL)
+                .setMsg(msg)
+                .setTitle(title)
+                .setCancelable(isCancelable)
+                .setSize(600, 400)
+                .setOnEnterListener(enterListener)
+                .setOnCancelListener(cancelListener)
+                .build()
     }
 }

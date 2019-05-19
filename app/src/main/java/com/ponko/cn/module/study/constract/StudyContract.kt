@@ -15,9 +15,17 @@ class StudyContract {
     }
 
     class Model {
+        /**
+         * 请求学习界面首页接口
+         */
         fun requestStudyApi(callback: HttpCallBack<MainCBean>) {
             PonkoApp.studyApi?.main()?.enqueue(callback)
         }
+
+
+
+
+
     }
 
     class Present(private val context: Context?, private val view: View?) {
