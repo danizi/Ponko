@@ -327,6 +327,30 @@ public class ProfileCBean {
         public void setStatus(int status) {
             this.status = status;
         }
+
+        @Override
+        public String toString() {
+            return "AccountBean{" +
+                    "qq='" + qq + '\'' +
+                    ", city='" + city + '\'' +
+                    ", heartbeat=" + heartbeat +
+                    ", companyName='" + companyName + '\'' +
+                    ", industry='" + industry + '\'' +
+                    ", avatar='" + avatar + '\'' +
+                    ", study_count=" + study_count +
+                    ", study_duration=" + study_duration +
+                    ", expiredTime=" + expiredTime +
+                    ", intention='" + intention + '\'' +
+                    ", realName='" + realName + '\'' +
+                    ", weiXin='" + weiXin + '\'' +
+                    ", is_bind_wechat=" + is_bind_wechat +
+                    ", phone='" + phone + '\'' +
+                    ", nickname='" + nickname + '\'' +
+                    ", integration=" + integration +
+                    ", email='" + email + '\'' +
+                    ", status=" + status +
+                    '}';
+        }
     }
 
     public static class TaskBean {

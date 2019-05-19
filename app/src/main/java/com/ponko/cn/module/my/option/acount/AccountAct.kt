@@ -103,10 +103,11 @@ class AccountAct : AppCompatActivity() {
                 when (itemBean.content) {
                     "个人信息" -> {
                         BKLog.d("点击个人信息")
+                        ActivityUtil.startActivity(context, Intent(context, PersonalActivity::class.java))
                     }
                     "收件信息" -> {
                         BKLog.d("点击收件信息")
-                        ActivityUtil.startActivity(context, Intent(context,AddressActivity::class.java))
+                        ActivityUtil.startActivity(context, Intent(context, AddressActivity::class.java))
                     }
                     "微信绑定" -> {
                         BKLog.d("点击微信绑定")

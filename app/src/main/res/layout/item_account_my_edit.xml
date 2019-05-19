@@ -40,6 +40,7 @@
         android:hint="hit"
         android:textColor="#333333"
         android:textColorHint="#999999"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/iv_arrow"
         app:layout_constraintTop_toTopOf="parent" />

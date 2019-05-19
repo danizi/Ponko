@@ -69,7 +69,7 @@ object BarUtil {
         val flBack: FrameLayout? = barView?.findViewById(R.id.fl_back) as FrameLayout
         val tvTitle: TextView? = barView.findViewById(R.id.tv_title) as TextView
         val tvRight: TextView? = barView.findViewById(R.id.tv_right) as TextView
-
+        tvRight?.text = right
         flBack?.setOnClickListener {
             (context as Activity).finish()
         }

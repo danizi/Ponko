@@ -31,16 +31,6 @@ import retrofit2.Response
 
 class AddressActivity : AppCompatActivity() {
 
-    private class ViewHolder private constructor(val toolbar: Toolbar, val rv: RecyclerView) {
-        companion object {
-            fun create(rootView: AppCompatActivity): ViewHolder {
-                val toolbar = rootView.findViewById<View>(R.id.toolbar) as Toolbar
-                val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
-                return ViewHolder(toolbar, rv)
-            }
-        }
-    }
-
     private var viewHolder: ViewHolder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,36 +41,60 @@ class AddressActivity : AppCompatActivity() {
             viewHolder = ViewHolder.create(this)
         }
 
+        //设置顶部状态栏
         BarUtil.addBar1(this, viewHolder?.toolbar, "收件地址", "保存", View.OnClickListener {
             val phone = viewHolder?.rv?.layoutManager?.getChildAt(0)?.findViewById<EditText>(R.id.et)?.text.toString()
             val name = viewHolder?.rv?.layoutManager?.getChildAt(1)?.findViewById<EditText>(R.id.et)?.text.toString()
             val address = viewHolder?.rv?.layoutManager?.getChildAt(2)?.findViewById<EditText>(R.id.et)?.text.toString()
-            BKLog.d("保存地址信息 phone:$phone neme$name address$address")
-            var canSava = true
-            if (TextUtils.isEmpty(phone)) {
-                canSava = false
-                Toast.makeText(this@AddressActivity, "手机号码为空", Toast.LENGTH_SHORT).show()
-            }
-            if (TextUtils.isEmpty(name)) {
-                canSava = false
-                Toast.makeText(this@AddressActivity, "姓名为空", Toast.LENGTH_SHORT).show()
-            }
-            if (TextUtils.isEmpty(address)) {
-                canSava = false
-                Toast.makeText(this@AddressActivity, "收件地址为空", Toast.LENGTH_SHORT).show()
-            }
-            if (canSava) {
-                val params = HashMap<String, String>()
-                params["tel"] = phone
-                params["recipient"] = name
-                params["address"] = address
-                PonkoApp.myApi?.saveAddress(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
-                    override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                        Toast.makeText(this@AddressActivity, "保存收货地址成功", Toast.LENGTH_SHORT).show()
-                    }
-                })
+            if (isCanSava(phone, name, address)) {
+                saveAddress(phone, name, address)
             }
         })
+
+        //设置收件信息
+        getAddress()
+    }
+
+    /**
+     * 检查输入信息
+     */
+    private fun isCanSava(phone: String, name: String, address: String): Boolean {
+        BKLog.d("保存地址信息 phone:$phone neme$name address$address")
+        var canSava = true
+        if (TextUtils.isEmpty(phone)) {
+            canSava = false
+            Toast.makeText(this@AddressActivity, "手机号码为空", Toast.LENGTH_SHORT).show()
+        }
+        if (TextUtils.isEmpty(name)) {
+            canSava = false
+            Toast.makeText(this@AddressActivity, "姓名为空", Toast.LENGTH_SHORT).show()
+        }
+        if (TextUtils.isEmpty(address)) {
+            canSava = false
+            Toast.makeText(this@AddressActivity, "收件地址为空", Toast.LENGTH_SHORT).show()
+        }
+        return canSava
+    }
+
+    /**
+     * 保存信息
+     */
+    private fun saveAddress(phone: String, name: String, address: String) {
+        val params = HashMap<String, String>()
+        params["tel"] = phone
+        params["recipient"] = name
+        params["address"] = address
+        PonkoApp.myApi?.saveAddress(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
+            override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                Toast.makeText(this@AddressActivity, "保存收货地址成功", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    /**
+     * 获取收件信息
+     */
+    private fun getAddress() {
         PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
             override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
                 val addressBean = response?.body()
@@ -95,7 +109,27 @@ class AddressActivity : AppCompatActivity() {
         })
     }
 
+    /**
+     * 窗口的ViewHolder
+     */
+    private class ViewHolder private constructor(val toolbar: Toolbar, val rv: RecyclerView) {
+        companion object {
+            fun create(rootView: AppCompatActivity): ViewHolder {
+                val toolbar = rootView.findViewById<View>(R.id.toolbar) as Toolbar
+                val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
+                return ViewHolder(toolbar, rv)
+            }
+        }
+    }
+
+    /**
+     * 实体bean
+     */
     private class ItemBean(var content: String, var hint: String, var et: String? = "")
+
+    /**
+     * 地址填写ViewHolder
+     */
     private class ItemViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val tv: TextView, val ivArrow: CircleImageView, val et: EditText, val divider: View) {
