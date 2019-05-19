@@ -103,7 +103,7 @@ object M3u8Utils {
     }
 
     /**
-     * str转集合 1,2,3,4，ps：下载m3u8解析时会被使用，下载一个文件就从数据库中移除
+     * str转集合 1,2,3,4, ps：下载m3u8解析时会被使用，下载一个文件就从数据库中移除
      */
     fun strToList(args: String?): ArrayList<String>? {
         val l = args?.split(",")

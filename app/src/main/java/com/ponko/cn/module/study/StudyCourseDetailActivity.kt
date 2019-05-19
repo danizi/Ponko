@@ -66,6 +66,13 @@ class StudyCourseDetailActivity : AppCompatActivity() {
             intent.putExtra("vid", vid)
             ActivityUtil.startActivity(context, intent)
         }
+
+        /**
+         * 搜索页面跳转使用该方法 todo 缺失专题信息啊
+         */
+        fun startFromSearch(context: Context?) {
+
+        }
     }
 
     private var viewHolder: ViewHolder? = null
@@ -117,7 +124,7 @@ class StudyCourseDetailActivity : AppCompatActivity() {
                 vid = intent.getStringExtra("vid")
                 BKLog.d(TAG, "点击了“已”缓存课程跳转过来")
             }
-            TYPE_FROM_CACHE -> {
+            TYPE_FROM_GENERAL -> {
                 BKLog.d(TAG, "点击了“未”缓存课程跳转过来")
             }
         }
@@ -181,7 +188,7 @@ class StudyCourseDetailActivity : AppCompatActivity() {
                         Toast.makeText(this@StudyCourseDetailActivity, "获取播放地址失败 - ", Toast.LENGTH_SHORT).show()
                     }
 
-                    override fun onSuccess(url: String,size:Int?) {
+                    override fun onSuccess(url: String, size: Int?) {
                         //然后请求视频地址
                         val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
                         this@StudyCourseDetailActivity.runOnUiThread {

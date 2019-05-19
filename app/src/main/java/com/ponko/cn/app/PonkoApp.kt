@@ -33,10 +33,11 @@ class PonkoApp : Application() {
         var myApi: MyApi? = null
         var adApi: AdApi? = null
         var payApi: PayApi? = null
+        var searchApi: SearchApi? = null
 
         var dbHelp: PonkoDBHelp? = null
-        var courseSpecialDao: CourseSpecialDao?=null
-        var courseDao: CourseDao?=null
+        var courseSpecialDao: CourseSpecialDao? = null
+        var courseDao: CourseDao? = null
 
         var activityManager = ActManager()
         @SuppressLint("StaticFieldLeak")
@@ -79,6 +80,7 @@ class PonkoApp : Application() {
         myApi = retrofitClient?.retrofit?.create(MyApi::class.java)
         adApi = retrofitClient?.retrofit?.create(AdApi::class.java)
         payApi = retrofitClient?.retrofit?.create(PayApi::class.java)
+        searchApi = retrofitClient?.retrofit?.create(SearchApi::class.java)
     }
 
     private fun initActivityManager() {

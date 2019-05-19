@@ -45,6 +45,7 @@ interface StudyApi {
      *                ptime  = Long.toString(System.currentTimeMillis());
      *                sign   = "format=" + format + "&ptime=" + ptime + "&vid=" + vid + secretKey; SHA1签名方式
      */
+    @Deprecated("")
     @FormUrlEncoded
     @POST("http://api.polyv.net/v2/video/{userid}/get-video-msg")
     fun updateVideoInfo(@FieldMap params: Map<String, String>): Call<Any>

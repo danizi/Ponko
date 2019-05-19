@@ -1,15 +1,12 @@
 package com.ponko.cn.module.study.holder
 
-import android.content.Intent
 import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.module.study.CourseTypeLinearActivity
-import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
