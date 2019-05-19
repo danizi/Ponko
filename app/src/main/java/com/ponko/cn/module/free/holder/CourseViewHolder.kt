@@ -7,8 +7,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.CoursesCBean
+import com.ponko.cn.module.free.FreeDetailsAct
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.log.BKLog
 
 class CourseViewHolder(view: View?) : BaseViewHolder(view!!) {
 
@@ -38,7 +40,14 @@ class CourseViewHolder(view: View?) : BaseViewHolder(view!!) {
         val listBean = d as CoursesCBean.TrialBean.ListBean
         v?.tvTitle?.text = listBean.title
         v?.tvDes?.text = listBean.summary
-        v?.clDetail?.setOnClickListener {}
+        v?.clDetail?.setOnClickListener {
+            BKLog.d("详情页面")
+            FreeDetailsAct.start(context, listBean.id)
+        }
+        v?.clVideo?.setOnClickListener {
+            BKLog.d("详情页面")
+            FreeDetailsAct.start(context, listBean.id)
+        }
         Glide.with(context, listBean.avatar, v?.ivAvatar)
     }
 }

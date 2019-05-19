@@ -86,7 +86,8 @@
         <activity android:name=".module.study.CacheActivity" />
         <activity android:name=".module.my.option.CacheListAct" />
         <activity android:name=".module.m3u8downer.M3u8DownerTextAct" />
-        <!--<activity android:name=".module.my.option.acount.CusTakePhotoActivity" />-->
+        <!-- <activity android:name=".module.my.option.acount.CusTakePhotoActivity" /> -->
+        <activity android:name=".module.free.FreeMoreAct"></activity>
     </application>
 
 </manifest>

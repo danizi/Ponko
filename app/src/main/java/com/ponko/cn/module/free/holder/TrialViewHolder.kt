@@ -10,12 +10,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.TrialBean
+import com.ponko.cn.module.free.FreeMoreAct
 import com.ponko.cn.module.free.adapter.CourseAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
+import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
 
-
+/**
+ * 免费课程相关
+ */
 class TrialViewHolder(view: View?) : BaseViewHolder(view!!) {
 
     private class ViewHolder private constructor(val tvTitle: TextView, val tvMore: TextView, val llDes: LinearLayout, val llBook: LinearLayout, val ivBook: ImageView, val tvBook: TextView, val llListen: LinearLayout, val ivListen: ImageView, val tvListen: TextView, val rv: RecyclerView, val llMore: LinearLayout, val tvBottomMore: TextView) {
@@ -49,7 +53,14 @@ class TrialViewHolder(view: View?) : BaseViewHolder(view!!) {
         v?.tvTitle?.text = trialBean.trial?.title
         v?.tvBook?.text = trialBean.trial?.summary
         v?.tvListen?.text = trialBean.trial?.summary2
-
+        v?.llMore?.setOnClickListener {
+            BKLog.d("点击更多")
+            FreeMoreAct.start(context, trialBean.trial?.title!!, trialBean.trial.id!!)
+        }
+        v?.tvMore?.setOnClickListener {
+            BKLog.d("点击更多")
+            FreeMoreAct.start(context, trialBean.trial?.title!!, trialBean.trial.id!!)
+        }
         v?.rv?.layoutManager = LinearLayoutManager(context)
         v?.rv?.isFocusableInTouchMode = false
         v?.rv?.requestFocus()
