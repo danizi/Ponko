@@ -110,8 +110,8 @@ class CacheContract {
                 ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
         //删
-        const val SQL_DEL_BY_ID="DELETE FORM $TABLE_NAME WHERE $$COLUMN_COURSE_ID"
-        const val SQL_DEL_ALL="DELETE FORM $TABLE_NAME"
+        const val SQL_DEL_BY_ID="DELETE FROM $TABLE_NAME WHERE $$COLUMN_COURSE_ID"
+        const val SQL_DEL_ALL="DELETE FROM $TABLE_NAME"
 
         //改
         const val SQL_UPDATE_BY_ID="UPDATE $TABLE_NAME SET " +
@@ -146,6 +146,7 @@ class CacheContract {
         //查
         const val SQL_SELECT_BY_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
         const val SQL_SELECT_BY_VID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COLUMN_VID = ?;"
+        const val SQL_SELECT_BY_SPECIAL_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_SPECIAL_ID = ?;"
         const val SQL_SELECT_ALL="SELECT * FROM $TABLE_NAME;"
     }
 }

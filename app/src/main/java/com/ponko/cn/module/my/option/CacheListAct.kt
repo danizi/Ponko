@@ -2,35 +2,37 @@ package com.ponko.cn.module.my.option
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.app.PonkoApp.Companion.courseDao
 import com.ponko.cn.app.PonkoApp.Companion.m3u8DownManager
 import com.ponko.cn.bean.BindItemViewHolderBean
-import com.ponko.cn.bean.VideoInfoCBean
 import com.ponko.cn.db.bean.CourseDbBean
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.m3u8downer.core.M3u8DownTask
 import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.module.m3u8downer.core.OnDownListener
-import com.ponko.cn.module.media.MediaUitl
+import com.ponko.cn.module.study.StudyCacheActivity
 import com.ponko.cn.module.study.StudyCourseDetailActivity
+import com.ponko.cn.utils.BarUtil
+import com.ponko.cn.utils.Glide
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.utils.FileUtil
+import com.xm.lib.media.broadcast.BroadcastManager
 import java.io.File
 
+
 /**
- * 缓存列表
- * 分两种情况处理：
- *               1 如果用户在专题
+ * 缓存列表 - 缓存的章节
  */
 class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
     companion object {
@@ -43,6 +45,90 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         private const val DOWN_STATE_PROCESS = "下载中..."
         private const val DOWN_STATE_ERROR = "下载错误"
         private const val DOWN_STATE_PAUSE = "暂停"
+
+        /**
+         * 下载全部任务广播
+         */
+        const val ACTION_DOWN_ALL = "broadcast.action.down.all"
+
+        var isDelete = false
+        var isSelectAll = false
+        var selectItems = ArrayList<CourseDbBean>()
+
+        var accept_special_id = ""
+        var accept_title = ""
+        var accept_teacher = ""
+        var accept_num = 0
+        var accept_duration = 0
+
+        /**
+         * 离线缓存列表跳转过来
+         * @param context    上下文对象
+         * @param special_id 课程专题id
+         * @param title      专题名称
+         * @param teacher    专题老师
+         * @param num        专题课程数量
+         * @param duration   专题总时长
+         */
+        fun start(context: Context?, special_id: String, title: String, teacher: String, num: Int, duration: Int) {
+            val intent = Intent(context, CacheListAct::class.java)
+            intent.putExtra("id", special_id)
+            intent.putExtra("title", title)
+            intent.putExtra("teacher", teacher)
+            intent.putExtra("num", num)
+            intent.putExtra("duration", duration)
+            accept_special_id = special_id
+            accept_title = title
+            accept_teacher = teacher
+            accept_num = num
+            accept_duration = duration
+            context?.startActivity(intent)
+        }
+    }
+
+    /**
+     * 底部按钮全选/删除
+     */
+    private var llbottom: LinearLayout? = null
+    private var btnAll: Button? = null
+    private var btnDelete: Button? = null
+
+    /**
+     * 下载所有广播
+     */
+    private var broadcastManager: BroadcastManager? = null
+    private var downAllBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == ACTION_DOWN_ALL) {
+                val datas = PonkoApp.courseDao?.selectBySpecialId(accept_special_id)
+                down(datas)
+                BKLog.d("开始所有任务")
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        broadcastManager?.registerReceiver(ACTION_DOWN_ALL, downAllBroadcastReceiver)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        broadcastManager?.unRegisterReceiver(downAllBroadcastReceiver)
+        isDelete = false
+        isSelectAll = false
+        selectItems.clear()
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_cache_list
+    }
+
+    override fun findViews() {
+        super.findViews()
+        llbottom = findViewById(R.id.ll_bottom)
+        btnAll = findViewById(R.id.btn_all_select)
+        btnDelete = findViewById(R.id.btn_down)
     }
 
     override fun initDisplay() {
@@ -50,14 +136,53 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         disableRefresh = true
         addItemDecoration = false
         super.initDisplay()
+        BarUtil.addBarIcon(this, viewHolder?.toolbar, "缓存", R.mipmap.delete, R.mipmap.cancel, View.OnClickListener {
+            isSelectAll = !isSelectAll
+            if (llbottom?.visibility == View.GONE) {
+                llbottom?.visibility = View.VISIBLE
+                isDelete = true
+            } else {
+                llbottom?.visibility = View.GONE
+                isDelete = false
+            }
+            adapter?.notifyDataSetChanged()
+        })
     }
+
+    override fun iniEvent() {
+        super.iniEvent()
+        btnAll?.setOnClickListener {
+            BKLog.d("点击了全选")
+            isSelectAll = !isSelectAll
+            adapter?.notifyDataSetChanged()
+        }
+        btnDelete?.setOnClickListener {
+            BKLog.d("点击了删除")
+            for (deleteItem in selectItems) {
+                //删除数据库中的数据
+                courseDao?.delete(deleteItem)
+                //删除本地缓存的数据
+                FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + M3u8Utils.m3u8Unique(deleteItem.column_m3u8_url)))
+                //删除RecyclerView刷新
+                for (i in 1..(adapter?.data?.size!! - 1)) {
+                    if (deleteItem == adapter?.data?.get(i)) {
+                        adapter?.data?.remove(deleteItem)
+                        adapter?.notifyItemRemoved(i)
+                        adapter?.notifyItemChanged(i)
+                        break
+                    }
+                }
+            }
+        }
+    }
+
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
         return BindItemViewHolderBean.create(
-                arrayOf(0),
-                arrayOf(M3u8ViewHolder::class.java),
-                arrayOf(CourseDbBean::class.java),
-                arrayOf(R.layout.item_down_m3u8)
+                arrayOf(0, 1),
+                arrayOf(CacheListTopHolder::class.java, M3u8ViewHolder::class.java),
+                arrayOf(CacheListTopBean::class.java, CourseDbBean::class.java),
+                arrayOf(R.layout.activity_cache_list_top, R.layout.item_down_m3u8)
         )
     }
 
@@ -65,7 +190,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
 
     override fun requestRefreshApi() {
         //从数据库中获取
-        val datas = PonkoApp.courseDao?.selectAll()
+        val datas = PonkoApp.courseDao?.selectBySpecialId(accept_special_id)
         requestRefreshSuccess(datas)
         //检查权限
         checkPermission()
@@ -92,7 +217,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                 }
     }
 
-    private fun down(datas:ArrayList<CourseDbBean>?){
+    private fun down(datas: ArrayList<CourseDbBean>?) {
         for (course in datas?.iterator()!!) {
             val m3u8DownTask = M3u8DownTask.Builder()
                     .vid(course.column_vid)
@@ -151,9 +276,9 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
     /**
      * 更新Rv界面
      */
-    private fun updateRv(vid: String,m3u8: String, value: CourseDbBean?, type: Int) {
+    private fun updateRv(vid: String, m3u8: String, value: CourseDbBean?, type: Int) {
         var progressIndex = -1
-        for (i in 0..(adapter?.data?.size!! - 1)) {
+        for (i in 1..(adapter?.data?.size!! - 1)) {
             val courseDbBean = adapter?.data!![i] as CourseDbBean
 //            if (m3u8 == courseDbBean.column_m3u8_url) {
             if (vid == courseDbBean.column_vid) {
@@ -165,7 +290,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                         courseDbBean.column_vid = vid
                         courseDbBean.column_m3u8_url = m3u8
                         //下载中状态更新到数据库当中
-                        PonkoApp.courseDao?.downProgressUpdate(vid,value.column_progress)
+                        PonkoApp.courseDao?.downProgressUpdate(vid, value.column_progress)
                     }
                     UPDATE_COMPLETE -> {
                         courseDbBean.column_complete = value?.column_complete!! //1代表成功
@@ -192,7 +317,16 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
     }
 
     override fun multiTypeData(body: ArrayList<CourseDbBean>?): List<Any> {
-        return body!!
+        val data = ArrayList<Any>()
+        data.add(CacheListTopBean(
+                accept_special_id,
+                accept_title,
+                accept_teacher,
+                accept_num,
+                accept_duration
+        ))
+        data.addAll(body!!)
+        return data
     }
 
     override fun adapter(): BaseRvAdapter? {
@@ -201,6 +335,43 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
 
     override fun presenter(): Any {
         return Any()
+    }
+
+    /**
+     * 缓存顶部内容
+     */
+    class CacheListTopHolder(view: View) : BaseViewHolder(view) {
+        private class ViewHolder private constructor(val imageView5: ImageView, val tvSection: TextView, val btnDownAll: Button) {
+            companion object {
+
+                fun create(rootView: View): ViewHolder {
+                    val imageView5 = rootView.findViewById<View>(R.id.imageView5) as ImageView
+                    val tvSection = rootView.findViewById<View>(R.id.tv_section) as TextView
+                    val btnDownAll = rootView.findViewById<View>(R.id.btn_down_all) as Button
+                    return ViewHolder(imageView5, tvSection, btnDownAll)
+                }
+            }
+        }
+
+        private var ui: ViewHolder? = null
+
+        override fun bindData(d: Any, position: Int) {
+            if (ui == null) {
+                ui = ViewHolder.create(itemView)
+            }
+            val cacheListTopBean = d as CacheListTopBean
+            val context = itemView.context
+            itemView.setOnClickListener {
+                BKLog.d("跳转到本课程其他章节")
+                StudyCacheActivity.start(context, cacheListTopBean.id, cacheListTopBean.teacher, cacheListTopBean.num.toLong(), cacheListTopBean.duration.toLong())
+            }
+            ui?.btnDownAll?.setOnClickListener {
+                BKLog.d("全部开始")
+                context.sendBroadcast(Intent(ACTION_DOWN_ALL))
+                //为了安全起见 首先将运行队列全部移除
+                m3u8DownManager?.dispatcher?.removeAll()
+            }
+        }
     }
 
     /**
@@ -216,7 +387,19 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             }
             val courseDbBean = d as CourseDbBean
             val context = itemView.context
+            //是否是删除模式
+            if (isDelete) {
+                if (isSelectAll) {
+                    selectItems.add(courseDbBean)
+                } else {
+                    selectItems.remove(courseDbBean)
+                }
+                viewHolder?.cb?.visibility = View.VISIBLE
+            } else {
+                viewHolder?.cb?.visibility = View.GONE
+            }
             //设置界面内容
+            Glide.with(context, courseDbBean.column_cover, viewHolder?.ivCover) //设置封面
             progress(courseDbBean)                                     //下载修改“进度提示字”和“进度条”
             viewHolder?.tvCourseName?.text = courseDbBean.column_title //任务名称
             when (courseDbBean.column_complete) {
@@ -230,18 +413,48 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
 
             //监听
             itemView.setOnClickListener {
-                BKLog.d(TAG, "点击下载任务item")
-                when (courseDbBean.column_complete) {
-                    0 -> {
-                        notDownComplete(courseDbBean)          //未完成点击处理
+                when (isDelete) {
+                    true -> {
+                        deleteClickItem(courseDbBean)
                     }
-                    1 -> {
-                        downComplete(context, courseDbBean)    //完成点击处理
+                    false -> {
+                        ordinaryClickItem(context, courseDbBean)
                     }
                 }
             }
         }
 
+        /**
+         * 非删除模式点击item处理
+         */
+        private fun ordinaryClickItem(context: Context, courseDbBean: CourseDbBean) {
+            BKLog.d(TAG, "点击下载任务item")
+            when (courseDbBean.column_complete) {
+                0 -> {
+                    notDownComplete(courseDbBean)          //未完成点击处理
+                }
+                1 -> {
+                    downComplete(context, courseDbBean)    //完成点击处理
+                }
+            }
+        }
+
+        /**
+         * 删除模式点击item处理
+         */
+        private fun deleteClickItem(courseDbBean: CourseDbBean) {
+            if (viewHolder?.cb?.isChecked == true) {
+                viewHolder?.cb?.isChecked = false
+                selectItems.remove(courseDbBean)
+            } else {
+                selectItems.add(courseDbBean)
+                viewHolder?.cb?.isChecked = true
+            }
+        }
+
+        /**
+         * 下载完成点击item处理
+         */
         private fun downComplete(context: Context, courseDbBean: CourseDbBean) {
             val courseSpecialDbBeans = PonkoApp.courseSpecialDao?.select(courseDbBean.column_special_id)
             if (!courseSpecialDbBeans?.isEmpty()!!) {
@@ -256,6 +469,9 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             //StudyCourseDetailActivity.startFromCacheCourse(context, value_typeId, value_teachers, value_num, value_duration, courseDbBean.column_vid)
         }
 
+        /**
+         * 没有下载完成点击item处理
+         */
         private fun notDownComplete(courseDbBean: CourseDbBean) {
             if (m3u8DownManager?.isRun(courseDbBean.column_m3u8_url) == true) {
                 m3u8DownManager?.pause(courseDbBean.column_m3u8_url)
@@ -272,6 +488,9 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             }
         }
 
+        /**
+         * 进度显示处理
+         */
         @SuppressLint("SetTextI18n")
         fun progress(courseDbBean: CourseDbBean) {
             viewHolder?.pb?.max = courseDbBean.column_total//进度条最大值设置
@@ -290,19 +509,25 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             }
         }
 
-        private class ViewHolder private constructor(val imageView5: ImageView, val tvCourseName: TextView, val pb: ProgressBar, val tvState: TextView, val tvProcessTotal: TextView) {
+        private class ViewHolder private constructor(val cb: CheckBox, val ivCover: ImageView, val tvCourseName: TextView, val pb: ProgressBar, val tvState: TextView, val tvProcessTotal: TextView) {
             companion object {
+
                 fun create(rootView: View): ViewHolder {
-                    val imageView5 = rootView.findViewById<View>(R.id.imageView5) as ImageView
+                    val cb = rootView.findViewById<View>(R.id.cb) as CheckBox
+                    val ivCover = rootView.findViewById<View>(R.id.iv_cover) as ImageView
                     val tvCourseName = rootView.findViewById<View>(R.id.tv_course_name) as TextView
                     val pb = rootView.findViewById<View>(R.id.pb) as ProgressBar
                     val tvState = rootView.findViewById<View>(R.id.tv_state) as TextView
                     val tvProcessTotal = rootView.findViewById<View>(R.id.tv_process_total) as TextView
-                    return ViewHolder(imageView5, tvCourseName, pb, tvState, tvProcessTotal)
+                    return ViewHolder(cb, ivCover, tvCourseName, pb, tvState, tvProcessTotal)
                 }
             }
         }
+
     }
+
+    class CacheListTopBean(var id: String, var title: String, var teacher: String, var num: Int, var duration: Int)
+
 
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)

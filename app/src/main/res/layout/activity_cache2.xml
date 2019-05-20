@@ -5,31 +5,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".module.study.CacheActivity">
-
-    <include
-        android:id="@+id/include3"
-        layout="@layout/activity_base_refresh_load" />
+    tools:context=".module.study.StudyCacheActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute">
+
+        <!--标题栏-->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            android:elevation="6dp"
+            android:minHeight="?attr/actionBarSize"
+            android:visibility="gone"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp" />
+
+        <!--内容-->
+        <include layout="@layout/srl_rv" />
+
+    </LinearLayout>
+
+    <!--底部按钮-->
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/include3">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
             android:id="@+id/btn_all_select"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="全选" />
+            android:background="#9DCAAE"
+            android:text="全选"
+            android:textColor="@color/white" />
 
+        <!--确认删除(x)或者是下载取决用户选中模式-->
         <Button
             android:id="@+id/btn_down"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="下载" />
+            android:background="#FF5A5E"
+            android:text="下载"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

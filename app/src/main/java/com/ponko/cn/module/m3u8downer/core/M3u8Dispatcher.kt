@@ -88,6 +88,17 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
         }
     }
 
+    fun removeAll(){
+        for (tasker in runningQueue?.iterator()!!) {
+            tasker.m3u8DownRunnable?.stop()
+            runningQueue?.remove(tasker)
+        }
+        for (tasker in readyQueue?.iterator()!!) {
+            readyQueue?.remove(tasker)
+            tasker.m3u8DownRunnable?.stop()
+        }
+    }
+
     fun isRun(url: String): Boolean {
         for (tasker in runningQueue?.iterator()!!) {
             if (url == tasker.downTask?.m3u8) {

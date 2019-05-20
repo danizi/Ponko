@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:lines="1"
-        android:text="May老师"
+        android:text="老师"
         android:textColor="#666666"
         app:layout_constraintBottom_toTopOf="@+id/course_number"
         app:layout_constraintStart_toStartOf="@+id/tv_course_title"

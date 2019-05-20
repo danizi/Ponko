@@ -15,6 +15,7 @@ import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
 import com.ponko.cn.utils.CacheUtil
 import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
+import com.xm.lib.common.log.BKLog
 import java.io.File
 
 class PonkoApp : Application() {
@@ -47,6 +48,8 @@ class PonkoApp : Application() {
     override fun onCreate() {
         super.onCreate()
         app = this
+        //日志开关
+        iniLog()
         //初始化网络请求
         initNetWork()
         //初始化窗口管理
@@ -55,6 +58,10 @@ class PonkoApp : Application() {
         initDb()
         //初始化m3u8文件下载器
         initDownManager()
+    }
+
+    private fun iniLog() {
+        BKLog.LEVEL = BKLog.E
     }
 
     private fun initDownManager() {

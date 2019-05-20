@@ -2,6 +2,7 @@ package com.ponko.cn.db.dao
 
 import android.database.sqlite.SQLiteDatabase
 import com.ponko.cn.db.CacheContract
+import com.ponko.cn.db.CacheContract.CourseTable.SQL_SELECT_BY_SPECIAL_ID
 import com.ponko.cn.db.CacheContract.CourseTable.SQL_SELECT_BY_VID
 import com.ponko.cn.db.bean.CourseDbBean
 import com.xm.lib.common.log.BKLog
@@ -16,7 +17,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun insert(bean: CourseDbBean) {
         if (db?.isOpen == true) {
-            if (select(bean).isEmpty()) {
+            if (select(bean).isEmpty() && !exist(bean.column_vid)) {
                 db?.execSQL(CacheContract.CourseTable.SQL_INSERT, arrayOf(
                         bean.column_uid,
                         bean.column_special_id,
@@ -142,7 +143,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
     }
 
     /**
-     * 通过课程id查询
+     * 通过课程vid查询
      */
     fun select(bean: CourseDbBean): ArrayList<CourseDbBean> {
         val queryData = ArrayList<CourseDbBean>()
@@ -215,6 +216,37 @@ class CourseDao(private var db: SQLiteDatabase?) {
     }
 
     /**
+     * 通过专题ID来查看课程
+     */
+    fun selectBySpecialId(special_id: String): ArrayList<CourseDbBean> {
+        val data = ArrayList<CourseDbBean>()
+        val cursor = db?.rawQuery(SQL_SELECT_BY_SPECIAL_ID, arrayOf(special_id))
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                val courseDbBean = CourseDbBean()
+                val id = cursor.getString(0)
+                courseDbBean.column_uid = cursor.getString(1)
+                courseDbBean.column_special_id = cursor.getString(2)
+                courseDbBean.column_course_id = cursor.getString(3)
+                courseDbBean.column_cover = cursor.getString(4)
+                courseDbBean.column_title = cursor.getString(5)
+                courseDbBean.column_total = cursor.getInt(6)
+                courseDbBean.column_progress = cursor.getInt(7)
+                courseDbBean.column_complete = cursor.getInt(8)
+                courseDbBean.column_m3u8_url = cursor.getString(9)
+                courseDbBean.column_key_ts_url = cursor.getString(10)
+                courseDbBean.column_down_path = cursor.getString(11)
+                courseDbBean.column_state = cursor.getString(12)
+                courseDbBean.column_vid = cursor.getString(13)
+                data.add(courseDbBean)
+            }
+        } else {
+            BKLog.e("数据库中未查询到")
+        }
+        return data
+    }
+
+    /**
      * 查看所有课程
      */
     fun selectAll(): ArrayList<CourseDbBean> {
@@ -253,6 +285,33 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun exist(vid: String?): Boolean {
         return select(vid).size > 0
+    }
+
+    /**
+     * 判断是否已经缓存完成
+     */
+    fun isComplete(vid: String?): Boolean {
+        val courseDbBeans = select(vid)
+        if (courseDbBeans.size > 1) {
+            throw IllegalAccessException("查询到多个相同的vid信息，按道理只有一个")
+        } else if (!courseDbBeans.isEmpty()) {
+            return courseDbBeans[0].column_complete == 1
+        }
+        return false
+    }
+
+    /**
+     * 判断完成的数量
+     */
+    fun completeCount(specialId: String): Int {
+        var count = 0
+        val courseDbBeans = selectBySpecialId(specialId)
+        for (courseDbBean in courseDbBeans) {
+            if (courseDbBean.column_complete == 1) {
+                count++
+            }
+        }
+        return count
     }
 
     @Deprecated("")

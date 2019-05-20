@@ -17,7 +17,7 @@ object MediaUitl {
     /**
      * 三种选择 1 标准  2 高清 3超高清
      */
-    private const val QUALITY = 3
+    private const val QUALITY = 2
 
     /**
      * 视频地址选择 ps:调用接口有时候地址是空的

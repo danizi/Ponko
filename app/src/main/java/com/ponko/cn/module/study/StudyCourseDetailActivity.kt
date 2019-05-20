@@ -2,7 +2,6 @@ package com.ponko.cn.module.study
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
@@ -14,6 +13,7 @@ import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.media.AttachmentComplete
 import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.media.AttachmentPre
@@ -25,7 +25,8 @@ import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
 import retrofit2.Response
 
-class StudyCourseDetailActivity : AppCompatActivity() {
+class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
+
 
     companion object {
         const val TAG = "StudyCourseDetailActivity"
@@ -84,31 +85,51 @@ class StudyCourseDetailActivity : AppCompatActivity() {
     private var num = 0L
     private var duration = 0L
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_study_course_detail)
-        findViews()
-        initEvent()
-        initData(this@StudyCourseDetailActivity, viewHolder?.video!!)
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_study_course_detail)
+//        findViews()
+//        initEvent()
+//        initData(this@StudyCourseDetailActivity, viewHolder?.video!!)
+//
+//    }
+
+    override fun presenter(): Any {
+        return Any()
     }
 
-    private fun initEvent() {
+    override fun getLayoutId(): Int {
+        return R.layout.activity_study_course_detail
+    }
+
+    override fun findViews() {
+        if (viewHolder == null) {
+            viewHolder = ViewHolder.create(this)
+        }
+    }
+
+    override fun initDisplay() {
+        super.initDisplay()
+        com.jaeger.library.StatusBarUtil.setColor(this, this.resources.getColor(R.color.black), 0)
+    }
+
+    override fun iniEvent() {
+        super.iniEvent()
         viewHolder?.ivColect?.setOnClickListener {
             BKLog.d("点击收藏")
         }
         viewHolder?.ivDown?.setOnClickListener {
             BKLog.d("点击下载缓存页面")
-            CacheActivity.start(this, typeId, teachers, num, duration)
+            StudyCacheActivity.start(this, typeId, teachers, num, duration)
         }
         viewHolder?.ivShare?.setOnClickListener {
             BKLog.d("点击分享")
         }
     }
 
-    private fun findViews() {
-        if (viewHolder == null) {
-            viewHolder = ViewHolder.create(this)
-        }
+    override fun iniData() {
+        super.iniData()
+        initData(this, viewHolder?.video!!)
     }
 
     private fun initData(context: Context?, xmVideoView: XmVideoView) {
@@ -243,7 +264,7 @@ class StudyCourseDetailActivity : AppCompatActivity() {
     }
 
     /**
-     * 课程详情播放页面ViewHolder
+     * 课程详情窗口ViewHolder
      */
     private class ViewHolder private constructor(val video: XmVideoView, val constraintLayout5: ConstraintLayout, val ivShare: ImageView, val ivColect: ImageView, val ivDown: ImageView, val rv: RecyclerView) {
         companion object {

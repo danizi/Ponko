@@ -5,59 +5,73 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/imageView5"
+    <CheckBox
+        android:visibility="gone"
+        android:id="@+id/cb"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:src="@mipmap/ic_launcher"
+        android:layout_height="match_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="113dp"
+        android:layout_height="67dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cb"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/tv_course_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
         android:text="课程名称"
-        app:layout_constraintStart_toEndOf="@+id/imageView5"
-        app:layout_constraintTop_toTopOf="@+id/imageView5" />
+        android:textColor="#333333"
+        app:layout_constraintStart_toEndOf="@+id/iv_cover"
+        app:layout_constraintTop_toTopOf="@+id/iv_cover" />
 
     <ProgressBar
         android:id="@+id/pb"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_state"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tv_course_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_course_name" />
 
     <TextView
+        android:textSize="12sp"
         android:id="@+id/tv_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:text="状态"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+        android:textColor="#FF5A5E"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_cover"
         app:layout_constraintStart_toStartOf="@+id/tv_course_name" />
 
     <TextView
+        android:textSize="12sp"
         android:id="@+id/tv_process_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:text="0M / 0M"
-        app:layout_constraintEnd_toEndOf="@+id/pb"
-        app:layout_constraintTop_toBottomOf="@+id/pb" />
+        app:layout_constraintBottom_toBottomOf="@+id/tv_state"
+        app:layout_constraintEnd_toEndOf="@+id/pb" />
 
 </android.support.constraint.ConstraintLayout>

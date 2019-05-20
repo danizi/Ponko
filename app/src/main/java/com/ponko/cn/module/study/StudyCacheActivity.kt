@@ -2,6 +2,8 @@ package com.ponko.cn.module.study
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -24,11 +26,12 @@ import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.MediaUitl.fileSize
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.NumUtil
-import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.common.util.TimerHelper
 import retrofit2.Call
 import retrofit2.Response
@@ -36,17 +39,21 @@ import retrofit2.Response
 /**
  * 专题-选集缓存页面
  */
-class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
+class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
 
     companion object {
         /**
          * 日志标识
          */
-        private const val TAG = "CacheActivity"
+        private const val TAG = "StudyCacheActivity"
         /**
          * 选中专题下的课程数量
          */
         val SleSections = ArrayList<CoursesDetailCBean.ChaptersBean.SectionsBean>()
+        /**
+         * 是否全选
+         */
+        var isSelectAll = false
 
         /**
          * @param context  上下文对象
@@ -56,7 +63,7 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
          * @param duration 专题课程总时长
          */
         fun start(context: Context, typeId: String, teachers: String, num: Long, duration: Long) {
-            val intent = Intent(context, CacheActivity::class.java)
+            val intent = Intent(context, StudyCacheActivity::class.java)
             intent.putExtra("typeId", typeId)
             intent.putExtra("teachers", teachers)
             intent.putExtra("num", num)
@@ -108,6 +115,7 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         addItemDecoration = false
         super.initDisplay()
         BarUtil.addBar1(this, viewHolder?.toolbar, "选集缓存")
+        viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(this, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
     }
 
     override fun findViews() {
@@ -120,6 +128,9 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         super.iniEvent()
         btnAllSelect?.setOnClickListener {
             BKLog.d(TAG, "点击全选")
+            isSelectAll = !isSelectAll
+            adapter?.notifyDataSetChanged()
+            //requestRefreshApi()
         }
         btnDown?.setOnClickListener {
             BKLog.d(TAG, "下载")
@@ -131,8 +142,10 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
                 override fun onDelayTimerFinish() {
                     //开始下载
                     down(PonkoApp.courseDao?.selectAll())
+                    ToastUtil.show("已加入缓存队列")
+                    this@StudyCacheActivity.finish()
                 }
-            }, 1000)
+            }, 200)
         }
     }
 
@@ -161,7 +174,7 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         courseSpecialDao?.insert(courseSpecialDbBean)
         BKLog.d(TAG, ">专题信息插入数据库:" + courseSpecialDbBean.toString())
 
-        //下载专题下的课程列表 PS:后台有些视频信息大小会有值，有些没有值-蛋疼
+        //下载专题下的课程列表 PS:后台有些视频信息大小会有值，有些没有值
         //val courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
         for (section in SleSections) {
             if (fileSize(section) == 0) {
@@ -290,43 +303,81 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
      */
     open class CacheItemViewHolder(view: View) : BaseViewHolder(view) {
 
-        private class ViewHolder private constructor(val textView2: CheckBox, val tvCourseName: TextView, val tvCourseTime: TextView) {
+        private class ViewHolder private constructor(val cb: CheckBox, val tvCourseName: TextView, val tvCourseTime: TextView, val tvLocal: TextView) {
             companion object {
 
                 fun create(rootView: View): ViewHolder {
-                    val textView2 = rootView.findViewById<View>(R.id.textView2) as CheckBox
+                    val cb = rootView.findViewById<View>(R.id.cb) as CheckBox
                     val tvCourseName = rootView.findViewById<View>(R.id.tv_course_name) as TextView
                     val tvCourseTime = rootView.findViewById<View>(R.id.tv_course_time) as TextView
-                    return ViewHolder(textView2, tvCourseName, tvCourseTime)
+                    val tvLocal = rootView.findViewById<View>(R.id.tv_local) as TextView
+                    return ViewHolder(cb, tvCourseName, tvCourseTime, tvLocal)
                 }
             }
         }
 
         private var viewHolder: ViewHolder? = null
-
         override fun bindData(d: Any, position: Int) {
             if (viewHolder == null) {
                 viewHolder = ViewHolder.create(itemView)
             }
             val context = itemView.context
             val sectionsBean = d as CoursesDetailCBean.ChaptersBean.SectionsBean
+            //设置课程章节
             viewHolder?.tvCourseName?.text = sectionsBean.name
+            //课程时间
             viewHolder?.tvCourseTime?.text = NumUtil.getDecimalPoint(sectionsBean.duration.toInt() / 60f)
-            itemView.setOnClickListener {
-                //viewHolder?.textView2?.setBackgroundResource(R.mipmap.collection_p_check)
-                //viewHolder?.textView2?.setBackgroundResource(R.drawable.gray_circle)
-                if (viewHolder?.textView2?.isChecked == true) {
-                    BKLog.d(TAG, "取消选择")
-                    viewHolder?.textView2?.isChecked = false
-                    SleSections.remove(sectionsBean)
-                } else {
-                    BKLog.d(TAG, "选择")
-                    viewHolder?.textView2?.isChecked = true
+            //本地是否缓存了
+            if (courseDao?.isComplete(sectionsBean.vid) == true) {
+                displayLocal()
+            } else {
+                //选中状态
+                displayGeneral()
+                if (isSelectAll) {
                     SleSections.add(sectionsBean)
+                }else{
+                    SleSections.remove(sectionsBean)
                 }
-
-                BKLog.d(TAG, "点击了${sectionsBean.name}")
+                itemView.setOnClickListener {
+                    val select = if (isChecked()) {
+                        unSelect(sectionsBean)
+                    } else {
+                        select(sectionsBean)
+                    }
+                    BKLog.d(TAG, "点击了${sectionsBean.name} - $select")
+                }
             }
+        }
+
+        private fun isChecked(): Boolean {
+            return viewHolder?.cb?.isChecked!!
+        }
+
+        private fun select(sectionsBean: CoursesDetailCBean.ChaptersBean.SectionsBean): String {
+            viewHolder?.cb?.isChecked = true
+            SleSections.add(sectionsBean)
+            return "选中"
+        }
+
+        private fun unSelect(sectionsBean: CoursesDetailCBean.ChaptersBean.SectionsBean): String {
+            viewHolder?.cb?.isChecked = false
+            SleSections.remove(sectionsBean)
+            return "未选中"
+        }
+
+        private fun displayGeneral() {
+            viewHolder?.cb?.isChecked = isSelectAll
+            viewHolder?.cb?.isEnabled = true
+        }
+
+        private fun displayLocal() {
+            viewHolder?.tvLocal?.visibility = View.VISIBLE
+            //不能点击
+            viewHolder?.cb?.isChecked = true
+            viewHolder?.cb?.isEnabled = false
+            //修改颜色样式
+            viewHolder?.tvCourseName?.setTextColor(Color.parseColor("#888888"))
+            viewHolder?.tvCourseTime?.setTextColor(Color.parseColor("#888888"))
         }
     }
 

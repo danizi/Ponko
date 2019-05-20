@@ -1,5 +1,6 @@
 package com.ponko.cn.module.my.option
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.support.v7.widget.DividerItemDecoration
 import android.view.View
@@ -11,11 +12,13 @@ import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.db.bean.CourseSpecialDbBean
 import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.module.common.RefreshLoadAct
+import com.ponko.cn.module.study.StudyCacheActivity
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 
 class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
@@ -31,11 +34,10 @@ class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
 
     override fun initDisplay() {
         BarUtil.addBar1(this, viewHolder?.toolbar, "离线缓存")
-        //disableRefresh = true
         disableLoad = true
         addItemDecoration = false
         super.initDisplay()
-        viewHolder?.rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(this, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
     }
 
     override fun requestMoreApi() {
@@ -65,20 +67,29 @@ class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
      */
     open class ItemViewHolder(view: View) : BaseViewHolder(view) {
         private var viewHolder: ViewHolder? = null
+        @SuppressLint("SetTextI18n")
         override fun bindData(d: Any, position: Int) {
             if (viewHolder == null) {
                 viewHolder = ViewHolder.create(itemView)
             }
+
             val courseSpecialDbBean = d as CourseSpecialDbBean
             val context = itemView.context
             Glide.with(context, courseSpecialDbBean.cover, viewHolder?.ivCover)
             viewHolder?.tvCourseTitle?.text = courseSpecialDbBean.title
             viewHolder?.tvTeacher?.text = "${courseSpecialDbBean.teacher}老师"
-            viewHolder?.courseNumber?.text = "共${courseSpecialDbBean.num}集 | 已缓存0"
+            viewHolder?.courseNumber?.text = "共${courseSpecialDbBean.num}集 | 已缓存${PonkoApp.courseDao?.completeCount(courseSpecialDbBean.special_id)}"
             courseSpecialDbBean.special_id
             itemView.setOnClickListener {
                 BKLog.d("跳转到专题缓存课程列表")
-                ActivityUtil.startActivity(context, Intent(context, CacheListAct::class.java))
+                CacheListAct.start(
+                        context,
+                        courseSpecialDbBean.special_id,
+                        courseSpecialDbBean.title,
+                        courseSpecialDbBean.teacher,
+                        courseSpecialDbBean.num,
+                        courseSpecialDbBean.duration)
+                //ActivityUtil.startActivity(context, Intent(context, CacheListAct::class.java))
             }
         }
 

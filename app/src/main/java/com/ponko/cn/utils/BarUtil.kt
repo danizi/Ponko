@@ -6,10 +6,7 @@ import android.support.v7.widget.Toolbar
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.ponko.cn.R
 import com.xm.lib.common.util.ViewUtil
 
@@ -45,6 +42,9 @@ object BarUtil {
         tvSearch.setOnEditorActionListener(editorActionListener)
     }
 
+    /**
+     * 白色顶部
+     */
     fun addWhiteBar(context: Context?, toolbar: Toolbar?, title: String, barRight: String? = "", barRightlistener: View.OnClickListener? = null) {
         val barView = ViewUtil.viewById(context, R.layout.bar_white, null)
         toolbar?.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
@@ -62,6 +62,9 @@ object BarUtil {
         tvBarRight?.text = barRight
     }
 
+    /**
+     * 常规的顶部栏
+     */
     fun addBar1(context: Context?, toolbar: Toolbar?, title: String, right: String? = "", listener: View.OnClickListener? = null) {
         val barView = ViewUtil.viewById(context, R.layout.bar_1, null)
         toolbar?.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
@@ -77,6 +80,41 @@ object BarUtil {
         tvTitle?.text = title
     }
 
+    /**
+     * 顶部栏右边带有图标
+     */
+    fun addBarIcon(context: Context?, toolbar: Toolbar?, title: String, id: Int/*删除*/, id2: Int/*取消*/, listener: View.OnClickListener) {
+        val barView = ViewUtil.viewById(context, R.layout.bar_icon, null)
+        toolbar?.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        toolbar?.visibility = View.VISIBLE
+        var flBack: FrameLayout? = null
+        var tvTitle: TextView? = null
+        var rlRight: RelativeLayout? = null
+        var icon: ImageView? = null
+        flBack = barView?.findViewById(R.id.fl_back)
+        tvTitle = barView?.findViewById(R.id.tv_title)
+        rlRight = barView?.findViewById(R.id.rl_right)
+        icon = barView?.findViewById(R.id.icon)
+        icon?.setImageResource(id)
+        flBack?.setOnClickListener {
+            (context as Activity).finish()
+        }
+        var flag = true
+        rlRight?.setOnClickListener { v ->
+            listener.onClick(v)
+            if (flag) {
+                icon?.setImageResource(id2)
+            } else {
+                icon?.setImageResource(id)
+            }
+            flag = !flag
+        }
+        tvTitle?.text = title
+    }
+
+    /**
+     * 积分商城里面会使用的
+     */
     fun addBar2(context: Context?, toolbar: Toolbar?, title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
         val barView = ViewUtil.viewById(context, R.layout.bar_2, null)
         toolbar?.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
@@ -92,6 +130,9 @@ object BarUtil {
         tvBarRight?.text = barRight
     }
 
+    /**
+     * 一般用于首页四个模块上
+     */
     fun addBar3(context: Context?, toolbar: Toolbar?, title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
         val barView = ViewUtil.viewById(context, R.layout.bar_3, null)
         toolbar?.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
