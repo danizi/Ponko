@@ -168,7 +168,7 @@ class PersonalActivity : AppCompatActivity() {
     /**
      * 个人信息ViewHolder 头像 昵称 名字
      */
-    private class AccountItemViewHolder(view: View) : BaseViewHolder(view) {
+    open class AccountItemViewHolder(view: View) : BaseViewHolder(view) {
         private var viewHolder: ItemViewHolder? = null
 
         override fun bindData(d: Any, position: Int) {
@@ -200,7 +200,7 @@ class PersonalActivity : AppCompatActivity() {
     /**
      * 账号ViewHolder QQ 微信 邮箱
      */
-    private class CommunicationItemViewHolder(view: View) : BaseViewHolder(view) {
+    open class CommunicationItemViewHolder(view: View) : BaseViewHolder(view) {
         private var viewHolder: ItemViewHolder? = null
 
         override fun bindData(d: Any, position: Int) {
@@ -222,7 +222,7 @@ class PersonalActivity : AppCompatActivity() {
     /**
      * 其他ViewHolder 公司名称 行业 城市 用途
      */
-    private class OtherItemViewHolder(view: View) : BaseViewHolder(view) {
+    open class OtherItemViewHolder(view: View) : BaseViewHolder(view) {
         private var viewHolder: ItemViewHolder? = null
 
         override fun bindData(d: Any, position: Int) {
@@ -245,7 +245,7 @@ class PersonalActivity : AppCompatActivity() {
     /**
      * 编辑条目ViewHolder
      */
-    private class ItemViewHolder private constructor(val tv: TextView, val ivArrow: CircleImageView, val et: EditText, val divider: View) {
+    open class ItemViewHolder private constructor(val tv: TextView, val ivArrow: CircleImageView, val et: EditText, val divider: View) {
         companion object {
 
             fun create(rootView: View): ItemViewHolder {

@@ -63,7 +63,7 @@ class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
     /**
      * 专题列表
      */
-    private class ItemViewHolder(view: View) : BaseViewHolder(view) {
+    open class ItemViewHolder(view: View) : BaseViewHolder(view) {
         private var viewHolder: ViewHolder? = null
         override fun bindData(d: Any, position: Int) {
             if (viewHolder == null) {

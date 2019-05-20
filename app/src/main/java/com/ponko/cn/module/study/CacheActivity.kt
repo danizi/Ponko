@@ -256,7 +256,7 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
     /**
      * 专题-课程ViewHolder
      */
-    private class CacheListViewHolder(view: View) : BaseViewHolder(view) {
+    open class CacheListViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val tvTitle: TextView, val rv: RecyclerView) {
             companion object {
@@ -288,7 +288,7 @@ class CacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
     /**
      * 课程item列表ViewHolder
      */
-    private class CacheItemViewHolder(view: View) : BaseViewHolder(view) {
+    open class CacheItemViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val textView2: CheckBox, val tvCourseName: TextView, val tvCourseTime: TextView) {
             companion object {

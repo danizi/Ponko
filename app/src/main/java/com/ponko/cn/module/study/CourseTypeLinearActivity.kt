@@ -87,7 +87,7 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
         return Any()
     }
 
-    private class CourseTypeLinearViewHolder(view: View) : BaseViewHolder(view) {
+    open class CourseTypeLinearViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val tvTitle: TextView, val rv: RecyclerView) {
             companion object {
@@ -117,7 +117,7 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
         }
     }
 
-    private class CourseViewHolder(view: View) : BaseViewHolder(view) {
+    open class CourseViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val ivCover: ImageView, val tvCourseTitle: TextView, val tvTeacher: TextView, val courseNumber: TextView, val imageView2: ImageView) {
             companion object {

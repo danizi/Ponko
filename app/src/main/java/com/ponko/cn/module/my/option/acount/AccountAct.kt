@@ -17,7 +17,6 @@ import com.xm.lib.common.log.BKLog
 
 class AccountAct : AppCompatActivity() {
 
-
     private class ViewHolder private constructor(val toolbar: android.support.v7.widget.Toolbar, val tvAccount: TextView, val rvAccount: RecyclerView, val tvSecure: TextView, val rvSecure: RecyclerView, val btnExit: Button) {
         companion object {
 
@@ -63,7 +62,7 @@ class AccountAct : AppCompatActivity() {
 
     private class ItemBean(var content: String, var isSwitch: Boolean? = false)
 
-    private class ItemViewHolder(view: View) : BaseViewHolder(view) {
+    open class ItemViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val tv: TextView, val ivArrow: ImageView, val sc: Switch, val divider: View) {
             companion object {

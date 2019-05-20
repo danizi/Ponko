@@ -130,7 +130,7 @@ class AddressActivity : AppCompatActivity() {
     /**
      * 地址填写ViewHolder
      */
-    private class ItemViewHolder(view: View) : BaseViewHolder(view) {
+    open class ItemViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val tv: TextView, val ivArrow: CircleImageView, val et: EditText, val divider: View) {
             companion object {
