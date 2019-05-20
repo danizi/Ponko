@@ -13,9 +13,25 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+
+        <!--============================================主界面 start-->
+        <activity android:name=".GuideAct">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".StartAct" />
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask" />
+        <!--============================================主界面 end-->
+
+
+        <!--============================================我的-积分商城相关 start-->
         <activity android:name=".module.my.option.store.StoreAct" />
         <activity android:name=".module.my.option.CacheAct" />
         <activity android:name=".module.my.option.ColoctAct" />
@@ -26,31 +42,40 @@
         <activity android:name=".module.my.option.store.IntegralExchangedAct" />
         <activity android:name=".module.my.option.ProblemAct" />
         <activity android:name=".module.my.option.acount.AccountAct" />
-        <activity android:name=".module.login.LoginStartAct">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".module.my.option.store.IntegralTaskActivity" />
+        <activity android:name=".module.my.option.store.IntegralRankingActivity" />
+        <activity android:name=".module.my.option.store.IntegralRecordActivity" />
+        <activity android:name=".module.my.option.OpenRollActivity" />
+        <activity android:name=".module.my.option.InviteFriendActivity" />
+        <activity android:name=".module.my.option.HistoryActivity" />
+        <activity android:name=".module.my.option.CacheListAct" />
+        <activity android:name=".module.my.option.acount.AddressActivity" />
+        <activity android:name=".module.my.option.acount.PersonalActivity" />
+        <!--============================================积分商城相关 end-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
+        <!--============================================登录 start-->
+        <activity android:name=".module.login.LoginStartAct" />
         <activity android:name=".module.login.LoginAccountAct" />
         <activity android:name=".module.login.LoginRegisterAct" />
         <activity android:name=".module.login.LoginWxAct" />
         <activity android:name=".module.login.LogSmsAct" />
-        <activity android:name=".GuideAct" />
-        <activity android:name=".StartAct" />
+        <activity android:name=".module.login.LoginFindPwdAct" />
+        <activity android:name=".module.login.LoginUpdateAct" />
+        <activity android:name=".module.login.LoginResetPhoneAct" />
+        <!--============================================登录 end-->
+
+
         <activity android:name=".module.free.FreeDetailsAct" />
         <activity android:name=".WebAct" />
-        <activity android:name=".module.my.option.OpenRollActivity" />
-        <activity android:name=".module.my.option.InviteFriendActivity" />
-        <activity android:name=".module.my.option.HistoryActivity" />
+
         <activity android:name=".module.study.CourseTypeLinearActivity" />
         <activity
             android:name=".module.study.StudyCourseDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard" />
-        <activity android:name=".module.my.option.store.IntegralTaskActivity" />
-        <activity android:name=".module.my.option.store.IntegralRankingActivity" />
-        <activity android:name=".module.my.option.store.IntegralRecordActivity" />
+
+
+        <!--============================================微信支付 start-->
         <activity
             android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
@@ -76,18 +101,25 @@
                 <data android:scheme="wxd37fb8ce51a02360" />
             </intent-filter>
         </activity>
-        <activity android:name=".module.login.LoginFindPwdAct" />
-        <activity android:name=".module.login.LoginUpdateAct" />
-        <activity android:name=".module.login.LoginResetPhoneAct" />
+        <!--============================================微信支付 end-->
+
+
+        <!--============================================学习 start-->
+        <activity android:name=".module.study.StudyCacheActivity" />
         <activity android:name=".module.study.CourseTypeGridActivity" />
         <activity android:name=".module.study.SearchActivity" />
-        <activity android:name=".module.my.option.acount.AddressActivity" />
-        <activity android:name=".module.my.option.acount.PersonalActivity" />
-        <activity android:name=".module.study.StudyCacheActivity" />
-        <activity android:name=".module.my.option.CacheListAct" />
+        <!--============================================学习 end-->
+
+        <!--============================================免费 start-->
+        <activity android:name=".module.free.FreeMoreAct" />
+        <!--============================================免费 end-->
+
+
+        <!--============================================测试 start-->
         <activity android:name=".module.m3u8downer.M3u8DownerTextAct" />
+        <!--============================================测试 end-->
         <!-- <activity android:name=".module.my.option.acount.CusTakePhotoActivity" /> -->
-        <activity android:name=".module.free.FreeMoreAct"></activity>
+
     </application>
 
 </manifest>

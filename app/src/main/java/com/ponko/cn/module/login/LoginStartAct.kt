@@ -11,6 +11,9 @@ import com.xm.lib.common.base.mvp.MvpActivity
 import com.xm.lib.component.OnCancelListener
 import com.xm.lib.component.OnEnterListener
 
+/**
+ * 登录首页
+ */
 class LoginStartAct : MvpActivity<LoginStartContract.Present>(), LoginStartContract.View {
 
     private var clTourist: ConstraintLayout? = null

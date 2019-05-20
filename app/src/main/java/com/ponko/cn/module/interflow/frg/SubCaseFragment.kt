@@ -29,6 +29,11 @@ class SubCaseFragment : RefreshLoadFrg<Any, ArrayList<AnalysisCBean.ActivitiesBe
         }
     }
 
+    override fun initDisplay() {
+        addItemDecoration = false
+        super.initDisplay()
+    }
+
     override fun iniData() {
         typeId = arguments?.getString("typeId")!!
         super.iniData()

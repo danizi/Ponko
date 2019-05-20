@@ -3,11 +3,13 @@ package com.ponko.cn
 import android.content.Intent
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
+import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.CacheUtil
 import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.StatusBarUtil
@@ -30,8 +32,9 @@ class GuideAct : BaseActivity() {
 
     override fun setContentViewBefore() {
         // 判断用户是否第一次启动app
-        if (false) {
+        if (!TextUtils.isEmpty(CacheUtil.getJoinGuide())) {
             joinStartActivity()
+            finish()
         }
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
@@ -92,6 +95,7 @@ class GuideAct : BaseActivity() {
 
     private fun joinStartActivity() {
         ActivityUtil.startActivity(this, Intent(this, StartAct::class.java))
+        CacheUtil.putJoinGuide("true")
         finish()
     }
 }

@@ -20,7 +20,7 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
 
     override fun onFailure(call: Call<T>?, msg: String?) {
         BKLog.e(TAG, "HttpCallBack onFailure msg$msg")
-        if(!TextUtils.isEmpty(msg)){
+        if (!TextUtils.isEmpty(msg)) {
             DialogUtil.show(
                     PonkoApp.activityManager.getTopActivity()!!,
                     "提示"
@@ -28,11 +28,13 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
                     , true,
                     object : OnEnterListener {
                         override fun onEnter(dlg: AlertDialog) {
-                            val act =   PonkoApp.activityManager.getTopActivity()
-                            val intent = Intent(act,LoginStartAct::class.java)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            ActivityUtil.startActivity(act,intent)
-                            dlg.dismiss()
+                            if (msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"]) {
+                                val act = PonkoApp.activityManager.getTopActivity()
+                                val intent = Intent(act, LoginStartAct::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                ActivityUtil.startActivity(act, intent)
+                                dlg.dismiss()
+                            }
                         }
                     }
                     , null)
@@ -59,9 +61,9 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
         onFailure(null, msg)
     }
 
+    private val errorCodeMaps = HashMap<String, String>()
     private fun httpErrorCodeMaps(url: String): HashMap<String, String> {
-        val errorCodeMaps = HashMap<String, String>()
-        errorCodeMaps["InvalidAccessToken"] = "无效令牌"
+        errorCodeMaps["InvalidAccessToken"] = "无效令牌，请重新登录"
         errorCodeMaps["InvalidAccessKeyId"] = "key无效"
         errorCodeMaps["PhoneNotFound"] = "未注册"
         errorCodeMaps["TokenPasswordDoesNotMatch"] = "密码不正确"

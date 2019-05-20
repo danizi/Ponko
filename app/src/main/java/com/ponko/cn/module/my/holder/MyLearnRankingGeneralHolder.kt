@@ -47,7 +47,7 @@ class MyLearnRankingGeneralHolder(view: View) : BaseViewHolder(view) {
         viewHolder?.rv?.adapter = adapter
     }
 
-    private class ItemViewHolder(view: View) : BaseViewHolder(view) {
+    open class ItemViewHolder(view: View) : BaseViewHolder(view) {
 
         private var viewHolder: ViewHolder? = null
 
@@ -80,7 +80,7 @@ class MyLearnRankingGeneralHolder(view: View) : BaseViewHolder(view) {
                 }
             }
             viewHolder?.tvRanking?.text = position.toString()
-            viewHolder?.tvStudyTime?.text = NumUtil.getDecimalPoint(rankingBean.duration.toFloat() / 60f / 60f)+"小时"
+            viewHolder?.tvStudyTime?.text = NumUtil.getDecimalPoint(rankingBean.duration.toFloat() / 60f / 60f) + "小时"
             viewHolder?.tvName?.text = rankingBean.nickname
         }
 

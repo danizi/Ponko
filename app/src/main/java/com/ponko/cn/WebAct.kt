@@ -27,9 +27,11 @@ import com.ponko.cn.bean.OrderCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.utils.CacheUtil.getToken
+import com.xm.lib.common.http.NetworkUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.XmPopWindow
+import com.xm.lib.component.XmStateView
 import com.xm.lib.pay.AbsPay
 import com.xm.lib.pay.Channel
 import com.xm.lib.pay.OnPayListener
@@ -46,6 +48,13 @@ import retrofit2.Response
 class WebAct : PonkoBaseAct<Any>() {
     companion object {
         private const val TAG = "WebAct"
+        /**
+         * 普通的跳转使用该方法
+         * @param context     上下文对象
+         * @param link_type   网页类型
+         * @param link_value  网页操作值
+         * @param title       标题
+         */
         fun start(context: Context?, link_type: String?, link_value: String?, title: String? = "") {
             val intent = Intent(context, WebAct::class.java)
             intent.putExtra("title", title)
@@ -54,6 +63,16 @@ class WebAct : PonkoBaseAct<Any>() {
             context?.startActivity(intent)
         }
 
+        /**
+         * 积分兑换使用该方法
+         * @param context     上下文对象
+         * @param link_type   网页类型
+         * @param link_value  网页操作值
+         * @param title       标题
+         * @param id          兑换产品id
+         * @param needScore   需要的积分
+         * @param needScore   用户总积分
+         */
         fun startExChange(context: Context?, link_type: String?, link_value: String?, title: String?, id: String?, needScore: String, aggregateScore: String) {
             val intent = Intent(context, WebAct::class.java)
             intent.putExtra("title", title)
@@ -129,7 +148,7 @@ class WebAct : PonkoBaseAct<Any>() {
             "pay" -> {
                 try {
                     payViewHolder?.payProductId = intent.getStringExtra("pay_product_id")
-                }catch (e:Exception){
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
@@ -141,7 +160,10 @@ class WebAct : PonkoBaseAct<Any>() {
         //shareViewHolder?.iniData(this)
     }
 
-    private class ViewHolder private constructor(val toolbar: Toolbar, val process: ProgressBar, val web: WebView, val flBottomBtn: FrameLayout) {
+    /**
+     * 窗口UI
+     */
+    private class ViewHolder private constructor(val toolbar: Toolbar, val process: ProgressBar, val web: WebView, val flBottomBtn: FrameLayout, val viewState: XmStateView) {
         companion object {
 
             const val javascriptInterfaceName = "local_obj"
@@ -151,10 +173,12 @@ class WebAct : PonkoBaseAct<Any>() {
                 val process = rootView.findViewById<View>(R.id.process) as ProgressBar
                 val web = rootView.findViewById<View>(R.id.web) as WebView
                 val flBottomBtn = rootView.findViewById<View>(R.id.fl_bottom_btn) as FrameLayout
-                return ViewHolder(toolbar, process, web, flBottomBtn)
+                val viewState = rootView.findViewById<View>(R.id.view_state) as XmStateView
+                return ViewHolder(toolbar, process, web, flBottomBtn, viewState)
             }
         }
 
+        private var url: String = ""
         private var tvBarRight: TextView? = null
         private var tvTitle: TextView? = null
         private var act: Activity? = null
@@ -200,8 +224,9 @@ class WebAct : PonkoBaseAct<Any>() {
 
                     progressBar?.progress = newProgress
 
-                    if (newProgress >= 100)
+                    if (newProgress >= 100) {
                         progressBar?.visibility = View.GONE
+                    }
                 }
 
                 override fun onReceivedTitle(view: WebView, title: String) {
@@ -212,6 +237,7 @@ class WebAct : PonkoBaseAct<Any>() {
                     }
                     super.onReceivedTitle(view, title)
                 }
+
             }
             webView?.webViewClient = object : WebViewClient() {
                 @TargetApi(Build.VERSION_CODES.N)
@@ -230,7 +256,7 @@ class WebAct : PonkoBaseAct<Any>() {
                 }
 
                 override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
-                    BKLog.d(TAG, "onReceivedError error  $error")
+                    BKLog.e(TAG, "onReceivedError error  $error")
                     super.onReceivedError(view, request, error)
                 }
 
@@ -356,6 +382,9 @@ class WebAct : PonkoBaseAct<Any>() {
         }
     }
 
+    /**
+     * 积分兑换相关操作ViewHolder
+     */
     private class ExchangeViewHolder private constructor(val rootView: View, val btnExchange: AppCompatButton) {
         companion object {
             private const val javascriptInterfaceName = "local_obj"
@@ -455,6 +484,9 @@ class WebAct : PonkoBaseAct<Any>() {
 
     }
 
+    /**
+     * 支付相关操作ViewHolder
+     */
     private class PayViewHolder private constructor(val rootView: View, val btnCourse: AppCompatButton, val btnIntroduce: AppCompatButton, val btnPay: AppCompatButton) {
         companion object {
             private const val javascriptInterfaceName = "local_obj"
@@ -554,6 +586,9 @@ class WebAct : PonkoBaseAct<Any>() {
 //        }
     }
 
+    /**
+     * 分享相关操作ViewHolder
+     */
     private class ShareViewHolder private constructor(val rootView: View, val tvRemind: TextView, val flFriend: FrameLayout, val flFriendMoment: FrameLayout, val tvCancel: TextView, popWindow: XmPopWindow) {
         companion object {
 
@@ -592,6 +627,9 @@ class WebAct : PonkoBaseAct<Any>() {
         }
     }
 
+    /**
+     * 注入到网页中的对象
+     */
     class InJavaScriptLocalObj(val listener: OnInJavaScriptLocalObjListener?) {
 
         interface OnInJavaScriptLocalObjListener {

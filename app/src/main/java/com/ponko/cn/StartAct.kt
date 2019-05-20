@@ -21,6 +21,9 @@ import com.xm.lib.common.util.TimerHelper
 import retrofit2.Call
 import retrofit2.Response
 
+/**
+ * 启动页
+ */
 class StartAct : BaseActivity() {
     companion object {
         const val TAG = "StartAct"
@@ -67,19 +70,22 @@ class StartAct : BaseActivity() {
                     BKLog.d(TAG, "requestAd onSuccess : ${response?.body().toString()}")
                     requestAdSuccess(response?.body())
                 } catch (e: Exception) {
-                    e.printStackTrace()
-                    requestAdSuccess()
+                    joinMainActivity(1000)
                 }
             }
 
             override fun onFailure(call: Call<AdCBean>?, msg: String?) {
                 super.onFailure(call, msg)
                 BKLog.d(TAG, "onFailure : $msg")
-                joinMainActivity()
+                flAdOver?.visibility = View.GONE
+                joinMainActivity(1000)
             }
         })
     }
 
+    /**
+     * 反馈广告点击
+     */
     private fun requestAdFeedback(adId: String?, action: Int) {
         BKLog.d(TAG, "requestAdFeedback adId;$adId action:$action")
         PonkoApp.adApi?.feedback(adId, action)?.enqueue(object : HttpCallBack<Any>() {
@@ -89,6 +95,9 @@ class StartAct : BaseActivity() {
         })
     }
 
+    /**
+     * 请求广告接口成功
+     */
     @SuppressLint("SetTextI18n")
     private fun requestAdSuccess(body: AdCBean? = AdCBean()) {
         adCBean = body
@@ -135,13 +144,20 @@ class StartAct : BaseActivity() {
         }
     }
 
-    private fun joinMainActivity() {
+    /**
+     * 进入主界面
+     */
+    private fun joinMainActivity(s: Long? = 0) {
+        Thread.sleep(s!!)
         finish()
         timerHelper.stop()
         ActivityUtil.startActivity(this, Intent(this, MainActivity::class.java))
         requestAdFeedback(adCBean?.id, 1)
     }
 
+    /**
+     * 进入广告页面
+     */
     private fun joinAdDetailsActivity() {
         finish()
         IntoTargetUtil.target(this, adCBean?.type, adCBean?.target)

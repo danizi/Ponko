@@ -10,9 +10,13 @@ import com.ponko.cn.bean.AnalysisCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.interflow.adapter.InterflowCaseAdapter
 import com.xm.lib.common.base.BaseFragment
+import com.xm.lib.component.XmStateView
 import retrofit2.Call
 import retrofit2.Response
 
+/**
+ * 案例
+ */
 class CaseFragment : BaseFragment() {
     private var viewHolder: ViewHolder? = null
 
@@ -36,13 +40,14 @@ class CaseFragment : BaseFragment() {
 
     override fun iniData() {
         //请求数据
+        viewHolder?.viewState?.showLoading("正在加载中...")
+
         PonkoApp.interflowApi?.getAnalysis(1, 0)?.enqueue(object : HttpCallBack<AnalysisCBean>() {
             override fun onSuccess(call: Call<AnalysisCBean>?, response: Response<AnalysisCBean>?) {
                 //选项卡个数
                 val analysisCBean = response?.body()
                 val frgs = ArrayList<Fragment>()
                 val titls = ArrayList<String>()
-
                 titls.add("首页")
                 frgs.add(SubCaseFragment.create())
                 for (type in analysisCBean?.types!!) {
@@ -53,18 +58,26 @@ class CaseFragment : BaseFragment() {
 
                 viewHolder?.vp?.adapter = InterflowCaseAdapter(childFragmentManager, frgs, titls)
                 viewHolder?.tl?.setupWithViewPager(viewHolder?.vp)
+                viewHolder?.viewState?.hide()
+            }
+
+            override fun onFailure(call: Call<AnalysisCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                //请求失败
             }
         })
     }
 
 
-    private class ViewHolder private constructor(val tl: TabLayout, val vp: ViewPager) {
+    private class ViewHolder private constructor(val tl: TabLayout, val vp: ViewPager, val viewState: XmStateView) {
         companion object {
 
             fun create(rootView: View): ViewHolder {
                 val tl = rootView.findViewById<View>(R.id.tl) as TabLayout
                 val vp = rootView.findViewById<View>(R.id.vp) as ViewPager
-                return ViewHolder(tl, vp)
+                val viewState = rootView.findViewById<View>(R.id.view_state) as XmStateView
+
+                return ViewHolder(tl, vp, viewState)
             }
         }
     }

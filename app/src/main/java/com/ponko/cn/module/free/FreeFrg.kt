@@ -9,9 +9,11 @@ import com.ponko.cn.module.free.constract.FreeConstract
 import com.ponko.cn.module.free.holder.ExchangedViewHolder
 import com.ponko.cn.module.free.holder.TrialViewHolder
 import com.ponko.cn.module.free.holder.WechatViewHolder
+import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.log.BKLog
 
-class FreeFrg : RefreshLoadFrg<FreeConstract.Present,CoursesCBean>(), FreeConstract.View {
+class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConstract.View {
 
     override fun presenter(): FreeConstract.Present {
         return FreeConstract.Present(context, this)
@@ -24,7 +26,10 @@ class FreeFrg : RefreshLoadFrg<FreeConstract.Present,CoursesCBean>(), FreeConstr
     override fun initDisplay() {
         super.initDisplay()
         disableLoad = true
-        addBar3("免费体验","兑换", View.OnClickListener {})
+        addBar3("免费体验", "兑换", View.OnClickListener {
+            BKLog.d("弹出兑换码框")
+            DialogUtil.showExchange(context)
+        })
     }
 
 
@@ -49,10 +54,10 @@ class FreeFrg : RefreshLoadFrg<FreeConstract.Present,CoursesCBean>(), FreeConstr
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
         return BindItemViewHolderBean.create(
-                arrayOf(0,1,2),
-                arrayOf(WechatViewHolder::class.java,ExchangedViewHolder::class.java, TrialViewHolder::class.java),
-                arrayOf(WechatBean::class.java,ExchangedBean::class.java,TrialBean::class.java),
-                arrayOf(R.layout.item_course_introduction,R.layout.item_course_introduction,R.layout.item_free_course_type)
+                arrayOf(0, 1, 2),
+                arrayOf(WechatViewHolder::class.java, ExchangedViewHolder::class.java, TrialViewHolder::class.java),
+                arrayOf(WechatBean::class.java, ExchangedBean::class.java, TrialBean::class.java),
+                arrayOf(R.layout.item_course_introduction, R.layout.item_course_introduction, R.layout.item_free_course_type)
         )
     }
 

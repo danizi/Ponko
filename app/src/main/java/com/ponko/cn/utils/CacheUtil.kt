@@ -1,5 +1,6 @@
 package com.ponko.cn.utils
 
+import android.text.TextUtils
 import com.ponko.cn.app.PonkoApp
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.SPUtil
@@ -22,6 +23,14 @@ object CacheUtil {
     }
 
     /**
+     * 获取用户类型
+     */
+    fun getUserType(): String {
+        return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "UserType", "").toString()
+    }
+
+
+    /**
      * 用户-游客
      */
     fun putUserTypeTourist() {
@@ -38,16 +47,25 @@ object CacheUtil {
     }
 
     /**
+     * 用户微信-绑定
+     */
+    fun putUserTypeWx() {
+        BKLog.d("put WXLogin")
+        SPUtil.put(PonkoApp.app, SP_FILE_NAME, "UserType", "WXLogin")
+    }
+
+    /**
      * 用户是否是登录
      */
     fun isUserTypeLogin(): Boolean {
-        val type = SPUtil.get(PonkoApp.app, SP_FILE_NAME, "UserType", "UserType").toString()
+        val type = SPUtil.get(PonkoApp.app, SP_FILE_NAME, "UserType", "").toString()
         BKLog.d("UserType : $type")
         if (type == "Tourist") {
             return false
         }
         return true
     }
+
 
     /**
      * 保利威视视频配置信息
@@ -69,5 +87,18 @@ object CacheUtil {
 
     fun getSearchRecord(): String {
         return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "record", "").toString()
+    }
+
+    fun clearUserInfo() {
+        putToken("")
+        SPUtil.put(PonkoApp.app, SP_FILE_NAME, "UserType", "")
+    }
+
+    fun putJoinGuide(s: String) {
+        SPUtil.put(PonkoApp.app, SP_FILE_NAME, "JoinGuide", s)
+    }
+
+    fun getJoinGuide():String{
+        return SPUtil.get(PonkoApp.app, SP_FILE_NAME,"JoinGuide","") as String
     }
 }

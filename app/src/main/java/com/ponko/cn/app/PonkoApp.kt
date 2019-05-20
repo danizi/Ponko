@@ -24,7 +24,7 @@ class PonkoApp : Application() {
         var app: Application? = null
         var mainCBean: MainCBean? = null
         var signInfo: StoreTaskBean? = null
-        var UI_DEBUG = true
+        var UI_DEBUG = false
 
         var retrofitClient: RetrofitClient? = null
         var loginApi: LoginApi? = null

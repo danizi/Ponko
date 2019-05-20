@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.*
 import com.ponko.cn.R
+import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
@@ -17,6 +18,44 @@ import com.xm.lib.common.log.BKLog
 
 class AccountAct : AppCompatActivity() {
 
+
+    private var viewHolder: ViewHolder? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_account)
+        if (viewHolder == null) {
+            viewHolder = ViewHolder.create(this)
+        }
+
+        //设置顶部栏
+        BarUtil.addBar1(this, viewHolder?.toolbar, "账号安全")
+
+        //账号
+        val accountAdapter = object : BaseRvAdapter() {}
+        accountAdapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my)
+        accountAdapter.data?.add(ItemBean("个人信息"))
+        accountAdapter.data?.add(ItemBean("收件信息"))
+        accountAdapter.data?.add(ItemBean("微信绑定", true))
+        viewHolder?.rvAccount?.adapter = accountAdapter
+        viewHolder?.rvAccount?.layoutManager = LinearLayoutManager(this)
+
+        //安全
+        val secureAdapter = object : BaseRvAdapter() {}
+        secureAdapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my)
+        secureAdapter.data?.add(ItemBean("修改手机"))
+        secureAdapter.data?.add(ItemBean("修改密码"))
+        viewHolder?.rvSecure?.adapter = secureAdapter
+        viewHolder?.rvSecure?.layoutManager = LinearLayoutManager(this)
+
+        viewHolder?.btnExit?.setOnClickListener {
+            ActivityUtil.clearTheStackStartActivity(this@AccountAct, Intent(this, LoginStartAct::class.java))
+        }
+    }
+
+    /**
+     * 窗体UI ViewHolder
+     */
     private class ViewHolder private constructor(val toolbar: android.support.v7.widget.Toolbar, val tvAccount: TextView, val rvAccount: RecyclerView, val tvSecure: TextView, val rvSecure: RecyclerView, val btnExit: Button) {
         companion object {
 
@@ -32,36 +71,9 @@ class AccountAct : AppCompatActivity() {
         }
     }
 
-
-    private var viewHolder: ViewHolder? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_account)
-        if (viewHolder == null) {
-            viewHolder = ViewHolder.create(this)
-        }
-        BarUtil.addBar1(this, viewHolder?.toolbar, "账号安全")
-
-        val accountAdapter = object : BaseRvAdapter() {}
-        accountAdapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my)
-        accountAdapter.data?.add(ItemBean("个人信息"))
-        accountAdapter.data?.add(ItemBean("收件信息"))
-        accountAdapter.data?.add(ItemBean("微信绑定", true))
-        viewHolder?.rvAccount?.adapter = accountAdapter
-        viewHolder?.rvAccount?.layoutManager = LinearLayoutManager(this)
-
-        val secureAdapter = object : BaseRvAdapter() {}
-        secureAdapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my)
-        secureAdapter.data?.add(ItemBean("修改手机"))
-        secureAdapter.data?.add(ItemBean("修改密码"))
-        viewHolder?.rvSecure?.adapter = secureAdapter
-        viewHolder?.rvSecure?.layoutManager = LinearLayoutManager(this)
-
-    }
-
-    private class ItemBean(var content: String, var isSwitch: Boolean? = false)
-
+    /**
+     * 功能选项ViewHolder
+     */
     open class ItemViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val tv: TextView, val ivArrow: ImageView, val sc: Switch, val divider: View) {
@@ -122,4 +134,6 @@ class AccountAct : AppCompatActivity() {
             }
         }
     }
+
+    private class ItemBean(var content: String, var isSwitch: Boolean? = false)
 }

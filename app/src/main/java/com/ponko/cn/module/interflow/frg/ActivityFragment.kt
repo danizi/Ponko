@@ -12,7 +12,15 @@ import com.xm.lib.common.base.rv.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 
+/**
+ * 活动
+ */
 class ActivityFragment : RefreshLoadFrg<Any, List<ActivityCBean>>() {
+
+    override fun initDisplay() {
+        addItemDecoration = false
+        super.initDisplay()
+    }
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
         return BindItemViewHolderBean.create(

@@ -45,6 +45,7 @@ class LoginStartContract {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     val token = response?.body()?.token
                     CacheUtil.putToken(token)
+                    CacheUtil.putUserTypeTourist()
                     val intent = Intent(context, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     ActivityUtil.startActivity(context, intent)

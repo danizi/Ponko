@@ -48,6 +48,7 @@ class LoginAccountContract {
                     BKLog.d("登录成功")
                     val token = response?.body()?.token
                     CacheUtil.putToken(token)
+                    CacheUtil.putUserTypeLogin()
                     val intent = Intent(context, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     ActivityUtil.startActivity(context, intent)
