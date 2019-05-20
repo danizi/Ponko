@@ -4,12 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
-
-    <com.xm.lib.media.base.XmVideoView
-        android:id="@+id/xmVideoView"
-        android:layout_width="match_parent"
-        android:layout_height="211dp" />
+    android:background="@color/white"
+    tools:ignore="HardcodedText,ContentDescription,UseCompoundDrawables">
 
     <TextView
         android:id="@+id/tv_course_title"
@@ -21,8 +17,7 @@
         android:text="如何写邮件-精选"
         android:textColor="@color/black"
         android:textSize="@dimen/sp_22"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/xmVideoView" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/ll_des"
@@ -31,6 +26,7 @@
         android:layout_marginTop="17dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_course_title"
@@ -47,8 +43,10 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginRight="5dp"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/ic_launcher"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/tv_teacher"
@@ -68,6 +66,7 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginRight="5dp"
                 android:src="@mipmap/ic_launcher" />
 
@@ -89,6 +88,7 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginRight="5dp"
                 android:src="@mipmap/ic_launcher" />
 
@@ -128,6 +128,7 @@
             android:id="@+id/ll_share_wx"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="11dp"
             android:layout_marginRight="11dp"
             android:background="@drawable/free_share_bk"
             android:orientation="horizontal"

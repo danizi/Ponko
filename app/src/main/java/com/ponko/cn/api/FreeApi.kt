@@ -3,6 +3,7 @@ package com.ponko.cn.api
 import com.ponko.cn.bean.CoursesCBean
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.CoursesListCBean
+import com.ponko.cn.bean.DetailCBean
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -32,5 +33,5 @@ interface FreeApi {
      * @return
      */
     @GET("courses/trial/detail")
-    abstract fun freeInfo(@Query("id") id: String): Call<CoursesDetailCBean>
+    fun freeDetail(@Query("id") id: String): Call<DetailCBean>
 }
