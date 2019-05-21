@@ -41,7 +41,7 @@ class MyRankGenenalViewHolder(view: View) : BaseViewHolder(view) {
         viewHolder?.rv?.layoutManager = LinearLayoutManager(context)
     }
 
-    private class MyRankGenenalItemVH(view: View) : BaseViewHolder(view) {
+    open class MyRankGenenalItemVH(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val constraintLayout3: ConstraintLayout, val tvRank: TextView, val ivHead: CircleImageView, val tvMe: TextView, val tvPayType: TextView, val tvIntegral: TextView) {
             companion object {

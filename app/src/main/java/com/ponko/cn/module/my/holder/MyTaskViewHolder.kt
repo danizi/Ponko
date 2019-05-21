@@ -40,7 +40,7 @@ class MyTaskViewHolder(view: View) : BaseViewHolder(view) {
         viewHolder?.rv?.layoutManager = LinearLayoutManager(context)
     }
 
-    private class ItemTaskViewHolder(view: View) : BaseViewHolder(view) {
+    open class ItemTaskViewHolder(view: View) : BaseViewHolder(view) {
 
         private class ViewHolder private constructor(val tvIntegralNum: TextView, val tvDes1: TextView, val tvDes2: TextView, val tvState: TextView) {
             companion object {

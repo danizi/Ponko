@@ -3,6 +3,7 @@ package com.ponko.cn.module.my.holder
 import android.content.Intent
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -20,6 +21,11 @@ import com.ponko.cn.module.my.option.acount.AccountAct
 import com.ponko.cn.module.my.option.store.IntegralRankingActivity
 import com.ponko.cn.module.my.option.store.IntegralTaskActivity
 import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.CacheUtil.USERTYPE_LOGIN
+import com.ponko.cn.utils.CacheUtil.USERTYPE_TOURIST
+import com.ponko.cn.utils.CacheUtil.USERTYPE_WXLOGIN
+import com.ponko.cn.utils.CacheUtil.getUserType
 import com.ponko.cn.utils.CacheUtil.isUserTypeLogin
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -83,20 +89,20 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
 
         // 监听
         viewHolder?.ivCircleHead?.setOnClickListener {
-            when (userType) {
-                "tourist" -> {
+            when (CacheUtil.getUserType()) {
+                USERTYPE_TOURIST -> {
                     BKLog.d("游客模式 - 点击头像 - 进入登录页面")
                     val intent = Intent(context, LoginAccountAct::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     ActivityUtil.startActivity(context, intent)
                 }
-                "wxBind" -> {
+                USERTYPE_WXLOGIN -> {
                     BKLog.d("微信模式 - 点击头像 - 进入个人信息页面")
-                    ActivityUtil.startActivity(context, Intent(context,AccountAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, AccountAct::class.java))
                 }
-                "login" -> {
+                USERTYPE_LOGIN -> {
                     BKLog.d("登录模式 - 点击头像 - (未綁定先綁定綁定成功) - 进入个人信息页面")
-                    ActivityUtil.startActivity(context, Intent(context,AccountAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, AccountAct::class.java))
                 }
             }
         }
@@ -122,14 +128,16 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         }
     }
 
+    @Deprecated("")
     private fun userType(profileCBean: ProfileCBean): String {
         var userType = "tourist"
+
         if (profileCBean.account.isIs_bind_wechat) {
             viewHolder?.btnWxUnbind?.visibility = View.GONE
-            viewHolder?.tvName?.text = profileCBean.account.nickname
+//            viewHolder?.tvName?.text = profileCBean.account.nickname
             userType = "wxBind"
         } else {
-            viewHolder?.tvName?.text = profileCBean.account.realName
+//            viewHolder?.tvName?.text = profileCBean.account.realName
             userType = "login"
         }
         return userType
@@ -138,21 +146,45 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
     private fun infoPair(profileCBean: ProfileCBean): Pair<String, String> {
         var name = ""
         var vipDes = ""
-        if (isUserTypeLogin()) {
-            // 登录模式
-            name = profileCBean.account.realName
-            if (profileCBean.account.expiredTime > 0) {
-                vipDes = "已加入帮课大学"
-                viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
-            } else {
-                vipDes = "未入学"
-                viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
+        when (getUserType()) {
+            USERTYPE_LOGIN -> {
+                if (profileCBean.account.expiredTime > 0) {
+                    vipDes = "已加入帮课大学"
+                    viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
+                } else {
+                    vipDes = "未入学"
+                    viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
+                }
+                name = profileCBean.account.realName
             }
-        } else {
-            // 游客模式
-            name = "同学，请登录"
-            vipDes = "登录后可以多终端同步您的所有信息"
+            USERTYPE_TOURIST -> {
+                // 游客模式
+                name = "同学，请登录"
+                vipDes = "登录后可以多终端同步您的所有信息"
+            }
+            USERTYPE_WXLOGIN -> {
+                name = profileCBean.account.nickname
+            }
         }
+
+        if (TextUtils.isEmpty(name)) {
+            name = "帮课大学学员"
+        }
+//        if (isUserTypeLogin()) {
+//            // 登录模式
+//            name = profileCBean.account.realName
+//            if (profileCBean.account.expiredTime > 0) {
+//                vipDes = "已加入帮课大学"
+//                viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
+//            } else {
+//                vipDes = "未入学"
+//                viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
+//            }
+//        } else {
+//            // 游客模式
+//            name = "同学，请登录"
+//            vipDes = "登录后可以多终端同步您的所有信息"
+//        }
         return Pair(name, vipDes)
     }
 }

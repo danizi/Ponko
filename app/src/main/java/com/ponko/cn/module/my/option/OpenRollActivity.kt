@@ -13,6 +13,7 @@ import retrofit2.Call
 import retrofit2.Response
 
 class OpenRollActivity : RefreshLoadAct<Any, List<OpenCBean>>() {
+
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
         return BindItemViewHolderBean.create(
                 arrayOf(0),
@@ -23,6 +24,7 @@ class OpenRollActivity : RefreshLoadAct<Any, List<OpenCBean>>() {
     }
 
     override fun initDisplay() {
+        addItemDecoration = false
         super.initDisplay()
         addBar2("开通学籍", "", View.OnClickListener { })
         viewHolder?.clContent?.setBackgroundColor(resources?.getColor(R.color.divider)!!)

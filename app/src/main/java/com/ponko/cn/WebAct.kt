@@ -27,7 +27,7 @@ import com.ponko.cn.bean.OrderCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.utils.CacheUtil.getToken
-import com.xm.lib.common.http.NetworkUtil
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.XmPopWindow
@@ -38,6 +38,8 @@ import com.xm.lib.pay.OnPayListener
 import com.xm.lib.pay.PayConfig
 import com.xm.lib.pay.ali.AliPay
 import com.xm.lib.pay.wx.WxPay
+import com.xm.lib.share.ShareConfig
+import com.xm.lib.share.wx.WxShare
 import retrofit2.Call
 import retrofit2.Response
 
@@ -109,7 +111,7 @@ class WebAct : PonkoBaseAct<Any>() {
 
             //底部支付按钮，其中根据获取页面值，判断是否添加“老师介绍”、“老师课程”按钮
             val payView = ViewUtil.viewById(this, R.layout.web_bottom_pay)
-            payViewHolder = PayViewHolder.create(payView!!)
+            payViewHolder = PayViewHolder.create(this, payView!!)
 
             //分享底部弹出框
             val shareView = ViewUtil.viewById(this, R.layout.view_share)
@@ -487,7 +489,7 @@ class WebAct : PonkoBaseAct<Any>() {
     /**
      * 支付相关操作ViewHolder
      */
-    private class PayViewHolder private constructor(val rootView: View, val btnCourse: AppCompatButton, val btnIntroduce: AppCompatButton, val btnPay: AppCompatButton) {
+    private class PayViewHolder private constructor(var act: Activity?, val rootView: View, val btnCourse: AppCompatButton, val btnIntroduce: AppCompatButton, val btnPay: AppCompatButton) {
         companion object {
             private const val javascriptInterfaceName = "local_obj"
             val javascriptPayProductid = "javascript:window.$javascriptInterfaceName.getValueById(" +
@@ -502,16 +504,15 @@ class WebAct : PonkoBaseAct<Any>() {
                     "document.getElementById('productGuideCTitle').value" +
                     ")"
 
-            fun create(ll_pay: View): PayViewHolder {
+            fun create(act: Activity?, ll_pay: View): PayViewHolder {
                 val btnCourse = ll_pay.findViewById<View>(R.id.btn_course) as AppCompatButton
                 val btnIntroduce = ll_pay.findViewById<View>(R.id.btn_introduce) as AppCompatButton
                 val btnPay = ll_pay.findViewById<View>(R.id.btn_pay) as AppCompatButton
-                return PayViewHolder(ll_pay, btnCourse, btnIntroduce, btnPay)
+                return PayViewHolder(act, ll_pay, btnCourse, btnIntroduce, btnPay)
             }
         }
 
         var payProductId: String = ""
-        private var act: Activity? = null
 
         fun initEvent() {
             btnPay.setOnClickListener {
@@ -589,7 +590,7 @@ class WebAct : PonkoBaseAct<Any>() {
     /**
      * 分享相关操作ViewHolder
      */
-    private class ShareViewHolder private constructor(val rootView: View, val tvRemind: TextView, val flFriend: FrameLayout, val flFriendMoment: FrameLayout, val tvCancel: TextView, popWindow: XmPopWindow) {
+    private class ShareViewHolder private constructor(val ctx: Context?, val rootView: View, val tvRemind: TextView, val flFriend: FrameLayout, val flFriendMoment: FrameLayout, val tvCancel: TextView, val popWindow: XmPopWindow) {
         companion object {
 
             private const val javascriptInterfaceName = "local_obj"
@@ -607,23 +608,30 @@ class WebAct : PonkoBaseAct<Any>() {
                 val popWindow = XmPopWindow(context)
                 popWindow.ini(rootView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 //popWindow.showAtLocation(XmPopWindow.Location.BOTTOM, R.style.AnimationBottomFade, window.decorView, 0, 0)
-                return ShareViewHolder(rootView, tvRemind, flFriend, flFriendMoment, tvCancel, popWindow)
+                return ShareViewHolder(context, rootView, tvRemind, flFriend, flFriendMoment, tvCancel, popWindow)
             }
         }
 
         var shareTitle: String? = null
         var shareDescription: String? = null
         var shareUrl: String? = null
+        var wxShare:WxShare? = WxShare(ctx as Activity)
 
         fun initEvent() {
-
+            wxShare?.init(ShareConfig.Builder().appid(APP_ID).build())
+            tvCancel.setOnClickListener {
+                popWindow.dismiss()
+            }
+            flFriend.setOnClickListener {
+                wxShare?.shareWebPage(R.mipmap.ic_launcher,shareUrl!!,shareTitle!!,shareDescription!!,SendMessageToWX.Req.WXSceneSession)
+            }
+            flFriendMoment.setOnClickListener {
+                wxShare?.shareWebPage(R.mipmap.ic_launcher,shareUrl!!,shareTitle!!,shareDescription!!,SendMessageToWX.Req.WXSceneTimeline)
+            }
         }
 
-//        fun iniData(act: Activity? = null) {
-//
-//        }
-
         fun share() {
+            popWindow.showAtLocation(XmPopWindow.Location.BOTTOM, com.xm.lib.media.R.style.AnimationBottomFade, (ctx as Activity).window.decorView, 0, 0)
         }
     }
 

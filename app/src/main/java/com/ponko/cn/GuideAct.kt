@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
+import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.CacheUtil
 import com.xm.lib.common.base.BaseActivity
@@ -32,9 +33,10 @@ class GuideAct : BaseActivity() {
 
     override fun setContentViewBefore() {
         // 判断用户是否第一次启动app
-        if (!TextUtils.isEmpty(CacheUtil.getJoinGuide())) {
+        if (!TextUtils.isEmpty(CacheUtil.getJoinGuide())/*用户进入过应用*/ && !TextUtils.isEmpty(CacheUtil.getUserType())/*用户标识位不为空*/) {
             joinStartActivity()
-            finish()
+        } else if (TextUtils.isEmpty(CacheUtil.getUserType())) {
+            joinStartLogin()
         }
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
@@ -93,9 +95,20 @@ class GuideAct : BaseActivity() {
     override fun iniEvent() {
     }
 
+    /**
+     * 进入启动页面
+     */
     private fun joinStartActivity() {
         ActivityUtil.startActivity(this, Intent(this, StartAct::class.java))
         CacheUtil.putJoinGuide("true")
+        finish()
+    }
+
+    /**
+     * 进入登录界面
+     */
+    private fun joinStartLogin() {
+        ActivityUtil.clearTheStackStartActivity(this, Intent(this, LoginStartAct::class.java))
         finish()
     }
 }

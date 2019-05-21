@@ -83,15 +83,21 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
 
     open fun requestMoreSuccess(body: D?) {
         val data = body as ArrayList<Any>
-        adapter?.data?.addAll(data)
-        val positionStart = adapter?.data?.size
-        val itemCount = body.size
-        adapter?.notifyItemRangeChanged(positionStart!!, itemCount)
-        viewHolder?.srl?.finishLoadMore()
+        if (multiTypeData(body).isEmpty()) {
+            viewHolder?.viewState?.showNoData("暂无数据...")
+        } else {
+            adapter?.data?.addAll(data)
+            val positionStart = adapter?.data?.size
+            val itemCount = body.size
+            adapter?.notifyItemRangeChanged(positionStart!!, itemCount)
+            viewHolder?.srl?.finishLoadMore()
+        }
     }
 
     open fun requestMoreFailure() {
-
+        viewHolder?.viewState?.showError("网络开小差了....", View.OnClickListener {
+            requestMoreApi()
+        })
     }
 
 
@@ -102,18 +108,23 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
 
     open fun requestRefreshSuccess(body: D?) {
         viewHolder?.srl?.finishRefresh()
-        adapter = adapter()
-        bindItemViewHolder(bindItemViewHolderData())
-        viewHolder?.rv?.adapter = adapter
-        adapter?.data?.clear()
-        adapter?.data?.addAll(multiTypeData(body))
-        //设置适配器
-        viewHolder?.viewState?.hide()
-        if (!disableRefresh) {
-            viewHolder?.srl?.isEnableRefresh = true
-        }
-        if (!disableLoad) {
-            viewHolder?.isCanLoad(viewHolder?.rv, viewHolder?.srl) //判断RecyclerView内容的长度是否可以触发上拉加载
+
+        if (multiTypeData(body).isEmpty()) {
+            viewHolder?.viewState?.showNoData("暂无数据...")
+        } else {
+            adapter = adapter()
+            bindItemViewHolder(bindItemViewHolderData())
+            viewHolder?.rv?.adapter = adapter
+            adapter?.data?.clear()
+            adapter?.data?.addAll(multiTypeData(body))
+            //设置适配器
+            viewHolder?.viewState?.hide()
+            if (!disableRefresh) {
+                viewHolder?.srl?.isEnableRefresh = true
+            }
+            if (!disableLoad) {
+                viewHolder?.isCanLoad(viewHolder?.rv, viewHolder?.srl) //判断RecyclerView内容的长度是否可以触发上拉加载
+            }
         }
     }
 

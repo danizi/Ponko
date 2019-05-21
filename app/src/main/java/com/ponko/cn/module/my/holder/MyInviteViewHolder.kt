@@ -6,6 +6,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.InviteFriendsBean
+import com.ponko.cn.module.my.option.InviteFriendShareActivity
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
@@ -43,6 +44,7 @@ class MyInviteViewHolder(view: View) : BaseViewHolder(view) {
         viewHolder?.tvIntegralNum?.text = productsBean.score.toString()
         itemView.setOnClickListener {
             BKLog.d("点击了${productsBean.title}")
+            InviteFriendShareActivity.start(context, productsBean.id!!)
         }
     }
 

@@ -1,12 +1,14 @@
 package com.ponko.cn.utils
 
-import android.text.TextUtils
 import com.ponko.cn.app.PonkoApp
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.SPUtil
 
 object CacheUtil {
     private const val SP_FILE_NAME = "Cache.sp"
+    const val USERTYPE_TOURIST = "Tourist"
+    const val USERTYPE_LOGIN = "Login"
+    const val USERTYPE_WXLOGIN = "WXLogin"
 
     /**
      * 保存用户token
@@ -57,6 +59,7 @@ object CacheUtil {
     /**
      * 用户是否是登录
      */
+    @Deprecated("")
     fun isUserTypeLogin(): Boolean {
         val type = SPUtil.get(PonkoApp.app, SP_FILE_NAME, "UserType", "").toString()
         BKLog.d("UserType : $type")
@@ -94,11 +97,15 @@ object CacheUtil {
         SPUtil.put(PonkoApp.app, SP_FILE_NAME, "UserType", "")
     }
 
+    /**
+     * 引导页面
+     */
     fun putJoinGuide(s: String) {
         SPUtil.put(PonkoApp.app, SP_FILE_NAME, "JoinGuide", s)
     }
 
-    fun getJoinGuide():String{
-        return SPUtil.get(PonkoApp.app, SP_FILE_NAME,"JoinGuide","") as String
+    fun getJoinGuide(): String {
+        return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "JoinGuide", "") as String
     }
+
 }

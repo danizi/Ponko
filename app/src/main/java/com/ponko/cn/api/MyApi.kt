@@ -195,4 +195,19 @@ interface MyApi {
     ////////////////////////////////////
     @GET("help")
     fun getHelpList(): Call<MutableList<HelpCBean>>
+
+    ////////////////////////////////////
+    ///        邀请相关               //
+    ////////////////////////////////////
+    @GET("invites/templates")
+    fun shareInvites(@Query("productId") productId: String): Call<Invite>
+
+    @GET("invites/records")
+    //  @FormUrlEncoded
+    fun shareInviteRecords(): Call<MutableList<InviteRecordBean>>
+
+    @POST("invites/save")
+    @FormUrlEncoded
+    fun shareSave(@Field("image") url: String, @Field("saying") say: String): Call<GeneralBean>
+
 }

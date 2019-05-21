@@ -69,10 +69,11 @@ class PonkoApp : Application() {
     }
 
     private fun initNetWork() {
-        val heads = HashMap<String, String>()
+        //ps 请求头的顺序要一致哟，不然请求某些接口会出错
+        val heads = LinkedHashMap<String, String>()
+        heads["x-tradestudy-access-key-id"] = "c"
         heads["x-tradestudy-client-version"] = "3.4.6"
         heads["x-tradestudy-client-device"] = "android_phone"
-        heads["x-tradestudy-access-key-id"] = "c"
         heads["x-tradestudy-access-token"] = CacheUtil.getToken()!!
         retrofitClient = RetrofitClient.intance
                 .setBaseUrl(BASE_API)

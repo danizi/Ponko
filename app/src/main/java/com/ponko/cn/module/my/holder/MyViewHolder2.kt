@@ -50,7 +50,7 @@ class MyViewHolder2(view: View) : BaseViewHolder(view) {
         adapter.addItemViewDelegate(0, com.ponko.cn.module.my.holder.ViewHolder::class.java, Any::class.java, R.layout.item_my)
         viewHolder?.rv?.adapter = adapter
         viewHolder?.rv?.layoutManager = GridLayoutManager(context, 4)
-        viewHolder?.rv?.isFocusableInTouchMode=false
+        viewHolder?.rv?.isFocusableInTouchMode = false
         viewHolder?.rv?.requestFocus()
     }
 
@@ -85,28 +85,28 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
         itemView.setOnClickListener {
             when (myListBean.des) {
                 "积分商城" -> {
-                    ActivityUtil.startActivity(context,  Intent(context, StoreAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, StoreAct::class.java))
                 }
                 "缓存" -> {
-                    ActivityUtil.startActivity(context,  Intent(context,CacheAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, CacheAct::class.java))
                 }
                 "收藏" -> {
-                    ActivityUtil.startActivity(context,  Intent(context,ColoctAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, ColoctAct::class.java))
                 }
                 "历史" -> {
-                    ActivityUtil.startActivity(context,  Intent(context,HistoryActivity::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, HistoryActivity::class.java))
                 }
                 "提醒" -> {
-                    ActivityUtil.startActivity(context,  Intent(context,RemindAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, RemindAct::class.java))
                 }
                 "学习排行" -> {
-                    ActivityUtil.startActivity(context,  Intent(context,LearnRankingAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, LearnRankingAct::class.java))
                 }
                 "BK码兑换" -> {
-                    ActivityUtil.startActivity(context,  Intent(context,ExchangeAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, ExchangeAct::class.java))
                 }
                 "已兑课程" -> {
-                    ActivityUtil.startActivity(context,  Intent(context, IntegralExchangedAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, IntegralExchangedAct::class.java))
                 }
                 "咨询" -> {
                     RxPermissions(context as AppCompatActivity)
@@ -114,7 +114,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                             .subscribe { aBoolean ->
                                 if (aBoolean!!) {
                                     //当所有权限都允许之后，返回true
-                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + 15074770708))
+                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + PonkoApp.mainCBean?.public_phone))
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                     context.startActivity(intent)
                                 } else {
@@ -125,7 +125,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                             }
                 }
                 "常见问题" -> {
-                    ActivityUtil.startActivity(context, Intent(context,ProblemAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, ProblemAct::class.java))
                 }
             }
             BKLog.d("点击${myListBean.des}")

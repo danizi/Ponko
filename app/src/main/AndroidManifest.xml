@@ -14,7 +14,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
-        <!--============================================主界面 start-->
+        <!-- ============================================主界面 start -->
         <activity android:name=".GuideAct">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,16 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".StartAct" />
-
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask" />
-        <!--============================================主界面 end-->
+        <!-- ============================================主界面 end -->
 
 
-        <!--============================================我的-积分商城相关 start-->
+        <!-- ============================================我的-积分商城相关 start -->
         <activity android:name=".module.my.option.store.StoreAct" />
         <activity android:name=".module.my.option.CacheAct" />
         <activity android:name=".module.my.option.ColoctAct" />
@@ -51,10 +49,10 @@
         <activity android:name=".module.my.option.CacheListAct" />
         <activity android:name=".module.my.option.acount.AddressActivity" />
         <activity android:name=".module.my.option.acount.PersonalActivity" />
-        <!--============================================积分商城相关 end-->
+        <!-- ============================================积分商城相关 end -->
 
 
-        <!--============================================登录 start-->
+        <!-- ============================================登录 start -->
         <activity android:name=".module.login.LoginStartAct" />
         <activity android:name=".module.login.LoginAccountAct" />
         <activity android:name=".module.login.LoginRegisterAct" />
@@ -63,19 +61,16 @@
         <activity android:name=".module.login.LoginFindPwdAct" />
         <activity android:name=".module.login.LoginUpdateAct" />
         <activity android:name=".module.login.LoginResetPhoneAct" />
-        <!--============================================登录 end-->
-
+        <!-- ============================================登录 end -->
 
         <activity android:name=".module.free.FreeDetailsAct" />
         <activity android:name=".WebAct" />
-
         <activity android:name=".module.study.CourseTypeLinearActivity" />
         <activity
             android:name=".module.study.StudyCourseDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard" />
 
-
-        <!--============================================微信支付 start-->
+        <!-- ============================================微信支付 start -->
         <activity
             android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
@@ -101,25 +96,28 @@
                 <data android:scheme="wxd37fb8ce51a02360" />
             </intent-filter>
         </activity>
-        <!--============================================微信支付 end-->
+        <!-- ============================================微信支付 end -->
 
 
-        <!--============================================学习 start-->
+        <!-- ============================================学习 start -->
         <activity android:name=".module.study.StudyCacheActivity" />
         <activity android:name=".module.study.CourseTypeGridActivity" />
         <activity android:name=".module.study.SearchActivity" />
-        <!--============================================学习 end-->
+        <!-- ============================================学习 end -->
 
-        <!--============================================免费 start-->
+
+        <!-- ============================================免费 start -->
         <activity android:name=".module.free.FreeMoreAct" />
-        <!--============================================免费 end-->
+        <!-- ============================================免费 end -->
 
 
-        <!--============================================测试 start-->
+        <!-- ============================================测试 start -->
         <activity android:name=".module.m3u8downer.M3u8DownerTextAct" />
-        <!--============================================测试 end-->
+        <!-- ============================================测试 end -->
         <!-- <activity android:name=".module.my.option.acount.CusTakePhotoActivity" /> -->
 
+        <activity android:name=".module.my.option.InviteFriendShareActivity" />
+        <activity android:name=".module.my.option.InviteFriendRecordActivity"></activity>
     </application>
 
 </manifest>

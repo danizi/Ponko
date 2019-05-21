@@ -39,6 +39,9 @@ class LoginStartContract {
 
     class Present(private val context: Context, private val v: View) {
 
+        /**
+         * 游客模式进入主页
+         */
         fun joinMainPageByTourist() {
             val uuid = UDIDUtil.getUDID(context)
             PonkoApp.loginApi?.touristsSignIn(uuid)?.enqueue(object : HttpCallBack<GeneralBean>() {
@@ -55,19 +58,33 @@ class LoginStartContract {
 
         private var broadcastManager: BroadcastManager? = null
         private var wxAuthBroadcastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-
-                fun unbind(oauthBean: OauthBean?, code: String) {
-                    val userInfo = oauthBean?.info.toString()
-                    BKLog.d("未綁定微信，$userInfo")
-                    //区分注册过还是未注册过
-                    if (TextUtils.isEmpty(userInfo)) {
+            /**
+             * 绑定微信操作
+             */
+            fun bind(oauthBean: OauthBean?) {
+                val userInfo = oauthBean?.info.toString()
+                BKLog.d("已綁定微信，$userInfo")
+                val token = oauthBean?.token
+                CacheUtil.putToken(token)
+                val intent = Intent(context, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                ActivityUtil.startActivity(context, intent)
+            }
+            /**
+             * 未绑定微信操作
+             */
+            fun unbind(oauthBean: OauthBean?, code: String) {
+                val userInfo = oauthBean?.info.toString()
+                BKLog.d("未綁定微信，$userInfo")
+                //区分注册过还是未注册过
+                when(TextUtils.isEmpty(userInfo)){
+                    true->{
                         //未注册跳转到微信注册页面
                         val intent = Intent(context, LoginWxAct::class.java)
                         intent.putExtra("code", code)
                         ActivityUtil.startActivity(context, intent)
-                    } else {
-                        //已注册直接调用绑定接口
+                    }
+                    false->{
                         val params = HashMap<String, String>()
                         params["token"] = oauthBean?.info?.unionId!!
                         params["type"] = "wechat"
@@ -83,17 +100,30 @@ class LoginStartContract {
                         })
                     }
                 }
+//                    if (TextUtils.isEmpty(userInfo)) {
+//                        //未注册跳转到微信注册页面
+//                        val intent = Intent(context, LoginWxAct::class.java)
+//                        intent.putExtra("code", code)
+//                        ActivityUtil.startActivity(context, intent)
+//                    } else {
+//                        //已注册直接调用绑定接口
+//                        val params = HashMap<String, String>()
+//                        params["token"] = oauthBean?.info?.unionId!!
+//                        params["type"] = "wechat"
+//                        PonkoApp.loginApi?.wechatBind(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
+//                            override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+//                                BKLog.d("已注册账号 - 綁定微信成功，$userInfo")
+//                                val token = oauthBean.token
+//                                CacheUtil.putToken(token)
+//                                val intent = Intent(context, MainActivity::class.java)
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                                ActivityUtil.startActivity(context, intent)
+//                            }
+//                        })
+//                    }
+            }
 
-                fun bind(oauthBean: OauthBean?) {
-                    val userInfo = oauthBean?.info.toString()
-                    BKLog.d("已綁定微信，$userInfo")
-                    val token = oauthBean?.token
-                    CacheUtil.putToken(token)
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    ActivityUtil.startActivity(context, intent)
-                }
-
+            override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == "COMMAND_SENDAUTH") {
                     val code = intent.getStringExtra("code")
                     BKLog.d("WechatAuth code:$code")

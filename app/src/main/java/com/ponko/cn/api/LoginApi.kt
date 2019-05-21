@@ -77,15 +77,18 @@ interface LoginApi {
      * @param type wechat
      */
     @HTTP(method = "DELETE", path = "user/bind-oauth", hasBody = true)
-    fun wechatUnBint(@Query("type") type: String): Call<ResponseBody>
+    fun wechatUnBint(@Query("type") type: String?="wechat"): Call<ResponseBody>
 
     /**
      * 微信鉴权
      * @param code 微信鉴权回调code
      */
     @POST("user/login/oauth")
-    fun weChatOauth(@Query("type") type: String?="wechat", @Query("code") code: String): Call<OauthBean>
+    fun weChatOauth(@Query("type") type: String? = "wechat", @Query("code") code: String): Call<OauthBean>
 
+    /**
+     * 游客登录
+     */
     @POST("user/guest")
     @FormUrlEncoded
     fun touristsSignIn(@Field("deviceId") deviceId: String): Call<GeneralBean>

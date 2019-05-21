@@ -31,7 +31,8 @@ class LoginAccountContract {
         }
 
         fun clickFindPwd() {
-            ActivityUtil.startActivity(context, Intent(context, LoginFindPwdAct::class.java))
+//            ActivityUtil.startActivity(context, Intent(context, LoginFindPwdAct::class.java))
+            LoginFindPwdAct.startFindPwd(context)
         }
 
         fun clickEnter(phone: String, pwd: String) {
