@@ -6,6 +6,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.ponko.cn.R
 import java.lang.Exception
@@ -16,7 +18,7 @@ object Glide {
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.mipmap.load_img_default)
-                .crossFade()
+                .crossFade(300)
                 .listener(object : RequestListener<String, GlideDrawable> {
                     override fun onException(e: Exception?, model: String?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
                         //ToastUtil.showToast(e?.message)
@@ -27,6 +29,11 @@ object Glide {
                         return false
                     }
                 })
-                .into(imageView)
+                .into(object : SimpleTarget<GlideDrawable>() {
+                    //ps:添加回调处理第一次不显示图片问题，但是没有动画了
+                    override fun onResourceReady(resource: GlideDrawable?, glideAnimation: GlideAnimation<in GlideDrawable>?) {
+                        imageView?.setImageDrawable(resource)
+                    }
+                })
     }
 }

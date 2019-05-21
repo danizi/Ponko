@@ -88,6 +88,9 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         val userType = userType(profileCBean)
 
         // 监听
+        viewHolder?.btnWxUnbind?.setOnClickListener {
+            ActivityUtil.startActivity(context, Intent(context, AccountAct::class.java))
+        }
         viewHolder?.ivCircleHead?.setOnClickListener {
             when (CacheUtil.getUserType()) {
                 USERTYPE_TOURIST -> {

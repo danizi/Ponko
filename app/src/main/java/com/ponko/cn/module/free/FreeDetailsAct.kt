@@ -1,42 +1,54 @@
 package com.ponko.cn.module.free
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.WebView
+import android.widget.*
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp.Companion.APP_ID
 import com.ponko.cn.app.PonkoApp.Companion.freeApi
 import com.ponko.cn.bean.DetailCBean
 import com.ponko.cn.http.HttpCallBack
-import com.ponko.cn.module.study.holder.CourseSectionViewHolder
+import com.ponko.cn.module.media.AttachmentComplete
+import com.ponko.cn.module.media.AttachmentGesture
+import com.ponko.cn.module.media.AttachmentPre
+import com.ponko.cn.module.media.MediaUitl
+import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.IntoTargetUtil
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.decoration.MyItemDecoration
+import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.TimeUtil
+import com.xm.lib.media.base.XmVideoView
+import com.xm.lib.share.ShareConfig
+import com.xm.lib.share.wx.WxShare
 import retrofit2.Call
 import retrofit2.Response
-import android.support.v4.view.ViewPager
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AppCompatActivity
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import com.xm.lib.common.base.rv.BaseViewHolder
-import com.xm.lib.media.base.XmVideoView
 
 
 /**
  * 免费详情页面
  */
 class FreeDetailsAct : BaseActivity() {
-
 
     companion object {
         /**
@@ -57,12 +69,16 @@ class FreeDetailsAct : BaseActivity() {
     private var ui: ViewHolder? = null
 
     /**
-     * 适配器
+     * ViewPager适配器
      */
     private var freeDetailFragmentPagerAdapter: FreeDetailFragmentPagerAdapter? = null
+    /**
+     * 详情顶部操作实体
+     */
+    private var detailTopBean: DetailTopBean? = null
 
     override fun setContentViewBefore() {
-
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
 
     override fun getLayoutId(): Int {
@@ -76,7 +92,37 @@ class FreeDetailsAct : BaseActivity() {
     }
 
     override fun initDisplay() {
+        initVideo(this, ui?.video!!)
+    }
 
+    private fun initVideo(context: Context, xmVideoView: XmVideoView) {
+        //绑定的页面
+        val preUrl = ""
+        val playUrl = ""
+        val attachmentPre = AttachmentPre(context, preUrl)
+        attachmentPre.url = playUrl
+        val attachmentControl = AttachmentControl(context)
+        val attachmentGesture = AttachmentGesture(context)
+        val attachmentComplete = AttachmentComplete(context)
+        xmVideoView.bindAttachmentView(attachmentPre)      //预览附着页面
+        xmVideoView.bindAttachmentView(attachmentControl)  //控制器附着页面
+        xmVideoView.bindAttachmentView(attachmentGesture)  //手势附着页面(调节亮度和音量)
+        xmVideoView.bindAttachmentView(attachmentComplete) //播放完成附着页面
+        //播放器回调观察者
+        xmVideoView.addPlayerObserver(attachmentPre)
+        xmVideoView.addPlayerObserver(attachmentControl)
+        xmVideoView.addPlayerObserver(attachmentGesture)
+        xmVideoView.addPlayerObserver(attachmentComplete)
+        //手势观察者
+        xmVideoView.addGestureObserver(attachmentPre)
+        xmVideoView.addGestureObserver(attachmentControl)
+        xmVideoView.addGestureObserver(attachmentGesture)
+        xmVideoView.addGestureObserver(attachmentComplete)
+        //各种状态（断网、音量、电话、插上耳机、电量...）观察者
+        xmVideoView.addPhoneStateObserver(attachmentPre)
+        xmVideoView.addPhoneStateObserver(attachmentControl)
+        xmVideoView.addPhoneStateObserver(attachmentGesture)
+        xmVideoView.addPhoneStateObserver(attachmentComplete)
     }
 
     override fun iniData() {
@@ -85,48 +131,101 @@ class FreeDetailsAct : BaseActivity() {
             override fun onSuccess(call: Call<DetailCBean>?, response: Response<DetailCBean>?) {
                 //设置内容
                 val body = response?.body()
-                DetailTopBean(
-                        body?.id,
-                        body?.teacher,
-                        body?.count,
-                        body?.duration,
-                        body?.course_id,
-                        body?.share_title,
-                        body?.share_description,
-                        body?.share_url,
-                        body?.pay_url,
-                        body?.pay_btn,
-                        body?.title
-                )
-                val frgs = ArrayList<Fragment>()
-                WebFragment.detailContentBean = DetailContentBean(body?.summary_url, body?.chapters)
-                ChaptersFragment.detailContentBean = DetailContentBean(body?.summary_url, body?.chapters)
-                frgs.add(WebFragment())
-                frgs.add(ChaptersFragment())
-                val titles = ArrayList<String>()
-                titles.add("老师介绍")
-                titles.add("课程")
-                ui?.vp?.adapter = FreeDetailFragmentPagerAdapter(frgs, titles, supportFragmentManager)
-                ui?.tb?.setupWithViewPager(ui?.vp)
-                ui?.vp?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
-                    }
+                //初始化播放器预览页面
+                displayVideo(body)
 
-                    override fun onPageSelected(position: Int) {
-                        ui?.vp?.requestLayout()
-                    }
+                //设置内容顶部老师说明
+                displayTop(body)
 
-                    override fun onPageScrollStateChanged(state: Int) {
-
-                    }
-                })
+                //ViewPager设置 设置网页&课程
+                displayContent(body)
             }
         })
     }
 
-    override fun iniEvent() {
+    fun displayVideo(body: DetailCBean?) {
+        MediaUitl.getM3u8Url(body?.chapters!![0].sections[0].vid, object : MediaUitl.OnPlayUrlListener {
+            override fun onFailure() {
+                Toast.makeText(this@FreeDetailsAct, "获取播放地址失败 - ", Toast.LENGTH_SHORT).show()
+            }
 
+            override fun onSuccess(url: String, size: Int?) {
+                //然后请求视频地址
+                val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
+                this@FreeDetailsAct.runOnUiThread {
+                    attachmentPre.load(url, body.chapters!![0].sections[0]?.avatar!!)
+                }
+            }
+        })
+    }
+
+    fun displayContent(body: DetailCBean?) {
+        val frgs = ArrayList<Fragment>()
+        WebFragment.detailContentBean = DetailContentBean(body?.summary_url, body?.chapters)
+        ChaptersFragment.detailContentBean = DetailContentBean(body?.summary_url, body?.chapters)
+        frgs.add(WebFragment())
+        frgs.add(ChaptersFragment())
+        val titles = ArrayList<String>()
+        titles.add("介绍")
+        titles.add("目录")
+        ui?.vp?.adapter = FreeDetailFragmentPagerAdapter(frgs, titles, supportFragmentManager)
+        ui?.tb?.setupWithViewPager(ui?.vp)
+        ui?.vp?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+            }
+
+            override fun onPageSelected(position: Int) {
+                //滑动时再重新计算viewpager的大小
+                ui?.vp?.requestLayout()
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+
+            }
+        })
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    fun displayTop(body: DetailCBean?) {
+        detailTopBean = DetailTopBean(
+                body?.id,
+                body?.teacher,
+                body?.count,
+                body?.duration,
+                body?.course_id,
+                body?.share_title,
+                body?.share_description,
+                body?.share_url,
+                body?.pay_url,
+                body?.pay_btn,
+                body?.title
+        )
+        ui?.tvTeacher?.text = "${detailTopBean?.teacher}老师"
+        ui?.tvClass?.text = "${detailTopBean?.count}节课"
+        ui?.tvTime?.text = "${detailTopBean?.duration!!}分钟"
+    }
+
+
+    override fun iniEvent() {
+        ui?.llShareFriend?.setOnClickListener {
+            BKLog.d("点击微信朋友圈分享按钮")
+            val wxShare = WxShare(this)
+            wxShare.init(ShareConfig.Builder().appid(APP_ID).build())
+            wxShare.shareWebPage(R.mipmap.ic_launcher, detailTopBean?.share_url!!, detailTopBean?.share_title!!, detailTopBean?.share_description!!, SendMessageToWX.Req.WXSceneSession)
+        }
+        ui?.llShareWx?.setOnClickListener {
+            BKLog.d("点击微信分享按钮")
+            val wxShare = WxShare(this)
+            wxShare.init(ShareConfig.Builder().appid(APP_ID).build())
+            wxShare.shareWebPage(R.mipmap.ic_launcher, detailTopBean?.share_url!!, detailTopBean?.share_title!!, detailTopBean?.share_description!!, SendMessageToWX.Req.WXSceneSession)
+        }
+        ui?.btnPay?.setOnClickListener {
+            BKLog.d("点击支付按钮")
+            IntoTargetUtil.target(this, "pay", detailTopBean?.pay_url)
+        }
     }
 
     class DetailTopBean(var id: String?, var teacher: String?, var count: Int? = 0, var duration: Int? = 0, var course_id: String?, var share_title: String?, var share_description: String?, var share_url: String?, var pay_url: String?, var pay_btn: String?, var title: String?)
@@ -151,6 +250,9 @@ class FreeDetailsAct : BaseActivity() {
         }
     }
 
+    /**
+     * 网页fragment
+     */
     class WebFragment : Fragment() {
         companion object {
             var detailContentBean: DetailContentBean? = null
@@ -174,6 +276,9 @@ class FreeDetailsAct : BaseActivity() {
         }
     }
 
+    /**
+     * 章节fragment
+     */
     class ChaptersFragment : Fragment() {
         companion object {
             var detailContentBean: DetailContentBean? = null
@@ -185,32 +290,89 @@ class FreeDetailsAct : BaseActivity() {
             val v = inflater.inflate(R.layout.fragment_free_detail_chapters, container, false)
             rv = v.findViewById(R.id.rv)
             val adapter = object : BaseRvAdapter() {}
-            detailContentBean?.chapters
-            adapter.data?.addAll(detailContentBean?.chapters!!)
+            for (chapter in detailContentBean?.chapters!!) {
+                adapter.data?.add(chapter.chapterName!!)
+                adapter.data?.addAll(chapter.sections)
+            }
             adapter.addItemViewDelegate(0, ChapterNameViewHolder::class.java, String::class.java, R.layout.item_free_catalogue_content)
-            adapter.addItemViewDelegate(1, SectionsBeanViewHolder::class.java, DetailCBean.ChaptersBean::class.java, R.layout.item_free_catalogue_section)
+            adapter.addItemViewDelegate(1, SectionsBeanViewHolder::class.java, DetailCBean.ChaptersBean.SectionsBean::class.java, R.layout.item_free_catalogue_section)
             rv?.layoutManager = LinearLayoutManager(context)
             rv?.adapter = adapter
+            rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
+            rv?.isFocusableInTouchMode = false
+            rv?.requestFocus()
             return v
         }
     }
 
+    /**
+     * 章节标题ViewHolder
+     */
     class ChapterNameViewHolder(view: View) : BaseViewHolder(view) {
-        override fun bindData(d: Any, position: Int) {
 
+        private var ui: ViewHolder? = null
+        override fun bindData(d: Any, position: Int) {
+            if (ui == null) {
+                ui = ViewHolder.create(itemView)
+            }
+            val context = itemView.context
+            val title = d as String
+            ui?.tv?.text = title
         }
+
+        private class ViewHolder private constructor(val tv: TextView) {
+            companion object {
+
+                fun create(rootView: View): ViewHolder {
+                    val tv = rootView.findViewById<View>(R.id.tv) as TextView
+                    return ViewHolder(tv)
+                }
+            }
+        }
+
     }
 
+    /**
+     * 课程内容ViewHolder
+     */
     class SectionsBeanViewHolder(view: View) : BaseViewHolder(view) {
+        private var ui: ViewHolder? = null
         override fun bindData(d: Any, position: Int) {
+            if (ui == null) {
+                ui = ViewHolder.create(itemView)
+            }
+            val context = itemView.context
+            val sectionsBean = d as DetailCBean.ChaptersBean.SectionsBean
+            ui?.tvContent?.text = sectionsBean.sectionName
+            if (sectionsBean.isFree) {
+                ui?.ivLock?.visibility = View.GONE
+            } else {
+                ui?.ivLock?.visibility = View.VISIBLE
+            }
+            ui?.tvTime?.text = TimeUtil.hhmmss(sectionsBean.duration.toLong() * 1000)
+            itemView.setOnClickListener {
+                BKLog.d("点击播放${sectionsBean.sectionName}")
+            }
+        }
 
+
+        private class ViewHolder private constructor(val tvContent: TextView, val tvTime: TextView, val ivLock: ImageView) {
+            companion object {
+
+                fun create(rootView: View): ViewHolder {
+                    val tvContent = rootView.findViewById<View>(R.id.tv_content) as TextView
+                    val tvTime = rootView.findViewById<View>(R.id.tv_time) as TextView
+                    val ivLock = rootView.findViewById<View>(R.id.iv_lock) as ImageView
+                    return ViewHolder(tvContent, tvTime, ivLock)
+                }
+            }
         }
     }
 
     /**
      * 免费页面窗口ui ViewHolder
      */
-    private class ViewHolder private constructor(val video: XmVideoView, val tvCourseTitle: TextView, val llDes: LinearLayout, val tvTeacher: TextView, val tvClass: TextView, val tvTime: TextView, val button2: Button, val llShareWx: LinearLayout, val llShareFriend: LinearLayout, val tb: TabLayout, val vp: ViewPager) {
+    private class ViewHolder private constructor(val video: XmVideoView, val tvCourseTitle: TextView, val llDes: LinearLayout, val tvTeacher: TextView, val tvClass: TextView, val tvTime: TextView, val btnPay: Button, val llShareWx: LinearLayout, val llShareFriend: LinearLayout, val tb: TabLayout, val vp: ViewPager) {
         companion object {
 
             fun create(rootView: AppCompatActivity): ViewHolder {
@@ -220,12 +382,12 @@ class FreeDetailsAct : BaseActivity() {
                 val tvTeacher = rootView.findViewById<View>(R.id.tv_teacher) as TextView
                 val tvClass = rootView.findViewById<View>(R.id.tv_class) as TextView
                 val tvTime = rootView.findViewById<View>(R.id.tv_time) as TextView
-                val button2 = rootView.findViewById<View>(R.id.button2) as Button
+                val btnPay = rootView.findViewById<View>(R.id.btn_pay) as Button
                 val llShareWx = rootView.findViewById<View>(R.id.ll_share_wx) as LinearLayout
                 val llShareFriend = rootView.findViewById<View>(R.id.ll_share_friend) as LinearLayout
                 val tb = rootView.findViewById<View>(R.id.tb) as TabLayout
                 val vp = rootView.findViewById<View>(R.id.vp) as ViewPager
-                return ViewHolder(video, tvCourseTitle, llDes, tvTeacher, tvClass, tvTime, button2, llShareWx, llShareFriend, tb, vp)
+                return ViewHolder(video, tvCourseTitle, llDes, tvTeacher, tvClass, tvTime, btnPay, llShareWx, llShareFriend, tb, vp)
             }
         }
     }

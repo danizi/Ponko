@@ -63,7 +63,9 @@
         <activity android:name=".module.login.LoginResetPhoneAct" />
         <!-- ============================================登录 end -->
 
-        <activity android:name=".module.free.FreeDetailsAct" />
+        <activity
+            android:name=".module.free.FreeDetailsAct"
+            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard" />
         <activity android:name=".WebAct" />
         <activity android:name=".module.study.CourseTypeLinearActivity" />
         <activity
