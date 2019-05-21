@@ -59,24 +59,25 @@ class SearchActivity : RefreshLoadAct<Any, SearchRecordCBean>() {
     /**
      * 适配器
      */
-    var adp: BaseRvAdapter? = null
+    private var adp: BaseRvAdapter? = null
     /**
      * 保存用户搜索的关键字
      */
-    var record: String? = ""
+    private var record: String? = ""
     /**
      * 广播管理
      */
-    var broadcastManager: BroadcastManager? = null
-    var searchReceiver = object : BroadcastReceiver() {
+    private var broadcastManager: BroadcastManager? = null
+    private var searchReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if(intent?.action==SEARCH_ACTION){
-                search( intent.getStringExtra("search"))
+            if (intent?.action == SEARCH_ACTION) {
+                search(intent.getStringExtra("search"))
             }
         }
     }
+
     companion object {
-        private const val SEARCH_ACTION ="broadcast.action.search"
+        private const val SEARCH_ACTION = "broadcast.action.search"
     }
 
     override fun getLayoutId(): Int {
@@ -142,7 +143,7 @@ class SearchActivity : RefreshLoadAct<Any, SearchRecordCBean>() {
                 })
     }
 
-    private fun search(record:String?){
+    private fun search(record: String?) {
         searchApi?.search(record!!)?.enqueue(object : HttpCallBack<SearchCBean>() {
             override fun onSuccess(call: Call<SearchCBean>?, response: Response<SearchCBean>?) {
                 flResultContainer?.visibility = View.VISIBLE
@@ -299,7 +300,9 @@ class SearchActivity : RefreshLoadAct<Any, SearchRecordCBean>() {
         for (record in searchList!!) {
             record10.add(record)
         }
-        data.add(SearchRecordBean(record10))
+        if (!record10.isEmpty()) {
+            data.add(SearchRecordBean(record10))
+        }
         return data
     }
 

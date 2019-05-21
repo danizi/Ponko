@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import com.ponko.cn.R
 import com.ponko.cn.utils.ActivityUtil
 import android.support.constraint.ConstraintLayout
@@ -17,13 +18,18 @@ import com.github.gongw.VerifyCodeView
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.login.contract.LoginAccountContract
 import com.ponko.cn.utils.CacheUtil
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.TimerHelper
 import retrofit2.Call
 import retrofit2.Response
 
-class LogSmsAct : AppCompatActivity() {
+/**
+ * 短信窗口
+ */
+class LogSmsAct : PonkoBaseAct<Any>() {
 
     companion object {
         private const val TYPE = "type"
@@ -55,6 +61,154 @@ class LogSmsAct : AppCompatActivity() {
         }
     }
 
+    /**
+     * 窗口UI ViewHolder
+     */
+    private var viewHolder: ViewHolder? = null
+    /**
+     * 来自哪个窗口标识
+     */
+    private var from: String? = null
+    /**
+     * 电话号码
+     */
+    private var phone: String? = null
+    /**
+     * 定时器
+     */
+    private var timerHelper: TimerHelper = TimerHelper()
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        // 判断是哪一个窗口跳转
+        from = intent.getStringExtra(TYPE)
+        phone = intent.getStringExtra(PHONE)
+        timerHelper.countDown(object : TimerHelper.OnCountDownListener {
+            override fun onDelayTimer(ms: Long) {
+                val s = ms / 1000
+                BKLog.d("倒计时$s")
+                this@LogSmsAct.runOnUiThread {
+                    viewHolder?.tvTimer?.text = "重新发送（${s}S）"
+                }
+            }
+
+            override fun onComplete() {
+                BKLog.d("倒计时完成")
+            }
+
+        }, 1000, 60000)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timerHelper.stop()
+    }
+
+    override fun presenter(): Any {
+        return Any()
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_log_sms
+    }
+
+    override fun findViews() {
+        super.findViews()
+        if (viewHolder == null) {
+            viewHolder = ViewHolder.create(this)
+        }
+    }
+
+    override fun initDisplay() {
+        super.initDisplay()
+        viewHolder?.tvDes?.text = "验证码已发送$phone"
+    }
+
+    override fun iniEvent() {
+        super.iniEvent()
+        viewHolder?.flClose?.setOnClickListener {
+            finish()
+        }
+        viewHolder?.btnEnter?.setOnClickListener {
+            when (from) {
+                VALUE_FINDPWD -> {
+                    findPwd()
+                }
+                VALUE_REGISTER -> {
+                    register()
+                }
+                VALUE_RESETPHONE -> {
+                    resetPhone()
+                }
+            }
+        }
+    }
+
+    /**
+     * 校验重置号码短信code
+     */
+    private fun resetPhone() {
+        BKLog.d("重置号码处理")
+        val code = viewHolder?.viewCode?.vcText!!
+        if (TextUtils.isEmpty(code)) {
+            Toast.makeText(this, "验证码不能为空", Toast.LENGTH_SHORT).show()
+        } else {
+            PonkoApp.loginApi?.checkResetPhoneCode(code)?.enqueue(object : HttpCallBack<GeneralBean>() {
+                override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                    LoginUpdateAct.startFromResetPhone(this@LogSmsAct, code)
+                }
+            })
+
+        }
+    }
+
+    /**
+     * 注册账号
+     */
+    private fun register() {
+        BKLog.d("注册账号处理")
+        val code = viewHolder?.viewCode?.vcText!!
+        val token = CacheUtil.getToken()!! //游客token
+        val phone = intent.getStringExtra(PHONE)
+        val pwd = intent.getStringExtra(PWD)
+        BKLog.d("phone: $phone  pwd: $pwd  code: $code token:$token")
+        if (TextUtils.isEmpty(code)) {
+            Toast.makeText(this, "验证码不能为空", Toast.LENGTH_SHORT).show()
+        } else {
+            PonkoApp.loginApi?.register(phone, pwd, code, token)?.enqueue(object : HttpCallBack<GeneralBean>() {
+                override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                    BKLog.d("找回密码验证码合法")
+                    //请求登录接口进行登录
+                    LoginAccountContract.Present(this@LogSmsAct, null).clickEnter(phone, pwd)
+                }
+            })
+        }
+    }
+
+    /**
+     * 校验找回密码
+     */
+    private fun findPwd() {
+        BKLog.d("找回密码处理")
+        //短信验证，成功跳转到更新窗口LoginUpdateAct
+        val code = viewHolder?.viewCode?.vcText!!
+        val phone = intent.getStringExtra(PHONE)
+        if (TextUtils.isEmpty(code)) {
+            Toast.makeText(this, "验证码不能为空", Toast.LENGTH_SHORT).show()
+        } else {
+            //检查验证码是否合法
+            PonkoApp.loginApi?.checkForgetCode(phone, code)?.enqueue(object : HttpCallBack<GeneralBean>() {
+                override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                    //PonkoApp.retrofitClient?.headers?.put("x-tradestudy-access-token", response?.body()?.token!!)
+                    LoginUpdateAct.startFromFindPwd(this@LogSmsAct, code, response?.body()?.token!!)
+                }
+            })
+        }
+    }
+
+    /**
+     * 窗口UI
+     */
     private class ViewHolder private constructor(val constraintLayout: ConstraintLayout, val flClose: FrameLayout, val tvWxSuccess: TextView, val clTimer: ConstraintLayout, val tvDes: TextView, val tvTimer: TextView, val constraintLayout2: ConstraintLayout, val viewCode: VerifyCodeView, val btnEnter: Button) {
         companion object {
 
@@ -70,83 +224,6 @@ class LogSmsAct : AppCompatActivity() {
                 val btnEnter = rootView.findViewById<View>(R.id.btn_enter) as Button
 
                 return ViewHolder(constraintLayout, flClose, tvWxSuccess, clTimer, tvDes, tvTimer, constraintLayout2, viewCode, btnEnter)
-            }
-        }
-    }
-
-
-    private var viewHolder: ViewHolder? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_log_sms)
-
-        // 判断是哪一个窗口跳转
-        val from = intent.getStringExtra(TYPE)
-
-        // findViews
-        if (viewHolder == null) {
-            viewHolder = ViewHolder.create(this)
-        }
-
-        // initEvent
-        viewHolder?.flClose?.setOnClickListener {
-            finish()
-        }
-        viewHolder?.btnEnter?.setOnClickListener {
-            when (from) {
-                VALUE_FINDPWD -> {
-                    BKLog.d("找回密码处理")
-
-                    //短信验证，成功跳转到更新窗口LoginUpdateAct
-                    val code = viewHolder?.viewCode?.vcText!!
-                    val phone = intent.getStringExtra(PHONE)
-                    if (TextUtils.isEmpty(code)) {
-                        Toast.makeText(this, "验证码不能为空", Toast.LENGTH_SHORT).show()
-                    } else {
-                        //检查验证码是否合法
-                        PonkoApp.loginApi?.checkForgetCode(phone, code)?.enqueue(object : HttpCallBack<GeneralBean>() {
-                            override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                                PonkoApp.retrofitClient?.headers?.put("x-tradestudy-access-token", response?.body()?.token!!)
-                                LoginUpdateAct.startFromFindPwd(this@LogSmsAct, code)
-                            }
-                        })
-                    }
-                }
-                VALUE_REGISTER -> {
-                    BKLog.d("注册账号处理")
-                    val code = viewHolder?.viewCode?.vcText!!
-                    val token = CacheUtil.getToken()!! //游客token
-                    val phone = intent.getStringExtra(PHONE)
-                    val pwd = intent.getStringExtra(PWD)
-                    BKLog.d("phone: $phone  pwd: $pwd  code: $code token:$token")
-                    if (TextUtils.isEmpty(code)) {
-                        Toast.makeText(this, "验证码不能为空", Toast.LENGTH_SHORT).show()
-                    } else {
-                        PonkoApp.loginApi?.register(phone, pwd, code, token)?.enqueue(object : HttpCallBack<GeneralBean>() {
-                            override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                                BKLog.d("找回密码验证码合法")
-                                //请求登录接口进行登录
-                                LoginAccountContract.Present(this@LogSmsAct, null).clickEnter(phone, pwd)
-                            }
-                        })
-                    }
-                }
-                VALUE_RESETPHONE -> {
-                    BKLog.d("重置号码处理")
-                    val code = viewHolder?.viewCode?.vcText!!
-                    if (TextUtils.isEmpty(code)) {
-                        Toast.makeText(this, "验证码不能为空", Toast.LENGTH_SHORT).show()
-                    } else {
-                        PonkoApp.loginApi?.checkResetPhoneCode(code)?.enqueue(object : HttpCallBack<GeneralBean>() {
-                            override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-
-                                LoginUpdateAct.startFromResetphone(this@LogSmsAct, code)
-                            }
-                        })
-
-                    }
-                }
             }
         }
     }

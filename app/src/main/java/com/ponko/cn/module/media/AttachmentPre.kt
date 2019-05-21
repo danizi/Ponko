@@ -47,7 +47,7 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
     fun load(playUrl: String, preUrl: String) {
         this.url = playUrl
         this.preUrl = preUrl
-        Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ivPre)//加载图片
+        Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ivPre)//加载图片  //TODO You cannot start a load for a destroyed activity
     }
 
     override fun layoutId(): Int {

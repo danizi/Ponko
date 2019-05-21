@@ -50,12 +50,25 @@ interface LoginApi {
     @POST("user/register")
     fun register(@Query("phone") phone: String, @Query("password") password: String, @Query("securityCode") securityCode: String, @Query("deviceId") deviceId: String): Call<GeneralBean>
 
+    /**
+     * 重置密码
+     * @param newPassword 新密码
+     * @param token 短信验证验证返回的token
+     */
     @POST("user/forgot/reset_password")
     @FormUrlEncoded
-    fun resetPassword(@Field("newPassword") newPassword: String?, @Query("securityCode") securityCode: String): Call<GeneralBean>
+    fun resetPassword(@Field("newPassword") newPassword: String?, @Query("token") token: String): Call<GeneralBean>
 
     /**
-     * 賬號創建加綁定
+     * 遊客模式
+     */
+    @POST("user/guest")
+    @FormUrlEncoded
+    fun touristsSignIn(@Field("deviceId") deviceId: String): Call<GeneralBean>
+
+    /**
+     * 微信登录 - 賬號創建加綁定
+     * /user/login/oauth/bind?type=wechat&phone=xxxxx&password=xxxxx&token=上面返回的unionId（鉴权Info）&code=短信验证码
      */
     @POST("user/login/oauth/bind")
     fun wxbind(@Query("phone") phone: String, @Query("password") password: String, @Query("code") code: String, @Query("type") type: String = "wechat"): Call<GeneralBean>
@@ -77,7 +90,7 @@ interface LoginApi {
      * @param type wechat
      */
     @HTTP(method = "DELETE", path = "user/bind-oauth", hasBody = true)
-    fun wechatUnBint(@Query("type") type: String?="wechat"): Call<ResponseBody>
+    fun wechatUnBint(@Query("type") type: String? = "wechat"): Call<ResponseBody>
 
     /**
      * 微信鉴权
@@ -86,10 +99,5 @@ interface LoginApi {
     @POST("user/login/oauth")
     fun weChatOauth(@Query("type") type: String? = "wechat", @Query("code") code: String): Call<OauthBean>
 
-    /**
-     * 游客登录
-     */
-    @POST("user/guest")
-    @FormUrlEncoded
-    fun touristsSignIn(@Field("deviceId") deviceId: String): Call<GeneralBean>
+
 }
