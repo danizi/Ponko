@@ -25,6 +25,7 @@ import com.ponko.cn.module.login.LoginResetPhoneAct
 import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
+import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -62,6 +63,7 @@ class AccountAct : PonkoBaseAct<Any>() {
                     loginApi?.wechatUnBint()?.enqueue(object : HttpCallBack<ResponseBody>() {
                         override fun onSuccess(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                             ToastUtil.show("微信解绑成功")
+                            CacheUtil.putUserTypeLogin() //从绑定用户 -> 登录用户
                         }
                     })
                 }
@@ -79,6 +81,7 @@ class AccountAct : PonkoBaseAct<Any>() {
                 loginApi?.wechatBind(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
                     override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                         ToastUtil.show("微信绑定成功")
+                        CacheUtil.putUserTypeWx()
                     }
                 })
             }

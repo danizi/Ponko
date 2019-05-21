@@ -109,7 +109,11 @@ object MediaUitl {
                 //BKLog.d(TAG, "保利威视视频详细信息:" + response.body()!!.string())
                 val tempResponse = response.body()?.string()
                 //println("保利威视视频详细信息:$tempResponse")
-                listener?.onSuccess(Gson().fromJson(tempResponse, VideoInfoCBean::class.java))
+                try {
+                    listener?.onSuccess(Gson().fromJson(tempResponse, VideoInfoCBean::class.java))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         })
     }

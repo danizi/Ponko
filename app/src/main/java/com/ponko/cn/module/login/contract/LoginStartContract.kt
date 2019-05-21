@@ -70,6 +70,7 @@ class LoginStartContract {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 ActivityUtil.startActivity(context, intent)
             }
+
             /**
              * 未绑定微信操作
              */
@@ -77,22 +78,23 @@ class LoginStartContract {
                 val userInfo = oauthBean?.info.toString()
                 BKLog.d("未綁定微信，$userInfo")
                 //区分注册过还是未注册过
-                when(TextUtils.isEmpty(userInfo)){
-                    true->{
+                when (TextUtils.isEmpty(userInfo)) {
+                    true -> {
                         //未注册跳转到微信注册页面
                         val intent = Intent(context, LoginWxAct::class.java)
                         intent.putExtra("code", code)
                         ActivityUtil.startActivity(context, intent)
                     }
-                    false->{
+                    false -> {
                         val params = HashMap<String, String>()
                         params["token"] = oauthBean?.info?.unionId!!
                         params["type"] = "wechat"
                         PonkoApp.loginApi?.wechatBind(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
                             override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                                BKLog.d("已注册账号 - 綁定微信成功，$userInfo")
+                                BKLog.d("已注册账号前提下 - 綁定微信成功，$userInfo")
                                 val token = oauthBean.token
                                 CacheUtil.putToken(token)
+                                CacheUtil.putUserTypeWx()
                                 val intent = Intent(context, MainActivity::class.java)
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 ActivityUtil.startActivity(context, intent)
@@ -100,27 +102,6 @@ class LoginStartContract {
                         })
                     }
                 }
-//                    if (TextUtils.isEmpty(userInfo)) {
-//                        //未注册跳转到微信注册页面
-//                        val intent = Intent(context, LoginWxAct::class.java)
-//                        intent.putExtra("code", code)
-//                        ActivityUtil.startActivity(context, intent)
-//                    } else {
-//                        //已注册直接调用绑定接口
-//                        val params = HashMap<String, String>()
-//                        params["token"] = oauthBean?.info?.unionId!!
-//                        params["type"] = "wechat"
-//                        PonkoApp.loginApi?.wechatBind(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
-//                            override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-//                                BKLog.d("已注册账号 - 綁定微信成功，$userInfo")
-//                                val token = oauthBean.token
-//                                CacheUtil.putToken(token)
-//                                val intent = Intent(context, MainActivity::class.java)
-//                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                                ActivityUtil.startActivity(context, intent)
-//                            }
-//                        })
-//                    }
             }
 
             override fun onReceive(context: Context?, intent: Intent?) {

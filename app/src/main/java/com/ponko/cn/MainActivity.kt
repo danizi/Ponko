@@ -98,7 +98,7 @@ class MainActivity : BaseActivity() {
                     }
                 } catch (e: Exception) {
                     BKLog.e("未请求到广告数据")
-                    show()
+                    //show()
                 }
             }
 

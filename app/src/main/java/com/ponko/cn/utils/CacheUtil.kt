@@ -108,4 +108,6 @@ object CacheUtil {
         return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "JoinGuide", "") as String
     }
 
+
+
 }

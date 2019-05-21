@@ -1,11 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:fitsSystemWindows="true"
-    tools:context=".module.login.LoginResetPhoneAct">
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/registerBackButton"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_margin="@dimen/dp_8"
+        android:background="#FFFFFF"
+        android:src="@mipmap/back1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:drawableStart="@mipmap/phone"
+        android:drawablePadding="@dimen/dp_8"
+        android:gravity="center"
+        android:text="当前手机号"
+        android:textColor="@color/black"
+        android:textSize="26sp" />
+
+    <TextView
+        android:id="@+id/tv_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="当前手机号"
+        android:textColor="@color/black"
+        android:textSize="19sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="你可以在这里修改登录帮课大学的手机号。"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/dp_12"
+        android:layout_marginEnd="16dp"
+        android:text="你账户的所有数据，包括课程学习的权限、收藏、学习记录等数据，将会被移到你新手机号上"
+        android:textColor="#666666"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="重要提示"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/dp_12"
+        android:layout_marginEnd="16dp"
+        android:text="成功修改手机号后，旧号码将无法登录，你必须使用新号码重新登录。"
+        android:textColor="#666666"
+        android:textSize="14sp" />
+
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_enter"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="end"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/login_enter_btn_bk"
+        android:text="更换手机号"
+        android:textColor="@color/white"
+        android:textSize="19sp" />
+</LinearLayout>
