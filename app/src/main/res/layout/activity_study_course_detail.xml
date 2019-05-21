@@ -69,12 +69,15 @@
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv"
+    <ExpandableListView
+        android:id="@+id/expand_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
+        tools:ignore="UnusedAttribute" />
 </android.support.constraint.ConstraintLayout>

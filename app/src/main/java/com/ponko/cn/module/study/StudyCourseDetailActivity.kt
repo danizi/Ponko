@@ -1,14 +1,16 @@
 package com.ponko.cn.module.study
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesDetailCBean
@@ -21,12 +23,13 @@ import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.ActivityUtil
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
 import retrofit2.Response
 
-class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
 
+class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
 
     companion object {
         const val TAG = "StudyCourseDetailActivity"
@@ -76,23 +79,54 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
         }
     }
 
+    /**
+     * 主窗口UI
+     */
     private var viewHolder: ViewHolder? = null
-    private var courseInfo: CoursesDetailCBean? = null
-    private var vid = ""
+    /**
+     * 专题数据bean
+     */
+    private var coursesDetailCBean: CoursesDetailCBean? = null
+    /**
+     * 哪个窗口跳转标识
+     */
     private var type = ""
+    /**
+     * 视频唯一标识
+     */
+    private var vid = ""
+    /**
+     * 专题唯一标识
+     */
     private var typeId = ""
+    /**
+     * 专题老师
+     */
     private var teachers = ""
+    /**
+     * 专题课程数量
+     */
     private var num = 0L
+    /**
+     * 专题总时间
+     */
     private var duration = 0L
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_study_course_detail)
-//        findViews()
-//        initEvent()
-//        initData(this@StudyCourseDetailActivity, viewHolder?.video!!)
-//
-//    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //接受的信息，需要转发到缓存页面中。
+        type = intent.getStringExtra("type")
+        typeId = intent.getStringExtra("typeId")
+        teachers = intent.getStringExtra("teachers")
+        num = intent.getLongExtra("num", 0L)
+        duration = intent.getLongExtra("duration", 0L)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewHolder?.video!!.onDestroy()//销毁播放器
+    }
 
     override fun presenter(): Any {
         return Any()
@@ -110,7 +144,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
 
     override fun initDisplay() {
         super.initDisplay()
-        com.jaeger.library.StatusBarUtil.setColor(this, this.resources.getColor(R.color.black), 0)
+        com.jaeger.library.StatusBarUtil.setColor(this, this.resources.getColor(R.color.black), 0) //系统栏颜色
     }
 
     override fun iniEvent() {
@@ -133,7 +167,6 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
     }
 
     private fun initData(context: Context?, xmVideoView: XmVideoView) {
-
         //接受的信息，需要转发到缓存页面中。
         type = intent.getStringExtra("type")
         typeId = intent.getStringExtra("typeId")
@@ -183,7 +216,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
         PonkoApp.studyApi?.getCourseDetail(typeId)?.enqueue(object : HttpCallBack<CoursesDetailCBean>() {
             override fun onSuccess(call: Call<CoursesDetailCBean>?, response: Response<CoursesDetailCBean>?) {
                 //专题下课程信息保存
-                courseInfo = response?.body()
+                coursesDetailCBean = response?.body()
 
                 //设置预览界面
                 setPre(getVid())
@@ -192,12 +225,13 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
                 setControl()
 
                 //视频列表展示设置
+                list()
             }
 
             fun setControl() {
                 for (i in 0..(viewHolder?.video?.childCount!! - 1)) {
                     if (viewHolder?.video?.getChildAt(i) is AttachmentControl) {
-                        (viewHolder?.video?.getChildAt(i) as AttachmentControl).courseDetail = courseInfo
+                        (viewHolder?.video?.getChildAt(i) as AttachmentControl).courseDetail = coursesDetailCBean
                         break
                     }
                 }
@@ -213,7 +247,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
                         //然后请求视频地址
                         val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
                         this@StudyCourseDetailActivity.runOnUiThread {
-                            attachmentPre.load(url, courseInfo?.image!!)
+                            attachmentPre.load(url, coursesDetailCBean?.image!!)
                         }
                     }
                 })
@@ -248,25 +282,174 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
 
             fun getVid(): String? {
                 val playUrl = if (TextUtils.isEmpty(vid)) {
-                    courseInfo?.chapters!![0].sections[0].vid  //PS 游客模式vid获取不到
+                    coursesDetailCBean?.chapters!![0].sections[0].vid  //PS 游客模式vid获取不到
                 } else {
                     vid
                 }
                 BKLog.d("vid:$playUrl")
                 return playUrl
             }
+
+            /**
+             * 展示视频列表
+             */
+            fun list() {
+
+                viewHolder?.expandList?.setAdapter(MyExtendableListViewAdapter(coursesDetailCBean))
+                viewHolder?.expandList?.setOnGroupExpandListener { groupPosition ->
+                    val count = MyExtendableListViewAdapter(coursesDetailCBean).groupCount
+                    for (i in 0 until count) {
+                        if (i != groupPosition) {
+                            viewHolder?.expandList?.collapseGroup(i)
+                        }
+                    }
+                }
+            }
         })
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewHolder?.video!!.onDestroy()//销毁播放器
+
+    /**
+     * 二级列表的适配器
+     */
+    private class MyExtendableListViewAdapter(courseInfo: CoursesDetailCBean?) : BaseExpandableListAdapter () {
+        val group = ArrayList<String>()
+        val child = ArrayList<List<CoursesDetailCBean.ChaptersBean.SectionsBean>>()
+
+        init {
+            for (chapter in courseInfo?.chapters!!) {
+                group.add(chapter.chapter_name!!)
+                child.add(chapter?.sections!!)
+            }
+        }
+
+        /**
+         * 主分组
+         */
+        override fun getGroup(groupPosition: Int): Any {
+            return group[groupPosition]
+        }
+
+        /**
+         * 指定位置上的子元素是否可选中
+         */
+        override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
+            return true
+        }
+
+        /**
+         * 分组和子选项是否持有稳定的ID, 就是说底层数据的改变会不会影响到它们
+         */
+        override fun hasStableIds(): Boolean {
+            return true
+        }
+
+        /**
+         * 获取显示指定主组的视图对象
+         */
+        override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup?): View {
+            val groupViewHolder: GroupViewHolder
+            var view = convertView
+            if (view == null) {
+                groupViewHolder = GroupViewHolder.create(parent?.context!!, parent)
+                view = groupViewHolder.rootView
+                view.tag = groupViewHolder
+            } else {
+                groupViewHolder = convertView?.tag as GroupViewHolder
+            }
+            groupViewHolder.tvSection.text = group[groupPosition]
+            return view
+        }
+
+        /**
+         * 子分组数量
+         */
+        override fun getChildrenCount(groupPosition: Int): Int {
+            return child[groupPosition].size
+        }
+
+        /**
+         * 获取子选项的ID, 这个ID必须是唯一的
+         */
+        override fun getChild(groupPosition: Int, childPosition: Int): Any {
+            return childPosition
+        }
+
+        /**
+         * 取指定分组的ID, 这个ID必须是唯一的
+         */
+        override fun getGroupId(groupPosition: Int): Long {
+            return groupPosition.toLong()
+        }
+
+        /**
+         * 取得显示给定分组给定子位置的数据用的视图
+         */
+        @SuppressLint("SetTextI18n")
+        override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup?): View {
+            val childViewHolder: ChildViewHolder
+            var view = convertView
+            if (view == null) {
+                childViewHolder = ChildViewHolder.create(parent?.context!!, parent)
+                view = childViewHolder.rootView
+                view.tag = childViewHolder
+            } else {
+                childViewHolder = convertView?.tag as ChildViewHolder
+            }
+            childViewHolder.tvCourseName.text = child[groupPosition][childPosition].name
+            childViewHolder.tvTime.text = TimeUtil.hhmmss(child[groupPosition][childPosition].duration.toLong()) + " | "
+            childViewHolder.tvPos.text = childPosition.toString()
+            childViewHolder.tvProcess.text = (child[groupPosition][childPosition].progress_duration / child[groupPosition][childPosition].duration.toInt()).toString()
+            return view
+        }
+
+        /**
+         *获取子选项的ID, 这个ID必须是唯一的
+         */
+        override fun getChildId(groupPosition: Int, childPosition: Int): Long {
+            return childPosition.toLong()
+        }
+
+        /**
+         * 主分组数量
+         */
+        override fun getGroupCount(): Int {
+            return group.size
+        }
+
+        private class GroupViewHolder private constructor(val rootView: View, val tvSection: TextView) {
+            companion object {
+
+                fun create(context: Context, parent: ViewGroup?): GroupViewHolder {
+                    val rootView = LayoutInflater.from(context).inflate(R.layout.item_study_course_detail_section, parent, false)
+                    val tvSection = rootView.findViewById<View>(R.id.tv_section) as TextView
+                    return GroupViewHolder(rootView, tvSection)
+                }
+            }
+        }
+
+        private class ChildViewHolder private constructor(val rootView: View, val tvPos: TextView, val tvCourseName: TextView, val tvTime: TextView, val tvProcess: TextView) {
+            companion object {
+
+                fun create(context: Context, parent: ViewGroup?): ChildViewHolder {
+                    val rootView = LayoutInflater.from(context).inflate(R.layout.item_study_course_detail_course, parent, false)
+                    val tvPos = rootView.findViewById<View>(R.id.tv_pos) as TextView
+                    val tvCourseName = rootView.findViewById<View>(R.id.tv_course_name) as TextView
+                    val tvTime = rootView.findViewById<View>(R.id.tv_time) as TextView
+                    val tvProcess = rootView.findViewById<View>(R.id.tv_process) as TextView
+
+                    return ChildViewHolder(rootView, tvPos, tvCourseName, tvTime, tvProcess)
+                }
+            }
+        }
+
+
     }
 
     /**
      * 课程详情窗口ViewHolder
      */
-    private class ViewHolder private constructor(val video: XmVideoView, val constraintLayout5: ConstraintLayout, val ivShare: ImageView, val ivColect: ImageView, val ivDown: ImageView, val rv: RecyclerView) {
+    private class ViewHolder private constructor(val video: XmVideoView, val constraintLayout5: ConstraintLayout, val ivShare: ImageView, val ivColect: ImageView, val ivDown: ImageView, val expandList: ExpandableListView) {
         companion object {
 
             fun create(rootView: AppCompatActivity): ViewHolder {
@@ -275,8 +458,8 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
                 val ivShare = rootView.findViewById<View>(R.id.iv_share) as ImageView
                 val ivColect = rootView.findViewById<View>(R.id.iv_colect) as ImageView
                 val ivDown = rootView.findViewById<View>(R.id.iv_down) as ImageView
-                val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
-                return ViewHolder(video, constraintLayout5, ivShare, ivColect, ivDown, rv)
+                val expandList = rootView.findViewById<View>(R.id.expand_list) as ExpandableListView
+                return ViewHolder(video, constraintLayout5, ivShare, ivColect, ivDown, expandList)
             }
         }
     }
