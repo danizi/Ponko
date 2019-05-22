@@ -22,11 +22,13 @@ class IntegralTaskActivity : RefreshLoadAct<Any, StoreTaskBean>() {
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun initDisplay() {
+        disableLoad = true
+        addItemDecoration = false
         super.initDisplay()
         addBar2("赚积分", "规则", View.OnClickListener { })
         viewHolder?.toolbar?.setBackgroundColor(Color.parseColor("#EFF7FE"))
         viewHolder?.toolbar?.elevation = 0f
-        addItemDecoration=false
+        addItemDecoration = false
         com.jaeger.library.StatusBarUtil.setColor(this, Color.parseColor("#EFF7FE"), 0)
     }
 

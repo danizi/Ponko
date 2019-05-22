@@ -137,7 +137,7 @@ class AddressActivity : AppCompatActivity() {
 
                 fun create(rootView: View): ViewHolder {
                     val tv = rootView.findViewById<View>(R.id.tv) as TextView
-                    val ivArrow = rootView.findViewById<View>(R.id.iv_arrow) as CircleImageView
+                    val ivArrow = rootView.findViewById<View>(R.id.iv_head) as CircleImageView
                     val et = rootView.findViewById<View>(R.id.et) as EditText
                     val divider = rootView.findViewById(R.id.divider) as View
                     return ViewHolder(tv, ivArrow, et, divider)

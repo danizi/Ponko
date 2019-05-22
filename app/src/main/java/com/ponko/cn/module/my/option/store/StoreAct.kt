@@ -19,31 +19,39 @@ import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.WebAct
 import com.ponko.cn.app.PonkoApp
-import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.StoreProfileBean
 import com.ponko.cn.bean.StoreProfileCMoreBean
 import com.ponko.cn.http.HttpCallBack
-import com.ponko.cn.module.common.RefreshLoadFrg
+import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.my.holder.MyBookViewHolder
 import com.ponko.cn.module.my.holder.MyCourseViewHolder
 import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.AnimUtil
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Response
 
-class StoreAct : BaseActivity() {
-
+/**
+ * 积分商城首页
+ */
+class StoreAct : PonkoBaseAct<Any>() {
+    /**
+     * 窗口UI
+     */
     private var viewHolder: ViewHolder? = null
+    /**
+     * 积分商城接口信息
+     */
     private var storeProfileBean: StoreProfileBean? = null
 
-    override fun setContentViewBefore() {}
+    override fun presenter(): Any {
+        return Any()
+    }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_store
@@ -56,12 +64,25 @@ class StoreAct : BaseActivity() {
     }
 
     override fun initDisplay() {
+        //顶部栏
         BarUtil.addWhiteBar(this, viewHolder?.toolbar, "积分商城", "规则", View.OnClickListener {
             BKLog.d("点击规则")
             WebAct.start(this, "url", storeProfileBean?.score_rule)
         })
-        com.jaeger.library.StatusBarUtil.setColor(this, Color.parseColor("#FF41434E"), 0)
+        //顶部栏颜色
         viewHolder?.toolbar?.setBackgroundColor(Color.parseColor("#FF41434E"))
+
+        //系统栏颜色
+        com.jaeger.library.StatusBarUtil.setColor(this, Color.parseColor("#FF41434E"), 0)
+
+        //
+        if (PonkoApp.signInfo?.isCompleted != true) {
+            viewHolder?.ivSign?.visibility = View.VISIBLE
+            AnimUtil.shakeAnim(viewHolder?.ivSign)
+        } else {
+            viewHolder?.ivSign?.visibility = View.GONE
+            AnimUtil.cancel(viewHolder?.ivSign)
+        }
     }
 
     override fun iniData() {
@@ -120,7 +141,10 @@ class StoreAct : BaseActivity() {
         }
     }
 
-    open class ViewHolder private constructor(val toolbar: Toolbar, val clInfo: ConstraintLayout, val container: ConstraintLayout, val ivHead: CircleImageView, val tvNick: TextView, val tvPayType: TextView, val tvIntegralNum: TextView, val llObtainLog: LinearLayout, val llRecord: LinearLayout, val clAction: ConstraintLayout, val llIntegral: LinearLayout, val ivIntegral: AppCompatImageView, val tvIntegral: TextView, val ivSign: ImageView, val llExchange: LinearLayout, val ivExchange: AppCompatImageView, val tvExchange: TextView, val llRank: LinearLayout, val ivRank: AppCompatImageView, val tvRank: TextView, val tb: TabLayout, val vp: ViewPager) {
+    /**
+     * 积分商城UI
+     */
+    private class ViewHolder private constructor(val toolbar: Toolbar, val clInfo: ConstraintLayout, val container: ConstraintLayout, val ivHead: CircleImageView, val tvNick: TextView, val tvPayType: TextView, val tvIntegralNum: TextView, val llObtainLog: LinearLayout, val llRecord: LinearLayout, val clAction: ConstraintLayout, val llIntegral: LinearLayout, val ivIntegral: AppCompatImageView, val tvIntegral: TextView, val ivSign: ImageView, val llExchange: LinearLayout, val ivExchange: AppCompatImageView, val tvExchange: TextView, val llRank: LinearLayout, val ivRank: AppCompatImageView, val tvRank: TextView, val tb: TabLayout, val vp: ViewPager) {
         companion object {
 
             fun create(act: AppCompatActivity): ViewHolder {
@@ -151,6 +175,9 @@ class StoreAct : BaseActivity() {
         }
     }
 
+    /**
+     * ViewPager Fragment页面
+     */
     @SuppressLint("ValidFragment")
     open class ExchangeFrg : MvpFragment<Any>() {
         private var rv: RecyclerView? = null
@@ -223,6 +250,9 @@ class StoreAct : BaseActivity() {
         }
     }
 
+    /**
+     * ViewPager适配器
+     */
     open class Adapter(fm: FragmentManager, val frgs: ArrayList<Fragment>, val title: ArrayList<String>) : FragmentPagerAdapter(fm) {
 
         override fun getItem(p0: Int): Fragment {

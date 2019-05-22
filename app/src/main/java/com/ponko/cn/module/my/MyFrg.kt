@@ -11,6 +11,7 @@ import com.ponko.cn.module.my.adapter.MyAdapter
 import com.ponko.cn.module.my.constract.MyConstract
 import com.ponko.cn.module.my.holder.MyViewHolder
 import com.ponko.cn.module.my.holder.MyViewHolder2
+import com.ponko.cn.utils.AnimUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 import retrofit2.Call
@@ -45,17 +46,6 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
 
     override fun requestMyInfoApiSuccess(body: ProfileCBean?) {
         requestRefreshSuccess(body)
-        //再请求签到接口
-        PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
-            override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
-                val storeTaskBean = response?.body()
-                PonkoApp.signInfo = storeTaskBean
-                if (storeTaskBean?.isCompleted != true) {
-                    //未签到状态
-                    BKLog.d("未签到状态,商城图片晃动")
-                }
-            }
-        })
     }
 
     override fun multiTypeData(body: ProfileCBean?): List<Any> {
@@ -74,5 +64,16 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
         super.initDisplay()
         viewHolder?.clContent?.setBackgroundColor(context?.resources?.getColor(R.color.white)!!)
         isFocusableInTouchMode()
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        BKLog.d("显示状态：$isVisibleToUser")
+        PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
+            override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
+                val storeTaskBean = response?.body()
+                PonkoApp.signInfo = storeTaskBean
+            }
+        })
     }
 }

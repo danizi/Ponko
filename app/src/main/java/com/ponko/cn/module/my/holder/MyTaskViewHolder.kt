@@ -1,32 +1,27 @@
 package com.ponko.cn.module.my.holder
 
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import com.ponko.cn.R
-import com.xm.lib.common.base.rv.BaseViewHolder
-import android.support.v7.widget.RecyclerView
 import com.ponko.cn.bean.MyTaskBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.BaseViewHolder
 
-
+/**
+ * 签到任务展示
+ */
 class MyTaskViewHolder(view: View) : BaseViewHolder(view) {
-
-    private class ViewHolder private constructor(val view2: View, val tvTitle: TextView, val rv: RecyclerView) {
-        companion object {
-
-            fun create(rootView: View): ViewHolder {
-                val view2 = rootView.findViewById(R.id.view2) as View
-                val tvTitle = rootView.findViewById<View>(R.id.tv_title) as TextView
-                val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
-                return ViewHolder(view2, tvTitle, rv)
-            }
-        }
-    }
-
+    /**
+     * 签到任务展示 UI
+     */
     private var viewHolder: ViewHolder? = null
 
+    /**
+     * 数据绑定
+     */
     override fun bindData(d: Any, position: Int) {
         if (viewHolder == null) {
             viewHolder = ViewHolder.create(itemView)
@@ -34,14 +29,19 @@ class MyTaskViewHolder(view: View) : BaseViewHolder(view) {
         val context = itemView.context
         val myTaskBean = d as MyTaskBean
         val adapter = object : BaseRvAdapter() {}
-        adapter.addItemViewDelegate(0, ItemTaskViewHolder::class.java, Any::class.java, R.layout.item_my_store_integral_task)
+        adapter.addItemViewDelegate(0, ItemTaskViewHolder::class.java, StoreTaskBean.TasksBean::class.java, R.layout.item_my_store_integral_task)
         adapter.data?.addAll(myTaskBean.tasks)
         viewHolder?.rv?.adapter = adapter
         viewHolder?.rv?.layoutManager = LinearLayoutManager(context)
     }
 
+    /**
+     * 任务item
+     */
     open class ItemTaskViewHolder(view: View) : BaseViewHolder(view) {
-
+        /**
+         * 任务item UI
+         */
         private class ViewHolder private constructor(val tvIntegralNum: TextView, val tvDes1: TextView, val tvDes2: TextView, val tvState: TextView) {
             companion object {
 
@@ -56,7 +56,38 @@ class MyTaskViewHolder(view: View) : BaseViewHolder(view) {
         }
 
         override fun bindData(d: Any, position: Int) {
+            val tasksBean = d as StoreTaskBean.TasksBean
+            //任务是否完成
+            tasksBean.name
+        }
 
+        /**
+         * 任务完成展示
+         */
+        private fun taskComplete() {
+
+        }
+
+        /**
+         * 任务未完成展示
+         */
+        private fun taskUnComplete() {
+
+        }
+    }
+
+    /**
+     * 签到任务展示 UI
+     */
+    private class ViewHolder private constructor(val view2: View, val tvTitle: TextView, val rv: RecyclerView) {
+        companion object {
+
+            fun create(rootView: View): ViewHolder {
+                val view2 = rootView.findViewById(R.id.view2) as View
+                val tvTitle = rootView.findViewById<View>(R.id.tv_title) as TextView
+                val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
+                return ViewHolder(view2, tvTitle, rv)
+            }
         }
     }
 }

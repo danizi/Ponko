@@ -13,15 +13,20 @@ import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.MyBean
+import com.ponko.cn.bean.StoreTaskBean
+import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.*
 import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.ponko.cn.module.my.option.store.StoreAct
 import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.AnimUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.task.DownTask
+import retrofit2.Call
+import retrofit2.Response
 
 
 class MyViewHolder2(view: View) : BaseViewHolder(view) {
@@ -82,9 +87,12 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
         val context = itemView.context
         viewHolder?.iv?.setImageResource(myListBean.icon)
         viewHolder?.tv?.text = myListBean.des
+
+        isStoreIconShake(myListBean.des)
         itemView.setOnClickListener {
             when (myListBean.des) {
                 "积分商城" -> {
+                    stopShakeAnim(viewHolder?.iv)
                     ActivityUtil.startActivity(context, Intent(context, StoreAct::class.java))
                 }
                 "缓存" -> {
@@ -131,5 +139,31 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
             BKLog.d("点击${myListBean.des}")
 
         }
+    }
+
+    /**
+     * 未签到，积分晃动提醒
+     */
+    private fun isStoreIconShake(des: String) {
+        if (des == "积分商城") {
+            PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
+                override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
+                    val storeTaskBean = response?.body()
+                    PonkoApp.signInfo = storeTaskBean
+                    if (storeTaskBean?.isCompleted != true) {
+                        //未签到状态
+                        BKLog.d("未签到状态,商城图片晃动")
+                        AnimUtil.shakeAnim(viewHolder?.iv)
+                    }
+                }
+            })
+        }
+    }
+
+    /**
+     * 停止动画
+     */
+    private fun stopShakeAnim(view: View?) {
+        AnimUtil.cancel(view)
     }
 }
