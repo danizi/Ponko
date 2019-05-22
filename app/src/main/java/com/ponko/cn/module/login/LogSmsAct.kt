@@ -1,5 +1,6 @@
 package com.ponko.cn.module.login
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -78,12 +79,13 @@ class LogSmsAct : PonkoBaseAct<Any>() {
      */
     private var timerHelper: TimerHelper = TimerHelper()
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
         // 判断是哪一个窗口跳转
         from = intent.getStringExtra(TYPE)
         phone = intent.getStringExtra(PHONE)
+
         timerHelper.countDown(object : TimerHelper.OnCountDownListener {
+            @SuppressLint("SetTextI18n")
             override fun onDelayTimer(ms: Long) {
                 val s = ms / 1000
                 BKLog.d("倒计时$s")
@@ -97,6 +99,7 @@ class LogSmsAct : PonkoBaseAct<Any>() {
             }
 
         }, 1000, 60000)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onDestroy() {
@@ -142,6 +145,10 @@ class LogSmsAct : PonkoBaseAct<Any>() {
                 }
             }
         }
+    }
+
+    override fun iniData() {
+        super.iniData()
     }
 
     /**

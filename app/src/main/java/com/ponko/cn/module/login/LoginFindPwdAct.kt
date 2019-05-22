@@ -102,6 +102,7 @@ class LoginFindPwdAct : PonkoBaseAct<Any>() {
             }
         })
         viewHolder?.btnEnter?.setOnClickListener {
+            //下一步，請求發送短信接口成功，跳轉到短信頁面
             PonkoApp.loginApi?.forgetPasswordSms(viewHolder?.etAccount?.text.toString())?.enqueue(object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     //下一步，請求發送短信接口成功，跳轉到短信頁面

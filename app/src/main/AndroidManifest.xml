@@ -3,6 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ponko.cn">
 
+    <uses-feature android:name="android.hardware.camera" />
+    <!--相机权限-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!--写入SD卡的权限：如果你希望保存相机拍照后的照片-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--读取SD卡的权限:打开相册选取图片所必须的权限-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".app.PonkoApp"
         android:allowBackup="true"
@@ -13,6 +21,29 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+
+        <!--针对相册处理的 FileProvider共享文件、缓存-->
+        <!--<provider-->
+            <!--android:name="android.support.v4.content.FileProvider"-->
+            <!--android:authorities="${applicationId}.fileProvider"-->
+            <!--android:exported="false"-->
+            <!--android:grantUriPermissions="true"-->
+            <!--tools:replace="name,authorities,exported,grantUriPermissions">-->
+            <!--<meta-data-->
+                <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
+                <!--android:resource="@xml/file_paths"-->
+                <!--tools:replace="name,resource" />-->
+        <!--</provider>-->
+
+        <!--<provider-->
+            <!--android:name="android.support.v4.content.FileProvider"-->
+            <!--android:authorities="com.ponko.cn.provider"-->
+            <!--android:exported="false"-->
+            <!--android:grantUriPermissions="true">-->
+            <!--<meta-data-->
+                <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
+                <!--android:resource="@xml/file_paths" />-->
+        <!--</provider>-->
 
         <!-- ============================================主界面 start -->
         <activity android:name=".GuideAct">
@@ -119,7 +150,11 @@
         <!-- <activity android:name=".module.my.option.acount.CusTakePhotoActivity" /> -->
 
         <activity android:name=".module.my.option.InviteFriendShareActivity" />
-        <activity android:name=".module.my.option.InviteFriendRecordActivity"></activity>
+        <activity android:name=".module.my.option.InviteFriendRecordActivity"/>
+
+        <!--照片选取-->
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+
     </application>
 
 </manifest>

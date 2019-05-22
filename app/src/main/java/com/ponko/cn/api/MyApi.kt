@@ -23,7 +23,7 @@ interface MyApi {
     fun basic_info(): Call<ProfileCBean>
 
     /**
-     * 上传个人信息，不包括头像
+     * 上传个人信息 ps：头像是在选取头像的时候就上传到后台了
      */
     @POST("user/save")
     @FormUrlEncoded

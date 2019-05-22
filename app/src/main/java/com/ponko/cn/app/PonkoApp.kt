@@ -77,7 +77,7 @@ class PonkoApp : Application() {
         heads["x-tradestudy-access-token"] = CacheUtil.getToken()!!
         retrofitClient = RetrofitClient.intance
                 .setBaseUrl(BASE_API)
-                .setHttpCacheDirectory(File(cacheDir, "ponko"))
+                .setHttpCacheDirectory(File(cacheDir, "PonkoCache"))
                 .setTimeout(4000)
                 .setHeaders(heads)
                 .createRetrofit(app = this)

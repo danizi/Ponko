@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:ignore="HardcodedText">
 
     <TextView
         android:id="@+id/tv"
@@ -13,17 +15,19 @@
         android:layout_marginLeft="12dp"
         android:layout_marginTop="17dp"
         android:layout_marginBottom="12dp"
-        android:text="个人信息"
+        android:text="@string/app_name"
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iv_arrow"
+        android:id="@+id/iv_head"
         android:layout_width="46dp"
         android:layout_height="46dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="15dp"
+        android:layout_marginBottom="8dp"
         android:src="@mipmap/ic_launcher"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -42,7 +46,7 @@
         android:textColorHint="#999999"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/iv_arrow"
+        app:layout_constraintEnd_toEndOf="@+id/iv_head"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
