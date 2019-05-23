@@ -196,6 +196,7 @@ class PersonalActivity : PonkoBaseAct<Any>() {
         params["currentIndustry"] = accountBean.industry
         params["currentCompanyName"] = accountBean.companyName
         params["intention"] = accountBean.intention
+        params["currentCity"] = accountBean.city
         myApi?.saveProfile(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
             override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                 BKLog.d("保存编辑好的个人信息${accountBean.toString()}")

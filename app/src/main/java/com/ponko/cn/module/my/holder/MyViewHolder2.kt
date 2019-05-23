@@ -92,7 +92,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
         itemView.setOnClickListener {
             when (myListBean.des) {
                 "积分商城" -> {
-                    stopShakeAnim(viewHolder?.iv)
+                    //stopShakeAnim(viewHolder?.iv)
                     ActivityUtil.startActivity(context, Intent(context, StoreAct::class.java))
                 }
                 "缓存" -> {

@@ -14,7 +14,9 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.my.holder.MyTaskSignViewHolder
 import com.ponko.cn.module.my.holder.MyTaskViewHolder
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response
 
@@ -24,8 +26,12 @@ class IntegralTaskActivity : RefreshLoadAct<Any, StoreTaskBean>() {
     override fun initDisplay() {
         disableLoad = true
         addItemDecoration = false
+        isFocusableInTouchMode()
         super.initDisplay()
-        addBar2("赚积分", "规则", View.OnClickListener { })
+        addBar2("赚积分", "规则", View.OnClickListener {
+            BKLog.d("点击规则")
+            //IntoTargetUtil.target(this,"url",PonkoApp.signInfo.)
+        })
         viewHolder?.toolbar?.setBackgroundColor(Color.parseColor("#EFF7FE"))
         viewHolder?.toolbar?.elevation = 0f
         addItemDecoration = false

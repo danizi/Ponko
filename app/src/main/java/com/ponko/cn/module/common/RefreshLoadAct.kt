@@ -16,6 +16,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import android.widget.FrameLayout
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.utils.BarUtil
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
@@ -82,13 +83,17 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     abstract fun requestMoreApi()
 
     open fun requestMoreSuccess(body: D?) {
-        val data = body as ArrayList<Any>
+//        val data = body as ArrayList<Any>
+        val data = multiTypeData(body)
         if (multiTypeData(body).isEmpty()) {
-            viewHolder?.viewState?.showNoData("暂无数据...")
+            ToastUtil.show("数据已全部加载")
+            viewHolder?.srl?.finishLoadMore(0)
+            //viewHolder?.viewState?.showNoData("暂无数据...")
         } else {
             adapter?.data?.addAll(data)
             val positionStart = adapter?.data?.size
-            val itemCount = body.size
+//            val itemCount = body.size
+            val itemCount = data.size
             adapter?.notifyItemRangeChanged(positionStart!!, itemCount)
             viewHolder?.srl?.finishLoadMore()
         }
@@ -110,7 +115,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
         viewHolder?.srl?.finishRefresh()
 
         if (multiTypeData(body).isEmpty()) {
-            viewHolder?.viewState?.showNoData("暂无数据...")
+            viewHolder?.viewState?.showNoData("暂无数据")
         } else {
             adapter = adapter()
             bindItemViewHolder(bindItemViewHolderData())
@@ -150,18 +155,22 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
         viewHolder?.rv?.requestFocus()
     }
 
+    @Deprecated("直接使用BarUtil", ReplaceWith("BarUtil.addBar1(this, viewHolder?.toolbar, title)", "com.ponko.cn.utils.BarUtil"))
     protected fun addBar1(title: String) {
         BarUtil.addBar1(this, viewHolder?.toolbar, title)
     }
 
+    @Deprecated("直接使用BarUtil", ReplaceWith("BarUtil.addBar2(this, viewHolder?.toolbar, title, barRight, barRightlistener)", "com.ponko.cn.utils.BarUtil"))
     protected fun addBar2(title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
         BarUtil.addBar2(this, viewHolder?.toolbar, title, barRight, barRightlistener)
     }
 
+    @Deprecated("直接使用BarUtil", ReplaceWith("BarUtil.addBar3(this, viewHolder?.toolbar, title, barRight, barRightlistener)", "com.ponko.cn.utils.BarUtil"))
     protected fun addBar3(title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
         BarUtil.addBar3(this, viewHolder?.toolbar, title, barRight, barRightlistener)
     }
 
+    @Deprecated("直接使用BarUtil", ReplaceWith("BarUtil.addWhiteBar(this, viewHolder?.toolbar, title, barRight, barRightlistener)", "com.ponko.cn.utils.BarUtil"))
     protected fun addWhiteBar(title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
         BarUtil.addWhiteBar(this, viewHolder?.toolbar, title, barRight, barRightlistener)
     }
@@ -182,6 +191,9 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
             }
         }
 
+        /**
+         * 检查RecyclerView内容是否大于刷新组件的高度 ，如果小于则不能进行底部加载操作
+         */
         fun isCanLoad(rv: RecyclerView?, srl: SmartRefreshLayout?) {
             srl?.isEnableLoadMore = true
             val vto = rv?.viewTreeObserver

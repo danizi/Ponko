@@ -15,6 +15,7 @@ import retrofit2.Call
 import retrofit2.Response
 import android.widget.TextView
 import android.widget.LinearLayout
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
 
@@ -22,6 +23,9 @@ import com.xm.lib.common.util.TimeUtil
  * 积分获取记录
  */
 class IntegralRecordActivity : RefreshLoadAct<Any, StoreObtainLogBean>() {
+    /**
+     * 积分记录UI
+     */
     private var v: ViewHolder? = null
 
     override fun initDisplay() {
@@ -54,19 +58,25 @@ class IntegralRecordActivity : RefreshLoadAct<Any, StoreObtainLogBean>() {
             @SuppressLint("SetTextI18n")
             override fun onSuccess(call: Call<StoreObtainLogBean>?, response: Response<StoreObtainLogBean>?) {
                 val storeObtainLogBean = response?.body()
-                requestMoreSuccess(storeObtainLogBean)
+//                if (!storeObtainLogBean?.list?.isEmpty()!!) {
+                    requestMoreSuccess(storeObtainLogBean)
+//                } else {
+//                    ToastUtil.show("数据已全部加载完成")
+//                    viewHolder?.srl?.finishLoadMore(0)
+//                }
             }
         })
     }
 
     override fun requestRefreshApi() {
         PonkoApp.myApi?.integralObtainRecord()?.enqueue(object : HttpCallBack<StoreObtainLogBean>() {
+            @SuppressLint("SetTextI18n")
             override fun onSuccess(call: Call<StoreObtainLogBean>?, response: Response<StoreObtainLogBean>?) {
                 val storeObtainLogBean = response?.body()
                 requestRefreshSuccess(storeObtainLogBean)
                 v?.tvIntegralExpiration?.text = "当前有${storeObtainLogBean?.soon_expired_scores}积分将在${TimeUtil.unixStr("yyy-MM-dd", storeObtainLogBean?.soon_expired_time!!)}日过期，"
                 v?.llIntegralExpiration?.setOnClickListener {
-                    BKLog.d("点击积分过期提示")
+                    BKLog.d("顶部黄色提示")
                     finish()
                 }
             }
@@ -85,6 +95,9 @@ class IntegralRecordActivity : RefreshLoadAct<Any, StoreObtainLogBean>() {
         return Any()
     }
 
+    /**
+     * ui
+     */
     private class ViewHolder private constructor(val llIntegralExpiration: LinearLayout, val tvIntegralExpiration: TextView) {
         companion object {
 

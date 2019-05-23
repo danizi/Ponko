@@ -1,5 +1,7 @@
 package com.ponko.cn.module.my.holder
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -7,6 +9,7 @@ import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.MyTaskBean
 import com.ponko.cn.bean.StoreTaskBean
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 
@@ -33,19 +36,69 @@ class MyTaskViewHolder(view: View) : BaseViewHolder(view) {
         adapter.data?.addAll(myTaskBean.tasks)
         viewHolder?.rv?.adapter = adapter
         viewHolder?.rv?.layoutManager = LinearLayoutManager(context)
+        viewHolder?.rv?.isFocusableInTouchMode = false
+        viewHolder?.rv?.requestFocus()
     }
 
     /**
      * 任务item
      */
     open class ItemTaskViewHolder(view: View) : BaseViewHolder(view) {
+
+        private var ui: ViewHolder? = null
+        private var context: Context? = null
+        private var tasksBean: StoreTaskBean.TasksBean? = null
+
+        @SuppressLint("SetTextI18n")
+        override fun bindData(d: Any, position: Int) {
+            if (ui == null) {
+                ui = ViewHolder.create(itemView)
+            }
+            context = itemView.context
+            tasksBean = d as StoreTaskBean.TasksBean
+            ui?.tvIntegralNum?.text = "+" + tasksBean?.scores.toString()
+            ui?.tvDes1?.text = tasksBean?.name
+            ui?.tvDes2?.text = tasksBean?.summary
+
+            if (tasksBean?.isCompleted!!) {
+                taskComplete()
+            } else {
+                taskUnComplete()
+            }
+        }
+
+        /**
+         * 任务完成展示
+         */
+        private fun taskComplete() {
+            ui?.tvIntegralNum?.isEnabled = false
+            ui?.tvDes1?.isEnabled = false
+            ui?.tvDes2?.isEnabled = false
+            ui?.tvState?.isEnabled = false
+            ui?.tvState?.text = "已完成"
+        }
+
+        /**
+         * 任务未完成展示
+         */
+        private fun taskUnComplete() {
+            ui?.tvIntegralNum?.isEnabled = true
+            ui?.tvDes1?.isEnabled = true
+            ui?.tvDes2?.isEnabled = true
+            ui?.tvState?.isEnabled = true
+            ui?.tvState?.text = "立即前往"
+            itemView.setOnClickListener {
+                IntoTargetUtil.target(context, tasksBean?.linkType, tasksBean?.linkValue)
+            }
+        }
+
         /**
          * 任务item UI
          */
         private class ViewHolder private constructor(val tvIntegralNum: TextView, val tvDes1: TextView, val tvDes2: TextView, val tvState: TextView) {
             companion object {
 
-                fun create(rootView: android.support.constraint.ConstraintLayout): ViewHolder {
+                fun create(rootView: View): ViewHolder {
                     val tvIntegralNum = rootView.findViewById<View>(R.id.tv_integral_num) as TextView
                     val tvDes1 = rootView.findViewById<View>(R.id.tv_des1) as TextView
                     val tvDes2 = rootView.findViewById<View>(R.id.tv_des2) as TextView
@@ -53,26 +106,6 @@ class MyTaskViewHolder(view: View) : BaseViewHolder(view) {
                     return ViewHolder(tvIntegralNum, tvDes1, tvDes2, tvState)
                 }
             }
-        }
-
-        override fun bindData(d: Any, position: Int) {
-            val tasksBean = d as StoreTaskBean.TasksBean
-            //任务是否完成
-            tasksBean.name
-        }
-
-        /**
-         * 任务完成展示
-         */
-        private fun taskComplete() {
-
-        }
-
-        /**
-         * 任务未完成展示
-         */
-        private fun taskUnComplete() {
-
         }
     }
 

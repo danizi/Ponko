@@ -28,6 +28,7 @@ import com.ponko.cn.utils.CacheUtil.USERTYPE_WXLOGIN
 import com.ponko.cn.utils.CacheUtil.getUserType
 import com.ponko.cn.utils.CacheUtil.isUserTypeLogin
 import com.ponko.cn.utils.Glide
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import de.hdodenhof.circleimageview.CircleImageView
@@ -89,25 +90,12 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
 
         // 监听
         viewHolder?.btnWxUnbind?.setOnClickListener {
+            BKLog.d("微信解除绑定")
             ActivityUtil.startActivity(context, Intent(context, AccountAct::class.java))
         }
         viewHolder?.ivCircleHead?.setOnClickListener {
-            when (CacheUtil.getUserType()) {
-                USERTYPE_TOURIST -> {
-                    BKLog.d("游客模式 - 点击头像 - 进入登录页面")
-                    val intent = Intent(context, LoginAccountAct::class.java)
-                    //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    ActivityUtil.startActivity(context, intent)
-                }
-                USERTYPE_WXLOGIN -> {
-                    BKLog.d("微信模式 - 点击头像 - 进入个人信息页面")
-                    ActivityUtil.startActivity(context, Intent(context, AccountAct::class.java))
-                }
-                USERTYPE_LOGIN -> {
-                    BKLog.d("登录模式 - 点击头像 - (未綁定先綁定綁定成功) - 进入个人信息页面")
-                    ActivityUtil.startActivity(context, Intent(context, AccountAct::class.java))
-                }
-            }
+            BKLog.d("点击头像")
+            IntoTargetUtil.target(context, "head", "")
         }
         viewHolder?.clOpenRoll?.setOnClickListener {
             BKLog.d("点击开通学籍")

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:ignore="HardcodedText">
 
     <View
         android:layout_width="0dp"
@@ -19,10 +20,12 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
-        android:background="@drawable/my_store_task_circle_bk_s"
+        android:background="@drawable/selector_task_circle"
+        android:enabled="true"
         android:gravity="center"
         android:text="+5"
         android:textColor="#34314C"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,8 +36,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginLeft="15dp"
+        android:enabled="true"
         android:text="分享邀请海报"
-        android:textColor="#34314C"
+        android:textColor="@drawable/selector_task_tv"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/tv_integral_num"
         app:layout_constraintTop_toTopOf="@+id/tv_integral_num" />
@@ -56,11 +60,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="15dp"
         android:layout_marginRight="15dp"
-        android:background="@drawable/my_store_task_red_bk"
+        android:background="@drawable/selector_task_btn_state"
+        android:enabled="true"
         android:gravity="center"
         android:padding="3dp"
-        android:text="状态"
-        android:textColor="@color/white"
+        android:text="立即前往"
+        android:textColor="@drawable/selector_task_tv_state"
+        android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -35,7 +35,7 @@ class MyIntegralRecordViewHolder(view: View) : BaseViewHolder(view) {
         }
         val context = itemView.context
         val obtainLogBean = d as StoreObtainLogBean.ListBean
-        viewHolder?.tvObtainIntegralType?.text = obtainLogBean.type
+        viewHolder?.tvObtainIntegralType?.text = obtainLogBean.title
         viewHolder?.tvSignTime?.text = TimeUtil.unixStr("yyyy/MM/dd HH:mm:ss", obtainLogBean.createTime)
         viewHolder?.tvIntegralNum?.text = "${obtainLogBean.scores}积分"
     }

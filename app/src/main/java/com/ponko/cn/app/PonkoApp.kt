@@ -23,6 +23,7 @@ class PonkoApp : Application() {
         var APP_ID = "wxd37fb8ce51a02360"
         var app: Application? = null
         var mainCBean: MainCBean? = null
+        @Deprecated("还是接口代替，不缓存在内存中了")
         var signInfo: StoreTaskBean? = null
         var UI_DEBUG = false
 

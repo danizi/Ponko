@@ -33,7 +33,7 @@
             android:id="@+id/tv_integral_expiration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="当前有200积分将在2018-12-30日过期，"
+            android:text="当前有0积分将在0000-00-00日过期，"
             android:textColor="@color/black" />
 
         <TextView

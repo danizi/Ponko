@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import com.ponko.cn.MainActivity
 import com.ponko.cn.WebAct
+import com.ponko.cn.module.login.LoginAccountAct
+import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.module.my.option.InviteFriendActivity
 import com.ponko.cn.module.my.option.RemindAct
 import com.ponko.cn.module.my.option.acount.AccountAct
@@ -75,6 +77,32 @@ object IntoTargetUtil {
             }
             linkType.equals("wechat_bind", true) -> {
                 wechatBind(linkValue)
+            }
+            linkType.equals("head", true) -> {
+                headClick()
+            }
+        }
+    }
+
+    /**
+     * 点击头像
+     */
+    private fun headClick() {
+        when (CacheUtil.getUserType()) {
+            CacheUtil.USERTYPE_TOURIST -> {
+                BKLog.d("游客模式 - 点击头像 - 进入登录页面")
+//                val intent = Intent(context, LoginAccountAct::class.java)
+                val intent = Intent(context, LoginStartAct::class.java)
+                //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                ActivityUtil.startActivity(context, intent)
+            }
+            CacheUtil.USERTYPE_WXLOGIN -> {
+                BKLog.d("微信模式 - 点击头像 - 进入个人信息页面")
+                ActivityUtil.startActivity(context, Intent(context, AccountAct::class.java))
+            }
+            CacheUtil.USERTYPE_LOGIN -> {
+                BKLog.d("登录模式 - 点击头像 - (未綁定先綁定綁定成功) - 进入个人信息页面")
+                ActivityUtil.startActivity(context, Intent(context, AccountAct::class.java))
             }
         }
     }

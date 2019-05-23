@@ -130,13 +130,18 @@ class SearchActivity : RefreshLoadAct<Any, SearchRecordCBean>() {
                                 CacheUtil.putSearchRecord(M3u8Utils.listToStr(records)!!)
                             }
                             //刷新搜索记录界面
-                            val searchRecordViewHold = adp?.getTypeViewHolder(2) as SearchRecordViewHold
-                            searchRecordViewHold.adapter.data?.add(0, record!!)
-                            searchRecordViewHold.adapter.notifyItemInserted(0)
-                            searchRecordViewHold.adapter.notifyItemChanged(0)
+                            try {
+                                val searchRecordViewHold = adp?.getTypeViewHolder((adp?.data?.size!!-1)) as SearchRecordViewHold
+                                searchRecordViewHold.adapter.data?.add(0, record!!)
+                                searchRecordViewHold.adapter.notifyItemInserted(0)
+                                searchRecordViewHold.adapter.notifyItemChanged(0)
 
-                            //请求搜索界面页面
-                            search(record)
+                                //请求搜索界面页面
+                                search(record)
+                            }catch (e:Exception){
+                                e.printStackTrace()
+                            }
+
                         }
                     }
                     true
@@ -300,9 +305,9 @@ class SearchActivity : RefreshLoadAct<Any, SearchRecordCBean>() {
         for (record in searchList!!) {
             record10.add(record)
         }
-        if (!record10.isEmpty()) {
+//        if (!record10.isEmpty()) {
             data.add(SearchRecordBean(record10))
-        }
+//        }
         return data
     }
 

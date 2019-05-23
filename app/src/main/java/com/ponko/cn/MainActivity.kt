@@ -1,5 +1,6 @@
 package com.ponko.cn
 
+import android.os.Bundle
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
@@ -28,7 +29,13 @@ class MainActivity : BaseActivity() {
     companion object {
         private const val TAG = "MainActivity"
         lateinit var bottomMenu: BottomMenu
+
     }
+
+    /**
+     * 当前底部菜单所在位置
+     */
+    private var bottomPos = 0
 
     override fun setContentViewBefore() {
 
@@ -43,7 +50,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun initDisplay() {
-        bottomMenu.select(0)
+        bottomMenu.select(bottomPos)
                 .setContainer(R.id.container)
                 .setTitleColor(R.color.grey, R.color.red)
                 .setItemLayoutId(R.layout.item_bottom_menu)
@@ -53,6 +60,7 @@ class MainActivity : BaseActivity() {
                 .addItem(MyFrg(), "我的", R.mipmap.bottom_tab_icon_my_n, R.mipmap.bottom_tab_icon_my_h)
                 .setOnItemClickListener(object : OnItemClickListener {
                     override fun onItemClick(view: BottomMenu, pos: Int) {
+                        bottomPos = pos
                         BKLog.d(TAG, "pos:$pos")
                     }
                 })
@@ -145,9 +153,24 @@ class MainActivity : BaseActivity() {
 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (KeyEvent.KEYCODE_BACK == keyCode) {
-            finish()
-        }
-        return super.onKeyDown(keyCode, event)
+//        if (KeyEvent.KEYCODE_BACK == keyCode) {
+//            finish()
+//        }
+//        return super.onKeyDown(keyCode, event)
+        return back(keyCode, event)
     }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putInt("pos", bottomPos)
+        BKLog.d("应用销毁保存的数据 -> $bottomPos")
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        bottomPos = savedInstanceState?.getInt("pos")!!
+        BKLog.d("应用重启拿到的保存的数据 -> $bottomPos")
+        bottomMenu.select(bottomPos)
+    }
+
 }

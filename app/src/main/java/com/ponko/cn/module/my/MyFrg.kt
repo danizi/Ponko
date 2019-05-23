@@ -1,10 +1,15 @@
 package com.ponko.cn.module.my
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.support.annotation.RequiresApi
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.*
+import com.ponko.cn.constant.Constant
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.my.adapter.MyAdapter
@@ -14,10 +19,37 @@ import com.ponko.cn.module.my.holder.MyViewHolder2
 import com.ponko.cn.utils.AnimUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.media.broadcast.BroadcastManager
 import retrofit2.Call
 import retrofit2.Response
 
 class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.View {
+
+    /**
+     * 广播管理器
+     */
+    private var broadcastManager: BroadcastManager? = null
+    /**
+     * 刷新广播
+     */
+    private var refreshBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == Constant.ACTION_SIGN_SUCCESS) {
+                BKLog.d("用户签到成功，刷新我的页面")
+                iniData()
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        broadcastManager?.registerReceiver(Constant.ACTION_SIGN_SUCCESS, refreshBroadcastReceiver)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        broadcastManager?.unRegisterReceiver(refreshBroadcastReceiver)
+    }
 
     override fun presenter(): MyConstract.Present {
         return MyConstract.Present(context, this)

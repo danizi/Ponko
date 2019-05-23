@@ -147,7 +147,9 @@ class FreeDetailsAct : BaseActivity() {
     fun displayVideo(body: DetailCBean?) {
         MediaUitl.getM3u8Url(body?.chapters!![0].sections[0].vid, object : MediaUitl.OnPlayUrlListener {
             override fun onFailure() {
-                Toast.makeText(this@FreeDetailsAct, "获取播放地址失败 - ", Toast.LENGTH_SHORT).show()
+                this@FreeDetailsAct.runOnUiThread {
+                    Toast.makeText(this@FreeDetailsAct, "获取播放地址失败", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onSuccess(url: String, size: Int?) {

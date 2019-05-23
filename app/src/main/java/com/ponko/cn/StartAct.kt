@@ -85,6 +85,8 @@ class StartAct : BaseActivity() {
 
     /**
      * 反馈广告点击
+     * @param ad Id 广告唯一标识
+     * @param action 1进入广告 2关闭广告
      */
     private fun requestAdFeedback(adId: String?, action: Int) {
         BKLog.d(TAG, "requestAdFeedback adId;$adId action:$action")
@@ -114,6 +116,8 @@ class StartAct : BaseActivity() {
         //设置广告可见
         clAd?.visibility = View.VISIBLE
 
+
+
         flAdOver?.isClickable = true
         ivAd?.isClickable = true
         Glide.with(this, body?.picture, ivAd) //加载图片
@@ -138,9 +142,11 @@ class StartAct : BaseActivity() {
     override fun iniEvent() {
         flAdOver?.setOnClickListener {
             joinMainActivity()
+            requestAdFeedback(adCBean?.id, 2)
         }
-        ivAd?.setOnClickListener {
+        clAd?.setOnClickListener {
             joinAdDetailsActivity()
+            requestAdFeedback(adCBean?.id, 1)
         }
     }
 
@@ -152,7 +158,6 @@ class StartAct : BaseActivity() {
         finish()
         timerHelper.stop()
         ActivityUtil.startActivity(this, Intent(this, MainActivity::class.java))
-        requestAdFeedback(adCBean?.id, 1)
     }
 
     /**
@@ -161,6 +166,5 @@ class StartAct : BaseActivity() {
     private fun joinAdDetailsActivity() {
         finish()
         IntoTargetUtil.target(this, adCBean?.type, adCBean?.target)
-        requestAdFeedback(adCBean?.id, 2)
     }
 }
