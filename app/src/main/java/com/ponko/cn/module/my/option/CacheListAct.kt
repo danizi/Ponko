@@ -40,6 +40,9 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         private const val UPDATE_PROCESS = 1
         private const val UPDATE_COMPLETE = 2
         private const val UPDATE_STATE = 3
+        private const val UPDATE_QUEUE = 4
+        private const val UPDATE_ERROR = 5
+
         private const val DOWN_STATE_START = "下载准备中...."
         private const val DOWN_STATE_COMPLETE = "下载完成"
         private const val DOWN_STATE_PROCESS = "下载中..."
@@ -199,6 +202,11 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
 
     override fun requestMoreApi() {}
 
+    override fun onResume() {
+        super.onResume()
+        requestRefreshApi()
+    }
+
     override fun requestRefreshApi() {
         //从数据库中获取
         val datas = PonkoApp.courseDao?.selectBySpecialId(accept_special_id)
@@ -242,11 +250,23 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
 
     private fun downListener() {
         m3u8DownManager?.listener = object : OnDownListener {
+
+            override fun onQueue(vid: String?, url: String?) {
+                BKLog.d(TAG, "M3u8DownTasker $vid 添加到队列中....")
+                val courseDbBean = CourseDbBean()
+                courseDbBean.column_vid = vid!!
+                courseDbBean.column_m3u8_url = url!!
+                courseDbBean.column_complete = 1
+                courseDbBean.column_state = DOWN_STATE_READY
+                updateRv(vid, url, courseDbBean, UPDATE_QUEUE)
+            }
+
             override fun onStart(vid: String, url: String, m3u8Analysis: ArrayList<String>) {
                 BKLog.d(TAG, "M3u8DownTasker 下载准备中....")
                 val courseDbBean = CourseDbBean()
                 courseDbBean.column_vid = vid
                 courseDbBean.column_m3u8_url = url
+                courseDbBean.column_complete = 0
                 courseDbBean.column_state = DOWN_STATE_START
                 updateRv(vid, url, courseDbBean, UPDATE_STATE)
             }
@@ -269,6 +289,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                 courseDbBean.column_vid = vid
                 courseDbBean.column_m3u8_url = url
                 courseDbBean.column_progress = progress
+                courseDbBean.column_complete = 0
                 courseDbBean.column_state = DOWN_STATE_PROCESS
                 updateRv(vid, url, courseDbBean, UPDATE_PROCESS)
             }
@@ -278,8 +299,9 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                 val courseDbBean = CourseDbBean()
                 courseDbBean.column_vid = vid
                 courseDbBean.column_m3u8_url = url
+                courseDbBean.column_complete = 0
                 courseDbBean.column_state = DOWN_STATE_ERROR
-                updateRv(vid, url, courseDbBean, UPDATE_STATE)
+                updateRv(vid, url, courseDbBean, UPDATE_ERROR)
             }
         }
     }
@@ -305,17 +327,33 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                     UPDATE_COMPLETE -> {
                         courseDbBean.column_complete = value?.column_complete!! //1代表成功
                         courseDbBean.column_vid = vid
-                        courseDbBean.column_m3u8_url = m3u8!!
+                        courseDbBean.column_m3u8_url = m3u8
                         courseDbBean.column_state = value.column_state
 
                         //下载完成状态更新到数据库中
-                        val cacheM3u8 = PonkoApp.m3u8DownManager?.path + File.separator + PonkoApp.m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(m3u8!!) + File.separator + M3u8Utils.m3u8FileName(m3u8)
+                        val cacheM3u8 = PonkoApp.m3u8DownManager?.path + File.separator + PonkoApp.m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(m3u8) + File.separator + M3u8Utils.m3u8FileName(m3u8)
                         PonkoApp.courseDao?.downCompleteUpdate(vid, cacheM3u8, m3u8, 1)
                     }
+
+                    UPDATE_QUEUE -> {
+                        courseDbBean.column_state = value?.column_state!!
+                        courseDbBean.column_vid = vid
+                        courseDbBean.column_m3u8_url = m3u8
+                        PonkoApp.courseDao?.downQueueUpdate(vid)
+                    }
+
+                    UPDATE_ERROR -> {
+                        courseDbBean.column_state = value?.column_state!!
+                        courseDbBean.column_vid = vid
+                        courseDbBean.column_m3u8_url = m3u8
+                        PonkoApp.courseDao?.downErrorUpdate(vid)
+                    }
+
                     UPDATE_STATE -> {
                         courseDbBean.column_state = value?.column_state!!
                         courseDbBean.column_vid = vid
-                        courseDbBean.column_m3u8_url = m3u8!!
+                        courseDbBean.column_m3u8_url = m3u8
+                        PonkoApp.courseDao?.downStateUpdate(vid)
                     }
                 }
                 break
@@ -451,21 +489,35 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
          * 下载状态显示
          */
         private fun displayDownState(courseDbBean: CourseDbBean?) {
+
+            //数据库中状态不是很准确
+            //viewHolder?.tvState?.text = courseDbBean?.column_state
+
+            //对上面状态的补充
             if (courseDbBean?.column_complete == 1) {
                 viewHolder?.tvState?.text = DOWN_STATE_COMPLETE    //下载状态提示字
                 BKLog.d(TAG, "${courseDbBean.column_title}任务处于 - 【完成状态】")
             } else {
-                if (m3u8DownManager?.isReady(courseDbBean?.column_vid!!) == true) {
-                    viewHolder?.tvState?.text = DOWN_STATE_READY
-                    BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【队列状态】")
-                } else if (m3u8DownManager?.isRun(courseDbBean?.column_vid!!) == true) {
-                    viewHolder?.tvState?.text = DOWN_STATE_PROCESS
-                    BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【运行状态】")
-                } else {
-                    viewHolder?.tvState?.text = DOWN_STATE_CLICK_DONW   //点击下载
-                    BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【默认状态，点击下载】")
+                when {
+                    m3u8DownManager?.isReady(courseDbBean?.column_vid!!) == true -> {
+                        viewHolder?.tvState?.text = DOWN_STATE_READY
+                        BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【队列状态】")
+                    }
+                    m3u8DownManager?.isRun(courseDbBean?.column_vid!!) == true -> {
+                        viewHolder?.tvState?.text = DOWN_STATE_PROCESS
+                        BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【运行状态】")
+                    }
+                    else -> {
+                        if (courseDbBean?.column_state == CourseDbBean.DOWN_STATE_ERROR) {
+                            viewHolder?.tvState?.text = CourseDbBean.DOWN_STATE_ERROR
+                        } else {
+                            viewHolder?.tvState?.text = DOWN_STATE_CLICK_DONW   //点击下载
+                        }
+                        BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【默认状态，点击下载】")
+                    }
                 }
             }
+            BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【${courseDbBean?.column_state}】")
         }
 
         /**
@@ -583,10 +635,4 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         }
 
     }
-
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_cache_list)
-//    }
 }

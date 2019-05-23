@@ -59,5 +59,13 @@ class CourseDbBean {
         return "CourseDbBean(column_uid='$column_uid', column_special_id='$column_special_id', column_course_id='$column_course_id', column_cover='$column_cover', column_title='$column_title', column_total=$column_total, column_progress=$column_progress, column_complete=$column_complete, column_m3u8_url='$column_m3u8_url', column_key_ts_url='$column_key_ts_url', column_down_path='$column_down_path', column_state='$column_state', column_vid='$column_vid')"
     }
 
-
+    companion object {
+        const val DOWN_STATE_START = "下载准备中...."
+        const val DOWN_STATE_COMPLETE = "下载完成"
+        const val DOWN_STATE_PROCESS = "下载中..."
+        const val DOWN_STATE_ERROR = "下载错误"
+        const val DOWN_STATE_PAUSE = "暂停"
+        const val DOWN_STATE_READY = "已加入下载队列中..."
+        const val DOWN_STATE_CLICK_DONW = "点击下载"
+    }
 }

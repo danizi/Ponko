@@ -69,7 +69,11 @@ class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
      * 专题列表
      */
     open class ItemViewHolder(view: View) : BaseViewHolder(view) {
+        /**
+         * 控件ui
+         */
         private var viewHolder: ViewHolder? = null
+
         @SuppressLint("SetTextI18n")
         override fun bindData(d: Any, position: Int) {
             if (viewHolder == null) {
@@ -96,7 +100,9 @@ class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
             }
         }
 
-
+        /**
+         * 专题 ui
+         */
         private class ViewHolder private constructor(val ivCover: ImageView, val tvCourseTitle: TextView, val tvTeacher: TextView, val courseNumber: TextView, val imageView2: ImageView) {
             companion object {
 

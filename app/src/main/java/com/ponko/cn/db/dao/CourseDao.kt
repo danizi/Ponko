@@ -48,25 +48,11 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun downCompleteUpdate(vid: String, cacheM3u8: String, m3u8: String, complete: Int) {
         val bean = select(vid)[0]
+        bean.column_state = CourseDbBean.DOWN_STATE_COMPLETE
         bean.column_down_path = cacheM3u8
         bean.column_m3u8_url = m3u8
-        bean.column_complete = complete
-        if (bean != null) {
-            db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_VID, arrayOf(
-                    bean.column_uid,
-                    bean.column_special_id,
-                    bean.column_course_id,
-                    bean.column_cover,
-                    bean.column_title,
-                    bean.column_total,
-                    bean.column_progress,
-                    bean.column_complete,
-                    bean.column_m3u8_url,
-                    bean.column_key_ts_url,
-                    bean.column_down_path,
-                    bean.column_state,
-                    bean.column_vid, vid))
-        }
+        bean.column_complete = 1
+        update(bean)
     }
 
     /**
@@ -74,23 +60,37 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun downProgressUpdate(vid: String, progress: Int) {
         val bean = select(vid)[0]
+        bean.column_state = CourseDbBean.DOWN_STATE_PROCESS
         bean.column_progress = progress
-        if (bean != null) {
-            db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_VID, arrayOf(
-                    bean.column_uid,
-                    bean.column_special_id,
-                    bean.column_course_id,
-                    bean.column_cover,
-                    bean.column_title,
-                    bean.column_total,
-                    bean.column_progress,
-                    bean.column_complete,
-                    bean.column_m3u8_url,
-                    bean.column_key_ts_url,
-                    bean.column_down_path,
-                    bean.column_state,
-                    bean.column_vid, vid))
-        }
+        bean.column_complete = 0
+        update(bean)
+    }
+
+    /**
+     * 课程加入队列中调用该方法进行状态更新
+     */
+    fun downQueueUpdate(vid: String) {
+        val bean = select(vid)[0]
+        bean.column_state = CourseDbBean.DOWN_STATE_READY
+        bean.column_complete = 0
+        update(bean)
+    }
+
+    /**
+     * 课程下载错误回调用该方法进行状态更新
+     */
+    fun downErrorUpdate(vid: String) {
+        val bean = select(vid)[0]
+        bean.column_state = CourseDbBean.DOWN_STATE_ERROR
+        bean.column_complete = 0
+        update(bean)
+    }
+
+    fun downStateUpdate(vid:String){
+        val bean = select(vid)[0]
+        bean.column_state = CourseDbBean.DOWN_STATE_START
+        bean.column_complete = 0
+        update(bean)
     }
 
     /**
@@ -314,8 +314,8 @@ class CourseDao(private var db: SQLiteDatabase?) {
         return count
     }
 
-    @Deprecated("")
-    fun update(bean: CourseDbBean) {
+
+    private fun update(bean: CourseDbBean) {
         if (db?.isOpen == true) {
             db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_ID, arrayOf(
                     bean.column_uid,
@@ -338,7 +338,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
     }
 
     @Deprecated("")
-    fun update(vid: String, cacheM3u8: String) {
+    private fun update(vid: String, cacheM3u8: String) {
         val bean = select(vid)[0]
         bean.column_m3u8_url = cacheM3u8
         if (bean != null) {
@@ -360,7 +360,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
     }
 
     @Deprecated("")
-    fun updateProgressByUrl(bean: CourseDbBean) {
+    private fun updateProgressByUrl(bean: CourseDbBean) {
         if (db?.isOpen == true) {
             db?.execSQL(CacheContract.CourseTable.SQL_UPDATE_BY_ID, arrayOf(
                     bean.column_uid,

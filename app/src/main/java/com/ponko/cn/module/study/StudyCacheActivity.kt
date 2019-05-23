@@ -152,7 +152,8 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
             timerHelper?.start(object : TimerHelper.OnDelayTimerListener {
                 override fun onDelayTimerFinish() {
                     //开始下载
-                    down(PonkoApp.courseDao?.selectAll())   //todo 根据专题去寻找课程哟
+                    down(PonkoApp.courseDao?.selectAll())
+//                    down(PonkoApp.courseDao?.selectBySpecialId(typeId))//ps: 根据专题去寻找课程哟
                     ToastUtil.show("已加入缓存队列")
                     this@StudyCacheActivity.finish()
                 }

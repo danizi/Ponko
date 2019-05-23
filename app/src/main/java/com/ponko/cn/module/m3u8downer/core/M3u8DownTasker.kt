@@ -17,12 +17,20 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
     var m3u8DownManager: M3u8DownManager? = null
     var m3u8DownRunnable: M3u8DownRunnable? = null
     var downTask: M3u8DownTask? = null
-    private var listener: OnDownListener?=null
+    private var listener: OnDownListener? = null
 
     init {
         this.m3u8DownManager = builder.m3u8DownManager
         this.downTask = builder.downTask
         this.m3u8DownRunnable = M3u8DownRunnable(this)
+    }
+
+    /**
+     * 任务加入队列回调
+     */
+    private fun callBackQueue(){
+        listener?.onQueue(downTask?.vid, downTask?.m3u8)
+        m3u8DownManager?.listener?.onQueue(downTask?.vid, downTask?.m3u8)
     }
 
     /**
@@ -58,13 +66,17 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
     }
 
     override fun enqueue(listener: OnDownListener?) {
-        this.listener=listener
+        this.listener = listener
 
         // 检查本地数据库未下载ts key 和进度，有缓存则设置
         if (checkCache()) return
 
         // 下载任务回调
         this.m3u8DownRunnable?.setOnDownListener(object : OnDownListener {
+
+            override fun onQueue(vid: String?, url: String?) {
+                callBackQueue()
+            }
 
             override fun onStart(vid: String, url: String, m3u8Analysis: ArrayList<String>) {
                 // 插入数据库
@@ -179,8 +191,14 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
 
         // 添加到下载队列中
         m3u8DownManager?.dispatcher?.enqueue(this)
+
+        // 任务进入下载队列
+        callBackQueue()
     }
 
+    /**
+     * 任务加入队列之前检查
+     */
     private fun checkCache(): Boolean {
         val cacheBean = m3u8DownManager?.dao?.select2(downTask?.vid!!)
         if (cacheBean?.complete == 1/*1 代表下载完成*/) {

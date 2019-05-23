@@ -251,33 +251,6 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
                         }
                     }
                 })
-//                if (PonkoApp.courseDao?.exist(vid) == true) {
-//                    val courses = PonkoApp.courseDao?.select(vid)
-//                    if (courses.isNullOrEmpty() && courses?.size == 1 && !TextUtils.isEmpty(courses[0].column_down_path)) {
-//                        val cacheM3u8 = courses[0].column_down_path
-//                        BKLog.d(TAG, "播放缓存视频 : $cacheM3u8 ")
-//                        //然后请求视频地址
-//                        val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
-//                        attachmentPre.load(cacheM3u8, courseInfo?.image!!)
-//                    }
-//                } else {
-//                    MediaUitl.getUrlByVid(vid, PonkoApp.mainCBean?.polyv?.user_id!!, PonkoApp.mainCBean?.polyv?.secret_key!!, object : MediaUitl.OnVideoInfoListener {
-//                        override fun onFailure() {
-//                            BKLog.d(TAG, "通过vid${vid}获取m3u8地址失败")
-//                            Toast.makeText(context, "请检查您的网络", Toast.LENGTH_SHORT).show()
-//                        }
-//
-//                        override fun onSuccess(videoInfo: VideoInfoCBean) {
-//                            BKLog.d(TAG, "通过vid${vid}获取m3u8地址成功${videoInfo.toString()}")
-//                            val m3u8 = videoInfo.data[0].hls[3]
-//                            BKLog.d(TAG, "播放网络视频 : $m3u8 ")
-//
-//                            //然后请求视频地址
-//                            val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
-//                            attachmentPre.load(m3u8, courseInfo?.image!!)
-//                        }
-//                    })
-//                }
             }
 
             fun getVid(): String? {
@@ -296,14 +269,17 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
             fun list() {
 
                 viewHolder?.expandList?.setAdapter(MyExtendableListViewAdapter(coursesDetailCBean))
-                viewHolder?.expandList?.setOnGroupExpandListener { groupPosition ->
-                    val count = MyExtendableListViewAdapter(coursesDetailCBean).groupCount
-                    for (i in 0 until count) {
-                        if (i != groupPosition) {
-                            viewHolder?.expandList?.collapseGroup(i)
-                        }
-                    }
-                }
+//                viewHolder?.expandList?.setOnGroupExpandListener { groupPosition ->
+//                    val count = MyExtendableListViewAdapter(coursesDetailCBean).groupCount
+//                    for (i in 0 until count) {
+//                        if (i != groupPosition) {
+//                            viewHolder?.expandList?.collapseGroup(i)
+//                        }
+//                    }
+//                }
+                viewHolder?.expandList?.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
+                    BKLog.d("点击：$groupPosition  $childPosition")
+                    true}
             }
         })
     }

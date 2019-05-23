@@ -32,6 +32,7 @@ import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.utils.FileUtil
 import java.io.File
 
+@Deprecated("仅供参考，实际代码已经改了很多")
 class M3u8DownerTextAct : AppCompatActivity() {
 
     companion object {
@@ -144,6 +145,10 @@ class M3u8DownerTextAct : AppCompatActivity() {
         }
 
         m3u8DownManager?.listener = object : OnDownListener {
+            override fun onQueue(vid: String?, url: String?) {
+                BKLog.d(TAG, "M3u8DownTasker 队列中....")
+            }
+
             override fun onStart(vid: String, url: String, m3u8Analysis: ArrayList<String>) {
                 BKLog.d(TAG, "M3u8DownTasker 下载准备中....")
 

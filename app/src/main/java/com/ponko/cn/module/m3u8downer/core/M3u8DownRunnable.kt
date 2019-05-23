@@ -47,7 +47,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
 
     override fun run() {
         isRuning = AtomicBoolean(true)
-        MediaUitl.getM3u8Url(m3u8DownTasker.downTask?.vid,object :MediaUitl.OnPlayUrlListener{
+        MediaUitl.getM3u8Url(m3u8DownTasker.downTask?.vid, object : MediaUitl.OnPlayUrlListener {
 
             override fun onFailure() {
                 callbackError("请检查您的网络")
@@ -61,7 +61,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
         })
     }
 
-    private fun analysisM3u8(m3u8:String) {
+    private fun analysisM3u8(m3u8: String) {
         val okHttpClient = OkHttpClient()
         val request = Request.Builder().url(m3u8).get().build()
         okHttpClient.newCall(request).enqueue(object : Callback {
@@ -148,7 +148,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
      */
     private fun callBackProcess(analysisUrl: String, total: Long) {
         progress += total
-        listener?.onProcess(m3u8DownTasker.downTask?.vid!!,analysisUrl, progress.toInt())
+        listener?.onProcess(m3u8DownTasker.downTask?.vid!!, analysisUrl, progress.toInt())
         //m3u8DownTasker.m3u8DownManager?.listener?.onProcess(m3u8, progress.toInt())
     }
 
@@ -156,7 +156,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
      * 任务下载错误回调
      */
     private fun callbackError(error: String) {
-        listener?.onError(m3u8DownTasker.downTask?.vid!!,"", error)
+        listener?.onError(m3u8DownTasker.downTask?.vid!!, "", error)
         //m3u8DownTasker.m3u8DownManager?.listener?.onError(m3u8, "解析m3u8失败")
     }
 
@@ -164,7 +164,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
      * 任务下载完成回调
      */
     private fun callBackComplete(analysisUrl: String) {
-        listener?.onComplete(m3u8DownTasker.downTask?.vid!!,analysisUrl)
+        listener?.onComplete(m3u8DownTasker.downTask?.vid!!, analysisUrl)
         //m3u8DownTasker.m3u8DownManager?.listener?.onComplete(m3u8)
     }
 
@@ -172,7 +172,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
      * 任务准备回调
      */
     private fun callBackStart(m3u8Ts: ArrayList<String>) {
-        listener?.onStart(m3u8DownTasker.downTask?.vid!!,"", m3u8Ts)
+        listener?.onStart(m3u8DownTasker.downTask?.vid!!, "", m3u8Ts)
         //m3u8DownTasker.m3u8DownManager?.listener?.onStart(m3u8,m3u8Ts)
     }
 
@@ -194,30 +194,41 @@ interface OnDownListener {
 
     /**
      * 开始下载
+     * @param vid 视频唯一ID
      * @param url m3u8
      * @param m3u8Analysis m3u8解析的key,ts
      */
-    fun onStart(vid:String,url: String, m3u8Analysis: ArrayList<String>)
+    fun onStart(vid: String, url: String, m3u8Analysis: ArrayList<String>)
+
+    /**
+     * 任务加入队列 PS ： M3u8DownTasker中才用到
+     * @param vid 视频唯一ID
+     * @param url m3u8
+     */
+    fun onQueue(vid: String?, url: String?)
 
     /**
      * 下载完成回调
+     * @param vid 视频唯一ID
      * @param url m3u8
      */
-    fun onComplete(vid:String,url: String)
+    fun onComplete(vid: String, url: String)
 
     /**
      * 下载进度回调
+     * @param vid 视频唯一ID
      * @param url m3u8
      * @param progress 进度
      */
-    fun onProcess(vid:String,url: String, progress: Int)
+    fun onProcess(vid: String, url: String, progress: Int)
 
     /**
      * 下载错误
+     * @param vid 视频唯一ID
      * @param url m3u8
      * @param msg 下载错误信息
      */
-    fun onError(vid:String,url: String, msg: String)
+    fun onError(vid: String, url: String, msg: String)
 
 
 }
