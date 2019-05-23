@@ -30,7 +30,7 @@ class CourseDbBean {
      */
     var column_progress = 0
     /**
-     * 是否下载完成
+     * 是否下载完成 1下载成功 0下载未完成
      */
     var column_complete = 0       //是否下载完成
     /**
@@ -49,7 +49,7 @@ class CourseDbBean {
     /**
      * 缓存课程状态( 下载中 暂停 队列 错误 ...)
      */
-    var column_state = ""
+    var column_state = "点击下载"
     /**
      * 视频播放id ps:通过接口获取真实的m3u8地址
      */

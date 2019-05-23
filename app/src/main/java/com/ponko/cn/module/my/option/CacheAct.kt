@@ -21,6 +21,9 @@ import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 
+/**
+ * 我的页面-缓存
+ */
 class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {

@@ -12,8 +12,15 @@ interface IM3u8DownManager {
 
     /**
      * 任务是否在下载
+     * @param url 可以传入真实的视频播放地址 也可以传入视频vid
      */
     fun isRun(url: String): Boolean
+
+    /**
+     * 任务是否已经在下载准备队列中了
+     * @param url 可以传入真实的视频播放地址 也可以传入视频vid
+     */
+    fun isReady(vid:String):Boolean
 
     /**
      * 暂停任务

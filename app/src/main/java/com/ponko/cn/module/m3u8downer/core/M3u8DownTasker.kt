@@ -17,6 +17,7 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
     var m3u8DownManager: M3u8DownManager? = null
     var m3u8DownRunnable: M3u8DownRunnable? = null
     var downTask: M3u8DownTask? = null
+    private var listener: OnDownListener?=null
 
     init {
         this.m3u8DownManager = builder.m3u8DownManager
@@ -24,7 +25,41 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
         this.m3u8DownRunnable = M3u8DownRunnable(this)
     }
 
+    /**
+     * 任务开始回调
+     */
+    fun callBackStart(m3u8Analysis: ArrayList<String>) {
+        listener?.onStart(downTask?.vid!!, downTask?.m3u8!!, m3u8Analysis)
+        m3u8DownManager?.listener?.onStart(downTask?.vid!!, downTask?.m3u8!!, m3u8Analysis)
+    }
+
+    /**
+     * 任务完成回调
+     */
+    fun callBackComplete() {
+        listener?.onComplete(downTask?.vid!!, downTask?.m3u8!!)
+        m3u8DownManager?.listener?.onComplete(downTask?.vid!!, downTask?.m3u8!!)
+    }
+
+    /**
+     * 任务下载进度回调
+     */
+    fun callBackProcess(progress: Int) {
+        listener?.onProcess(downTask?.vid!!, downTask?.m3u8!!, progress)
+        m3u8DownManager?.listener?.onProcess(downTask?.vid!!, downTask?.m3u8!!, progress)
+    }
+
+    /**
+     * 下载错误回调
+     */
+    fun callBackError(url: String, msg: String) {
+        listener?.onError(downTask?.vid!!, downTask?.m3u8!!, msg)
+        m3u8DownManager?.listener?.onError(downTask?.vid!!, downTask?.m3u8!!, msg)
+    }
+
     override fun enqueue(listener: OnDownListener?) {
+        this.listener=listener
+
         // 检查本地数据库未下载ts key 和进度，有缓存则设置
         if (checkCache()) return
 
@@ -94,23 +129,23 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
             override fun onProcess(vid: String, url: String, progress: Int) {
                 val daoBean = m3u8DownManager?.dao?.select2(downTask?.vid!!)!!
                 // 更新数据库中的进度字段
-                if(daoBean.total>0&&daoBean.progress>daoBean.total){
+                if (daoBean.total > 0 && daoBean.progress > daoBean.total) {
                     daoBean.progress = daoBean.total
-                }else{
+                } else {
                     daoBean.progress = progress
                 }
-                updateProcessDb(daoBean,progress, url)
+                updateProcessDb(daoBean, progress, url)
                 // 回调任务进度
                 callBackProcess(daoBean.progress)
             }
 
-            fun updateProcessDb(daoBean:M3u8DbContract.DaoBean,progress: Int, url: String) {
+            fun updateProcessDb(daoBean: M3u8DbContract.DaoBean, progress: Int, url: String) {
                 //val daoBean = m3u8DownManager?.dao?.select2(downTask?.vid!!)!!
                 if (!TextUtils.isEmpty(daoBean.vid)) {
                     // ps:实际计算大小与后台传过来的大小有偏差
-                    if(daoBean.total>0&&daoBean.progress>daoBean.total){
+                    if (daoBean.total > 0 && daoBean.progress > daoBean.total) {
                         daoBean.progress = daoBean.total
-                    }else{
+                    } else {
                         daoBean.progress = progress
                     }
                     daoBean.not_download_ts = getDownload_ts(daoBean.not_download_ts, url)!!
@@ -140,38 +175,6 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
                 // 回调任务下载错误信息
                 callBackError(url, msg)
             }
-
-            /**
-             * 任务开始回调
-             */
-            fun callBackStart(m3u8Analysis: ArrayList<String>) {
-                listener?.onStart(downTask?.vid!!, downTask?.m3u8!!, m3u8Analysis)
-                m3u8DownManager?.listener?.onStart(downTask?.vid!!, downTask?.m3u8!!, m3u8Analysis)
-            }
-
-            /**
-             * 任务完成回调
-             */
-            fun callBackComplete() {
-                listener?.onComplete(downTask?.vid!!, downTask?.m3u8!!)
-                m3u8DownManager?.listener?.onComplete(downTask?.vid!!, downTask?.m3u8!!)
-            }
-
-            /**
-             * 任务下载进度回调
-             */
-            fun callBackProcess(progress: Int) {
-                listener?.onProcess(downTask?.vid!!, downTask?.m3u8!!, progress)
-                m3u8DownManager?.listener?.onProcess(downTask?.vid!!, downTask?.m3u8!!, progress)
-            }
-
-            /**
-             * 下载错误回调
-             */
-            fun callBackError(url: String, msg: String) {
-                listener?.onError(downTask?.vid!!, downTask?.m3u8!!, msg)
-                m3u8DownManager?.listener?.onError(downTask?.vid!!, downTask?.m3u8!!, msg)
-            }
         })
 
         // 添加到下载队列中
@@ -180,11 +183,14 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
 
     private fun checkCache(): Boolean {
         val cacheBean = m3u8DownManager?.dao?.select2(downTask?.vid!!)
-        if (cacheBean?.complete == 1/*1 代表下载完成*/ ) {
+        if (cacheBean?.complete == 1/*1 代表下载完成*/) {
             cacheBean.need_download_ts = ""
             m3u8DownManager?.dao?.update2(cacheBean)
             //移除队列
             m3u8DownManager?.dispatcher?.remove(this)
+            //回调状态
+            callBackComplete()
+            BKLog.d("检查数据库任务状态：完成 任务不加入到队列中")
             return true
         }
 

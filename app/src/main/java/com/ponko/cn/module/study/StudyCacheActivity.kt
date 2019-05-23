@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -105,6 +106,16 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
      */
     private var timerHelper: TimerHelper? = TimerHelper()
 
+    /**
+     * 清除状态
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+        SleSections.clear()
+        isSelectAll = false
+        timerHelper?.stop()
+    }
+
     override fun getLayoutId(): Int {
         return R.layout.activity_cache2
     }
@@ -141,7 +152,7 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
             timerHelper?.start(object : TimerHelper.OnDelayTimerListener {
                 override fun onDelayTimerFinish() {
                     //开始下载
-                    down(PonkoApp.courseDao?.selectAll())
+                    down(PonkoApp.courseDao?.selectAll())   //todo 根据专题去寻找课程哟
                     ToastUtil.show("已加入缓存队列")
                     this@StudyCacheActivity.finish()
                 }
@@ -151,6 +162,8 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
 
     private fun down(datas: ArrayList<CourseDbBean>?) {
         for (course in datas?.iterator()!!) {
+            if (TextUtils.isEmpty(course.column_vid))
+                continue
             val m3u8DownTask = M3u8DownTask.Builder()
                     .vid(course.column_vid)
                     .m3u8(course.column_m3u8_url)
@@ -335,7 +348,7 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
                 displayGeneral()
                 if (isSelectAll) {
                     SleSections.add(sectionsBean)
-                }else{
+                } else {
                     SleSections.remove(sectionsBean)
                 }
                 itemView.setOnClickListener {
@@ -386,9 +399,5 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
 //        setContentView(R.layout.activity_cache2)
 //    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        SleSections.clear()
-        timerHelper?.stop()
-    }
+
 }

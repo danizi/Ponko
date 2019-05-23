@@ -39,7 +39,31 @@ class M3u8DownManager internal constructor(builder: Builder?, context: Context) 
     }
 
     override fun isRun(url: String): Boolean {
-        return dispatcher?.isRun(url)!!
+        for (runningQueue in dispatcher?.runningQueue!!) {
+            if (url == runningQueue.downTask?.vid) {
+                return true
+            }
+            if (url == runningQueue.downTask?.m3u8) {
+                return true
+            }
+        }
+        return false
+    }
+
+    override fun isReady(vid: String): Boolean {
+        //先判断运行队列中该任务
+        if (isRun(vid)) {
+            return false
+        }
+        for (readyQueue in dispatcher?.readyQueue!!) {
+            if (vid == readyQueue.downTask?.vid) {
+                return true
+            }
+            if (vid == readyQueue.downTask?.m3u8) {
+                return true
+            }
+        }
+        return false
     }
 
     override fun pause(url: String) {

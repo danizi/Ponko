@@ -62,7 +62,7 @@ class PonkoApp : Application() {
     }
 
     private fun iniLog() {
-        BKLog.LEVEL = BKLog.E
+        BKLog.LEVEL = BKLog.D
     }
 
     private fun initDownManager() {
