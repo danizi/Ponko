@@ -299,7 +299,10 @@ class StoreAct : PonkoBaseAct<Any>() {
                 } else {
                     m.reqeustExchangeMoreApi(cid, page, object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
                         override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
-                            v?.reqeustExchangeMoreApiSuccess(response?.body())
+                            val data = response?.body()
+                            if (data != null && !data.isEmpty()) {
+                                v?.reqeustExchangeMoreApiSuccess(response.body())
+                            }
                         }
                     })
                 }
