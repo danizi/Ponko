@@ -29,6 +29,8 @@ import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.utils.CacheUtil.getToken
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.TimeUtil
+import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.XmPopWindow
 import com.xm.lib.component.XmStateView
@@ -301,10 +303,11 @@ class WebAct : PonkoBaseAct<Any>() {
                             BKLog.d(TAG, "productId:$value")
                             payViewHolder?.payProductId = value
                             tvBarRight?.visibility = View.GONE
+                            payViewHolder?.btnPay?.visibility = View.VISIBLE
                         }
                     }
 
-                    override fun onPayGuide(have: String?, guideATitle: String?/*课程表*/, guideAUrl: String, guideBTitle: String/*老师介绍*/, guideBUrl: String, guideCTitle: String) {
+                    override fun onPayGuide(have: String?, guideATitle: String?/*课程表*/, guideAUrl: String, guideBTitle: String/*老师介绍*/, guideBUrl: String, guideCTitle: String/*支付按钮显示*/) {
                         act.runOnUiThread {
                             BKLog.d(TAG, "have:$have guideATitle:$guideATitle guideAUrl:$guideAUrl guideBTitle:$guideBTitle guideBUrl:$guideBUrl guideCTitle:$guideCTitle")
                             tvBarRight?.visibility = View.GONE
@@ -318,6 +321,7 @@ class WebAct : PonkoBaseAct<Any>() {
                                     payViewHolder?.btnCourse?.visibility = View.VISIBLE
                                     payViewHolder?.btnIntroduce?.visibility = View.VISIBLE
                                     payViewHolder?.btnPay?.visibility = View.VISIBLE
+                                    payViewHolder?.btnPay?.text = guideCTitle
                                     payViewHolder?.btnCourse?.setOnClickListener {
                                         start(act, "url", guideAUrl, guideATitle)
                                     }
@@ -495,7 +499,7 @@ class WebAct : PonkoBaseAct<Any>() {
             val javascriptPayProductid = "javascript:window.$javascriptInterfaceName.getValueById(" +
                     "document.getElementById('productId').value" +
                     ");"
-            const val javascriptPayGuide = "javascript:window.local_obj.getProductGuide(" +
+            const val javascriptPayGuide = "javascript:window.$javascriptInterfaceName.getProductGuide(" +
                     "document.getElementById('productGuideHave').value," +
                     "document.getElementById('productGuideATitle').value," +
                     "document.getElementById('productGuideAUrl').value," +
@@ -615,7 +619,7 @@ class WebAct : PonkoBaseAct<Any>() {
         var shareTitle: String? = null
         var shareDescription: String? = null
         var shareUrl: String? = null
-        var wxShare:WxShare? = WxShare(ctx as Activity)
+        var wxShare: WxShare? = WxShare(ctx as Activity)
 
         fun initEvent() {
             wxShare?.init(ShareConfig.Builder().appid(APP_ID).build())
@@ -623,10 +627,10 @@ class WebAct : PonkoBaseAct<Any>() {
                 popWindow.dismiss()
             }
             flFriend.setOnClickListener {
-                wxShare?.shareWebPage(R.mipmap.ic_launcher,shareUrl!!,shareTitle!!,shareDescription!!,SendMessageToWX.Req.WXSceneSession)
+                wxShare?.shareWebPage(R.mipmap.ic_launcher, shareUrl!!, shareTitle!!, shareDescription!!, SendMessageToWX.Req.WXSceneSession)
             }
             flFriendMoment.setOnClickListener {
-                wxShare?.shareWebPage(R.mipmap.ic_launcher,shareUrl!!,shareTitle!!,shareDescription!!,SendMessageToWX.Req.WXSceneTimeline)
+                wxShare?.shareWebPage(R.mipmap.ic_launcher, shareUrl!!, shareTitle!!, shareDescription!!, SendMessageToWX.Req.WXSceneTimeline)
             }
         }
 

@@ -47,8 +47,8 @@ class M3u8DbContract {
 
         //删
         @Deprecated("")
-        const val SQL_DELETE_BY_M3U8 = "DELETE FROM $TABLE_NAME WHERE $COLUMN_M3U8;"
-        const val SQL_DELETE_BY_VID = "DELETE FROM $TABLE_NAME WHERE $COLUMN_VID;"
+        const val SQL_DELETE_BY_M3U8 = "DELETE FROM $TABLE_NAME WHERE $COLUMN_M3U8 = ?;"
+        const val SQL_DELETE_BY_VID = "DELETE FROM $TABLE_NAME WHERE $COLUMN_VID = ?;"
         const val SQL_DELETE_ALL = "DELETE FROM $TABLE_NAME;"
 
         //改

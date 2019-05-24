@@ -24,7 +24,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
-            android:src="@mipmap/ic_launcher_round" />
+            android:src="@mipmap/load_img_default" />
 
         <TextView
             android:id="@+id/tv_ranking"
@@ -41,7 +41,7 @@
         android:layout_height="35dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:src="@mipmap/ic_launcher_round"
+        android:src="@mipmap/load_img_default"
         app:layout_constraintBottom_toBottomOf="@+id/fl_rank"
         app:layout_constraintStart_toEndOf="@+id/fl_rank"
         app:layout_constraintTop_toTopOf="@+id/fl_rank" />

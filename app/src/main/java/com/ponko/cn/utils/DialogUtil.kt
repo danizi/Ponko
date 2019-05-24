@@ -39,6 +39,12 @@ object DialogUtil {
         }
     }
 
+    fun hide() {
+        if (dlg != null && dlg?.isShowing!!) {
+            dlg?.dismiss()
+        }
+    }
+
     private fun newXmIOSDialog(context: Context, title: String, msg: String, isCancelable: Boolean, enterListener: OnEnterListener?, cancelListener: OnCancelListener?): AlertDialog {
         return XmIOSDialog(context)
                 .setType(Type.GENERAL)

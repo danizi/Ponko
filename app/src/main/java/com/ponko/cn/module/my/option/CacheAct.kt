@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.app.PonkoApp.Companion.courseDao
+import com.ponko.cn.app.PonkoApp.Companion.courseSpecialDao
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.db.bean.CourseSpecialDbBean
 import com.ponko.cn.db.dao.CourseSpecialDao
@@ -44,6 +46,24 @@ class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
     }
 
     override fun requestMoreApi() {
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val datas = courseSpecialDao?.selectAll()
+        if (!datas?.isEmpty()!!) {
+            for (courseSpecial in datas) {
+                //通过专题来寻找课程
+                val courses = courseDao?.selectBySpecialId(courseSpecial.special_id)
+                //如果课程为空则删除专题
+                if (courses?.isEmpty()!!) {
+                    courseSpecialDao?.delete(courseSpecial)
+                }
+            }
+        }
+        //重新再刷新一次页面
+        requestRefreshApi()
     }
 
     override fun requestRefreshApi() {

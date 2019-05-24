@@ -55,6 +55,7 @@ class StartAct : BaseActivity() {
         clAd?.visibility = View.GONE
         flAdOver?.isClickable = false
         ivAd?.isClickable = false
+        clAd?.isClickable = false
     }
 
     override fun iniData() {
@@ -135,7 +136,6 @@ class StartAct : BaseActivity() {
                     joinMainActivity()
                 }
             }
-
         }, body?.countdown!! * 200.toLong())
     }
 
@@ -143,6 +143,10 @@ class StartAct : BaseActivity() {
         flAdOver?.setOnClickListener {
             joinMainActivity()
             requestAdFeedback(adCBean?.id, 2)
+        }
+        ivAd?.setOnClickListener {
+            joinAdDetailsActivity()
+            requestAdFeedback(adCBean?.id, 1)
         }
         clAd?.setOnClickListener {
             joinAdDetailsActivity()
@@ -165,6 +169,9 @@ class StartAct : BaseActivity() {
      */
     private fun joinAdDetailsActivity() {
         finish()
+        joinMainActivity(0)
+        timerHelper.stop()
         IntoTargetUtil.target(this, adCBean?.type, adCBean?.target)
+
     }
 }

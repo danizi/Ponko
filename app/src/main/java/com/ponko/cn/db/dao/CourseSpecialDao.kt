@@ -49,14 +49,14 @@ class CourseSpecialDao(private var db: SQLiteDatabase?) {
     fun delete(bean: CourseSpecialDbBean) {
         if (db?.isOpen == true) {
             db?.execSQL(CacheContract.CourseSpecialTable.SQL_DEL_BY_ID, arrayOf(bean.special_id))
-            db?.close()
+            //db?.close()
         }
     }
 
     fun deleteAll() {
         if (db?.isOpen == true) {
             db?.execSQL(CacheContract.CourseSpecialTable.SQL_DEL_All, null)
-            db?.close()
+            //db?.close()
         } else {
             BKLog.d("数据库未打开")
         }

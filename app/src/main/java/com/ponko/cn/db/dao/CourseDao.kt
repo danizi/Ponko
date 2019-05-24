@@ -47,50 +47,70 @@ class CourseDao(private var db: SQLiteDatabase?) {
      * 更新状态
      */
     fun downCompleteUpdate(vid: String, cacheM3u8: String, m3u8: String, complete: Int) {
-        val bean = select(vid)[0]
-        bean.column_state = CourseDbBean.DOWN_STATE_COMPLETE
-        bean.column_down_path = cacheM3u8
-        bean.column_m3u8_url = m3u8
-        bean.column_complete = 1
-        update(bean)
+        if (!select(vid).isEmpty()) {
+            val bean = select(vid)[0]
+            bean.column_state = CourseDbBean.DOWN_STATE_COMPLETE
+            bean.column_down_path = cacheM3u8
+            bean.column_m3u8_url = m3u8
+            bean.column_complete = 1
+            update(bean)
+        }else{
+            BKLog.e("下载完成,数据库更新失败")
+        }
     }
 
     /**
      * 课程下载过程中调用该方法进行状态更新
      */
     fun downProgressUpdate(vid: String, progress: Int) {
-        val bean = select(vid)[0]
-        bean.column_state = CourseDbBean.DOWN_STATE_PROCESS
-        bean.column_progress = progress
-        bean.column_complete = 0
-        update(bean)
+        if (!select(vid).isEmpty()) {
+            val bean = select(vid)[0]
+            bean.column_state = CourseDbBean.DOWN_STATE_PROCESS
+            bean.column_progress = progress
+            bean.column_complete = 0
+            update(bean)
+        } else {
+            BKLog.e("下载更新,数据库更新失败")
+        }
     }
 
     /**
      * 课程加入队列中调用该方法进行状态更新
      */
     fun downQueueUpdate(vid: String) {
-        val bean = select(vid)[0]
-        bean.column_state = CourseDbBean.DOWN_STATE_READY
-        bean.column_complete = 0
-        update(bean)
+        if (!select(vid).isEmpty()) {
+            val bean = select(vid)[0]
+            bean.column_state = CourseDbBean.DOWN_STATE_READY
+            bean.column_complete = 0
+            update(bean)
+        } else {
+            BKLog.e("加入队列,数据库更新失败")
+        }
     }
 
     /**
      * 课程下载错误回调用该方法进行状态更新
      */
     fun downErrorUpdate(vid: String) {
-        val bean = select(vid)[0]
-        bean.column_state = CourseDbBean.DOWN_STATE_ERROR
-        bean.column_complete = 0
-        update(bean)
+        if (!select(vid).isEmpty()) {
+            val bean = select(vid)[0]
+            bean.column_state = CourseDbBean.DOWN_STATE_ERROR
+            bean.column_complete = 0
+            update(bean)
+        } else {
+            BKLog.e("下载错误,数据库更新失败")
+        }
     }
 
-    fun downStateUpdate(vid:String){
-        val bean = select(vid)[0]
-        bean.column_state = CourseDbBean.DOWN_STATE_START
-        bean.column_complete = 0
-        update(bean)
+    fun downStateUpdate(vid: String) {
+        if (!select(vid).isEmpty()) {
+            val bean = select(vid)[0]
+            bean.column_state = CourseDbBean.DOWN_STATE_START
+            bean.column_complete = 0
+            update(bean)
+        } else {
+            BKLog.e("下载状态,数据库更新失败")
+        }
     }
 
     /**

@@ -72,6 +72,7 @@ class StoreAct : PonkoBaseAct<Any>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        broadcastManager = BroadcastManager.create(this)
         broadcastManager?.registerReceiver(ACTION_SIGN_SUCCESS, refreshBroadcastReceiver)
     }
 

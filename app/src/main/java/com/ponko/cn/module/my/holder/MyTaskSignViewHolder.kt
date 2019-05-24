@@ -41,6 +41,16 @@ class MyTaskSignViewHolder(view: View) : BaseViewHolder(view) {
         context = itemView.context
         myTaskSignBean = d as MyTaskSignBean
 
+        //初始化显示积分数字滚动控件
+        ui?.tvNumber?.setCharacterList(TickerUtils.getDefaultNumberList())
+        ui?.tvNumber?.textColor = R.color.colorPrimary
+        ui?.tvNumber?.textSize = 100f
+        ui?.tvNumber?.animationDuration = 1000
+        ui?.tvNumber?.typeface = Typeface.DEFAULT
+        //tickerView?.animationInterpolator = OvershootInterpolator()
+        ui?.tvNumber?.gravity = Gravity.BOTTOM
+        ui?.tvNumber?.setText("0")
+
         //判断是否签到了
         if (myTaskSignBean?.completed!!) {
             // ps:未了确保积分数正常还是重新请求了积分 - 不再使用 myTaskSignBean.day myTaskSignBean.scores
@@ -48,6 +58,8 @@ class MyTaskSignViewHolder(view: View) : BaseViewHolder(view) {
         } else {
             showSignBtn()
         }
+        //显示签到天数
+        ui?.view7daySign?.setSelect(myTaskSignBean?.days!!)
     }
 
     /**

@@ -240,14 +240,16 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
             fun setPre(vid: String?) {
                 MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
                     override fun onFailure() {
-                        Toast.makeText(this@StudyCourseDetailActivity, "获取播放地址失败 - ", Toast.LENGTH_SHORT).show()
+                        this@StudyCourseDetailActivity.runOnUiThread {
+                            Toast.makeText(this@StudyCourseDetailActivity, "获取播放地址失败 - ", Toast.LENGTH_SHORT).show()
+                        }
                     }
 
                     override fun onSuccess(url: String, size: Int?) {
                         //然后请求视频地址
                         val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
                         this@StudyCourseDetailActivity.runOnUiThread {
-                            attachmentPre.load(url, coursesDetailCBean?.image!!)
+                            attachmentPre.load(url, coursesDetailCBean?.image!!)   //todo 窗口有销毁的可能
                         }
                     }
                 })
@@ -267,8 +269,12 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
              * 展示视频列表
              */
             fun list() {
+                val adp = MyExtendableListViewAdapter(coursesDetailCBean)
 
-                viewHolder?.expandList?.setAdapter(MyExtendableListViewAdapter(coursesDetailCBean))
+                viewHolder?.expandList?.setAdapter(adp)
+                for (i in 0..(adp.child.size - 1)) {
+                    viewHolder?.expandList?.expandGroup(i)
+                }
 //                viewHolder?.expandList?.setOnGroupExpandListener { groupPosition ->
 //                    val count = MyExtendableListViewAdapter(coursesDetailCBean).groupCount
 //                    for (i in 0 until count) {
@@ -279,7 +285,8 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
 //                }
                 viewHolder?.expandList?.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
                     BKLog.d("点击：$groupPosition  $childPosition")
-                    true}
+                    true
+                }
             }
         })
     }
@@ -288,7 +295,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<Any>() {
     /**
      * 二级列表的适配器
      */
-    private class MyExtendableListViewAdapter(courseInfo: CoursesDetailCBean?) : BaseExpandableListAdapter () {
+    private class MyExtendableListViewAdapter(courseInfo: CoursesDetailCBean?) : BaseExpandableListAdapter() {
         val group = ArrayList<String>()
         val child = ArrayList<List<CoursesDetailCBean.ChaptersBean.SectionsBean>>()
 

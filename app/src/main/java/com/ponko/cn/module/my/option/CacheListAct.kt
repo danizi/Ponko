@@ -29,6 +29,7 @@ import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.utils.FileUtil
 import com.xm.lib.media.broadcast.BroadcastManager
 import java.io.File
+import java.util.concurrent.LinkedBlockingQueue
 
 
 /**
@@ -58,7 +59,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
 
         var isDelete = false
         var isSelectAll = false
-        var selectItems = ArrayList<CourseDbBean>()
+        var selectItems = LinkedBlockingQueue<CourseDbBean>()
 
         var accept_special_id = ""
         var accept_title = ""
@@ -151,7 +152,6 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         addItemDecoration = false
         super.initDisplay()
         BarUtil.addBarIcon(this, viewHolder?.toolbar, "缓存", R.mipmap.delete, R.mipmap.cancel, View.OnClickListener {
-            isSelectAll = !isSelectAll
             if (llbottom?.visibility == View.GONE) {
                 llbottom?.visibility = View.VISIBLE
                 isDelete = true
@@ -171,8 +171,10 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             adapter?.notifyDataSetChanged()
         }
         btnDelete?.setOnClickListener {
-            BKLog.d("点击了删除")
+            BKLog.d(" ------> 点击了删除")
             for (deleteItem in selectItems) {
+                //删除下载库中的任务信息
+                m3u8DownManager?.dao?.delete2(deleteItem.column_vid)
                 //删除数据库中的数据
                 courseDao?.delete(deleteItem)
                 //删除本地缓存的数据
@@ -186,6 +188,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                         break
                     }
                 }
+                BKLog.d("删除课程 ${deleteItem.column_title}")
             }
         }
     }
@@ -475,14 +478,48 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         private fun displayMode(courseDbBean: CourseDbBean) {
             if (isDelete) {
                 if (isSelectAll) {
-                    selectItems.add(courseDbBean)
+                    addSelectItem()
+                    viewHolder?.cb?.isChecked = true
                 } else {
-                    selectItems.remove(courseDbBean)
+                    deleteSelectItem()
+                    viewHolder?.cb?.isChecked = false
                 }
                 viewHolder?.cb?.visibility = View.VISIBLE
             } else {
                 viewHolder?.cb?.visibility = View.GONE
+                viewHolder?.cb?.isChecked = false
             }
+        }
+
+        private fun addSelectItem() {
+            var addFlag = true
+            for (course in selectItems) {
+                if (course.column_vid == courseDbBean?.column_vid) {
+                    addFlag = false
+                    break
+                }
+            }
+            if (addFlag) {
+                selectItems.add(courseDbBean)
+                BKLog.d("${courseDbBean?.column_title}添加到选中队列中")
+            }
+            print()
+        }
+
+        private fun print() {
+            for (item in selectItems) {
+                BKLog.d("添加选中 - ${item?.column_title}")
+            }
+        }
+
+        private fun deleteSelectItem() {
+            for (course in selectItems) {
+                if (course.column_vid == courseDbBean?.column_vid) {
+                    selectItems.remove(course)
+                    BKLog.d("${courseDbBean?.column_title}添加到选中队列中")
+                }
+            }
+            print()
         }
 
         /**
@@ -510,14 +547,15 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                     else -> {
                         if (courseDbBean?.column_state == CourseDbBean.DOWN_STATE_ERROR) {
                             viewHolder?.tvState?.text = CourseDbBean.DOWN_STATE_ERROR
+                            BKLog.d(TAG, "${courseDbBean.column_title}任务处于 - 【错误状态】")
                         } else {
                             viewHolder?.tvState?.text = DOWN_STATE_CLICK_DONW   //点击下载
+                            BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【默认状态，点击下载】")
                         }
-                        BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【默认状态，点击下载】")
+
                     }
                 }
             }
-            BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【${courseDbBean?.column_state}】")
         }
 
         /**
@@ -541,9 +579,11 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         private fun deleteClickItem(courseDbBean: CourseDbBean) {
             if (viewHolder?.cb?.isChecked == true) {
                 viewHolder?.cb?.isChecked = false
-                selectItems.remove(courseDbBean)
+                //selectItems.remove(courseDbBean)
+                deleteSelectItem()
             } else {
-                selectItems.add(courseDbBean)
+                //selectItems.add(courseDbBean)
+                addSelectItem()
                 viewHolder?.cb?.isChecked = true
             }
         }

@@ -43,6 +43,7 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        broadcastManager = BroadcastManager.create(context)
         broadcastManager?.registerReceiver(Constant.ACTION_SIGN_SUCCESS, refreshBroadcastReceiver)
     }
 

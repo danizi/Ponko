@@ -21,6 +21,7 @@ import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.NumUtil
 import retrofit2.Call
@@ -53,7 +54,6 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
             ActivityUtil.startActivity(this, Intent(this, SearchActivity::class.java))
         })
         super.initDisplay()
-        viewHolder?.rv?.addItemDecoration(DividerItemDecoration(this, RecyclerView.VERTICAL))
     }
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
@@ -113,7 +113,7 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
             adapter.addItemViewDelegate(0, CourseViewHolder::class.java, InternalCourse::class.java, R.layout.item_course_introduction)
             viewHolder?.rv?.adapter = adapter
             viewHolder?.rv?.layoutManager = LinearLayoutManager(context)
-            viewHolder?.rv?.addItemDecoration(DividerItemDecoration(context, RecyclerView.VERTICAL))
+            viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))  //https://www.jianshu.com/p/86aaaa49ed3e
         }
     }
 
@@ -154,9 +154,9 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
                 }
             }
             viewHolder?.tvTeacher?.text = "${teachers}老师"
-            viewHolder?.courseNumber?.text = "共${internalCourse.num}集 | ${NumUtil.getDecimalPoint(internalCourse.duration?.toFloat()!! / 60f/60f)}小时"
+            viewHolder?.courseNumber?.text = "共${internalCourse.num}集 | ${NumUtil.getDecimalPoint(internalCourse.duration?.toFloat()!! / 60f / 60f)}小时"
             itemView.setOnClickListener {
-                StudyCourseDetailActivity.start(context, internalCourse.id,teachers,internalCourse.num,internalCourse.duration!!)
+                StudyCourseDetailActivity.start(context, internalCourse.id, teachers, internalCourse.num, internalCourse.duration!!)
             }
         }
     }

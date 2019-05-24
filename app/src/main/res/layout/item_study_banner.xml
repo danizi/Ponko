@@ -35,7 +35,7 @@
                 android:layout_width="52dp"
                 android:layout_height="33dp"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/load_img_default" />
 
             <TextView
                 android:id="@+id/tv_b2b"
@@ -73,7 +73,7 @@
                 android:layout_width="52dp"
                 android:layout_height="33dp"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/load_img_default" />
 
             <TextView
                 android:id="@+id/tv_b2c"

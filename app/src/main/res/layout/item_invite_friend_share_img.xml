@@ -27,13 +27,14 @@
 
         <ImageView
             android:id="@+id/iv_qr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="67dp"
+            android:layout_height="67dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:scaleType="fitXY"
             android:layout_marginBottom="8dp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/load_img_default"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
