@@ -52,13 +52,15 @@ class LoginStartContract {
                     val token = response?.body()?.token
                     CacheUtil.putToken(token)
                     CacheUtil.putUserTypeTourist()
-                    ActivityUtil.clearTheStackStartActivity(context,  Intent(context, MainActivity::class.java))
+                    DialogUtil.hideProcess()
+                    val intent = Intent(context, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    ActivityUtil.startActivity(context, intent)
                 }
 
                 override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
                     super.onFailure(call, msg)
                     DialogUtil.hideProcess()
-                    ActivityUtil.clearTheStackStartActivity(context,  Intent(context, MainActivity::class.java))
                 }
             })
         }

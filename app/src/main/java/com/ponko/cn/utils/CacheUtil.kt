@@ -1,5 +1,6 @@
 package com.ponko.cn.utils
 
+import android.text.TextUtils
 import com.ponko.cn.app.PonkoApp
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.SPUtil

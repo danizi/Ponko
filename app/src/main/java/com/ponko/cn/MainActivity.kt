@@ -29,7 +29,6 @@ class MainActivity : BaseActivity() {
     companion object {
         private const val TAG = "MainActivity"
         lateinit var bottomMenu: BottomMenu
-
     }
 
     /**
@@ -91,7 +90,6 @@ class MainActivity : BaseActivity() {
                                 .context(this@MainActivity)
                                 .activity(this@MainActivity)
                                 .build()
-                        xmAdView?.setAdRate(1.57f, 43)
                         xmAdView?.setCover(body?.picture)
                         xmAdView?.show()
                         xmAdView?.setOnAdListener(View.OnClickListener {

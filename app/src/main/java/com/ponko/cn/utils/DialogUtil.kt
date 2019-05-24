@@ -40,9 +40,14 @@ object DialogUtil {
     }
 
     fun hide() {
-        if (dlg != null && dlg?.isShowing!!) {
-            dlg?.dismiss()
+        try {
+            if (dlg != null && dlg?.isShowing!!) {
+                dlg?.dismiss()
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
         }
+
     }
 
     private fun newXmIOSDialog(context: Context, title: String, msg: String, isCancelable: Boolean, enterListener: OnEnterListener?, cancelListener: OnCancelListener?): AlertDialog {
@@ -95,15 +100,20 @@ object DialogUtil {
      * 显示进度条
      */
     fun showProcess(context: Context) {
-        if (progressDialog == null) {
-            progressDialog = ProgressDialog(context)
-            progressDialog?.setMessage("请稍等，正在处理中...")
-            progressDialog?.setCanceledOnTouchOutside(true)
+        try {
+            if (progressDialog == null) {
+                progressDialog = ProgressDialog(context)
+                progressDialog?.setMessage("请稍等，正在处理中...")
+                progressDialog?.setCanceledOnTouchOutside(true)
+            }
+            if (progressDialog?.isShowing == true) {
+                progressDialog?.dismiss()
+            }
+            progressDialog?.show()
+        }catch (e:Exception){
+            e.printStackTrace()
         }
-        if (progressDialog?.isShowing == true) {
-            progressDialog?.dismiss()
-        }
-        progressDialog?.show()
+
     }
 
     /**
