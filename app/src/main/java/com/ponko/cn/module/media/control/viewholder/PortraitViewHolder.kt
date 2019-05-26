@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.module.media.control.ControlViewHolder
+import com.ponko.cn.utils.ShareUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.TimeUtil
@@ -19,6 +21,11 @@ import com.xm.lib.media.view.XmPopWindow
  * 竖屏界面
  */
 class PortraitViewHolder : ControlViewHolder {
+
+    private var share: MediaBean.ShareBean? = null
+    override fun setShareInfo(share: MediaBean.ShareBean) {
+        this.share = share
+    }
 
     companion object {
         fun create(rootView: View?): PortraitViewHolder {
@@ -114,18 +121,7 @@ class PortraitViewHolder : ControlViewHolder {
             Toast.makeText(activity, "投屏", Toast.LENGTH_SHORT).show()
         }
         ivShare?.setOnClickListener {
-            val xmPopWindow = XmPopWindow(activity)
-            val shareView = LayoutInflater.from(activity).inflate(R.layout.media_share, null, false)
-            val share: ImageView = shareView.findViewById(R.id.iv_share_wx)
-            val friend: ImageView = shareView.findViewById(R.id.iv_share_friend)
-            share.setOnClickListener {
-                Toast.makeText(activity, "分享到微信", Toast.LENGTH_SHORT).show()
-            }
-            friend.setOnClickListener {
-                Toast.makeText(activity, "分享到朋友圈", Toast.LENGTH_SHORT).show()
-            }
-            xmPopWindow.ini(shareView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            xmPopWindow.showAtLocation(XmPopWindow.Location.BOTTOM, R.style.AnimationBottomFade, activity?.window?.decorView!!, 0, 0)
+            ShareUtil.showShareDlg(activity, this.share?.url, this.share?.title, this.share?.description)
         }
 
         //底部
@@ -194,6 +190,10 @@ class PortraitViewHolder : ControlViewHolder {
                 BKLog.d(AttachmentControl.TAG, "结束触发滑动 progress:$progress")
             }
         })
+    }
+
+    override fun setShareListener(listener: View.OnClickListener) {
+        ivShare?.setOnClickListener(listener)
     }
 
     override fun showOrHideControlView() {

@@ -13,6 +13,7 @@ import com.ponko.cn.module.interflow.frg.InterflowFrg
 import com.ponko.cn.module.my.MyFrg
 import com.ponko.cn.module.study.StudyFrg
 import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.BottomMenu
@@ -49,6 +50,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun initDisplay() {
+        BKLog.d("应用销毁保存数据接受的数据：")
         bottomMenu.select(bottomPos)
                 .setContainer(R.id.container)
                 .setTitleColor(R.color.grey, R.color.red)
@@ -81,26 +83,13 @@ class MainActivity : BaseActivity() {
     private fun requestAdApi() {
         adApi?.home()?.enqueue(object : HttpCallBack<AdCBean>() {
             private var xmAdView: XmAdView? = null
+            private var body: AdCBean? = null
             override fun onSuccess(call: Call<AdCBean>?, response: Response<AdCBean>?) {
                 //ps:如果没有广告数据后台会返回一个空数据,因为限定了转化实体类是AdCBean，所以会出现类型转化错误
                 try {
-                    val body = response?.body()
+                    body = response?.body()
                     if (!TextUtils.isEmpty(body?.picture)) {
-                        xmAdView = XmAdView.Builder()
-                                .context(this@MainActivity)
-                                .activity(this@MainActivity)
-                                .build()
-                        xmAdView?.setCover(body?.picture)
-                        xmAdView?.show()
-                        xmAdView?.setOnAdListener(View.OnClickListener {
-                            requestAdFeedbackApi(body?.id?.toInt()!!, 1)
-                            xmAdView?.dismiss()
-                        })
-                        xmAdView?.setOnCloseListener(View.OnClickListener {
-                            requestAdFeedbackApi(response?.body()?.id?.toInt()!!, 2)
-                            xmAdView?.dismiss()
-                        })
-
+                        show(body?.id, body?.picture)
                     }
                 } catch (e: Exception) {
                     BKLog.e("未请求到广告数据")
@@ -108,28 +97,39 @@ class MainActivity : BaseActivity() {
                 }
             }
 
-            private fun show() {
+            private fun show(adId: String?, adUrl: String?) {
                 xmAdView = XmAdView.Builder()
                         .context(this@MainActivity)
                         .activity(this@MainActivity)
                         .build()
-                xmAdView?.setAdRate(1.57f, 43)
-                xmAdView?.setCover("http://mmbiz.qpic.cn/mmbiz/PwIlO51l7wuFyoFwAXfqPNETWCibjNACIt6ydN7vw8LeIwT7IjyG3eeribmK4rhibecvNKiaT2qeJRIWXLuKYPiaqtQ/0")
+                xmAdView?.setAdRate(1.57f, 20)
+                xmAdView?.setCover(adUrl)
                 xmAdView?.show()
                 xmAdView?.setOnAdListener(View.OnClickListener {
-                    xmAdView?.dismiss()
+                    requestAdFeedbackApi(adId, 1)
+                    IntoTargetUtil.target(this@MainActivity, "url", body?.target)
                 })
                 xmAdView?.setOnCloseListener(View.OnClickListener {
-                    xmAdView?.dismiss()
+                    requestAdFeedbackApi(adId, 2)
                 })
             }
 
             /**
              * 请求广告点击反馈接口
              */
-            private fun requestAdFeedbackApi(id: Int, type: Int) {
-                adApi?.feedback(id.toString(), type)?.enqueue(object : HttpCallBack<Any>() {
-                    override fun onSuccess(call: Call<Any>?, response: Response<Any>?) {}
+            private fun requestAdFeedbackApi(id: String?, type: Int) {
+                adApi?.feedback(id, type)?.enqueue(object : HttpCallBack<Any>() {
+                    override fun onSuccess(call: Call<Any>?, response: Response<Any>?) {
+                        when (type) {
+                            1 -> {
+                                BKLog.d("点击广告,广告反馈成功")
+                            }
+                            2 -> {
+                                BKLog.d("关闭广告,广告反馈成功")
+                            }
+                        }
+                    }
+
                     override fun onFailure(call: Call<Any>?, msg: String?) {
                         super.onFailure(call, msg)
                         when (type) {
@@ -151,10 +151,6 @@ class MainActivity : BaseActivity() {
 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-//        if (KeyEvent.KEYCODE_BACK == keyCode) {
-//            finish()
-//        }
-//        return super.onKeyDown(keyCode, event)
         return back(keyCode, event)
     }
 

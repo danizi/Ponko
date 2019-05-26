@@ -19,8 +19,10 @@ import com.bumptech.glide.request.target.Target
 import com.google.gson.Gson
 import com.ponko.cn.bean.CourseDetailCBean
 import com.ponko.cn.bean.CoursesDetailCBean
+import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.module.media.control.ControlViewHolder
+import com.ponko.cn.utils.ShareUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.TimeUtil
@@ -37,6 +39,11 @@ import java.io.IOException
  * 横屏界面
  */
 class LandscapeViewHolder : ControlViewHolder {
+    private var share: MediaBean.ShareBean? = null
+
+    override fun setShareInfo(share: MediaBean.ShareBean) {
+        this.share = share
+    }
 
     companion object {
         fun create(rootView: View?): LandscapeViewHolder {
@@ -133,18 +140,7 @@ class LandscapeViewHolder : ControlViewHolder {
             listener?.onState(AttachmentControl.PORTRAIT)
         }
         ivShare?.setOnClickListener {
-            val xmPopWindow = XmPopWindow(activity)
-            val shareView = LayoutInflater.from(activity).inflate(R.layout.media_share, null, false)
-            val share: ImageView = shareView.findViewById(R.id.iv_share_wx)
-            val friend: ImageView = shareView.findViewById(R.id.iv_share_friend)
-            share.setOnClickListener {
-                Toast.makeText(activity, "分享到微信", Toast.LENGTH_SHORT).show()
-            }
-            friend.setOnClickListener {
-                Toast.makeText(activity, "分享到朋友圈", Toast.LENGTH_SHORT).show()
-            }
-            xmPopWindow.ini(shareView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            xmPopWindow.showAtLocation(XmPopWindow.Location.BOTTOM, R.style.AnimationBottomFade, activity?.window?.decorView!!, 0, 0)
+            ShareUtil.showShareDlg(activity, this.share?.url, this.share?.title, this.share?.description)
         }
         ivMore?.setOnClickListener {
             val xmPopWindow = XmPopWindow(activity)
@@ -228,42 +224,16 @@ class LandscapeViewHolder : ControlViewHolder {
             xmPopWindow.ini(ratioView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
             xmPopWindow.showAtLocation(XmPopWindow.Location.RIGHT, R.style.AnimationRightFade, activity?.window?.decorView!!, 0, 0)
         }
-//        rv?.setOnTouchListener { v, event ->
-//            //val x = event.rawX.toInt()
-//            val y = event.rawY.toInt()
-//            when (event.action) {
-//                MotionEvent.ACTION_DOWN -> {
-//                }
-//                MotionEvent.ACTION_UP -> {
-//                    if (deltaY > 0) {
-//                        ObjectAnimator.ofFloat(rv, "translationY", rv?.translationY!!, 0f).setDuration(500).start()
-//                    } else {
-//                        ObjectAnimator.ofFloat(rv, "translationY", rv?.translationY!!.toFloat(), (-rv?.height!!).toFloat()).setDuration(500).start()
-//                    }
-//                }
-//                MotionEvent.ACTION_MOVE -> {
-//                    if (mLastX != 0 && mLastY != 0) {
-//                        deltaX = x - mLastX//计算x坐标上的差值
-//                        deltaY = y - mLastY//计算y坐标上的差值
-//                        BKLog.d("rv?.translationY:${rv?.translationY} deltaY:$deltaY")
-//                        val tranX = rv?.translationX!! + deltaX//要平移的x值
-//                        val tranY = rv?.translationY!! + deltaY//要平移的y值
-//                        rv?.translationX = tranX//设置值
-//                        rv?.translationY = tranY
-//                    }
-//                }
-//            }
-//            mLastX = x;//记录上次的坐标
-//            mLastY = y;
-//            false
-//        }
-
         val l = LinearLayoutManager(activity)
         l.orientation = LinearLayoutManager.HORIZONTAL
         rv?.layoutManager = l
     }
 
-    fun list(){
+    override fun setShareListener(listener: View.OnClickListener) {
+        ivShare?.setOnClickListener(listener)
+    }
+
+    fun list() {
         val okHttpClient = OkHttpClient.Builder().build()
         val request = Request.Builder()
                 .url("https://api.tradestudy.cn/v3/course?courseId=e90b1cbc845411e5a95900163e000c35")
@@ -410,6 +380,9 @@ class LandscapeViewHolder : ControlViewHolder {
         seekBar?.progress = present
     }
 
+    /**
+     * 弹出框设置
+     */
     private class PopSettingViewHolder private constructor(val xmVideoView: XmVideoView?, val context: Context, val tvEdit: TextView, val clAction: ConstraintLayout, val imageView: ImageView, val clSpeed: ConstraintLayout, val tvSpeedTitle: TextView, val tvSpeed05: TextView, val tvSpeed075: TextView, val tvSpeed10: TextView, val tvSpeed125: TextView, val tvSpeed15: TextView, val tvSpeed20: TextView, val clTimerTop: ConstraintLayout, val tvTimerTitle: TextView, val tvTimerNoOpen: TextView, val tvTimerComplete: TextView, val tvTimerCustom: TextView, val clPlayType: ConstraintLayout, val tvPlayTypeTitle: TextView, val tvPlayTypeAuto: TextView, val tvPlayTypeListLoop: TextView, val tvPlayTypeLoop: TextView, val tvPlayTypeCustom: TextView, val clCanvas: ConstraintLayout, val tvCanvasTitle: TextView, val tvCanvasFit: TextView, val tvCanvasFill: TextView, val tvCanvas169: TextView, val tvCanvas43: TextView) {
         companion object {
 

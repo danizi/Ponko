@@ -1,6 +1,7 @@
 package com.ponko.cn.module.free
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -23,6 +24,7 @@ import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
 import com.ponko.cn.app.PonkoApp.Companion.freeApi
 import com.ponko.cn.bean.DetailCBean
+import com.ponko.cn.constant.Constant
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.media.AttachmentComplete
 import com.ponko.cn.module.media.AttachmentGesture
@@ -39,6 +41,8 @@ import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.media.base.XmVideoView
+import com.xm.lib.media.broadcast.BroadcastManager
+import com.xm.lib.pay.wx.uikit.Constants
 import com.xm.lib.share.ShareConfig
 import com.xm.lib.share.wx.WxShare
 import retrofit2.Call
@@ -51,6 +55,7 @@ import retrofit2.Response
 class FreeDetailsAct : BaseActivity() {
 
     companion object {
+        private const val TAG = "FreeDetailsAct"
         /**
          * 进入免费详情页面
          * @param context 上下文对象
@@ -67,18 +72,49 @@ class FreeDetailsAct : BaseActivity() {
      * 窗口ui相关控件
      */
     private var ui: ViewHolder? = null
-
+    /**
+     * 附着播放器控制器
+     */
+    private var attachmentControl: AttachmentControl? = null
     /**
      * ViewPager适配器
      */
-    private var freeDetailFragmentPagerAdapter: FreeDetailFragmentPagerAdapter? = null
+    //private var freeDetailFragmentPagerAdapter: FreeDetailFragmentPagerAdapter? = null
     /**
      * 详情顶部操作实体
      */
     private var detailTopBean: DetailTopBean? = null
 
+    private var broadcastManager: BroadcastManager? = null
+    private var clickFreeItemPlayReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == Constant.ACTION_CLICK_FREE_PLAY_ITEM) {
+                val vid = intent.getStringExtra("vid")
+                val sectionName = intent.getStringExtra("sectionName")
+                attachmentControl = ui?.video?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl
+                attachmentControl?.showLoading()
+                attachmentControl?.start(vid)
+                BKLog.d(TAG, "播放接受通知,播放$sectionName")
+            }
+        }
+    }
+
+
     override fun setContentViewBefore() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (broadcastManager == null) {
+            broadcastManager = BroadcastManager.create(this)
+        }
+        broadcastManager?.registerReceiver(Constant.ACTION_CLICK_FREE_PLAY_ITEM, clickFreeItemPlayReceiver)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        broadcastManager?.unRegisterReceiver(clickFreeItemPlayReceiver)
     }
 
     override fun getLayoutId(): Int {
@@ -92,9 +128,11 @@ class FreeDetailsAct : BaseActivity() {
     }
 
     override fun initDisplay() {
-        initVideo(this, ui?.video!!)
+        MediaUitl.initXmVideoView(ui?.video!!, this)
+        //initVideo(this, ui?.video!!)
     }
 
+    @Deprecated("")
     private fun initVideo(context: Context, xmVideoView: XmVideoView) {
         //绑定的页面
         val preUrl = ""
@@ -145,21 +183,24 @@ class FreeDetailsAct : BaseActivity() {
     }
 
     fun displayVideo(body: DetailCBean?) {
-        MediaUitl.getM3u8Url(body?.chapters!![0].sections[0].vid, object : MediaUitl.OnPlayUrlListener {
-            override fun onFailure() {
-                this@FreeDetailsAct.runOnUiThread {
-                    Toast.makeText(this@FreeDetailsAct, "获取播放地址失败", Toast.LENGTH_SHORT).show()
-                }
-            }
+        val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
+        attachmentPre.load(vid = body?.chapters!![0].sections[0].vid, preUrl = body.chapters!![0].sections[0]?.avatar!!)
 
-            override fun onSuccess(url: String, size: Int?) {
-                //然后请求视频地址
-                val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
-                this@FreeDetailsAct.runOnUiThread {
-                    attachmentPre.load(url, body.chapters!![0].sections[0]?.avatar!!)
-                }
-            }
-        })
+//        MediaUitl.getM3u8Url(body?.chapters!![0].sections[0].vid, object : MediaUitl.OnPlayUrlListener {
+//            override fun onFailure() {
+//                this@FreeDetailsAct.runOnUiThread {
+//                    Toast.makeText(this@FreeDetailsAct, "获取播放地址失败", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//
+//            override fun onSuccess(url: String, size: Int?) {
+//                //然后请求视频地址
+//                val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
+//                this@FreeDetailsAct.runOnUiThread {
+//                    attachmentPre.load(url, body.chapters!![0].sections[0]?.avatar!!)
+//                }
+//            }
+//        })
     }
 
     fun displayContent(body: DetailCBean?) {
@@ -303,6 +344,7 @@ class FreeDetailsAct : BaseActivity() {
             rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
             rv?.isFocusableInTouchMode = false
             rv?.requestFocus()
+
             return v
         }
     }
@@ -354,6 +396,10 @@ class FreeDetailsAct : BaseActivity() {
             ui?.tvTime?.text = TimeUtil.hhmmss(sectionsBean.duration.toLong() * 1000)
             itemView.setOnClickListener {
                 BKLog.d("点击播放${sectionsBean.sectionName}")
+                val intent = Intent(Constant.ACTION_CLICK_FREE_PLAY_ITEM)
+                intent.putExtra("vid", sectionsBean.vid)
+                intent.putExtra("sectionName", sectionsBean.sectionName)
+                context.sendBroadcast(intent)
             }
         }
 

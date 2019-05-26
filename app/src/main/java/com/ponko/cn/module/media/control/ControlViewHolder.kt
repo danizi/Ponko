@@ -5,6 +5,7 @@ import android.app.Activity
 import android.graphics.Rect
 import android.view.View
 import com.ponko.cn.bean.CourseDetailCBean
+import com.ponko.cn.bean.MediaBean
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.media.base.XmMediaPlayer
@@ -15,26 +16,74 @@ import com.xm.lib.media.base.XmVideoView
  */
 abstract class ControlViewHolder {
     protected val TAG = "ControlViewHolder"
+    /**
+     * 进度定时器
+     */
     private var progressTimer: TimerHelper? = TimerHelper()
+    /**
+     * 控制页面隐藏定时器
+     */
     private var controlViewHideTimer: TimerHelper? = TimerHelper()
-    var attachmentControl: AttachmentControl? = null //播放器控制页面
-    var isHorizontalSlide = false //是否处于水平滑动
-    var isClick = false //是否处理点击状态
-    var progress = 0    //保存用户拖动进度 单位:%
+    /**
+     * 播放器控制页面
+     */
+    var attachmentControl: AttachmentControl? = null
+    /**
+     * 是否处于水平滑动
+     */
+    var isHorizontalSlide = false
+    /**
+     * 是否处理点击状态
+     */
+    var isClick = false
+    /**
+     * 保存用户拖动进度 单位:%
+     */
+    var progress = 0
+    /**
+     * 页面View
+     */
     var rootView: View? = null
+    /**
+     * 分享View
+     */
+    var shareView: View? = null
+    /**
+     * 播放图片资源
+     */
+    var playResID = 0
+    /**
+     * 暂停图片资源
+     */
+    var pauseResID = 0
+    /**
+     * 保存竖屏播放器View信息
+     */
+    var portraitXmVideoViewRect: Rect? = null
 
-    var playResID = 0  //播放图片资源
-    var pauseResID = 0 //暂停图片资源
-
-    var portraitXmVideoViewRect: Rect? = null //保存竖屏的控件
-
+    /**
+     * 窗口实例
+     */
     protected var activity: Activity? = null
+    /**
+     * 播放器
+     */
     protected var mediaPlayer: XmMediaPlayer? = null
+    /**
+     * 播放器view
+     */
     protected var xmVideoView: XmVideoView? = null
     protected var screenW = 0
     protected var screenH = 0
+    /**
+     * 屏幕状态监听
+     */
     var listener: OnScreenStateListener? = null
+    /**
+     * 控制器页面是否显示
+     */
     var isControlViewShow = false
+
     /**
      * 点击屏幕控制界面 显示和隐藏状态来回切换
      */
@@ -108,7 +157,7 @@ abstract class ControlViewHolder {
     abstract fun progress(present: Int)
 
     /**
-     * 进度更新定时器
+     * 开启进度更新定时器
      */
     open fun progressTimerStart(period: Long) {
         /*定时更新进度*/
@@ -133,16 +182,17 @@ abstract class ControlViewHolder {
         }, period)
     }
 
+    /**
+     * 关闭定时更新进度进度定时器
+     */
     fun progressTimerStop() {
-        /*关闭定时更新进度*/
         progressTimer?.stop()
     }
 
     /**
-     * 延时隐藏播放器界面定时器
+     * 启动延时隐藏播放器界面定时器
      */
     fun startDelayTimerHideControlView(delay: Int) {
-        /*延时隐藏控制界面*/
         controlViewHideTimer?.start(object : TimerHelper.OnDelayTimerListener {
             override fun onDelayTimerFinish() {
                 hideControlView()
@@ -151,17 +201,47 @@ abstract class ControlViewHolder {
 
     }
 
+    /**
+     * 停止延时隐藏控制界面
+     */
     fun stopDelayTimerHideControlView() {
-        /*停止延时隐藏控制界面*/
         controlViewHideTimer?.stop()
     }
 
+    /**
+     * 显示播放列表 - 横向
+     */
     open fun showPlayList() {}
+
+    /**
+     * 显示播放列表 - 动画
+     */
     open fun showPlayListAni() {}
+
+    /**
+     * 隐藏播放列表 - 横向
+     */
     open fun hidePlayList() {}
+
+    /**
+     * 隐藏播放列表 - 动画
+     */
     open fun hidePlayListAni() {}
 
     interface OnScreenStateListener {
         fun onState(type: String)
     }
+
+    @Deprecated("可以完全去掉了")
+    abstract fun setShareListener(listener: View.OnClickListener)
+
+    /**
+     * 设置分享信息
+     */
+    abstract fun setShareInfo(share: MediaBean.ShareBean)
+
+    /**
+     * 播放列表
+     */
+    abstract fun setMediaInfo(info: MediaBean)
 }

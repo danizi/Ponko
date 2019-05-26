@@ -8,4 +8,9 @@ object Constant {
      * 签到成功广播
      */
     const val ACTION_SIGN_SUCCESS = "action_sign_success"
+
+    /**
+     * 点击免费视频详情页面Item广播
+     */
+    const val ACTION_CLICK_FREE_PLAY_ITEM = "action_click_free_play_item"
 }

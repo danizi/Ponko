@@ -1,19 +1,42 @@
 package com.ponko.cn.module.media
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import com.google.gson.Gson
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.bean.VideoInfoCBean
+import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.CacheUtil.getPolycConfig
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.media.base.XmVideoView
 import okhttp3.*
 import java.io.IOException
 
 
 object MediaUitl {
     private const val TAG = "MediaUitl"
+    private var handler = object : Handler(Looper.getMainLooper()) {}
+
+    /**
+     * 获取播放地址监听
+     */
+    interface OnPlayUrlListener {
+        fun onFailure()
+        fun onSuccess(url: String, size: Int? = 0)
+    }
+
+    /**
+     * 获取视频信息监听
+     */
+    interface OnVideoInfoListener {
+        fun onFailure()
+        fun onSuccess(videoInfo: VideoInfoCBean)
+    }
+
     /**
      * 三种选择 1 标准  2 高清 3超高清
      */
@@ -126,7 +149,9 @@ object MediaUitl {
         val polyvBean = Gson().fromJson(getPolycConfig(), MainCBean.PolyvBean::class.java)
         getUrlByVid(vid, polyvBean.user_id, polyvBean.secret_key, object : OnVideoInfoListener {
             override fun onFailure() {
-                listener?.onFailure()
+                handler.post {
+                    listener?.onFailure()
+                }
                 BKLog.e(TAG, "获取网络视频地址失败")
             }
 
@@ -135,7 +160,9 @@ object MediaUitl {
                 //val total =videoInfo.data[0].filesize[2]
                 val m3u8 = hls(videoInfo.data)
                 val total = fileSize(videoInfo.data)
-                listener?.onSuccess(m3u8, total)
+                handler.post {
+                    listener?.onSuccess(m3u8, total)
+                }
                 //存入到本地
                 PonkoApp.courseDao?.requestVideoInfoUpdate(vid, m3u8, total)
                 BKLog.d(TAG, "播放网络视频地址 : $m3u8 ")
@@ -168,19 +195,36 @@ object MediaUitl {
     }
 
     /**
-     * 获取播放地址监听
+     * 初始化播放器View
      */
-    interface OnPlayUrlListener {
-        fun onFailure()
-        fun onSuccess(url: String, size: Int? = 0)
-    }
-
-    /**
-     * 获取视频信息监听
-     */
-    interface OnVideoInfoListener {
-        fun onFailure()
-        fun onSuccess(videoInfo: VideoInfoCBean)
+    fun initXmVideoView(xmVideoView: XmVideoView, context: Context) {
+        //绑定的页面
+        val preUrl = ""
+        val playUrl = ""
+        val attachmentPre = AttachmentPre(context, preUrl)
+        attachmentPre.url = playUrl
+        val attachmentControl = AttachmentControl(context)
+        val attachmentGesture = AttachmentGesture(context)
+        val attachmentComplete = AttachmentComplete(context)
+        xmVideoView.bindAttachmentView(attachmentPre, "attachmentPre")      //预览附着页面
+        xmVideoView.bindAttachmentView(attachmentControl, "AttachmentControl")  //控制器附着页面
+        xmVideoView.bindAttachmentView(attachmentGesture, "attachmentGesture")  //手势附着页面(调节亮度和音量)
+        xmVideoView.bindAttachmentView(attachmentComplete, "attachmentComplete") //播放完成附着页面
+        //播放器回调观察者
+        xmVideoView.addPlayerObserver(attachmentPre)
+        xmVideoView.addPlayerObserver(attachmentControl)
+        xmVideoView.addPlayerObserver(attachmentGesture)
+        xmVideoView.addPlayerObserver(attachmentComplete)
+        //手势观察者
+        xmVideoView.addGestureObserver(attachmentPre)
+        xmVideoView.addGestureObserver(attachmentControl)
+        xmVideoView.addGestureObserver(attachmentGesture)
+        xmVideoView.addGestureObserver(attachmentComplete)
+        //各种状态（断网、音量、电话、插上耳机、电量...）观察者
+        xmVideoView.addPhoneStateObserver(attachmentPre)
+        xmVideoView.addPhoneStateObserver(attachmentControl)
+        xmVideoView.addPhoneStateObserver(attachmentGesture)
+        xmVideoView.addPhoneStateObserver(attachmentComplete)
     }
 
     /**

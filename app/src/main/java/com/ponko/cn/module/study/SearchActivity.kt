@@ -185,6 +185,65 @@ class SearchActivity : RefreshLoadAct<Any, SearchRecordCBean>() {
         broadcastManager?.unRegisterReceiver(searchReceiver)
     }
 
+
+
+    override fun bindItemViewHolderData(): BindItemViewHolderBean {
+        return BindItemViewHolderBean.create(
+                arrayOf(0, 1, 2),
+                arrayOf(StudyRecordViewHold::class.java, GiveInstructionViewHold::class.java, SearchRecordViewHold::class.java),
+                arrayOf(StudyRecordBean::class.java, GiveInstructionBean::class.java, SearchRecordBean::class.java),
+                arrayOf(R.layout.item_search_study_record, R.layout.item_search_give_instruction, R.layout.item_search_record)
+        )
+    }
+
+    override fun requestMoreApi() {}
+
+    override fun requestRefreshApi() {
+        searchApi?.searchRecord()?.enqueue(object : HttpCallBack<SearchRecordCBean>() {
+            override fun onSuccess(call: Call<SearchRecordCBean>?, response: Response<SearchRecordCBean>?) {
+                requestRefreshSuccess(response?.body())
+            }
+
+            override fun onFailure(call: Call<SearchRecordCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
+            }
+        })
+    }
+
+    override fun multiTypeData(body: SearchRecordCBean?): List<Any> {
+        val data = ArrayList<Any>()
+        //学习记录
+        if (!body?.sections?.isEmpty()!!) {
+            data.add(StudyRecordBean(body.sections))
+        }
+        //授课老师
+        if (!body.teachers?.isEmpty()!!) {
+            data.add(GiveInstructionBean(body.teachers))
+        }
+        //读取sp文件的关键字
+        val cacheRecord = CacheUtil.getSearchRecord()
+        val searchList = M3u8Utils.strToList(cacheRecord)
+        searchList?.remove("")
+        val record10 = ArrayList<String>()
+        for (record in searchList!!) {
+            record10.add(record)
+        }
+//        if (!record10.isEmpty()) {
+            data.add(SearchRecordBean(record10))
+//        }
+        return data
+    }
+
+    override fun adapter(): BaseRvAdapter? {
+        adp = object : BaseRvAdapter() {}
+        return adp
+    }
+
+    override fun presenter(): Any {
+        return Any()
+    }
+
     /**
      * 搜索结果课程
      */
@@ -261,63 +320,6 @@ class SearchActivity : RefreshLoadAct<Any, SearchRecordCBean>() {
                 BKLog.d("点击章节：${sectionsBean.sectionName}")
             }
         }
-    }
-
-    override fun bindItemViewHolderData(): BindItemViewHolderBean {
-        return BindItemViewHolderBean.create(
-                arrayOf(0, 1, 2),
-                arrayOf(StudyRecordViewHold::class.java, GiveInstructionViewHold::class.java, SearchRecordViewHold::class.java),
-                arrayOf(StudyRecordBean::class.java, GiveInstructionBean::class.java, SearchRecordBean::class.java),
-                arrayOf(R.layout.item_search_study_record, R.layout.item_search_give_instruction, R.layout.item_search_record)
-        )
-    }
-
-    override fun requestMoreApi() {}
-
-    override fun requestRefreshApi() {
-        searchApi?.searchRecord()?.enqueue(object : HttpCallBack<SearchRecordCBean>() {
-            override fun onSuccess(call: Call<SearchRecordCBean>?, response: Response<SearchRecordCBean>?) {
-                requestRefreshSuccess(response?.body())
-            }
-
-            override fun onFailure(call: Call<SearchRecordCBean>?, msg: String?) {
-                super.onFailure(call, msg)
-                requestRefreshFailure()
-            }
-        })
-    }
-
-    override fun multiTypeData(body: SearchRecordCBean?): List<Any> {
-        val data = ArrayList<Any>()
-        //学习记录
-        if (!body?.sections?.isEmpty()!!) {
-            data.add(StudyRecordBean(body.sections))
-        }
-        //授课老师
-        if (!body.teachers?.isEmpty()!!) {
-            data.add(GiveInstructionBean(body.teachers))
-        }
-        //读取sp文件的关键字
-        val cacheRecord = CacheUtil.getSearchRecord()
-        val searchList = M3u8Utils.strToList(cacheRecord)
-        searchList?.remove("")
-        val record10 = ArrayList<String>()
-        for (record in searchList!!) {
-            record10.add(record)
-        }
-//        if (!record10.isEmpty()) {
-            data.add(SearchRecordBean(record10))
-//        }
-        return data
-    }
-
-    override fun adapter(): BaseRvAdapter? {
-        adp = object : BaseRvAdapter() {}
-        return adp
-    }
-
-    override fun presenter(): Any {
-        return Any()
     }
 
     /**

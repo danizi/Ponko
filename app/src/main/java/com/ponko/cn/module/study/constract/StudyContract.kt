@@ -9,6 +9,9 @@ import com.ponko.cn.utils.CacheUtil.putPolyvConfig
 import retrofit2.Call
 import retrofit2.Response
 
+/**
+ * 学习页面契约类 - MVP模式
+ */
 class StudyContract {
     interface View {
         fun requestStudyApiSuccess(body: MainCBean?)
@@ -21,11 +24,6 @@ class StudyContract {
         fun requestStudyApi(callback: HttpCallBack<MainCBean>) {
             PonkoApp.studyApi?.main()?.enqueue(callback)
         }
-
-
-
-
-
     }
 
     class Present(private val context: Context?, private val view: View?) {

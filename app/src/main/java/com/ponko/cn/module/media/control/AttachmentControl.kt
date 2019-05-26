@@ -7,8 +7,12 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import com.ponko.cn.bean.CourseDetailCBean
 import com.ponko.cn.bean.CoursesDetailCBean
+import com.ponko.cn.bean.MediaBean
+import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.viewholder.LandscapeViewHolder
 import com.ponko.cn.module.media.control.viewholder.PortraitViewHolder
+import com.ponko.cn.utils.ToastUtil
+import com.xm.lib.common.http.NetworkUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.media.R
@@ -21,13 +25,46 @@ import com.xm.lib.media.event.PhoneStateObserver
 import com.xm.lib.media.event.PlayerObserver
 
 
+/**
+ * 控制器附着View
+ */
 class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
 
-    var controlViewHolder: ControlViewHolder? = null
+    /**
+     * 控制器View
+     */
+    var ui: ControlViewHolder? = null
+    /**
+     * 定时器周期时间，进度更新定时更新时间
+     */
     private val period: Int = 1000
+    /**
+     * 点击屏幕后延时delay时间隐藏控制器页面
+     */
     private val delay: Int = 5000
-    var courseDetail: CoursesDetailCBean?=null
+    /**
+     * 视频信息列表
+     */
+    @Deprecated("不适用")
+    var courseDetail: CoursesDetailCBean? = null
+    /**
+     * 保存竖屏视频大小信息
+     */
+    private var portraitXmVideoViewRect: Rect? = Rect()
+    /**
+     * 视频信息
+     */
+    private var info: MediaBean? = null
+    /**
+     * 分享信息
+     */
+    private var share: MediaBean.ShareBean? = null
+    /**
+     * 播放器配置信息
+     */
+    private var config: MediaBean.ConfigBean? = null
 
+    //private var portraitXmVideoView: XmVideoView? = null
     companion object {
         const val TAG = "AttachmentControl"
         const val PORTRAIT = "portrait"
@@ -44,28 +81,28 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
 
             override fun onSeekComplete(mp: IXmMediaPlayer) {
                 super.onSeekComplete(mp)
-                controlViewHolder?.hideLoading()
+                ui?.hideLoading()
             }
 
             override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
                 super.onInfo(mp, what, extra)
                 if (what == IXmMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                    controlViewHolder?.setActionResID(R.mipmap.media_control_pause)
-                    //controlViewHolder?.progressTimerStart(period.toLong())
+                    ui?.setActionResID(R.mipmap.media_control_pause)
+                    //ui?.progressTimerStart(period.toLong())
                 }
                 when (what) {
                     IXmMediaPlayer.MEDIA_INFO_BUFFERING_START -> {
-                        controlViewHolder?.showLoading()
+                        ui?.showLoading()
                     }
                     IXmMediaPlayer.MEDIA_INFO_BUFFERING_END -> {
-                        controlViewHolder?.hideLoading()
+                        ui?.hideLoading()
                     }
                 }
             }
 
             override fun onBufferingUpdate(mp: IXmMediaPlayer, percent: Int) {
                 super.onBufferingUpdate(mp, percent)
-                controlViewHolder?.secondaryProgress(percent)
+                ui?.secondaryProgress(percent)
             }
 
 
@@ -75,25 +112,25 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
 
             override fun onClick() {
                 super.onClick()
-                controlViewHolder?.isClick = true
-                controlViewHolder?.showOrHideControlView()
+                ui?.isClick = true
+                ui?.showOrHideControlView()
             }
 
             override fun onDownUp() {
                 super.onDownUp()
                 horizontalSlidePos = -1
                 //手指滑动设置进度释放处理进度
-                if (controlViewHolder?.isHorizontalSlide!!) {
-                    controlViewHolder?.isHorizontalSlide = false
-                    controlViewHolder?.hideControlView()
-                    controlViewHolder?.horizontalSlideStopSeekTo()
-                    controlViewHolder?.progressTimerStart(period.toLong())
-                    controlViewHolder?.horizontalSlideStopSeekTo()
+                if (ui?.isHorizontalSlide!!) {
+                    ui?.isHorizontalSlide = false
+                    ui?.hideControlView()
+                    ui?.horizontalSlideStopSeekTo()
+                    ui?.progressTimerStart(period.toLong())
+                    ui?.horizontalSlideStopSeekTo()
                 }
 
-                if (controlViewHolder?.isClick!!) {
-                    controlViewHolder?.isClick = false
-                    controlViewHolder?.startDelayTimerHideControlView(delay)
+                if (ui?.isClick!!) {
+                    ui?.isClick = false
+                    ui?.startDelayTimerHideControlView(delay)
                 }
             }
 
@@ -111,11 +148,11 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
 
             override fun onVertical(type: String, present: Int) {
                 super.onVertical(type, present)
-                if (controlViewHolder?.isControlViewShow!!) {
+                if (ui?.isControlViewShow!!) {
                     if (present > 0) {
-                        controlViewHolder?.hidePlayListAni()
+                        ui?.hidePlayListAni()
                     } else {
-                        controlViewHolder?.showPlayListAni()
+                        ui?.showPlayListAni()
                     }
                 }
             }
@@ -128,16 +165,16 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
                     horizontalSlidePos = xmVideoView?.mediaPlayer?.getCurrentPosition()!!
                 }
                 //手指处于水平滑动中
-                controlViewHolder?.isHorizontalSlide = true
+                ui?.isHorizontalSlide = true
 
                 //停止所有的计时器
-                controlViewHolder?.stopDelayTimerHideControlView()
-                controlViewHolder?.progressTimerStop()
+                ui?.stopDelayTimerHideControlView()
+                ui?.progressTimerStop()
 
                 //显示控制器界面
-                controlViewHolder?.updateProgress(horizontalSlidePos.toInt() + present * 1000L) // ps: 更新进度条 播放进度文本
-                controlViewHolder?.showProgress()
-                controlViewHolder?.showControlView()
+                ui?.updateProgress(horizontalSlidePos.toInt() + present * 1000L) // ps: 更新进度条 播放进度文本
+                ui?.showProgress()
+                ui?.showControlView()
             }
         }
         phoneObserver = object : PhoneStateObserver {}
@@ -156,17 +193,15 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         addPortraitView()
     }
 
-    private var portraitXmVideoViewRect: Rect? = Rect()
-    //private var portraitXmVideoView: XmVideoView? = null
     private fun addPortraitView(visibility: Int = View.GONE) {
         val portraitView = getView(R.layout.attachment_control_portrait)
         portraitView.visibility = visibility
         addView(portraitView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
-        controlViewHolder = PortraitViewHolder.create(portraitView)
-        controlViewHolder?.playResID = R.mipmap.media_control_play
-        controlViewHolder?.pauseResID = R.mipmap.media_control_pause
-        controlViewHolder?.bind(this)
-        controlViewHolder?.listener = object : ControlViewHolder.OnScreenStateListener {
+        ui = PortraitViewHolder.create(portraitView)
+        ui?.playResID = R.mipmap.media_control_play
+        ui?.pauseResID = R.mipmap.media_control_pause
+        ui?.bind(this)
+        ui?.listener = object : ControlViewHolder.OnScreenStateListener {
             override fun onState(type: String) {
                 this@AttachmentControl.removeAllViews()//删除所有子View ps:子View包含横屏or竖屏View
                 when (type) {
@@ -179,19 +214,19 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
                 }
             }
         }
-        controlViewHolder?.progressTimerStart(period.toLong())
+        ui?.progressTimerStart(period.toLong())
     }
 
     private fun addLandscapeView(visibility: Int = View.GONE) {
         val landscapeView = getView(R.layout.attachment_control_landscape)
         landscapeView.visibility = visibility
         addView(landscapeView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
-        controlViewHolder = LandscapeViewHolder.create(landscapeView)
-        controlViewHolder?.playResID = R.mipmap.media_control_play
-        controlViewHolder?.pauseResID = R.mipmap.media_control_pause
-        controlViewHolder?.bind(this)
-        controlViewHolder?.portraitXmVideoViewRect = portraitXmVideoViewRect
-        controlViewHolder?.listener = object : ControlViewHolder.OnScreenStateListener {
+        ui = LandscapeViewHolder.create(landscapeView)
+        ui?.playResID = R.mipmap.media_control_play
+        ui?.pauseResID = R.mipmap.media_control_pause
+        ui?.bind(this)
+        ui?.portraitXmVideoViewRect = portraitXmVideoViewRect
+        ui?.listener = object : ControlViewHolder.OnScreenStateListener {
             override fun onState(type: String) {
                 this@AttachmentControl.removeAllViews()//删除所有子View ps:子View包含横屏or竖屏View
                 when (type) {
@@ -205,7 +240,63 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
 
             }
         }
-        controlViewHolder?.progressTimerStart(period.toLong())
-        (controlViewHolder as LandscapeViewHolder).setPlayList(courseDetail)
+        ui?.progressTimerStart(period.toLong())
+        (ui as LandscapeViewHolder).setPlayList(courseDetail)
+    }
+
+    /**
+     * 显示
+     */
+    fun showLoading() {
+        ui?.showLoading()
+    }
+
+    /**
+     * 播放，请求视频信息，获取播放地址再播放
+     * @param vid 视频唯一标识
+     */
+    fun start(vid: String, pos: Int? = 0) {
+        if (NetworkUtil.isNetworkConnected(context)) {
+            xmVideoView?.pause()
+            MediaUitl.getUrlByVid(vid, object : MediaUitl.OnPlayUrlListener {
+                override fun onFailure() {
+                    BKLog.e("获取视频失败")
+                }
+
+                override fun onSuccess(url: String, size: Int?) {
+                    xmVideoView?.start(url, true)
+                }
+            })
+        } else {
+            ToastUtil.show("当前没有网络...")
+        }
+    }
+
+    /**
+     * 设置播放信息
+     */
+    fun setMediaInfo(info: MediaBean) {
+        this.info = info
+        ui?.setMediaInfo(info)
+    }
+
+    /**
+     * 设置分享信息
+     */
+    fun setShareInfo(share: MediaBean.ShareBean) {
+        this.share = share
+        ui?.setShareInfo(share)
+    }
+
+    @Deprecated("完全可以去掉")
+    fun setShareListener(listener: View.OnClickListener) {
+        ui?.setShareListener(listener)
+    }
+
+    /**
+     * 设置配置信息
+     */
+    fun setConfigInfo(config: MediaBean.ConfigBean) {
+        this.config = config
     }
 }
