@@ -17,6 +17,7 @@ import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
+import com.xm.lib.media.attachment.OnPlayListItemClickListener
 
 import com.xm.lib.media.base.IXmMediaPlayer
 import com.xm.lib.media.base.XmVideoView
@@ -29,7 +30,14 @@ import com.xm.lib.media.event.PlayerObserver
  * 控制器附着View
  */
 class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
-
+    /**
+     * 点击列表监听
+     */
+    private var listener: OnPlayListItemClickListener? = null
+    /**
+     * 播放视频列表中的哪一个视频下标
+     */
+    var index: Int = 0
     /**
      * 控制器View
      */
@@ -241,7 +249,11 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
             }
         }
         ui?.progressTimerStart(period.toLong())
-        (ui as LandscapeViewHolder).setPlayList(courseDetail)
+        //设置播放列表信息
+        ui?.setMediaInfo(this.info!!)
+        //设置播放列表监听
+        (ui as LandscapeViewHolder).setPlayList(listener)
+        (ui as LandscapeViewHolder).selectPlayList(this.index)
     }
 
     /**
@@ -254,19 +266,22 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
     /**
      * 播放，请求视频信息，获取播放地址再播放
      * @param vid 视频唯一标识
+     * @param progress 指定进度播放
+     * @param index 播放列表下标
      */
-    fun start(vid: String, pos: Int? = 0) {
+    fun start(vid: String, progress: Int? = 0, index: Int) {
         if (NetworkUtil.isNetworkConnected(context)) {
             xmVideoView?.pause()
-            MediaUitl.getUrlByVid(vid, object : MediaUitl.OnPlayUrlListener {
+            MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
                 override fun onFailure() {
                     BKLog.e("获取视频失败")
                 }
 
                 override fun onSuccess(url: String, size: Int?) {
-                    xmVideoView?.start(url, true)
+                    xmVideoView?.start(url, true, progress)
                 }
             })
+            this.index = index
         } else {
             ToastUtil.show("当前没有网络...")
         }
@@ -277,7 +292,6 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
      */
     fun setMediaInfo(info: MediaBean) {
         this.info = info
-        ui?.setMediaInfo(info)
     }
 
     /**
@@ -298,5 +312,17 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
      */
     fun setConfigInfo(config: MediaBean.ConfigBean) {
         this.config = config
+    }
+
+
+    /**
+     * 点击列表监听
+     */
+    fun setOnPlayListItemClickListener(listener: OnPlayListItemClickListener) {
+        this.listener = listener
+    }
+
+    fun refreshItem(index: Int) {
+        (ui as LandscapeViewHolder).selectPlayList(index)
     }
 }

@@ -6,9 +6,7 @@ import android.os.Looper
 import android.text.TextUtils
 import com.google.gson.Gson
 import com.ponko.cn.app.PonkoApp
-import com.ponko.cn.bean.CoursesDetailCBean
-import com.ponko.cn.bean.MainCBean
-import com.ponko.cn.bean.VideoInfoCBean
+import com.ponko.cn.bean.*
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.CacheUtil.getPolycConfig
 import com.xm.lib.common.log.BKLog
@@ -197,7 +195,7 @@ object MediaUitl {
     /**
      * 初始化播放器View
      */
-    fun initXmVideoView(xmVideoView: XmVideoView, context: Context) {
+    fun initXmVideoView(xmVideoView: XmVideoView?, context: Context) {
         //绑定的页面
         val preUrl = ""
         val playUrl = ""
@@ -206,26 +204,68 @@ object MediaUitl {
         val attachmentControl = AttachmentControl(context)
         val attachmentGesture = AttachmentGesture(context)
         val attachmentComplete = AttachmentComplete(context)
-        xmVideoView.bindAttachmentView(attachmentPre, "attachmentPre")      //预览附着页面
-        xmVideoView.bindAttachmentView(attachmentControl, "AttachmentControl")  //控制器附着页面
-        xmVideoView.bindAttachmentView(attachmentGesture, "attachmentGesture")  //手势附着页面(调节亮度和音量)
-        xmVideoView.bindAttachmentView(attachmentComplete, "attachmentComplete") //播放完成附着页面
+        xmVideoView?.bindAttachmentView(attachmentPre, "attachmentPre")      //预览附着页面
+        xmVideoView?.bindAttachmentView(attachmentControl, "AttachmentControl")  //控制器附着页面
+        xmVideoView?.bindAttachmentView(attachmentGesture, "attachmentGesture")  //手势附着页面(调节亮度和音量)
+        xmVideoView?.bindAttachmentView(attachmentComplete, "attachmentComplete") //播放完成附着页面
         //播放器回调观察者
-        xmVideoView.addPlayerObserver(attachmentPre)
-        xmVideoView.addPlayerObserver(attachmentControl)
-        xmVideoView.addPlayerObserver(attachmentGesture)
-        xmVideoView.addPlayerObserver(attachmentComplete)
+        xmVideoView?.addPlayerObserver(attachmentPre)
+        xmVideoView?.addPlayerObserver(attachmentControl)
+        xmVideoView?.addPlayerObserver(attachmentGesture)
+        xmVideoView?.addPlayerObserver(attachmentComplete)
         //手势观察者
-        xmVideoView.addGestureObserver(attachmentPre)
-        xmVideoView.addGestureObserver(attachmentControl)
-        xmVideoView.addGestureObserver(attachmentGesture)
-        xmVideoView.addGestureObserver(attachmentComplete)
+        xmVideoView?.addGestureObserver(attachmentPre)
+        xmVideoView?.addGestureObserver(attachmentControl)
+        xmVideoView?.addGestureObserver(attachmentGesture)
+        xmVideoView?.addGestureObserver(attachmentComplete)
         //各种状态（断网、音量、电话、插上耳机、电量...）观察者
-        xmVideoView.addPhoneStateObserver(attachmentPre)
-        xmVideoView.addPhoneStateObserver(attachmentControl)
-        xmVideoView.addPhoneStateObserver(attachmentGesture)
-        xmVideoView.addPhoneStateObserver(attachmentComplete)
+        xmVideoView?.addPhoneStateObserver(attachmentPre)
+        xmVideoView?.addPhoneStateObserver(attachmentControl)
+        xmVideoView?.addPhoneStateObserver(attachmentGesture)
+        xmVideoView?.addPhoneStateObserver(attachmentComplete)
     }
+
+    /**
+     * 构建播放列表数据 - 学习详情页面
+     */
+    fun buildPlayListByStudy(coursesDetailCBean: CoursesDetailCBean?): MediaBean {
+        //播放列表信息传递到控制器中去
+        val isPay = coursesDetailCBean?.isPossess
+        val mediaInfos = ArrayList<MediaBean.MediaInfo>()
+        for (chapter in coursesDetailCBean?.chapters!!) {
+            for (section in chapter.sections) {
+                val isFree = section.isFree
+                val vid = section.vid
+                val name = section.name
+                val duration = section.duration.toInt()
+                val progress = section.progress_duration
+                val avatar = section.avatar
+                mediaInfos.add(MediaBean.MediaInfo(isPay, isFree, name, vid, duration, progress, avatar))
+            }
+        }
+        return MediaBean(mediaInfos)
+    }
+
+    /**
+     * 构建播放列表数据 - 学习免费页面
+     */
+    fun buildPlayListByFree(detailCBean: DetailCBean?): MediaBean {
+        val isPay = PonkoApp.mainCBean?.types!![0].isIs_vip || PonkoApp.mainCBean?.types!![1].isIs_vip
+        val mediaInfos = ArrayList<MediaBean.MediaInfo>()
+        for (chapter in detailCBean?.chapters!!) {
+            for (section in chapter.sections) {
+                val isFree = section.isFree
+                val vid = section.vid
+                val name = section.sectionName
+                val duration = section.duration.toInt()
+                val progress = 0
+                val avatar = section.avatar
+                mediaInfos.add(MediaBean.MediaInfo(isPay, isFree, name, vid, duration, progress, avatar))
+            }
+        }
+        return MediaBean(mediaInfos)
+    }
+
 
     /**
      * 测试

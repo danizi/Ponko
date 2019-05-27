@@ -1,5 +1,6 @@
 package com.ponko.cn.module.study
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -331,6 +332,7 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         }
 
         private var viewHolder: ViewHolder? = null
+        @SuppressLint("ResourceAsColor")
         override fun bindData(d: Any, position: Int) {
             if (viewHolder == null) {
                 viewHolder = ViewHolder.create(itemView)
@@ -342,23 +344,31 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
             //课程时间
             viewHolder?.tvCourseTime?.text = NumUtil.getDecimalPoint(sectionsBean.duration.toInt() / 60f)
             //本地是否缓存了
-            if (courseDao?.isComplete(sectionsBean.vid) == true) {
-                displayLocal()
-            } else {
-                //选中状态
-                displayGeneral()
-                if (isSelectAll) {
-                    SleSections.add(sectionsBean)
-                } else {
-                    SleSections.remove(sectionsBean)
-                }
-                itemView.setOnClickListener {
-                    val select = if (isChecked()) {
-                        unSelect(sectionsBean)
+            when {
+                courseDao?.isComplete(sectionsBean.vid) == true -> displayLocal()
+                courseDao?.exist(sectionsBean.vid) == false -> {
+                    //选中状态
+                    displayGeneral()
+                    if (isSelectAll) {
+                        SleSections.add(sectionsBean)
                     } else {
-                        select(sectionsBean)
+                        SleSections.remove(sectionsBean)
                     }
-                    BKLog.d(TAG, "点击了${sectionsBean.name} - $select")
+                    itemView.setOnClickListener {
+                        val select = if (isChecked()) {
+                            unSelect(sectionsBean)
+                        } else {
+                            select(sectionsBean)
+                        }
+                        BKLog.d(TAG, "点击了${sectionsBean.name} - $select")
+                    }
+                }
+                else -> {
+                    viewHolder?.cb?.isChecked = false
+                    viewHolder?.cb?.isEnabled = false
+                    viewHolder?.tvLocal?.visibility = View.VISIBLE
+                    viewHolder?.tvLocal?.text = "队列中"
+                    viewHolder?.tvLocal?.setBackgroundColor(context.resources.getColor(R.color.red))
                 }
             }
         }

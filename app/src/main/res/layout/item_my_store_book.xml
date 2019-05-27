@@ -21,6 +21,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:maxLines="1"
+        android:ellipsize="end"
         android:id="@+id/tv_course_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -36,7 +38,7 @@
         android:id="@+id/tv_integral_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="6dp"
         android:text="积分"
         android:textColor="#FF3542"
         android:textSize="16sp"
@@ -47,7 +49,7 @@
         android:id="@+id/tv_exchanged"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="6dp"
         android:text="已兑换566件"
         android:textColor="#7E849D"
         android:textSize="12sp"

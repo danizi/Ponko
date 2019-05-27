@@ -54,7 +54,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
             bean.column_m3u8_url = m3u8
             bean.column_complete = 1
             update(bean)
-        }else{
+        } else {
             BKLog.e("下载完成,数据库更新失败")
         }
     }
@@ -312,12 +312,13 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun isComplete(vid: String?): Boolean {
         val courseDbBeans = select(vid)
+        if (courseDbBeans.isEmpty()) {
+            return false
+        }
         if (courseDbBeans.size > 1) {
             throw IllegalAccessException("查询到多个相同的vid信息，按道理只有一个")
-        } else if (!courseDbBeans.isEmpty()) {
-            return courseDbBeans[0].column_complete == 1
         }
-        return false
+        return courseDbBeans[0].column_complete == 1
     }
 
     /**

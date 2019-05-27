@@ -91,9 +91,8 @@ class FreeDetailsAct : BaseActivity() {
             if (intent?.action == Constant.ACTION_CLICK_FREE_PLAY_ITEM) {
                 val vid = intent.getStringExtra("vid")
                 val sectionName = intent.getStringExtra("sectionName")
-                attachmentControl = ui?.video?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl
                 attachmentControl?.showLoading()
-                attachmentControl?.start(vid)
+                attachmentControl?.start(vid,0,0)
                 BKLog.d(TAG, "播放接受通知,播放$sectionName")
             }
         }
@@ -129,38 +128,8 @@ class FreeDetailsAct : BaseActivity() {
 
     override fun initDisplay() {
         MediaUitl.initXmVideoView(ui?.video!!, this)
+        attachmentControl = ui?.video?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl
         //initVideo(this, ui?.video!!)
-    }
-
-    @Deprecated("")
-    private fun initVideo(context: Context, xmVideoView: XmVideoView) {
-        //绑定的页面
-        val preUrl = ""
-        val playUrl = ""
-        val attachmentPre = AttachmentPre(context, preUrl)
-        attachmentPre.url = playUrl
-        val attachmentControl = AttachmentControl(context)
-        val attachmentGesture = AttachmentGesture(context)
-        val attachmentComplete = AttachmentComplete(context)
-        xmVideoView.bindAttachmentView(attachmentPre)      //预览附着页面
-        xmVideoView.bindAttachmentView(attachmentControl)  //控制器附着页面
-        xmVideoView.bindAttachmentView(attachmentGesture)  //手势附着页面(调节亮度和音量)
-        xmVideoView.bindAttachmentView(attachmentComplete) //播放完成附着页面
-        //播放器回调观察者
-        xmVideoView.addPlayerObserver(attachmentPre)
-        xmVideoView.addPlayerObserver(attachmentControl)
-        xmVideoView.addPlayerObserver(attachmentGesture)
-        xmVideoView.addPlayerObserver(attachmentComplete)
-        //手势观察者
-        xmVideoView.addGestureObserver(attachmentPre)
-        xmVideoView.addGestureObserver(attachmentControl)
-        xmVideoView.addGestureObserver(attachmentGesture)
-        xmVideoView.addGestureObserver(attachmentComplete)
-        //各种状态（断网、音量、电话、插上耳机、电量...）观察者
-        xmVideoView.addPhoneStateObserver(attachmentPre)
-        xmVideoView.addPhoneStateObserver(attachmentControl)
-        xmVideoView.addPhoneStateObserver(attachmentGesture)
-        xmVideoView.addPhoneStateObserver(attachmentComplete)
     }
 
     override fun iniData() {
@@ -169,6 +138,9 @@ class FreeDetailsAct : BaseActivity() {
             override fun onSuccess(call: Call<DetailCBean>?, response: Response<DetailCBean>?) {
                 //设置内容
                 val body = response?.body()
+
+                //设置播放列表信息
+                attachmentControl?.setMediaInfo(MediaUitl.buildPlayListByFree(body))
 
                 //初始化播放器预览页面
                 displayVideo(body)

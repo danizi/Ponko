@@ -16,6 +16,7 @@
 
     <color name="login_button_bg">#FF5A5E</color>
     <color name="enable_false_color">#C3C3C3</color>
+    <color name="tv_6">#666666</color>
 
 
 </resources>

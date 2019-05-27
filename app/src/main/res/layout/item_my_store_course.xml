@@ -30,40 +30,50 @@
         app:layout_constraintStart_toEndOf="@+id/iv_course"
         app:layout_constraintTop_toTopOf="@+id/iv_course">
 
-        <TextView
-            android:lines="1"
-            android:id="@+id/tv_course_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="外贸后语知多少第四期"
-            android:textColor="#34314C"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/iv_course"
-            app:layout_constraintStart_toStartOf="@+id/iv_course"
-            app:layout_constraintTop_toBottomOf="@+id/iv_course" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_integral_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="积分"
-            android:textColor="#FF3542"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/iv_course"
-            app:layout_constraintTop_toBottomOf="@+id/tv_course_name" />
+            <TextView
+                android:id="@+id/tv_course_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="外贸后语知多少第四期"
+                android:textColor="#34314C"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/iv_course"
+                app:layout_constraintStart_toStartOf="@+id/iv_course"
+                app:layout_constraintTop_toBottomOf="@+id/iv_course" />
 
-        <TextView
-            android:id="@+id/tv_exchanged"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="已兑换566件"
-            android:textColor="#7E849D"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@+id/iv_course"
-            app:layout_constraintTop_toBottomOf="@+id/tv_integral_num" />
+            <TextView
+                android:id="@+id/tv_integral_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="积分"
+                android:textColor="#FF3542"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/iv_course"
+                app:layout_constraintTop_toBottomOf="@+id/tv_course_name" />
+
+            <TextView
+                android:id="@+id/tv_exchanged"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="已兑换566件"
+                android:textColor="#7E849D"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/iv_course"
+                app:layout_constraintTop_toBottomOf="@+id/tv_integral_num" />
+        </LinearLayout>
+
+
     </LinearLayout>
 
 

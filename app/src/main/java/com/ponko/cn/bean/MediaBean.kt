@@ -3,7 +3,13 @@ package com.ponko.cn.bean
 /**
  * 视频播放播放
  */
-class MediaBean(var chapters: List<CoursesDetailCBean.ChaptersBean>) {
+class MediaBean(var mediaInfos: List<MediaInfo>) {
+
+    /**
+     * 视频信息
+     */
+    class MediaInfo(var isPay: Boolean?, var isFree: Boolean?, var name: String?, var vid: String?, var duration: Int?, var progress_duration: Int?, var avatar: String, var select: Boolean? = false)
+
     /**
      * 分享信息
      */
@@ -19,9 +25,7 @@ class MediaBean(var chapters: List<CoursesDetailCBean.ChaptersBean>) {
             /**
              * 分享说明
              */
-            var description: String?) {
-
-    }
+            var description: String?)
 
     /**
      * 配置信息

@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,22 +13,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.google.gson.Gson
-import com.ponko.cn.bean.CourseDetailCBean
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.MediaBean
+import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.module.media.control.ControlViewHolder
 import com.ponko.cn.utils.ShareUtil
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.media.test.MediaListEnt
 import com.xm.lib.media.R
+import com.xm.lib.media.attachment.OnPlayListItemClickListener
 
 import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.view.XmPopWindow
@@ -39,7 +38,13 @@ import java.io.IOException
  * 横屏界面
  */
 class LandscapeViewHolder : ControlViewHolder {
+
+    private var mediaInfo: MediaBean? = null
     private var share: MediaBean.ShareBean? = null
+
+    override fun setMediaInfo(info: MediaBean) {
+        this.mediaInfo = info
+    }
 
     override fun setShareInfo(share: MediaBean.ShareBean) {
         this.share = share
@@ -224,57 +229,73 @@ class LandscapeViewHolder : ControlViewHolder {
             xmPopWindow.ini(ratioView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
             xmPopWindow.showAtLocation(XmPopWindow.Location.RIGHT, R.style.AnimationRightFade, activity?.window?.decorView!!, 0, 0)
         }
-        val l = LinearLayoutManager(activity)
-        l.orientation = LinearLayoutManager.HORIZONTAL
-        rv?.layoutManager = l
     }
 
     override fun setShareListener(listener: View.OnClickListener) {
         ivShare?.setOnClickListener(listener)
     }
 
+    @Deprecated("")
     fun list() {
-        val okHttpClient = OkHttpClient.Builder().build()
-        val request = Request.Builder()
-                .url("https://api.tradestudy.cn/v3/course?courseId=e90b1cbc845411e5a95900163e000c35")
-                .addHeader("x-tradestudy-access-token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IlpsczdzM0p6SG8zVHl6TkN3UU9iekUzakJNalB1L1loektHemNRYXlzOENHdkxBS1R5REFXbGt1K1FpdFE5WTJqTzAvNnJnQkgwVXA1cjJDYUxTakNBPT0iLCJwaG9uZSI6IjE1MDc0NzcwNzA4IiwiaWQiOiI2NTc4M2IxNWQ0NzcxMWU4OGI0NDAyNDJhYzEzMDAwMyIsInRva2VuIjoiZjc0OTEyYjIzYWFkNDIzMzliNjg1NDdmNzIyY2Y2NDEifQ.I2VniieCs33Q-78jkzfdI4O_aqosAiFOijpbCujtR5g")
-                .addHeader("x-tradestudy-client-version", "3.4.3")
-                .addHeader("x-tradestudy-client-device", "android_phone")
-                .addHeader("x-tradestudy-access-key-id", "c")
-                .build()
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d("", "")
-            }
-
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: Response) {
-                val body = response.body()?.string()
-                val mediaListEnt = Gson().fromJson(body, MediaListEnt::class.java)
-                val sections = ArrayList<MediaListEnt.ChaptersBean.SectionsBean>()
-                for (ent in mediaListEnt.chapters) {
-                    sections.addAll(ent.sections)
-                }
-                activity?.runOnUiThread {
-                    rv?.adapter = PlayListAdapter(sections, xmVideoView)
-                }
-                Log.d("", "body:$body-$mediaListEnt")
-            }
-        })
+//        val okHttpClient = OkHttpClient.Builder().build()
+//        val request = Request.Builder()
+//                .url("https://api.tradestudy.cn/v3/course?courseId=e90b1cbc845411e5a95900163e000c35")
+//                .addHeader("x-tradestudy-access-token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IlpsczdzM0p6SG8zVHl6TkN3UU9iekUzakJNalB1L1loektHemNRYXlzOENHdkxBS1R5REFXbGt1K1FpdFE5WTJqTzAvNnJnQkgwVXA1cjJDYUxTakNBPT0iLCJwaG9uZSI6IjE1MDc0NzcwNzA4IiwiaWQiOiI2NTc4M2IxNWQ0NzcxMWU4OGI0NDAyNDJhYzEzMDAwMyIsInRva2VuIjoiZjc0OTEyYjIzYWFkNDIzMzliNjg1NDdmNzIyY2Y2NDEifQ.I2VniieCs33Q-78jkzfdI4O_aqosAiFOijpbCujtR5g")
+//                .addHeader("x-tradestudy-client-version", "3.4.3")
+//                .addHeader("x-tradestudy-client-device", "android_phone")
+//                .addHeader("x-tradestudy-access-key-id", "c")
+//                .build()
+//        okHttpClient.newCall(request).enqueue(object : Callback {
+//            override fun onFailure(call: Call, e: IOException) {
+//                Log.d("", "")
+//            }
+//
+//            @Throws(IOException::class)
+//            override fun onResponse(call: Call, response: Response) {
+//                val body = response.body()?.string()
+//                val mediaListEnt = Gson().fromJson(body, MediaListEnt::class.java)
+//                val sections = ArrayList<MediaListEnt.ChaptersBean.SectionsBean>()
+//                for (ent in mediaListEnt.chapters) {
+//                    sections.addAll(ent.sections)
+//                }
+//                activity?.runOnUiThread {
+//                    rv?.adapter = PlayListAdapter(sections, xmVideoView)
+//                }
+//                Log.d("", "body:$body-$mediaListEnt")
+//            }
+//        })
     }
 
+
+    @Deprecated("可以不用了")
     fun setPlayList(courseDetail: CoursesDetailCBean?) {
-        val body = Gson().toJson(courseDetail)
-        val mediaListEnt = Gson().fromJson(body, MediaListEnt::class.java)
+//        val body = Gson().toJson(courseDetail)
+//        val mediaListEnt = Gson().fromJson(body, MediaListEnt::class.java)
+//
+//        val sections = ArrayList<MediaListEnt.ChaptersBean.SectionsBean>()
+//        for (ent in mediaListEnt.chapters) {
+//            sections.addAll(ent.sections)
+//        }
+//        activity?.runOnUiThread {
+//            rv?.adapter = PlayListAdapter(sections, xmVideoView)
+//        }
+    }
 
-        val sections = ArrayList<MediaListEnt.ChaptersBean.SectionsBean>()
-        for (ent in mediaListEnt.chapters) {
-            sections.addAll(ent.sections)
-        }
-        activity?.runOnUiThread {
-            rv?.adapter = PlayListAdapter(sections, xmVideoView)
+    private var adapter: PlayListAdapter? = null
+    fun setPlayList(listener: OnPlayListItemClickListener?) {
+        if (mediaInfo != null && !mediaInfo?.mediaInfos?.isEmpty()!!) {
+            activity?.runOnUiThread {
+                val l = LinearLayoutManager(activity)
+                l.orientation = LinearLayoutManager.HORIZONTAL
+                rv?.layoutManager = l
+                adapter = PlayListAdapter(mediaInfo?.mediaInfos, xmVideoView, listener)
+                rv?.adapter = adapter
+            }
+        } else {
+            BKLog.e("设置列表失败")
         }
     }
+
 
     @SuppressLint("ObjectAnimatorBinding")
     override fun showPlayList() {
@@ -380,6 +401,12 @@ class LandscapeViewHolder : ControlViewHolder {
         seekBar?.progress = present
     }
 
+
+    fun selectPlayList(index: Int) {
+        adapter?.data!![index].select = true
+        adapter?.notifyItemChanged(index)
+    }
+
     /**
      * 弹出框设置
      */
@@ -453,24 +480,33 @@ class LandscapeViewHolder : ControlViewHolder {
     private class PlayListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var cover: ImageView? = null
         private var title: TextView? = null
-        fun bind(any: Any, mediaPlayer: XmVideoView?) {
-            val sectionsBean = any as MediaListEnt.ChaptersBean.SectionsBean
+        private var tvChapter: TextView? = null
+        fun bind(any: MediaBean.MediaInfo, mediaPlayer: XmVideoView?, position: Int, listener: OnPlayListItemClickListener?) {
+            val sectionsBean = any
             cover = itemView.findViewById(R.id.iv_cover)
             title = itemView.findViewById(R.id.tv_title)
-
-            Glide.with(itemView.context).load(sectionsBean.avatar).error(R.mipmap.ic_launcher).listener(object : RequestListener<String?, GlideDrawable?> {
-                override fun onException(e: java.lang.Exception?, model: String?, target: Target<GlideDrawable?>?, isFirstResource: Boolean): Boolean {
-                    e?.printStackTrace()
-                    return false
-                }
-
-                override fun onResourceReady(resource: GlideDrawable?, model: String?, target: Target<GlideDrawable?>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                    return false
-                }
-            }).into(cover)
+            tvChapter = itemView.findViewById(R.id.tv_chapter)
+            com.ponko.cn.utils.Glide.with(itemView.context, sectionsBean.avatar, cover)
             title?.text = sectionsBean.name
+            if(sectionsBean.select==true){
+                title?.setTextColor(Color.parseColor("#FF5A5E"))
+                tvChapter?.setTextColor(Color.parseColor("#FF5A5E"))
+            }
             itemView.setOnClickListener {
-                mediaPlayer?.start(sectionsBean.hls1, true)
+                if (sectionsBean.isPay!! || sectionsBean.isFree!!) {
+                    MediaUitl.getM3u8Url(sectionsBean.vid, object : MediaUitl.OnPlayUrlListener {
+                        override fun onFailure() {
+                            BKLog.d("获取播放地址成功")
+                        }
+
+                        override fun onSuccess(url: String, size: Int?) {
+                            mediaPlayer?.start(url, true)
+                        }
+                    })
+                    listener?.item(itemView, position)
+                } else {
+                    ToastUtil.show("请先购买")
+                }
             }
         }
     }
@@ -478,14 +514,14 @@ class LandscapeViewHolder : ControlViewHolder {
     /**
      * 播放列表Adapter
      */
-    private class PlayListAdapter(val data: ArrayList<*>, val xmVideoView: XmVideoView?) : RecyclerView.Adapter<PlayListViewHolder>() {
+    private class PlayListAdapter(val data: List<MediaBean.MediaInfo>?, val xmVideoView: XmVideoView?, val listener: OnPlayListItemClickListener?) : RecyclerView.Adapter<PlayListViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayListViewHolder {
             return PlayListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false))
         }
 
         override fun getItemCount(): Int {
-            return if (data.isEmpty()) {
+            return if (data?.isEmpty()!!) {
                 0
             } else {
                 data.size
@@ -493,7 +529,7 @@ class LandscapeViewHolder : ControlViewHolder {
         }
 
         override fun onBindViewHolder(holder: PlayListViewHolder, position: Int) {
-            holder.bind(data[position]!!, xmVideoView)
+            holder.bind(data!![position], xmVideoView, position, listener)
         }
     }
 }
