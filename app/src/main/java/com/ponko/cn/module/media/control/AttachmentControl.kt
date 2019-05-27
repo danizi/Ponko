@@ -31,6 +31,10 @@ import com.xm.lib.media.event.PlayerObserver
  */
 class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
     /**
+     * 课程标题
+     */
+    private var title: String = ""
+    /**
      * 点击列表监听
      */
     private var listener: OnPlayListItemClickListener? = null
@@ -223,6 +227,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
             }
         }
         ui?.progressTimerStart(period.toLong())
+        ui?.setTitle(title)
     }
 
     private fun addLandscapeView(visibility: Int = View.GONE) {
@@ -254,6 +259,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         //设置播放列表监听
         (ui as LandscapeViewHolder).setPlayList(listener)
         (ui as LandscapeViewHolder).selectPlayList(this.index)
+        ui?.setTitle(title)
     }
 
     /**
@@ -261,6 +267,10 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
      */
     fun showLoading() {
         ui?.showLoading()
+    }
+
+    fun pause() {
+        xmVideoView?.pause()
     }
 
     /**
@@ -271,7 +281,6 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
      */
     fun start(vid: String, progress: Int? = 0, index: Int) {
         if (NetworkUtil.isNetworkConnected(context)) {
-            xmVideoView?.pause()
             MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
                 override fun onFailure() {
                     BKLog.e("获取视频失败")
@@ -322,7 +331,18 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         this.listener = listener
     }
 
-    fun refreshItem(index: Int) {
+    /**
+     * 刷新
+     */
+    fun updateListItem(index: Int) {
         (ui as LandscapeViewHolder).selectPlayList(index)
+    }
+
+    /**
+     * 设置标题
+     */
+    fun setTitle(title: String) {
+        this.title = title
+        ui?.setTitle(title)
     }
 }

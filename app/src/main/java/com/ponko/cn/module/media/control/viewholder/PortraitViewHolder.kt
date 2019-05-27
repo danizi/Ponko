@@ -21,6 +21,11 @@ import com.xm.lib.media.view.XmPopWindow
  * 竖屏界面
  */
 class PortraitViewHolder : ControlViewHolder {
+
+    override fun setTitle(title: String) {
+        tvTitle?.text = title
+    }
+
     override fun setMediaInfo(info: MediaBean) {
     }
 

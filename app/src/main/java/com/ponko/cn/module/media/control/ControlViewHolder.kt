@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Rect
 import android.view.View
-import com.ponko.cn.bean.CourseDetailCBean
 import com.ponko.cn.bean.MediaBean
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimerHelper
@@ -244,4 +243,9 @@ abstract class ControlViewHolder {
      * 播放列表
      */
     abstract fun setMediaInfo(info: MediaBean)
+
+    /**
+     * 设置标题
+     */
+    abstract fun setTitle(title: String)
 }

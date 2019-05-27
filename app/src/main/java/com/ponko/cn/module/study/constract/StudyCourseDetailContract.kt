@@ -79,7 +79,12 @@ class StudyCourseDetailContract {
          * @param groupPosition 点击展开列表的父组位置
          * @param childPosition 点击展开列表的子组位置
          */
-        fun start(coursesDetailCBean:CoursesDetailCBean,vid: String, groupPosition: Int, childPosition: Int)
+        fun start(coursesDetailCBean: CoursesDetailCBean, vid: String, groupPosition: Int, childPosition: Int)
+
+        /**
+         * 设置标题
+         */
+        fun setTitle(title: String?)
 
         /**
          * 二级列表的适配器
@@ -190,28 +195,29 @@ class StudyCourseDetailContract {
                     childViewHolder.tvLocal.visibility = View.GONE
                 }
 
-                // 当前位置状态
-                if (clickItemChildPos == childPosition && groupPosition == clickItemGroupPos) {
-                    //选中状态
-                    childViewHolder.tvPos.isEnabled = true
-                    childViewHolder.tvPos.text = ""
-                    childViewHolder.tvCourseName.isEnabled = true
-                    childViewHolder.tvTime.isEnabled = true
-                    childViewHolder.tvProcess.isEnabled = true
-                } else {
-                    //非选中状态
-                    //课程是否免费
-                    if (isPay || isFree) {
+
+                //非选中状态
+                //课程是否免费
+                if (isPay || isFree) {
+                    // 当前位置状态
+                    if (clickItemChildPos == childPosition && groupPosition == clickItemGroupPos) {
+                        //选中状态
+                        childViewHolder.tvPos.isEnabled = true
+                        childViewHolder.tvPos.text = ""
+                        childViewHolder.tvCourseName.isEnabled = true
+                        childViewHolder.tvTime.isEnabled = true
+                        childViewHolder.tvProcess.isEnabled = true
+                    } else {
                         childViewHolder.tvPos.isEnabled = false
                         childViewHolder.tvCourseName.isEnabled = false
                         childViewHolder.tvTime.isEnabled = false
                         childViewHolder.tvProcess.isEnabled = false
-                    } else {
-                        childViewHolder.tvPos.setBackgroundResource(R.mipmap.free_lock)
-                        childViewHolder.tvPos.width = 20
-                        childViewHolder.tvPos.height = 20
-                        childViewHolder.tvPos.text = ""
                     }
+                } else {
+                    childViewHolder.tvPos.setBackgroundResource(R.mipmap.free_lock)
+                    childViewHolder.tvPos.width = 20
+                    childViewHolder.tvPos.height = 20
+                    childViewHolder.tvPos.text = ""
                 }
                 BKLog.d("getChildView clickItemChildPos->$clickItemChildPos clickItemGroupPos->$clickItemGroupPos")
                 return view
@@ -391,7 +397,12 @@ class StudyCourseDetailContract {
          * 点击了展开列表中的item
          */
         fun clickExpandListItem(parent: ExpandableListView, v: View, groupPosition: Int, childPosition: Int, id: Long): Boolean? {
-            if (model.isPay) {
+            val isFree = model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].isFree
+            if (model.isPay || isFree) {
+
+                //设置标题
+                this.v.setTitle(model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name)
+
                 //设置分享信息
                 val cid = model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].id
                 val shareUrl = model.coursesDetailCBean?.share_base_url!! + "/" + cid
@@ -401,20 +412,28 @@ class StudyCourseDetailContract {
 
                 //点击播放
                 val vid = model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].vid
-                this.v.start(model.coursesDetailCBean!!,vid, groupPosition, childPosition)
+                this.v.start(model.coursesDetailCBean!!, vid, groupPosition, childPosition)
 
                 //点击之后刷新item选中状态
-                model.myExtendableListAdp?.clickItemChildPos = childPosition
-                model.myExtendableListAdp?.clickItemGroupPos = groupPosition
-                model.myExtendableListAdp?.notifyDataSetChanged()
+                updateExtendableListItem(groupPosition, childPosition)
 
                 //打印日志
                 val name = model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name
                 BKLog.d("点击：$groupPosition  $childPosition vid:$name")
+
             } else {
                 ToastUtil.show("请先购买课程！")
             }
             return true
+        }
+
+        /**
+         * 更新列表，变为点击状态
+         */
+        fun updateExtendableListItem(groupPosition: Int, childPosition: Int) {
+            model.myExtendableListAdp?.clickItemChildPos = childPosition
+            model.myExtendableListAdp?.clickItemGroupPos = groupPosition
+            model.myExtendableListAdp?.notifyDataSetChanged()
         }
 
         /**
@@ -449,6 +468,8 @@ class StudyCourseDetailContract {
                     //设置展示列表
                     model.myExtendableListAdp = StudyCourseDetailContract.V.MyExtendableListViewAdapter(model.coursesDetailCBean)
                     v.displayVideoExtendableList(model.myExtendableListAdp)
+                    //设置标题
+                    v.setTitle(model.coursesDetailCBean?.chapters!![0].sections[0].name)
                 }
             })
         }

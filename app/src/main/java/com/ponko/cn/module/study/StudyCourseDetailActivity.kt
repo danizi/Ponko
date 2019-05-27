@@ -71,6 +71,8 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         }
     }
 
+    private var coursesDetailCBean: CoursesDetailCBean? = null
+
     /**
      * 主窗口UI
      */
@@ -135,10 +137,26 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         }
 
         attachmentControl?.setOnPlayListItemClickListener(object : OnPlayListItemClickListener {
-            override fun item(view: View, postion: Int) {
+            override fun item(vid: String?, progress: Int?, view: View, postion: Int) {
                 BKLog.d("横屏状态点击了播放列表:$postion")
-                //更新一下
-                attachmentControl?.refreshItem(postion)
+
+                //暂停播放
+                attachmentControl?.pause()
+                attachmentControl?.showLoading()
+
+                //更新下横屏列表item
+                attachmentControl?.updateListItem(postion)
+
+                //更新下竖屏列表item
+                val (groupPosition, childPosition) = oneToTwo(postion)
+                p?.updateExtendableListItem(groupPosition, childPosition)
+                BKLog.d("选中groupPosition:$groupPosition childPosition:$childPosition")
+
+                //设置标题
+                setTitle(coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name)
+
+                //播放视频
+                attachmentControl?.start(vid!!, progress, postion)
             }
         })
     }
@@ -176,6 +194,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
     }
 
     override fun setVideoControlPlayListInfo(coursesDetailCBean: CoursesDetailCBean?) {
+        this.coursesDetailCBean = coursesDetailCBean
         attachmentControl?.setMediaInfo(MediaUitl.buildPlayListByStudy(coursesDetailCBean))
     }
 
@@ -194,8 +213,40 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
     override fun start(coursesDetailCBean: CoursesDetailCBean, vid: String, groupPosition: Int, childPosition: Int) {
         val progress = coursesDetailCBean.chapters[groupPosition].sections[childPosition].progress_duration * 1000
+        val pos = twoToOne(coursesDetailCBean, groupPosition, childPosition)
+        BKLog.d("二维转一维数组-> 下标pos:$pos")
+        attachmentControl?.start(vid, progress, pos)
+    }
+
+    override fun setTitle(title: String?) {
+        attachmentControl?.setTitle(title!!)
+    }
+
+    /**
+     * 一维数组转二维 - 位置
+     */
+    private fun oneToTwo(postion: Int): Pair<Int, Int> {
+        var tempPostion = postion + 1
+        var groupPosition = 0
+        var childPosition = 0
+        for (chapters in coursesDetailCBean?.chapters!!) {
+            if (tempPostion >= chapters.sections.size) {
+                groupPosition++
+                tempPostion -= chapters.sections.size
+            } else {
+                break
+            }
+        }
+        childPosition = tempPostion - 1
+        return Pair(groupPosition, childPosition)
+    }
+
+    /**
+     * 二维数组转一维 - 位置
+     */
+    private fun twoToOne(coursesDetailCBean: CoursesDetailCBean?, groupPosition: Int, childPosition: Int): Int {
         var pos = 0
-        for ((count, chapters) in coursesDetailCBean.chapters.withIndex()) {
+        for ((count, chapters) in coursesDetailCBean?.chapters?.withIndex()!!) {
             if (count < groupPosition) {
                 pos += chapters.sections.size
             } else {
@@ -203,15 +254,6 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
             }
         }
         pos += childPosition
-        BKLog.d("二维转一维数组-> 下标pos:$pos")
-        attachmentControl?.start(vid, progress, pos)
-    }
-
-    private fun oneToTwo() {
-
-    }
-
-    private fun twoToOne() {
-
+        return pos
     }
 }
