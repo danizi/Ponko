@@ -23,7 +23,6 @@ import com.xm.lib.media.broadcast.BroadcastManager
  */
 class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present>(), StudyCourseDetailContract.V {
 
-
     companion object {
         const val TAG = "StudyCourseDetailActivity"
         const val TYPE_FROM_GENERAL = "from_general"
@@ -106,6 +105,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        p?.uploadVideoProgress(viewHolder?.video)
     }
 
     /**
@@ -114,6 +114,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
     override fun onDestroy() {
         super.onDestroy()
         viewHolder?.video?.onDestroy()
+        p?.closeUploadVideoProgress()
     }
 
     override fun presenter(): StudyCourseDetailContract.Present {
@@ -132,8 +133,8 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
     override fun initDisplay() {
         super.initDisplay()
-        com.jaeger.library.StatusBarUtil.setColor(this, this.resources.getColor(R.color.black), 0) //系统栏颜色
-
+        //系统栏颜色
+        com.jaeger.library.StatusBarUtil.setColor(this, this.resources.getColor(R.color.black), 0)
         //按比例设置播放器View
         val present = 1f / 1.8f
         val layoutParams = viewHolder?.video?.layoutParams
@@ -158,8 +159,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
         attachmentControl?.setOnPlayListItemClickListener(object : OnPlayListItemClickListener {
             override fun item(vid: String?, progress: Int?, view: View, postion: Int) {
-                BKLog.d("横屏状态点击了播放列表:$postion")
-
+                p?.clickPlayListItem(vid,progress,view,postion)
                 //暂停播放
                 attachmentControl?.pause()
                 attachmentControl?.showLoading()
@@ -168,7 +168,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
                 attachmentControl?.updateListItem(postion)
 
                 //更新下竖屏列表item
-                val (groupPosition, childPosition) = oneToTwo(postion)
+                val (groupPosition, childPosition) = p?.oneToTwo(postion)!!
                 p?.updateExtendableListItem(groupPosition, childPosition)
                 BKLog.d("选中groupPosition:$groupPosition childPosition:$childPosition")
 
@@ -233,47 +233,12 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
     override fun start(coursesDetailCBean: CoursesDetailCBean, vid: String, groupPosition: Int, childPosition: Int) {
         val progress = coursesDetailCBean.chapters[groupPosition].sections[childPosition].progress_duration * 1000
-        val pos = twoToOne(coursesDetailCBean, groupPosition, childPosition)
+        val pos = p?.twoToOne(coursesDetailCBean, groupPosition, childPosition)
         BKLog.d("二维转一维数组-> 下标pos:$pos")
-        attachmentControl?.start(vid, progress, pos)
+        attachmentControl?.start(vid, progress, pos!!)
     }
 
     override fun setTitle(title: String?) {
         attachmentControl?.setTitle(title!!)
-    }
-
-    /**
-     * 一维数组转二维 - 位置
-     */
-    private fun oneToTwo(postion: Int): Pair<Int, Int> {
-        var tempPostion = postion + 1
-        var groupPosition = 0
-        var childPosition = 0
-        for (chapters in coursesDetailCBean?.chapters!!) {
-            if (tempPostion >= chapters.sections.size) {
-                groupPosition++
-                tempPostion -= chapters.sections.size
-            } else {
-                break
-            }
-        }
-        childPosition = tempPostion - 1
-        return Pair(groupPosition, childPosition)
-    }
-
-    /**
-     * 二维数组转一维 - 位置
-     */
-    private fun twoToOne(coursesDetailCBean: CoursesDetailCBean?, groupPosition: Int, childPosition: Int): Int {
-        var pos = 0
-        for ((count, chapters) in coursesDetailCBean?.chapters?.withIndex()!!) {
-            if (count < groupPosition) {
-                pos += chapters.sections.size
-            } else {
-                break
-            }
-        }
-        pos += childPosition
-        return pos
     }
 }

@@ -24,7 +24,6 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.downloader.task.DownTask
 import retrofit2.Call
 import retrofit2.Response
 
@@ -99,7 +98,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                     ActivityUtil.startActivity(context, Intent(context, CacheAct::class.java))
                 }
                 "收藏" -> {
-                    ActivityUtil.startActivity(context, Intent(context, ColoctAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, CollectAct::class.java))
                 }
                 "历史" -> {
                     ActivityUtil.startActivity(context, Intent(context, HistoryActivity::class.java))

@@ -20,8 +20,10 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.study.StudyCacheActivity
 import com.ponko.cn.utils.ShareUtil
 import com.ponko.cn.utils.ToastUtil
+import com.xm.lib.common.http.NetBean
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
+import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
 import retrofit2.Response
@@ -352,6 +354,10 @@ class StudyCourseDetailContract {
      */
     class Present(val context: Context, val v: V) {
         private val model = M()
+        /**
+         * 定时器帮助类
+         */
+        private val timerHelper = TimerHelper()
 
         /**
          * 点击了收藏
@@ -458,15 +464,26 @@ class StudyCourseDetailContract {
             } else {
                 ToastUtil.show("请先购买课程！")
             }
+            model.myExtendableListAdp?.clickItemChildPos = childPosition
+            model.myExtendableListAdp?.clickItemGroupPos = groupPosition
             return true
+        }
+
+        /**
+         * 点击了视频列表的item
+         */
+        fun clickPlayListItem(vid: String?, progress: Int?, view: View, postion: Int) {
+            BKLog.d("横屏状态点击了播放列表:$postion")
+            val (groupPosition, childPosition) = oneToTwo(postion)!!
+            model.clickItemGroupPos = groupPosition
+            model.clickItemChildPos = childPosition
         }
 
         /**
          * 更新列表，变为点击状态
          */
         fun updateExtendableListItem(groupPosition: Int, childPosition: Int) {
-            model.myExtendableListAdp?.clickItemChildPos = childPosition
-            model.myExtendableListAdp?.clickItemGroupPos = groupPosition
+
             model.myExtendableListAdp?.notifyDataSetChanged()
         }
 
@@ -506,6 +523,83 @@ class StudyCourseDetailContract {
                     v.setTitle(model.coursesDetailCBean?.chapters!![0].sections[0].name)
                 }
             })
+        }
+
+        /**
+         * 一维数组转二维 - 位置
+         */
+        fun oneToTwo(postion: Int): Pair<Int, Int> {
+            var tempPostion = postion + 1
+            var groupPosition = 0
+            var childPosition = 0
+            for (chapters in model.coursesDetailCBean?.chapters!!) {
+                if (tempPostion >= chapters.sections.size) {
+                    groupPosition++
+                    tempPostion -= chapters.sections.size
+                } else {
+                    break
+                }
+            }
+            childPosition = tempPostion - 1
+            return Pair(groupPosition, childPosition)
+        }
+
+        /**
+         * 二维数组转一维 - 位置
+         */
+        fun twoToOne(coursesDetailCBean: CoursesDetailCBean?, groupPosition: Int, childPosition: Int): Int {
+            var pos = 0
+            for ((count, chapters) in coursesDetailCBean?.chapters?.withIndex()!!) {
+                if (count < groupPosition) {
+                    pos += chapters.sections.size
+                } else {
+                    break
+                }
+            }
+            pos += childPosition
+            return pos
+        }
+
+        /**
+         * 上传播放进度
+         */
+        fun uploadVideoProgress(video: XmVideoView?) {
+            timerHelper.start(object : TimerHelper.OnPeriodListener {
+                override fun onPeriod() {
+                    val mediaPlayer = video?.mediaPlayer
+                    val isPlaying = mediaPlayer?.isPlaying()
+                    val isComplete = video?.isComplete
+                    if (isPlaying == true) {
+                        val sectionId = model.coursesDetailCBean?.chapters!![model.clickItemGroupPos].sections[model.clickItemChildPos].id
+                        val courseId = model.typeId
+                        val pos = mediaPlayer.getCurrentPosition()
+                        val params = HashMap<String, String>()
+                        params["completed"] = isComplete.toString()
+                        params["duration"] = mediaPlayer.getDuration().toString()
+                        params["position"] = (pos / 1000).toString()
+                        params["courseId"] = courseId
+                        params["sectionId"] = sectionId
+                        BKLog.d("上传内容 completed${isComplete.toString()} duration${(pos / 1000)} position:$pos courseId$courseId sectionId$sectionId")
+                        PonkoApp.studyApi?.updateVideoInfo(params)?.enqueue(object : HttpCallBack<NetBean>() {
+                            override fun onSuccess(call: Call<NetBean>?, response: Response<NetBean>?) {
+                                BKLog.d("上传视频进度成功")
+                            }
+
+                            override fun onFailure(call: Call<NetBean>?, msg: String?) {
+                                super.onFailure(call, msg)
+                                BKLog.d("上传视频进度失败")
+                            }
+                        })
+                    }
+                }
+            }, 10000)
+        }
+
+        /**
+         * 关闭上传进度
+         */
+        fun closeUploadVideoProgress() {
+            timerHelper.stop()
         }
     }
 }

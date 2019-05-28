@@ -1,6 +1,7 @@
 package com.ponko.cn.api
 
 import com.ponko.cn.bean.*
+import com.xm.lib.common.http.NetBean
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -48,5 +49,18 @@ interface StudyApi {
     @Deprecated("")
     @FormUrlEncoded
     @POST("http://api.polyv.net/v2/video/{userid}/get-video-msg")
-    fun updateVideoInfo(@FieldMap params: Map<String, String>): Call<Any>
+    fun getVideoInfo(@FieldMap params: Map<String, String>): Call<Any>
+
+    /**
+     * 上传学习视频进度
+     * params :
+     *        completed  是否完成
+     *        duration   视频总时长
+     *        position   视频进度（单位秒）
+     *        courseId   课程id
+     *        sectionId  章节id
+     */
+    @FormUrlEncoded
+    @POST("study/histories/update")
+    fun updateVideoInfo(@FieldMap params: Map<String, String>): Call<NetBean>
 }

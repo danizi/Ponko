@@ -63,7 +63,7 @@
         <!-- ============================================我的-积分商城相关 start -->
         <activity android:name=".module.my.option.store.StoreAct" />
         <activity android:name=".module.my.option.CacheAct" />
-        <activity android:name=".module.my.option.ColoctAct" />
+        <activity android:name=".module.my.option.CollectAct" />
         <activity android:name=".module.my.option.StudyRecordAct" />
         <activity android:name=".module.my.option.RemindAct" />
         <activity android:name=".module.my.option.LearnRankingAct" />
