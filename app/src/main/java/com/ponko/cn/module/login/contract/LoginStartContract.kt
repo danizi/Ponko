@@ -75,6 +75,7 @@ class LoginStartContract {
                 BKLog.d("已綁定微信，$userInfo")
                 val token = oauthBean?.token
                 CacheUtil.putToken(token)
+                CacheUtil.putUserTypeWx()
                 val intent = Intent(context, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 ActivityUtil.startActivity(context, intent)
@@ -145,6 +146,7 @@ class LoginStartContract {
         }
 
         fun clickWxLogin() {
+            CacheUtil.putToken("")
             val wxShare = WxShare(context as Activity)
             wxShare.init(ShareConfig.Builder().appid(APP_ID).build())
             wxShare.oauth()

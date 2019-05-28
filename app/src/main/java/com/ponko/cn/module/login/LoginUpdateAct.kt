@@ -104,7 +104,11 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
     override fun initDisplay() {
         super.initDisplay()
         viewHolder?.tvWxSuccess?.text = when (from) {
-            FINDPWD -> {
+            FINDPWD  -> {
+                viewHolder?.etAccount?.hint = SpannableString("请输入新密码")
+                "重置密码"
+            }
+            RESETPHONE->{
                 viewHolder?.etAccount?.hint = SpannableString("请输入新密码")
                 "重置密码"
             }
@@ -148,6 +152,7 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
         token = intent.getStringExtra(TOKEN)
         BKLog.d("token:$token")
         if (!TextUtils.isEmpty(newPwd)) {
+            DialogUtil.showProcess(this)
             PonkoApp.loginApi?.resetPassword(newPwd, token!!)?.enqueue(object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     DialogUtil.show(this@LoginUpdateAct, "提示", "修改成功，请重新登录", false, object : OnEnterListener {
@@ -157,6 +162,12 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
                             dlg.dismiss()
                         }
                     }, null)
+                    DialogUtil.hideProcess()
+                }
+
+                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    DialogUtil.hideProcess()
                 }
             })
         } else {

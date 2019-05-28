@@ -17,6 +17,8 @@ class PonkoDBHelp(context: Context?, name: String?, factory: SQLiteDatabase.Curs
         BKLog.d("onCreate 创建表")
         db?.execSQL(CacheContract.CourseSpecialTable.SQL_CREATE_COURSE_SPECIAL_TABLE)
         db?.execSQL(CacheContract.CourseTable.SQL_CREATE_TABLE)
+        db?.execSQL(CacheContract.CourseCollectSpecialTable.SQL_CREATE_COURSE_COLLECT_SPECIAL_TABLE)
+        db?.execSQL(CacheContract.CourseCollectSectionTable.SQL_CREATE_COURSE_COLLECT_SECTION_TABLE)
     }
 
     /**

@@ -22,6 +22,7 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.login.contract.LoginAccountContract
 import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimerHelper
 import retrofit2.Call
@@ -160,9 +161,16 @@ class LogSmsAct : PonkoBaseAct<Any>() {
         if (TextUtils.isEmpty(code)) {
             Toast.makeText(this, "验证码不能为空", Toast.LENGTH_SHORT).show()
         } else {
+            DialogUtil.showProcess(this)
             PonkoApp.loginApi?.checkResetPhoneCode(code)?.enqueue(object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     LoginUpdateAct.startFromResetPhone(this@LogSmsAct, code)
+                    DialogUtil.hideProcess()
+                }
+
+                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    DialogUtil.hideProcess()
                 }
             })
 
@@ -182,11 +190,18 @@ class LogSmsAct : PonkoBaseAct<Any>() {
         if (TextUtils.isEmpty(code)) {
             Toast.makeText(this, "验证码不能为空", Toast.LENGTH_SHORT).show()
         } else {
+            DialogUtil.showProcess(this)
             PonkoApp.loginApi?.register(phone, pwd, code, token)?.enqueue(object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     BKLog.d("找回密码验证码合法")
                     //请求登录接口进行登录
                     LoginAccountContract.Present(this@LogSmsAct, null).clickEnter(phone, pwd)
+                    DialogUtil.hideProcess()
+                }
+
+                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    DialogUtil.hideProcess()
                 }
             })
         }

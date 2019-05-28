@@ -4,20 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/divider"
     android:fitsSystemWindows="true"
     tools:context="com.ponko.cn.module.my.option.acount.AccountAct">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <!--标题栏-->
         <android.support.v7.widget.Toolbar
-            android:background="@color/white"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
             android:elevation="6dp"
             android:minHeight="?attr/actionBarSize"
             app:contentInsetLeft="0dp"
@@ -41,7 +42,6 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_account"
-                android:background="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
@@ -49,6 +49,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="15dp"
                 android:layout_marginRight="15dp"
+                android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -66,9 +67,9 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_secure"
                 android:layout_width="0dp"
-                android:background="@color/white"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="@+id/rv_account"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/rv_account"
@@ -86,6 +87,16 @@
                 app:layout_constraintEnd_toEndOf="@+id/rv_secure"
                 app:layout_constraintStart_toStartOf="@+id/rv_secure"
                 app:layout_constraintTop_toBottomOf="@+id/rv_secure" />
+
+            <TextView
+                android:id="@+id/tv_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="版本"
+                app:layout_constraintEnd_toEndOf="@+id/btn_exit"
+                app:layout_constraintStart_toStartOf="@+id/btn_exit"
+                app:layout_constraintTop_toBottomOf="@+id/btn_exit" />
 
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>

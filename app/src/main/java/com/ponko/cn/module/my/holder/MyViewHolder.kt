@@ -154,6 +154,13 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
                 vipDes = "登录后可以多终端同步您的所有信息"
             }
             USERTYPE_WXLOGIN -> {
+                if (profileCBean.account.expiredTime > 0) {
+                    vipDes = "已加入帮课大学"
+                    viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
+                } else {
+                    vipDes = "未入学"
+                    viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
+                }
                 name = profileCBean.account.nickname
             }
         }
@@ -161,21 +168,6 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         if (TextUtils.isEmpty(name)) {
             name = "帮课大学学员"
         }
-//        if (isUserTypeLogin()) {
-//            // 登录模式
-//            name = profileCBean.account.realName
-//            if (profileCBean.account.expiredTime > 0) {
-//                vipDes = "已加入帮课大学"
-//                viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
-//            } else {
-//                vipDes = "未入学"
-//                viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
-//            }
-//        } else {
-//            // 游客模式
-//            name = "同学，请登录"
-//            vipDes = "登录后可以多终端同步您的所有信息"
-//        }
         return Pair(name, vipDes)
     }
 }

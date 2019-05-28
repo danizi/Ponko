@@ -154,18 +154,100 @@ class CacheContract {
         const val SQL_SELECT_ALL = "SELECT * FROM $TABLE_NAME;"
     }
 
-
-    /**
-     * 收藏 - 小结收藏
-     */
-    object CourseCollectSection {
-
-    }
-
     /**
      * 收藏 - 专题
      */
     object CourseCollectSpecialTable {
+        //表名
+        private const val TABLE_NAME = "CourseCollectSpecialTable"
+        //表-列
+        private const val PRIMARY_ID = "_id"                     //主键ID
+        private const val COLUMN_UID = "uid"                     //用户唯一标识 PS：关联用户表
+        private const val COLUMN_COURSE_ID = "course_id"         //学习专题id 即是课程id
+        private const val COLUMN_TEACHER = "teacher"             //专题老师
+        private const val COLUMN_NUM = "num"                     //专题课程数量
+        private const val COLUMN_COVER = "cover"                 //专题封面
+        private const val COLUMN_TITLE = "title"                 //专题标题
+        //创建表
+        const val SQL_CREATE_COURSE_COLLECT_SPECIAL_TABLE = "CREATE TABLE $TABLE_NAME(" +
+                "$PRIMARY_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "$COLUMN_UID TEXT NOT NULL," +
+                "$COLUMN_COURSE_ID TEXT NOT NULL," +
+                "$COLUMN_TEACHER TEXT NOT NULL," +
+                "$COLUMN_NUM TEXT NOT NULL," +
+                "$COLUMN_COVER TEXT NOT NULL," +
+                "$COLUMN_TITLE TEXT NOT NULL" +
+                ");"
 
+        //增
+        const val SQL_INSERT = "insert $TABLE_NAME(" +
+                "$COLUMN_UID," +
+                "$COLUMN_COURSE_ID," +
+                "$COLUMN_TEACHER," +
+                "$COLUMN_NUM," +
+                "$COLUMN_COVER," +
+                "$COLUMN_TITLE" +
+                ")VALUE(?,?,?,?,?,?)"
+
+        //删
+        const val SQL_DETELE_BY_COURSE_ID="delete from $TABLE_NAME where $COLUMN_COURSE_ID = ?;"
+        const val SQL_DETELE_BY_ALL="delete from $TABLE_NAME;"
+
+        //改
+        const val SQL_UPDATE_BY_COURSE_ID="update $TABLE_NAME SET " +
+                "$COLUMN_UID =?," +
+                "$COLUMN_COURSE_ID =?," +
+                "$COLUMN_TEACHER =?," +
+                "$COLUMN_NUM =?," +
+                "$COLUMN_COVER =?," +
+                "$COLUMN_TITLE =?" +
+                "WHERE $COLUMN_COURSE_ID=?;"
+        //查
+        const val SQL_SELECT_BY_COURSE_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID=?"
     }
+
+    /**
+     * 收藏 - 小结收藏
+     */
+    object CourseCollectSectionTable {
+        //表名
+        private const val TABLE_NAME = "CourseCollectSectionTable"
+        //表-列
+        private const val PRIMARY_ID = "_id"                           //主键ID
+        private const val COLUMN_UID = "uid"                           //用户唯一标识 PS：关联用户表
+        private const val COLUMN_COURSE_ID = "course_id"               //学习专题id 即是课程id
+        private const val COLUMN_SECTION_ID = "section_id"             //小节id
+        private const val COLUMN_SECTION_NAME = "column_section_name"  //小节名称
+        //创建表
+        const val SQL_CREATE_COURSE_COLLECT_SECTION_TABLE = "CREATE TABLE $TABLE_NAME(" +
+                "$PRIMARY_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "$COLUMN_UID TEXT NOT NULL," +
+                "$COLUMN_COURSE_ID TEXT NOT NULL," +
+                "$COLUMN_SECTION_ID TEXT NOT NULL," +
+                "$COLUMN_SECTION_NAME TEXT NOT NULL" +
+                ");"
+        //增
+        const val SQL_INSERT = "INSERT INTO $TABLE_NAME(" +
+                "$COLUMN_UID=?," +
+                "$COLUMN_COURSE_ID=?," +
+                "$COLUMN_SECTION_ID=?," +
+                "$COLUMN_SECTION_NAME=?" +
+                ")VALUE(?,?,?)"
+        //删
+        const val SQL_DELETE_BY_COURSE_ID = "DELETE FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
+        const val SQL_DELETE_ALL = "DELETE FROM $TABLE_NAME;"
+
+        //改
+        const val SQL_UPDATE_BY_COURSE_ID="UPDATE $TABLE_NAME SET" +
+                "$COLUMN_UID=?," +
+                "$COLUMN_COURSE_ID=?," +
+                "$COLUMN_SECTION_ID=?," +
+                "$COLUMN_SECTION_NAME=?" +
+                "WHERE $COLUMN_COURSE_ID=?;"
+
+        //查
+        const val SQL_SELECT_BY_COURSE_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID=?"
+    }
+
+
 }

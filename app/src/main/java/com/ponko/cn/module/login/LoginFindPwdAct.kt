@@ -17,6 +17,7 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
+import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.base.BaseActivity
 import retrofit2.Call
 import retrofit2.Response
@@ -102,11 +103,18 @@ class LoginFindPwdAct : PonkoBaseAct<Any>() {
             }
         })
         viewHolder?.btnEnter?.setOnClickListener {
+            DialogUtil.showProcess(this)
             //下一步，請求發送短信接口成功，跳轉到短信頁面
             PonkoApp.loginApi?.forgetPasswordSms(viewHolder?.etAccount?.text.toString())?.enqueue(object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     //下一步，請求發送短信接口成功，跳轉到短信頁面
                     LogSmsAct.startFromFindPwd(this@LoginFindPwdAct, viewHolder?.etAccount?.text.toString())
+                    DialogUtil.hideProcess()
+                }
+
+                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    DialogUtil.hideProcess()
                 }
             })
         }

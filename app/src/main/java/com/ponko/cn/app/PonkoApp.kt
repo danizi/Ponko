@@ -3,6 +3,8 @@ package com.ponko.cn.app
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import com.ponko.cn.api.*
 import com.ponko.cn.bean.MainCBean
@@ -17,6 +19,7 @@ import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import com.xm.lib.common.log.BKLog
 import java.io.File
+
 
 class PonkoApp : Application() {
     companion object {
@@ -44,6 +47,19 @@ class PonkoApp : Application() {
         var activityManager = ActManager()
         @SuppressLint("StaticFieldLeak")
         var m3u8DownManager: M3u8DownManager? = null
+
+        fun getLocalVersion(ctx: Context): Int {
+            var localVersion = 0
+            try {
+                val packageInfo = ctx.applicationContext
+                        .packageManager
+                        .getPackageInfo(ctx.packageName, 0)
+                localVersion = packageInfo.versionCode
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+            }
+            return localVersion
+        }
     }
 
     override fun onCreate() {

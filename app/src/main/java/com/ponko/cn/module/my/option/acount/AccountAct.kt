@@ -1,10 +1,12 @@
 package com.ponko.cn.module.my.option.acount
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -23,13 +25,11 @@ import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.login.LoginFindPwdAct
 import com.ponko.cn.module.login.LoginResetPhoneAct
 import com.ponko.cn.module.login.LoginStartAct
-import com.ponko.cn.utils.ActivityUtil
-import com.ponko.cn.utils.BarUtil
-import com.ponko.cn.utils.CacheUtil
-import com.ponko.cn.utils.ToastUtil
+import com.ponko.cn.utils.*
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.component.OnEnterListener
 import com.xm.lib.media.broadcast.BroadcastManager
 import com.xm.lib.share.ShareConfig
 import com.xm.lib.share.wx.WxShare
@@ -60,10 +60,17 @@ class AccountAct : PonkoBaseAct<Any>() {
                     wxShare.oauth()
                 }
                 ACTION_UN_BIND -> {
+                    DialogUtil.showProcess(context!!)
                     loginApi?.wechatUnBint()?.enqueue(object : HttpCallBack<ResponseBody>() {
                         override fun onSuccess(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                             ToastUtil.show("微信解绑成功")
                             CacheUtil.putUserTypeLogin() //从绑定用户 -> 登录用户
+                            DialogUtil.hideProcess()
+                        }
+
+                        override fun onFailure(call: Call<ResponseBody>?, msg: String?) {
+                            super.onFailure(call, msg)
+                            DialogUtil.hideProcess()
                         }
                     })
                 }
@@ -117,16 +124,23 @@ class AccountAct : PonkoBaseAct<Any>() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun initDisplay() {
         super.initDisplay()
         //设置顶部栏
         BarUtil.addBar1(this, viewHolder?.toolbar, "账号安全")
+        viewHolder?.tvVersion?.text = "版本号:${PonkoApp.getLocalVersion(this)}"
     }
 
     override fun iniEvent() {
         super.iniEvent()
         viewHolder?.btnExit?.setOnClickListener {
-            ActivityUtil.clearTheStackStartActivity(this@AccountAct, Intent(this, LoginStartAct::class.java))
+            DialogUtil.show(this, "", "是否退出登录？", true, object : OnEnterListener {
+                override fun onEnter(dlg: AlertDialog) {
+                    ActivityUtil.clearTheStackStartActivity(this@AccountAct, Intent(this@AccountAct, LoginStartAct::class.java))
+                }
+            }, null)
+
         }
     }
 
@@ -150,42 +164,10 @@ class AccountAct : PonkoBaseAct<Any>() {
         viewHolder?.rvSecure?.layoutManager = LinearLayoutManager(this)
     }
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_account)
-//        if (viewHolder == null) {
-//            viewHolder = ViewHolder.create(this)
-//        }
-//
-//        //设置顶部栏
-//        BarUtil.addBar1(this, viewHolder?.toolbar, "账号安全")
-//
-//        //账号
-//        val accountAdapter = object : BaseRvAdapter() {}
-//        accountAdapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my)
-//        accountAdapter.data?.add(ItemBean("个人信息"))
-//        accountAdapter.data?.add(ItemBean("收件信息"))
-//        accountAdapter.data?.add(ItemBean("微信绑定", true))
-//        viewHolder?.rvAccount?.adapter = accountAdapter
-//        viewHolder?.rvAccount?.layoutManager = LinearLayoutManager(this)
-//
-//        //安全
-//        val secureAdapter = object : BaseRvAdapter() {}
-//        secureAdapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my)
-//        secureAdapter.data?.add(ItemBean("修改手机"))
-//        secureAdapter.data?.add(ItemBean("修改密码"))
-//        viewHolder?.rvSecure?.adapter = secureAdapter
-//        viewHolder?.rvSecure?.layoutManager = LinearLayoutManager(this)
-//
-//        viewHolder?.btnExit?.setOnClickListener {
-//            ActivityUtil.clearTheStackStartActivity(this@AccountAct, Intent(this, LoginStartAct::class.java))
-//        }
-//    }
-
     /**
      * 窗体UI ViewHolder
      */
-    private class ViewHolder private constructor(val toolbar: android.support.v7.widget.Toolbar, val tvAccount: TextView, val rvAccount: RecyclerView, val tvSecure: TextView, val rvSecure: RecyclerView, val btnExit: Button) {
+    private class ViewHolder private constructor(val toolbar: android.support.v7.widget.Toolbar, val tvAccount: TextView, val rvAccount: RecyclerView, val tvSecure: TextView, val rvSecure: RecyclerView, val btnExit: Button, val tvVersion: TextView) {
         companion object {
 
             fun create(rootView: AppCompatActivity): ViewHolder {
@@ -195,7 +177,8 @@ class AccountAct : PonkoBaseAct<Any>() {
                 val tvSecure = rootView.findViewById<View>(R.id.tv_secure) as TextView
                 val rvSecure = rootView.findViewById<View>(R.id.rv_secure) as RecyclerView
                 val btnExit = rootView.findViewById<View>(R.id.btn_exit) as Button
-                return ViewHolder(toolbar, tvAccount, rvAccount, tvSecure, rvSecure, btnExit)
+                val tvVersion = rootView.findViewById<View>(R.id.tv_version) as TextView
+                return ViewHolder(toolbar, tvAccount, rvAccount, tvSecure, rvSecure, btnExit, tvVersion)
             }
         }
     }

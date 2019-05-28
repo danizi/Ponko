@@ -12,6 +12,7 @@ import android.widget.*
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response
@@ -78,9 +79,16 @@ class LoginRegisterAct : AppCompatActivity() {
                 Toast.makeText(this, "输入项不能为空", Toast.LENGTH_SHORT).show()
             } else {
                 BKLog.d("點擊注冊 phone:$phone pwd:$pwd 首先請求短信")
+                DialogUtil.showProcess(this)
                 PonkoApp.loginApi?.registerSms(phone)?.enqueue(object : HttpCallBack<GeneralBean>() {
                     override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                         LogSmsAct.startFromRegister(this@LoginRegisterAct, phone, pwd)
+                        DialogUtil.hideProcess()
+                    }
+
+                    override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                        super.onFailure(call, msg)
+                        DialogUtil.hideProcess()
                     }
                 })
             }

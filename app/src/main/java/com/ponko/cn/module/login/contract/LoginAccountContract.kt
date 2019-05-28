@@ -12,6 +12,7 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.login.LoginFindPwdAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response
@@ -44,6 +45,7 @@ class LoginAccountContract {
                 Toast.makeText(context, "密码为空", Toast.LENGTH_SHORT).show()
                 return
             }
+            DialogUtil.showProcess(context!!)
             model.requestLoginApi(phone, pwd, object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     BKLog.d("登录成功")
@@ -53,6 +55,12 @@ class LoginAccountContract {
                     val intent = Intent(context, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     ActivityUtil.startActivity(context, intent)
+                    DialogUtil.hideProcess()
+                }
+
+                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    DialogUtil.hideProcess()
                 }
             })
         }

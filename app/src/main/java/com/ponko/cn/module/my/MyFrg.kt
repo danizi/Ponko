@@ -52,6 +52,11 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
         broadcastManager?.unRegisterReceiver(refreshBroadcastReceiver)
     }
 
+    override fun onResume() {
+        super.onResume()
+        requestRefreshApi()
+    }
+
     override fun presenter(): MyConstract.Present {
         return MyConstract.Present(context, this)
     }

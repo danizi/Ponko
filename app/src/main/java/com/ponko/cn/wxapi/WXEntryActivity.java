@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.ponko.cn.R;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
@@ -148,7 +147,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 break;
         }
 
-        Toast.makeText(this, getString(result) + ", type=" + resp.getType(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, getString(result) + ", type=" + resp.getType(), Toast.LENGTH_SHORT).show();
 
 
         if (resp.getType() == ConstantsAPI.COMMAND_SUBSCRIBE_MESSAGE) {
@@ -156,7 +155,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
             String text = String.format("openid=%s\ntemplate_id=%s\nscene=%d\naction=%s\nreserved=%s",
                     subscribeMsgResp.openId, subscribeMsgResp.templateID, subscribeMsgResp.scene, subscribeMsgResp.action, subscribeMsgResp.reserved);
 
-            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, text, Toast.LENGTH_LONG).show();
         }
 
         if (resp.getType() == ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM) {
@@ -164,7 +163,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
             String text = String.format("openid=%s\nextMsg=%s\nerrStr=%s",
                     launchMiniProgramResp.openId, launchMiniProgramResp.extMsg, launchMiniProgramResp.errStr);
 
-            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, text, Toast.LENGTH_LONG).show();
         }
 
         if (resp.getType() == ConstantsAPI.COMMAND_OPEN_BUSINESS_VIEW) {
@@ -172,14 +171,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
             String text = String.format("openid=%s\nextMsg=%s\nerrStr=%s\nbusinessType=%s",
                     launchMiniProgramResp.openId, launchMiniProgramResp.extMsg, launchMiniProgramResp.errStr, launchMiniProgramResp.businessType);
 
-            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, text, Toast.LENGTH_LONG).show();
         }
 
         if (resp.getType() == ConstantsAPI.COMMAND_OPEN_BUSINESS_WEBVIEW) {
             WXOpenBusinessWebview.Resp response = (WXOpenBusinessWebview.Resp) resp;
             String text = String.format("businessType=%d\nresultInfo=%s\nret=%d", response.businessType, response.resultInfo, response.errCode);
 
-            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, text, Toast.LENGTH_LONG).show();
         }
 
         if (resp.getType() == ConstantsAPI.COMMAND_SENDAUTH) {

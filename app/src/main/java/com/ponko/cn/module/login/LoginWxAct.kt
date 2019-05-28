@@ -18,6 +18,7 @@ import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.DialogUtil
 import retrofit2.Call
 import retrofit2.Response
 
@@ -89,6 +90,7 @@ class LoginWxAct : AppCompatActivity() {
             }
         })
         viewHolder?.btnEnter?.setOnClickListener {
+            DialogUtil.showProcess(this)
             PonkoApp.loginApi?.wxbind(viewHolder?.etAccount?.text.toString(), viewHolder?.etPwd?.text.toString(), code,  "wechat")?.enqueue(object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     val token = response?.body()?.token
@@ -96,6 +98,12 @@ class LoginWxAct : AppCompatActivity() {
                     val intent = Intent(this@LoginWxAct, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     ActivityUtil.startActivity(this@LoginWxAct, intent)
+                    DialogUtil.hideProcess()
+                }
+
+                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    DialogUtil.hideProcess()
                 }
             })
         }
