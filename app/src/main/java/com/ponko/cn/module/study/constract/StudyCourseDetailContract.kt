@@ -186,7 +186,7 @@ class StudyCourseDetailContract {
                 childViewHolder.tvPos.text = (childPosition + 1).toString()
                 childViewHolder.tvCourseName.text = name
                 childViewHolder.tvTime.text = TimeUtil.hhmmss(duration.toLong() * 1000) + " | "
-                childViewHolder.tvProcess.text = (progress / duration * 100).toString() + "%"
+                childViewHolder.tvProcess.text = (progress * 100 / duration).toInt().toString() + "%"
 
                 //课程是否本地缓存，缓存显示提示
                 if (PonkoApp.courseDao?.isComplete(vid) == true) {
@@ -370,10 +370,44 @@ class StudyCourseDetailContract {
         fun clickDown() {
             if (model.isPay) {
                 BKLog.d("点击下载缓存页面")
-                StudyCacheActivity.start(context, model.typeId, model.teachers, model.num, model.duration)
+                val num = if (model.num == 0L) {
+                    getNum()
+                } else {
+                    model.num
+                }
+                val duration = if (model.duration == 0L) {
+                    getDuration()
+                } else {
+                    model.duration
+                }
+                StudyCacheActivity.start(context, model.typeId, model.teachers, num, duration)
             } else {
                 ToastUtil.show("请先购买订购")
             }
+        }
+
+        /**
+         * 获取课程数量
+         */
+        private fun getNum(): Long {
+            var num = 0L
+            for (chapters in model.coursesDetailCBean?.chapters!!) {
+                num += chapters.sections.size
+            }
+            return num
+        }
+
+        /**
+         * 课程总时长
+         */
+        private fun getDuration(): Long {
+            var duration = 0L
+            for (chapters in model.coursesDetailCBean?.chapters!!) {
+                for (section in chapters.sections) {
+                    duration += section.duration.toLong()
+                }
+            }
+            return duration
         }
 
         /**

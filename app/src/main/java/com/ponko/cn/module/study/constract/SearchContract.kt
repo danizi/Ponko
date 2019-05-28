@@ -277,7 +277,7 @@ class SearchContract {
                 ui?.tv?.text = sectionsBean.name
                 itemView.setOnClickListener {
                     BKLog.d("跳转到课程")
-                    StudyCourseDetailActivity.startFromSearch(context, sectionsBean.courseId, "", adapter.data?.size?.toLong(), 0L, sectionsBean.name)
+                    StudyCourseDetailActivity.startFromSearch(context, sectionsBean.courseId, "", 0L, 0L, sectionsBean.name)
                 }
             }
         }

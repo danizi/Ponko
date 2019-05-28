@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.RecordCBean
+import com.ponko.cn.module.study.StudyCourseDetailActivity
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
@@ -44,6 +45,7 @@ class MyStudyRecordHolder(view: View) : BaseViewHolder(view) {
         viewHolder?.tvRecord?.text = "${TimeUtil.hhmmss(historyRecordBean.durationForSecond * 1000L)} | 已学习 $p %"
         itemView.setOnClickListener {
             BKLog.d("跳转到课程中...")
+            StudyCourseDetailActivity.start(context, historyRecordBean.courseId, "", 0L, 0L)
         }
     }
 }

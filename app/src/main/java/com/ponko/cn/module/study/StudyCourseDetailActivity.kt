@@ -14,6 +14,7 @@ import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.module.study.constract.StudyCourseDetailContract
 import com.ponko.cn.utils.ActivityUtil
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
 import com.xm.lib.media.broadcast.BroadcastManager
 
@@ -30,7 +31,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         const val TYPE_FROM_SEARCH = "from_search"
         /**
          * 点击专题中课程使用该方法
-         * @param typeId   专题ID
+         * @param typeId   专题ID 即课程courseId
          * @param teachers 老师
          * @param num      课程总集数
          * @param duration 课程总时间 （单位：秒）
@@ -47,7 +48,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
         /**
          * 缓存完成课程跳转使用该方法
-         * @param typeId   专题ID
+         * @param typeId   专题ID 即课程courseId
          * @param teachers 老师
          * @param num      课程总集数
          * @param duration 课程总时间 （单位：秒）
@@ -66,8 +67,13 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
         /**
          * 搜索页面跳转使用该方法 todo 缺少老师信息,那就填空
+         * @param typeId     专题ID 即课程courseId
+         * @param teachers   老师
+         * @param num         课程总集数
+         * @param duration    课程总时间 （单位：秒）
+         * @param sectionName 课程其中小节名称
          */
-        fun startFromSearch(context: Context?, typeId: String?, teachers: String, num: Long?, duration: Long,sectionName:String) {
+        fun startFromSearch(context: Context?, typeId: String?, teachers: String, num: Long?, duration: Long, sectionName: String) {
             val intent = Intent(context, StudyCourseDetailActivity::class.java)
             intent.putExtra("type", TYPE_FROM_SEARCH)
             intent.putExtra("typeId", typeId)
@@ -127,6 +133,12 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
     override fun initDisplay() {
         super.initDisplay()
         com.jaeger.library.StatusBarUtil.setColor(this, this.resources.getColor(R.color.black), 0) //系统栏颜色
+
+        //按比例设置播放器View
+        val present = 1f / 1.8f
+        val layoutParams = viewHolder?.video?.layoutParams
+        layoutParams?.height = ((ScreenUtil.getNormalWH(this)[0]) * present).toInt()
+        viewHolder?.video?.layoutParams = layoutParams
     }
 
     override fun iniEvent() {

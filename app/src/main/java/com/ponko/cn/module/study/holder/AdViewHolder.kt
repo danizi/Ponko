@@ -37,9 +37,10 @@ class AdViewHolder(view: View) : BaseViewHolder(view) {
         val context = itemView.context
 
         //图片高度自适应
-        val present = adBean.ad.height.toFloat() / adBean.ad.width.toFloat()
+        val present = 195f / 347f
         val layoutParams = v?.ivAd?.layoutParams
         layoutParams?.height = ((ScreenUtil.getNormalWH(context as Activity)[0] - ScreenUtil.dip2px(context, 28)) * present).toInt()
+        v?.ivAd?.layoutParams = layoutParams
 
         v?.tvAdTitle?.text = ad.title
         Glide.with(context, ad.image, v?.ivAd)
