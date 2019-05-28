@@ -27,6 +27,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         const val TAG = "StudyCourseDetailActivity"
         const val TYPE_FROM_GENERAL = "from_general"
         const val TYPE_FROM_CACHE = "from_cache"
+        const val TYPE_FROM_SEARCH = "from_search"
         /**
          * 点击专题中课程使用该方法
          * @param typeId   专题ID
@@ -64,10 +65,17 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         }
 
         /**
-         * 搜索页面跳转使用该方法 todo 缺失专题信息啊 缺少老师信息
+         * 搜索页面跳转使用该方法 todo 缺少老师信息,那就填空
          */
-        fun startFromSearch(context: Context?) {
-
+        fun startFromSearch(context: Context?, typeId: String?, teachers: String, num: Long?, duration: Long,sectionName:String) {
+            val intent = Intent(context, StudyCourseDetailActivity::class.java)
+            intent.putExtra("type", TYPE_FROM_SEARCH)
+            intent.putExtra("typeId", typeId)
+            intent.putExtra("teachers", teachers)
+            intent.putExtra("num", num)
+            intent.putExtra("duration", duration)
+            intent.putExtra("sectionName", sectionName)
+            ActivityUtil.startActivity(context, intent)
         }
     }
 

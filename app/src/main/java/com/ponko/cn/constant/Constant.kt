@@ -13,4 +13,7 @@ object Constant {
      * 点击免费视频详情页面Item广播
      */
     const val ACTION_CLICK_FREE_PLAY_ITEM = "action_click_free_play_item"
+
+    const val ACTION_CLICK_SEARCH_RECORD_ITEM = "action_click_search_record_item"
+    const val ACTION_CLICK_SEARCH_TEACHER_ITEM = "action_click_search_teacher_item"
 }
