@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#FF5A5E"
-            android:text="下载"
+            android:text="删除"
             android:textColor="@color/white" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

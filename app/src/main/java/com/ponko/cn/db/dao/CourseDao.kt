@@ -151,6 +151,13 @@ class CourseDao(private var db: SQLiteDatabase?) {
     }
 
     /**
+     * 通过vid来删除课程
+     */
+    fun deleteByVid(bean: CourseDbBean){
+        db?.execSQL(CacheContract.CourseTable.SQL_DEL_BY_VID, arrayOf(bean.column_vid))
+    }
+
+    /**
      * 删除所有课程信息
      */
     fun deleteAll() {

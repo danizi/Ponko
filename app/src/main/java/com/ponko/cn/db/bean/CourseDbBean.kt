@@ -55,6 +55,11 @@ class CourseDbBean {
      */
     var column_vid = ""
 
+    /**
+     * 是否被选中 PS：这个是要下载列表页面中使用的，不用存入数据库
+     */
+    var isSelect=false
+
     override fun toString(): String {
         return "CourseDbBean(column_uid='$column_uid', column_special_id='$column_special_id', column_course_id='$column_course_id', column_cover='$column_cover', column_title='$column_title', column_total=$column_total, column_progress=$column_progress, column_complete=$column_complete, column_m3u8_url='$column_m3u8_url', column_key_ts_url='$column_key_ts_url', column_down_path='$column_down_path', column_state='$column_state', column_vid='$column_vid')"
     }

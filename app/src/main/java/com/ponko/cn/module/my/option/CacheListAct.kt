@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.*
 import com.ponko.cn.R
@@ -21,11 +22,14 @@ import com.ponko.cn.module.m3u8downer.core.OnDownListener
 import com.ponko.cn.module.study.StudyCacheActivity
 import com.ponko.cn.module.study.StudyCourseDetailActivity
 import com.ponko.cn.utils.BarUtil
+import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.Glide
 import com.tbruyelle.rxpermissions2.RxPermissions
+import com.tencent.wxop.stat.event.i
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.component.OnEnterListener
 import com.xm.lib.downloader.utils.FileUtil
 import com.xm.lib.media.broadcast.BroadcastManager
 import java.io.File
@@ -158,9 +162,26 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             } else {
                 llbottom?.visibility = View.GONE
                 isDelete = false
+                unSelectAll()
             }
             adapter?.notifyDataSetChanged()
         })
+    }
+
+    private fun select(select: Boolean) {
+        for (data in adapter?.data!!) {
+            if (data is CourseDbBean) {
+                data.isSelect = select
+            }
+        }
+    }
+
+    private fun selectAll() {
+        select(true)
+    }
+
+    private fun unSelectAll() {
+        select(false)
     }
 
     override fun iniEvent() {
@@ -168,29 +189,75 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         btnAll?.setOnClickListener {
             BKLog.d("点击了全选")
             isSelectAll = !isSelectAll
+            for (data in adapter?.data!!) {
+                if (data is CourseDbBean) {
+                    data.isSelect = isSelectAll
+                }
+            }
             adapter?.notifyDataSetChanged()
         }
         btnDelete?.setOnClickListener {
             BKLog.d(" ------> 点击了删除")
-            for (deleteItem in selectItems) {
-                //删除下载库中的任务信息
-                m3u8DownManager?.dao?.delete2(deleteItem.column_vid)
-                //删除数据库中的数据
-                courseDao?.delete(deleteItem)
-                //删除本地缓存的数据
-                FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + M3u8Utils.m3u8Unique(deleteItem.column_m3u8_url)))
-                //删除RecyclerView刷新
-                for (i in 1..(adapter?.data?.size!! - 1)) {
-                    if (deleteItem == adapter?.data?.get(i)) {
-                        adapter?.data?.remove(deleteItem)
-                        adapter?.notifyItemRemoved(i)
-                        adapter?.notifyItemChanged(i)
-                        break
+            DialogUtil.show(this, "确定要删除已缓存的课程？", "删除后不可恢复", false, object : OnEnterListener {
+                override fun onEnter(dlg: AlertDialog) {
+
+                    val iterator = copyAdapterData()?.iterator()
+                    while (iterator?.hasNext()!!) {
+                        val data = iterator.next()
+                        if (data is CourseDbBean) {
+                            val courseDbBean = data as CourseDbBean
+                            if (courseDbBean.isSelect) {
+                                BKLog.d("选中删除 - ${courseDbBean.column_title}")
+                                //删除下载库中的任务信息
+                                m3u8DownManager?.dao?.delete2(courseDbBean.column_vid)
+                                //删除数据库中的数据
+                                courseDao?.deleteByVid(courseDbBean)
+                                //删除本地缓存的数据
+                                FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url)))
+                                //删除并让RecyclerView刷新
+                                notifyItem(courseDbBean)
+                            }
+                        }
                     }
+                    dlg.dismiss()
                 }
-                BKLog.d("删除课程 ${deleteItem.column_title}")
-            }
+            }, null)
         }
+    }
+
+    /**
+     * 获取数据
+     */
+    private fun copyAdapterData(): ArrayList<Any>? {
+        val copyAdapterData = ArrayList<Any>()
+        for (copyData in adapter?.data!!) {
+            copyAdapterData.add(copyData)
+        }
+        return copyAdapterData
+    }
+
+    private fun notifyItem(courseDbBean: CourseDbBean) {
+        var index = 0
+        val it = adapter?.data?.iterator()
+        while (it?.hasNext()!!) {
+            val data = it.next()
+            if (data is CourseDbBean) {
+                if (courseDbBean == data) {
+                    it.remove()
+                    adapter?.notifyItemRemoved(index)
+                    adapter?.notifyItemChanged(index)
+                }
+            }
+            index++
+        }
+//        for (i in 1..(adapter?.data?.size!! - 1)) {
+//            if (courseDbBean == adapter?.data?.get(i)) {
+//                adapter?.data?.remove(courseDbBean)
+//                adapter?.notifyItemRemoved(i)
+//                adapter?.notifyItemChanged(i)
+//                break
+//            }
+//        }
     }
 
 
@@ -458,11 +525,17 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             progress(courseDbBean!!)
 
             //监听
+            viewHolder?.cb?.setOnClickListener {
+                //点击选中
+                courseDbBean?.isSelect = !courseDbBean?.isSelect!!
+            }
             itemView.setOnClickListener {
                 when (isDelete) {
                     true -> {
                         //删除模式点击处理
                         deleteClickItem(courseDbBean!!)
+                        //点击选中
+                        courseDbBean?.isSelect = !courseDbBean?.isSelect!!
                     }
                     false -> {
                         //普通下载模式点击处理
@@ -477,20 +550,36 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
          */
         private fun displayMode(courseDbBean: CourseDbBean) {
             if (isDelete) {
-                if (isSelectAll) {
-                    addSelectItem()
-                    viewHolder?.cb?.isChecked = true
-                } else {
-                    deleteSelectItem()
-                    viewHolder?.cb?.isChecked = false
-                }
+                //删除模式
+//                if (isSelectAll) {
+//                    //全选
+//                    //addSelectItem()
+//                    viewHolder?.cb?.isChecked = true
+//                    courseDbBean.isSelect = true
+//                } else {
+//                    //不全选
+//                    //deleteSelectItem()
+//                    viewHolder?.cb?.isChecked = false
+//                    courseDbBean.isSelect = false
+//                }
                 viewHolder?.cb?.visibility = View.VISIBLE
             } else {
+                //非删除模式
                 viewHolder?.cb?.visibility = View.GONE
+                viewHolder?.cb?.isChecked = false
+                courseDbBean.isSelect = false
+            }
+
+            if (courseDbBean.isSelect) {
+                BKLog.d("选中")
+                viewHolder?.cb?.isChecked = true
+            } else {
+                BKLog.d("未选中")
                 viewHolder?.cb?.isChecked = false
             }
         }
 
+        @Deprecated("")
         private fun addSelectItem() {
             var addFlag = true
             for (course in selectItems) {
@@ -506,12 +595,14 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             print()
         }
 
+        @Deprecated("")
         private fun print() {
             for (item in selectItems) {
                 BKLog.d("添加选中 - ${item?.column_title}")
             }
         }
 
+        @Deprecated("")
         private fun deleteSelectItem() {
             for (course in selectItems) {
                 if (course.column_vid == courseDbBean?.column_vid) {
@@ -580,10 +671,10 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             if (viewHolder?.cb?.isChecked == true) {
                 viewHolder?.cb?.isChecked = false
                 //selectItems.remove(courseDbBean)
-                deleteSelectItem()
+                //deleteSelectItem()
             } else {
                 //selectItems.add(courseDbBean)
-                addSelectItem()
+                //addSelectItem()
                 viewHolder?.cb?.isChecked = true
             }
         }

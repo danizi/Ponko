@@ -1,5 +1,8 @@
 package com.ponko.cn.db
 
+/**
+ * 课程划分层次：系列、 专题 、课程列表。 PS:查看学习页面一层一层点击感受一下
+ */
 class CacheContract {
     /**
      * 缓存专题
@@ -76,7 +79,7 @@ class CacheContract {
         private const val COLUMN_COLUMN_VID = "column_vid"     //下载路径
 
         //创建
-        const val SQL_CREATE_TABLE="CREATE TABLE $TABLE_NAME( " +
+        const val SQL_CREATE_TABLE = "CREATE TABLE $TABLE_NAME( " +
                 "$PRIMARY_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$COLUMN_UID TEXT NOT NULL," +
                 "$COLUMN_SPECIAL_ID TEXT NOT NULL," +
@@ -93,7 +96,7 @@ class CacheContract {
                 "$COLUMN_COLUMN_VID TEXT NOT NULL" +
                 ");"
         //增
-        const val SQL_INSERT="INSERT INTO $TABLE_NAME(" +
+        const val SQL_INSERT = "INSERT INTO $TABLE_NAME(" +
                 "$COLUMN_UID," +
                 "$COLUMN_SPECIAL_ID," +
                 "$COLUMN_COURSE_ID," +
@@ -110,11 +113,12 @@ class CacheContract {
                 ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
         //删
-        const val SQL_DEL_BY_ID="DELETE FROM $TABLE_NAME WHERE $$COLUMN_COURSE_ID"
-        const val SQL_DEL_ALL="DELETE FROM $TABLE_NAME"
+        const val SQL_DEL_BY_ID = "DELETE FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
+        const val SQL_DEL_BY_VID = "DELETE FROM $TABLE_NAME WHERE $COLUMN_COLUMN_VID = ?;"
+        const val SQL_DEL_ALL = "DELETE FROM $TABLE_NAME"
 
         //改
-        const val SQL_UPDATE_BY_ID="UPDATE $TABLE_NAME SET " +
+        const val SQL_UPDATE_BY_ID = "UPDATE $TABLE_NAME SET " +
                 "$COLUMN_UID=?," +
                 "$COLUMN_SPECIAL_ID=?," +
                 "$COLUMN_COURSE_ID=?," +
@@ -129,7 +133,7 @@ class CacheContract {
                 "$COLUMN_COLUMN_STATE=?," +
                 "$COLUMN_COLUMN_VID=? WHERE $COLUMN_COURSE_ID=?;"
 
-        const val SQL_UPDATE_BY_VID="UPDATE $TABLE_NAME SET " +
+        const val SQL_UPDATE_BY_VID = "UPDATE $TABLE_NAME SET " +
                 "$COLUMN_UID=?," +
                 "$COLUMN_SPECIAL_ID=?," +
                 "$COLUMN_COURSE_ID=?," +
@@ -144,9 +148,24 @@ class CacheContract {
                 "$COLUMN_COLUMN_STATE=?," +
                 "$COLUMN_COLUMN_VID=? WHERE $COLUMN_COLUMN_VID=?;"
         //查
-        const val SQL_SELECT_BY_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
-        const val SQL_SELECT_BY_VID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COLUMN_VID = ?;"
-        const val SQL_SELECT_BY_SPECIAL_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_SPECIAL_ID = ?;"
-        const val SQL_SELECT_ALL="SELECT * FROM $TABLE_NAME;"
+        const val SQL_SELECT_BY_ID = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
+        const val SQL_SELECT_BY_VID = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_COLUMN_VID = ?;"
+        const val SQL_SELECT_BY_SPECIAL_ID = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_SPECIAL_ID = ?;"
+        const val SQL_SELECT_ALL = "SELECT * FROM $TABLE_NAME;"
+    }
+
+
+    /**
+     * 收藏 - 小结收藏
+     */
+    object CourseCollectSection {
+
+    }
+
+    /**
+     * 收藏 - 专题
+     */
+    object CourseCollectSpecialTable {
+
     }
 }
