@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.EditText
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
@@ -47,7 +48,6 @@ object DialogUtil {
         }catch (e:Exception){
             e.printStackTrace()
         }
-
     }
 
     private fun newXmIOSDialog(context: Context, title: String, msg: String, isCancelable: Boolean, enterListener: OnEnterListener?, cancelListener: OnCancelListener?): AlertDialog {
@@ -56,7 +56,7 @@ object DialogUtil {
                 .setMsg(msg)
                 .setTitle(title)
                 .setCancelable(isCancelable)
-                .setSize(600, 400)
+                .setSize(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .setOnEnterListener(enterListener)
                 .setOnCancelListener(cancelListener)
                 .build()

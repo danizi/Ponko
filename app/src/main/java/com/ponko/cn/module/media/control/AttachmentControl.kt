@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import com.ponko.cn.bean.CourseDetailCBean
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.media.MediaUitl
@@ -18,7 +17,6 @@ import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
-
 import com.xm.lib.media.base.IXmMediaPlayer
 import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.event.GestureObserver
@@ -213,7 +211,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         ui?.playResID = R.mipmap.media_control_play
         ui?.pauseResID = R.mipmap.media_control_pause
         ui?.bind(this)
-        ui?.listener = object : ControlViewHolder.OnScreenStateListener {
+        ui?.listener = object : com.xm.lib.media.attachment.control.ControlViewHolder.OnScreenStateListener {
             override fun onState(type: String) {
                 this@AttachmentControl.removeAllViews()//删除所有子View ps:子View包含横屏or竖屏View
                 when (type) {
@@ -239,7 +237,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         ui?.pauseResID = R.mipmap.media_control_pause
         ui?.bind(this)
         ui?.portraitXmVideoViewRect = portraitXmVideoViewRect
-        ui?.listener = object : ControlViewHolder.OnScreenStateListener {
+        ui?.listener = object : com.xm.lib.media.attachment.control.ControlViewHolder.OnScreenStateListener {
             override fun onState(type: String) {
                 this@AttachmentControl.removeAllViews()//删除所有子View ps:子View包含横屏or竖屏View
                 when (type) {

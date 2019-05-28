@@ -20,7 +20,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.ponko.cn.R
-import com.ponko.cn.R.id.sv
 import com.ponko.cn.WebAct
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.StoreProfileBean
@@ -32,13 +31,11 @@ import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.my.holder.MyBookViewHolder
 import com.ponko.cn.module.my.holder.MyCourseViewHolder
 import com.ponko.cn.utils.*
-import com.tencent.wxop.stat.event.i
 import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.component.CircleImageView
 import com.xm.lib.media.broadcast.BroadcastManager
-import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.activity_store.*
 import retrofit2.Call
 import retrofit2.Response
 
@@ -79,6 +76,11 @@ class StoreAct : PonkoBaseAct<Any>() {
     override fun onDestroy() {
         super.onDestroy()
         broadcastManager?.unRegisterReceiver(refreshBroadcastReceiver)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        iniData()
     }
 
     override fun presenter(): Any {
@@ -132,10 +134,11 @@ class StoreAct : PonkoBaseAct<Any>() {
             @SuppressLint("SetTextI18n")
             override fun onSuccess(call: Call<StoreProfileBean>?, response: Response<StoreProfileBean>?) {
                 storeProfileBean = response?.body()
-                Glide.with(baseContext, storeProfileBean?.avatar, viewHolder?.ivHead)
+                Glide.with(this@StoreAct, storeProfileBean?.avatar, viewHolder?.ivHead, true)
                 viewHolder?.tvNick?.text = storeProfileBean?.name
                 viewHolder?.tvPayType?.text = storeProfileBean?.paid
                 viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"
+                frgs.clear()
                 val titls = ArrayList<String>()
                 var count = 1
                 for (list in storeProfileBean?.list?.iterator()!!) {
@@ -147,8 +150,6 @@ class StoreAct : PonkoBaseAct<Any>() {
                 viewHolder?.tb?.setupWithViewPager(viewHolder?.vp)
             }
         })
-
-
     }
 
     var frgs = ArrayList<Fragment>()
@@ -168,13 +169,15 @@ class StoreAct : PonkoBaseAct<Any>() {
             }
         })
         viewHolder?.sv?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { p0, p1, p2, p3, p4 ->
-            val view = viewHolder?.sv?.getChildAt(0)
-            if (view?.height!! <= viewHolder?.sv?.scrollY!! + viewHolder?.sv?.height!!) {
-                BKLog.d("滑动到底部")
-                (frgs[indexPage] as ExchangeFrg).reqeustExchangeMoreApi()
-            } else if (viewHolder?.sv?.scrollY == 0) {
-                BKLog.d("滑动到顶部")
-                (frgs[indexPage] as ExchangeFrg).reqeustExchangeRefreshApi()
+            if (isFinishing) {
+                val view = viewHolder?.sv?.getChildAt(0)
+                if (view?.height!! <= viewHolder?.sv?.scrollY!! + viewHolder?.sv?.height!!) {
+                    BKLog.d("滑动到底部")
+                    (frgs[indexPage] as ExchangeFrg).reqeustExchangeMoreApi()
+                } else if (viewHolder?.sv?.scrollY == 0) {
+                    BKLog.d("滑动到顶部")
+                    (frgs[indexPage] as ExchangeFrg).reqeustExchangeRefreshApi()
+                }
             }
         })
         viewHolder?.ivHead?.setOnClickListener {
@@ -354,7 +357,9 @@ class StoreAct : PonkoBaseAct<Any>() {
 
         override fun iniEvent() {
             rv?.isFocusableInTouchMode = false
+            rv?.isNestedScrollingEnabled = false
             rv?.requestFocus()
+            rv?.setHasFixedSize(true)
         }
 
         override fun iniData() {
@@ -377,11 +382,18 @@ class StoreAct : PonkoBaseAct<Any>() {
             when (body!![0].layout) {
                 "bar" -> {
                     adapter.addItemViewDelegate(0, MyCourseViewHolder::class.java, Any::class.java, R.layout.item_my_store_course)
-                    rv?.layoutManager = LinearLayoutManager(context)
+                    val linearLayoutManager = LinearLayoutManager(context)
+                    linearLayoutManager.isSmoothScrollbarEnabled = true
+                    linearLayoutManager.isAutoMeasureEnabled = true
+                    rv?.layoutManager = linearLayoutManager
+
                 }
                 else -> {
                     adapter.addItemViewDelegate(0, MyBookViewHolder::class.java, Any::class.java, R.layout.item_my_store_book)
-                    rv?.layoutManager = GridLayoutManager(context, 2)
+                    val gridLayoutManager = GridLayoutManager(context, 2)
+                    gridLayoutManager.isSmoothScrollbarEnabled = true
+                    gridLayoutManager.isAutoMeasureEnabled = true
+                    rv?.layoutManager = gridLayoutManager
                 }
             }
             rv?.adapter = adapter

@@ -31,9 +31,6 @@ import com.xm.lib.media.view.XmPopWindow
  * 横屏界面
  */
 class LandscapeViewHolder private constructor(private val clLandscapeTop: ConstraintLayout?, private val ivBack: ImageView?, private val tvTitle: TextView?, private val ivShare: ImageView?, private val ivMore: ImageView?, private val clLandscapeBottom: ConstraintLayout?, private val seekBar: SeekBar?, private val ivAction: ImageView?, private val tvTime: TextView?, private val tvRatio: TextView?, private val clSeek: ConstraintLayout?, private val tvTime2: TextView?, private val pbLoading: ProgressBar?, private val rv: RecyclerView?) : ControlViewHolder() {
-    override fun setTitle(title: String) {
-        tvTitle?.text = title
-    }
 
     /**
      * 播放列表信息
@@ -204,6 +201,10 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
         }
     }
 
+    override fun setTitle(title: String) {
+        tvTitle?.text = title
+    }
+
     @SuppressLint("ObjectAnimatorBinding")
     override fun hidePlayListAni() {
         super.hidePlayListAni()
@@ -220,8 +221,6 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
     override fun hidePlayList() {
         super.hidePlayList()
         rv?.visibility = View.GONE
-
-
     }
 
     @SuppressLint("ObjectAnimatorBinding")
@@ -445,6 +444,7 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
     private class PlayListAdapter(val data: List<MediaBean.MediaInfo>?, val xmVideoView: XmVideoView?, val listener: OnPlayListItemClickListener?) : RecyclerView.Adapter<PlayListViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayListViewHolder {
+            BKLog.d("onCreateViewHolder viewType:$viewType")
             return PlayListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false))
         }
 
@@ -456,8 +456,13 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
             }
         }
 
+        override fun getItemViewType(position: Int): Int {
+            return position
+        }
+
         override fun onBindViewHolder(holder: PlayListViewHolder, position: Int) {
             holder.bind(data!![position], xmVideoView, position, listener)
+            BKLog.d("onBindViewHolder position:$position")
         }
     }
 

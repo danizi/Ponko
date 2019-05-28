@@ -26,7 +26,11 @@ import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.bean.OrderCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
+import com.ponko.cn.module.my.option.acount.AddressActivity
+import com.ponko.cn.module.my.option.acount.PersonalActivity
+import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.CacheUtil.getToken
+import com.ponko.cn.utils.ToastUtil
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
@@ -109,7 +113,7 @@ class WebAct : PonkoBaseAct<Any>() {
 
             //底部兑换积分
             val exchangeView = ViewUtil.viewById(this, R.layout.web_bottom_exchange)
-            exchangeViewHolder = ExchangeViewHolder.create(exchangeView!!)
+            exchangeViewHolder = ExchangeViewHolder.create(this, exchangeView!!)
 
             //底部支付按钮，其中根据获取页面值，判断是否添加“老师介绍”、“老师课程”按钮
             val payView = ViewUtil.viewById(this, R.layout.web_bottom_pay)
@@ -391,22 +395,27 @@ class WebAct : PonkoBaseAct<Any>() {
     /**
      * 积分兑换相关操作ViewHolder
      */
-    private class ExchangeViewHolder private constructor(val rootView: View, val btnExchange: AppCompatButton) {
+    private class ExchangeViewHolder private constructor(val act: Activity, val rootView: View, val btnExchange: AppCompatButton) {
         companion object {
             private const val javascriptInterfaceName = "local_obj"
 
-            fun create(rootView: View): ExchangeViewHolder {
+            fun create(act: Activity, rootView: View): ExchangeViewHolder {
                 val btnExchange = rootView.findViewById<View>(R.id.btn_exchange) as AppCompatButton
-                return ExchangeViewHolder(rootView, btnExchange)
+                return ExchangeViewHolder(act, rootView, btnExchange)
             }
         }
 
-        private var act: Activity? = null
         var totalScores = ""
         var needScores = ""
         var exchangeProductId = ""
 
         fun initEvent() {
+            if (!TextUtils.isEmpty(totalScores) && !TextUtils.isEmpty(needScores)) {
+                if (totalScores.toInt() < needScores.toInt()) {
+                    btnExchange.isEnabled = false
+                    btnExchange.text = "您的积分不足"
+                }
+            }
             btnExchange.setOnClickListener {
                 enterExchange()
             }
@@ -428,7 +437,6 @@ class WebAct : PonkoBaseAct<Any>() {
         private fun enterExchange() {
             BKLog.d("点击积分兑换")
             //1 判断积分是否足够
-
             if (totalScores.toInt() > needScores.toInt()) {
                 //2 判断地址是否填写
                 PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
@@ -453,6 +461,7 @@ class WebAct : PonkoBaseAct<Any>() {
                             }
                         }
 
+                        //兑换
                         if (isCanExchange) {
                             btnExchange.isEnabled = true
                             AlertDialog.Builder(act!!)
@@ -461,22 +470,23 @@ class WebAct : PonkoBaseAct<Any>() {
                                     .setPositiveButton("确定") { dialog, which ->
                                         PonkoApp.myApi?.exchangeProduct(exchangeProductId)?.enqueue(object : HttpCallBack<GeneralBean>() {
                                             override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                                                BKLog.d("兑换成功")
+                                                ToastUtil.show("兑换成功")
                                             }
                                         })
                                     }
                                     .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
                                     .create()
                                     .show()
-
-
                         } else {
                             btnExchange.isEnabled = false
-                            AlertDialog.Builder(act!!)
+                            btnExchange.text = error
+                            AlertDialog.Builder(act)
                                     .setTitle("提示")
                                     .setMessage("亲爱的用户，您 $error ，请完善您的个人信息")
                                     .setPositiveButton("确定") { dialog, which ->
                                         BKLog.d("跳转到个人信息页面")
+                                        act.finish()
+                                        ActivityUtil.startActivity(act, Intent(act, AddressActivity::class.java))
                                     }
                                     .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
                                     .create()
@@ -487,7 +497,6 @@ class WebAct : PonkoBaseAct<Any>() {
                 })
             }
         }
-
     }
 
     /**

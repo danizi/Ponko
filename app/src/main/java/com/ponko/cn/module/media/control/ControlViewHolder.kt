@@ -7,6 +7,7 @@ import android.view.View
 import com.ponko.cn.bean.MediaBean
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimerHelper
+import com.xm.lib.media.attachment.control.ControlViewHolder
 import com.xm.lib.media.base.XmMediaPlayer
 import com.xm.lib.media.base.XmVideoView
 
@@ -77,7 +78,7 @@ abstract class ControlViewHolder {
     /**
      * 屏幕状态监听
      */
-    var listener: OnScreenStateListener? = null
+    var listener: ControlViewHolder.OnScreenStateListener? = null
     /**
      * 控制器页面是否显示
      */
@@ -99,9 +100,24 @@ abstract class ControlViewHolder {
         isControlViewShow = true
     }
 
+    /**
+     * 显示进度条
+     */
     abstract fun showProgress()
+
+    /**
+     * 显示加载条
+     */
     abstract fun showLoading()
+
+    /**
+     * 显示顶部View
+     */
     abstract fun showTop()
+
+    /**
+     * 显示底部View
+     */
     abstract fun showBottom()
 
     /**
@@ -227,7 +243,11 @@ abstract class ControlViewHolder {
      */
     open fun hidePlayListAni() {}
 
-    interface OnScreenStateListener {
+    /**
+     * 横竖屏状态监听
+     */
+    @Deprecated("")
+     interface OnScreenStateListener {
         fun onState(type: String)
     }
 

@@ -31,6 +31,7 @@ import retrofit2.Response
 
 class AddressActivity : AppCompatActivity() {
 
+    private var debug = true
     private var viewHolder: ViewHolder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,18 +61,21 @@ class AddressActivity : AppCompatActivity() {
      */
     private fun isCanSava(phone: String, name: String, address: String): Boolean {
         BKLog.d("保存地址信息 phone:$phone neme$name address$address")
+
         var canSava = true
-        if (TextUtils.isEmpty(phone)) {
-            canSava = false
-            Toast.makeText(this@AddressActivity, "手机号码为空", Toast.LENGTH_SHORT).show()
-        }
-        if (TextUtils.isEmpty(name)) {
-            canSava = false
-            Toast.makeText(this@AddressActivity, "姓名为空", Toast.LENGTH_SHORT).show()
-        }
-        if (TextUtils.isEmpty(address)) {
-            canSava = false
-            Toast.makeText(this@AddressActivity, "收件地址为空", Toast.LENGTH_SHORT).show()
+        if (!debug) {
+            if (TextUtils.isEmpty(phone)) {
+                canSava = false
+                Toast.makeText(this@AddressActivity, "手机号码为空", Toast.LENGTH_SHORT).show()
+            }
+            if (TextUtils.isEmpty(name)) {
+                canSava = false
+                Toast.makeText(this@AddressActivity, "姓名为空", Toast.LENGTH_SHORT).show()
+            }
+            if (TextUtils.isEmpty(address)) {
+                canSava = false
+                Toast.makeText(this@AddressActivity, "收件地址为空", Toast.LENGTH_SHORT).show()
+            }
         }
         return canSava
     }

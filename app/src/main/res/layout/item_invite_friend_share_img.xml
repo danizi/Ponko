@@ -32,8 +32,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            android:scaleType="fitXY"
             android:layout_marginBottom="8dp"
+            android:scaleType="fitXY"
             android:src="@mipmap/load_img_default"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,15 +56,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="我是" />
+                android:text="我是"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tv_user_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
+                android:ellipsize="end"
+                android:lines="1"
                 android:text="@string/app_name"
-                android:textColor="#FC5654" />
+                android:textColor="#FC5654"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -82,13 +86,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="邀请您加入" />
+                android:text="邀请您加入"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tv_course_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name" />
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@string/app_name"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <TextView
@@ -98,6 +106,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="和我成为同学"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_qr"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/linearLayout3"

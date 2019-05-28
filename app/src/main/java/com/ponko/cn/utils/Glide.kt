@@ -13,8 +13,9 @@ import com.ponko.cn.R
 import java.lang.Exception
 
 object Glide {
-    fun with(context: Context?, path: String?, imageView: ImageView?) {
-        Glide.with(context).load(path)
+    fun with(context: Context?, path: String?, imageView: ImageView?, flag: Boolean? = false) {
+
+        val g = Glide.with(context).load(path)
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.mipmap.load_img_default)
@@ -29,11 +30,18 @@ object Glide {
                         return false
                     }
                 })
-                .into(object : SimpleTarget<GlideDrawable>() {
-                    //ps:添加回调处理第一次不显示图片问题，但是没有动画了
-                    override fun onResourceReady(resource: GlideDrawable?, glideAnimation: GlideAnimation<in GlideDrawable>?) {
-                        imageView?.setImageDrawable(resource)
-                    }
-                })
+
+        if (flag == true) {
+            g.into(imageView)
+        } else {
+            // ps:如果使用该方法容易出现UI卡顿，但是能解决第一次不显示问题
+            g.into(object : SimpleTarget<GlideDrawable>() {
+                //ps:添加回调处理第一次不显示图片问题，但是没有动画了
+                override fun onResourceReady(resource: GlideDrawable?, glideAnimation: GlideAnimation<in GlideDrawable>?) {
+                    imageView?.setImageDrawable(resource)
+                }
+            })
+        }
+
     }
 }

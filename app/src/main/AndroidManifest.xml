@@ -79,7 +79,7 @@
         <activity android:name=".module.my.option.HistoryActivity" />
         <activity android:name=".module.my.option.CacheListAct" />
         <activity android:name=".module.my.option.acount.AddressActivity" />
-        <activity android:name=".module.my.option.acount.PersonalActivity" />
+        <activity android:name=".module.my.option.acount.PersonalActivity" android:windowSoftInputMode="stateHidden|adjustResize"/>
         <!-- ============================================积分商城相关 end -->
 
 
