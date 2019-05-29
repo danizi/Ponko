@@ -22,29 +22,42 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
         BKLog.e(TAG, "HttpCallBack onFailure msg$msg")
 
         if (!TextUtils.isEmpty(msg)) {
-            for (error in errorCodeMaps) {
-                if (msg == error.value) {
-                    DialogUtil.show(
-                            PonkoApp.activityManager.getTopActivity()!!,
-                            "提示"
-                            , msg!!
-                            , true,
-                            object : OnEnterListener {
-                                override fun onEnter(dlg: AlertDialog) {
-                                    if (msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"]) {
-                                        val act = PonkoApp.activityManager.getTopActivity()
-                                        val intent = Intent(act, LoginStartAct::class.java)
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                        ActivityUtil.startActivity(act, intent)
-                                    }
-                                    dlg.dismiss()
-                                }
-                            }
-                            , null)
-                    break
+
+            //登录相关点击按钮都有相应提示，主要是没有网络
+            val a = PonkoApp.activityManager.getTopActivity()!!
+            val className = a::class.java.simpleName
+            BKLog.d("className->$className")
+            if (!TextUtils.isEmpty(className) && className.contains("Login")) {
+                showErrorDlg(msg!!)
+            } else {
+                for (error in errorCodeMaps) {
+                    if (msg == error.value) {
+                        showErrorDlg(msg)
+                        break
+                    }
                 }
             }
         }
+    }
+
+    private fun showErrorDlg(msg: String) {
+        DialogUtil.show(
+                PonkoApp.activityManager.getTopActivity()!!,
+                "提示"
+                , msg
+                , true,
+                object : OnEnterListener {
+                    override fun onEnter(dlg: AlertDialog) {
+                        if (msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"]) {
+                            val act = PonkoApp.activityManager.getTopActivity()
+                            val intent = Intent(act, LoginStartAct::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            ActivityUtil.startActivity(act, intent)
+                        }
+                        dlg.dismiss()
+                    }
+                }
+                , null)
     }
 
     override fun errorMsg(response: Response<T>?) {
