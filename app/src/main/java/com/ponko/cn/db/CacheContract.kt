@@ -180,7 +180,7 @@ class CacheContract {
                 ");"
 
         //增
-        const val SQL_INSERT = "insert $TABLE_NAME(" +
+        const val SQL_INSERT = "INSERT INTO $TABLE_NAME(" +
                 "$COLUMN_UID," +
                 "$COLUMN_COURSE_ID," +
                 "$COLUMN_TEACHER," +
@@ -190,11 +190,11 @@ class CacheContract {
                 ")VALUE(?,?,?,?,?,?)"
 
         //删
-        const val SQL_DETELE_BY_COURSE_ID="delete from $TABLE_NAME where $COLUMN_COURSE_ID = ?;"
-        const val SQL_DETELE_BY_ALL="delete from $TABLE_NAME;"
+        const val SQL_DETELE_BY_COURSE_ID="DELETE FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
+        const val SQL_DETELE_BY_ALL="DELETE FROM $TABLE_NAME;"
 
         //改
-        const val SQL_UPDATE_BY_COURSE_ID="update $TABLE_NAME SET " +
+        const val SQL_UPDATE_BY_COURSE_ID="UPDATE $TABLE_NAME SET " +
                 "$COLUMN_UID =?," +
                 "$COLUMN_COURSE_ID =?," +
                 "$COLUMN_TEACHER =?," +
@@ -232,9 +232,9 @@ class CacheContract {
                 "$COLUMN_COURSE_ID=?," +
                 "$COLUMN_SECTION_ID=?," +
                 "$COLUMN_SECTION_NAME=?" +
-                ")VALUE(?,?,?)"
+                ")VALUE(?,?,?,?)"
         //删
-        const val SQL_DELETE_BY_COURSE_ID = "DELETE FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
+        const val SQL_DELETE_BY_COLUMN_SECTION_ID= "DELETE FROM $TABLE_NAME WHERE $COLUMN_SECTION_ID = ?;"
         const val SQL_DELETE_ALL = "DELETE FROM $TABLE_NAME;"
 
         //改
@@ -246,7 +246,8 @@ class CacheContract {
                 "WHERE $COLUMN_COURSE_ID=?;"
 
         //查
-        const val SQL_SELECT_BY_COURSE_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID=?"
+        const val SQL_SELECT_BY_SECTION_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_SECTION_ID=?"
+        const val SQL_SELECT_ALL="SELECT * FROM $TABLE_NAME"
     }
 
 

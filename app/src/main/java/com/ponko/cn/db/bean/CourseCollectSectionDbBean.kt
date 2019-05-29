@@ -17,4 +17,10 @@ class CourseCollectSectionDbBean {
      * 小节名称
      */
     var column_section_name=""
+
+    override fun toString(): String {
+        return "CourseCollectSectionDbBean(column_uid='$column_uid', column_course_id='$column_course_id', column_section_id='$column_section_id', column_section_name='$column_section_name')"
+    }
+
+
 }

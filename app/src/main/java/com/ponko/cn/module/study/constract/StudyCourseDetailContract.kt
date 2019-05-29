@@ -16,8 +16,11 @@ import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesDetailCBean
+import com.ponko.cn.db.bean.CourseCollectSectionDbBean
+import com.ponko.cn.db.bean.CourseCollectSpecialDbBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.study.StudyCacheActivity
+import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.ShareUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.http.NetBean
@@ -87,6 +90,16 @@ class StudyCourseDetailContract {
          * 设置标题
          */
         fun setTitle(title: String?)
+
+        /**
+         * 收藏图标点亮
+         */
+        fun showCollectIcon()
+
+        /**
+         * 收藏图标不点亮
+         */
+        fun hideCollectIcon()
 
         /**
          * 二级列表的适配器
@@ -365,6 +378,31 @@ class StudyCourseDetailContract {
         fun clickCollect() {
             if (model.isPay) {
                 BKLog.d("点击收藏")
+                //首先判断数据库中是否存在
+                if (PonkoApp.collectSectionDao?.exist(getSectionId()) == false) {
+                    //如果不存在则将数据插入小节数据库中
+                    val section = getSection()
+                    val courseCollectSectionDbBean = CourseCollectSectionDbBean()
+                    courseCollectSectionDbBean.column_uid = CacheUtil.getToken()!!
+                    courseCollectSectionDbBean.column_section_id = section?.id!!
+                    courseCollectSectionDbBean.column_section_name = section.name
+                    courseCollectSectionDbBean.column_course_id = model.typeId
+                    PonkoApp.collectSectionDao?.insert(courseCollectSectionDbBean)
+                    BKLog.d("小节插入数据库")
+                }
+                if (PonkoApp.collectSpecialDao?.exist(model.typeId) == false) {
+                    val bean = CourseCollectSpecialDbBean()
+                    bean.column_uid = CacheUtil.getToken()!!
+                    bean.column_course_id = model.typeId
+                    bean.column_cover = getCover()
+                    bean.column_num = model.num.toString()
+                    bean.column_title = getTitle()
+                    bean.column_teacher = model.teachers
+                    PonkoApp.collectSpecialDao?.insert(bean)
+                    BKLog.d("小节-对应专题插入数据库")
+                }
+                //如果不存在则将数据插入课程数据库中
+                isDisplayCollect()
             } else {
                 ToastUtil.show("请先购买订购")
             }
@@ -440,6 +478,9 @@ class StudyCourseDetailContract {
             val isFree = model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].isFree
             if (model.isPay || isFree) {
 
+                //是否显示收藏
+                isDisplayCollect()
+
                 //设置标题
                 this.v.setTitle(model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name)
 
@@ -477,6 +518,50 @@ class StudyCourseDetailContract {
             val (groupPosition, childPosition) = oneToTwo(postion)!!
             model.clickItemGroupPos = groupPosition
             model.clickItemChildPos = childPosition
+            isDisplayCollect()
+        }
+
+        /**
+         * 是否显示收藏
+         */
+        private fun isDisplayCollect() {
+            //判断数据库中是否有收藏
+            val sectionId = getSectionId()
+            if (PonkoApp.collectSectionDao?.exist(sectionId) == true) {
+                BKLog.d("数据库已收藏")
+                v.showCollectIcon()
+            } else {
+                BKLog.d("数据库未收藏")
+                v.hideCollectIcon()
+            }
+        }
+
+        /**
+         * 获取小节id
+         */
+        private fun getSectionId(): String {
+            return model.coursesDetailCBean?.chapters!![model.clickItemGroupPos].sections[model.clickItemChildPos].id
+        }
+
+        /**
+         * 获取小节实体
+         */
+        private fun getSection(): CoursesDetailCBean.ChaptersBean.SectionsBean? {
+            return model.coursesDetailCBean?.chapters!![model.clickItemGroupPos].sections[model.clickItemChildPos]
+        }
+
+        /**
+         * 获取专题标题
+         */
+        private fun getTitle(): String {
+            return model.coursesDetailCBean?.title!!
+        }
+
+        /**
+         * 获取专题封面
+         */
+        private fun getCover(): String {
+            return model.coursesDetailCBean?.image!!
         }
 
         /**

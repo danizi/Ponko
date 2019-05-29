@@ -17,6 +17,8 @@ import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constant.BASE_API
 import com.ponko.cn.constant.Constant.BUG_APP_ID
 import com.ponko.cn.db.PonkoDBHelp
+import com.ponko.cn.db.dao.CourseCollectSectionDao
+import com.ponko.cn.db.dao.CourseCollectSpecialDao
 import com.ponko.cn.db.dao.CourseDao
 import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
@@ -32,13 +34,16 @@ import java.io.File
 
 class PonkoApp : MultiDexApplication() {
     companion object {
-        var APP_ID = "wxd37fb8ce51a02360"
         var app: Application? = null
-        var mainCBean: MainCBean? = null
-        @Deprecated("还是接口代替，不缓存在内存中了")
-        var signInfo: StoreTaskBean? = null
+        var APP_ID = "wxd37fb8ce51a02360"
         var UI_DEBUG = false
 
+        //临时变量
+        @Deprecated("还是接口代替，不缓存在内存中了")
+        var signInfo: StoreTaskBean? = null
+        var mainCBean: MainCBean? = null
+
+        //接口
         var retrofitClient: RetrofitClient? = null
         var loginApi: LoginApi? = null
         var studyApi: StudyApi? = null
@@ -49,11 +54,17 @@ class PonkoApp : MultiDexApplication() {
         var payApi: PayApi? = null
         var searchApi: SearchApi? = null
 
+        //数据库
         var dbHelp: PonkoDBHelp? = null
         var courseSpecialDao: CourseSpecialDao? = null
         var courseDao: CourseDao? = null
+        var collectSectionDao: CourseCollectSectionDao? = null
+        var collectSpecialDao: CourseCollectSpecialDao? = null
 
+        //窗口管理
         var activityManager = ActManager()
+
+        //下载管理
         @SuppressLint("StaticFieldLeak")
         var m3u8DownManager: M3u8DownManager? = null
 
@@ -89,22 +100,9 @@ class PonkoApp : MultiDexApplication() {
     }
 
     private fun initBugly() {
-//        Beta.autoInit = true
-//        Beta.autoCheckUpgrade = true
-//        Beta.upgradeCheckPeriod = 60 * 1000 * 60 * 24 * 2 //2天检查一次
-//        Beta.upgradeCheckPeriod = 1 //2天检查一次
-//        Beta.initDelay = 30 * 1000//30秒延迟检查
-//        Beta.initDelay = 1//1秒延迟检查
-//        Beta.largeIconId = R.mipmap.ic_launcher //设置通知栏大图标
-//        Beta.smallIconId = R.mipmap.ic_launcher //设置通知栏小图标
-//        Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-//        Beta.enableNotification = true
-//        Beta.canShowApkInfo = true
-//        Beta.canShowUpgradeActs.add(MainActivity::class.java)
-//        Beta.showInterruptedStrategy = false
         //Statistics.initCrashReport(applicationContext, BUG_APP_ID)   //ps:把这个配置打开会导致无法弹出升级框
         Statistics.initBugly(applicationContext, BUG_APP_ID)
-        Statistics.initUpgradeCheck( R.mipmap.ic_launcher,MainActivity::class.java)
+        Statistics.initUpgradeCheck(R.mipmap.ic_launcher, MainActivity::class.java)
     }
 
     private fun iniLog() {
@@ -116,7 +114,7 @@ class PonkoApp : MultiDexApplication() {
     }
 
     private fun initNetWork() {
-        //ps 请求头的顺序要一致哟，不然请求某些接口会出错
+        //ps 请求头的顺序要一致哟
         val heads = LinkedHashMap<String, String>()
         heads["x-tradestudy-access-key-id"] = "c"
         heads["x-tradestudy-client-version"] = "3.4.6"
@@ -174,6 +172,8 @@ class PonkoApp : MultiDexApplication() {
         dbHelp = PonkoDBHelp(this, "Ponko.db", null, 101)
         courseSpecialDao = CourseSpecialDao(PonkoApp.dbHelp?.writableDatabase)
         courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
+        collectSectionDao = CourseCollectSectionDao(PonkoApp.dbHelp?.writableDatabase)
+        collectSpecialDao = CourseCollectSpecialDao(PonkoApp.dbHelp?.writableDatabase)
     }
 
     override fun attachBaseContext(base: Context?) {

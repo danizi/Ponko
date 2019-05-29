@@ -25,4 +25,8 @@ class CourseCollectSpecialDbBean {
      * 专题标题
      */
     var column_title = ""
+
+    override fun toString(): String {
+        return "CourseCollectSpecialDbBean(column_uid='$column_uid', column_course_id='$column_course_id', column_teacher='$column_teacher', column_num='$column_num', column_cover='$column_cover', column_title='$column_title')"
+    }
 }

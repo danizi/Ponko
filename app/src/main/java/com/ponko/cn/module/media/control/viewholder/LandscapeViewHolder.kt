@@ -106,7 +106,7 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
             if (portraitXmVideoViewRect != null) {
                 //xmVideoView?.layout(portraitXmVideoViewRect?.left!!, portraitXmVideoViewRect?.top!!, portraitXmVideoViewRect?.right!!, portraitXmVideoViewRect?.bottom!!)
                 xmVideoView?.layoutParams?.width = portraitXmVideoViewRect?.right!!
-                xmVideoView?.layoutParams?.height = portraitXmVideoViewRect?.bottom!!
+                xmVideoView?.layoutParams?.height = portraitXmVideoViewRect?.bottom!! - ScreenUtil.getStatusBarHeight(activity)
 
             } else {
                 BKLog.e(TAG, "请给portraitXmVideoView属性赋值")

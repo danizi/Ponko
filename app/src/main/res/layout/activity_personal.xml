@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:background="@color/divider"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <!--标题栏-->
     <android.support.v7.widget.Toolbar
@@ -20,7 +22,7 @@
     <!--个人信息内容-->
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
@@ -28,7 +30,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <android.support.constraint.ConstraintLayout
@@ -50,6 +52,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <android.support.v7.widget.RecyclerView
+
                     android:id="@+id/rv_account"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -90,7 +93,7 @@
                 <!--其他-->
                 <TextView
                     android:id="@+id/tv_other"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
                     android:text="其他"
@@ -102,9 +105,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:layout_marginBottom="8dp"
                     android:background="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/rv_account"
                     app:layout_constraintStart_toStartOf="@+id/rv_account"
                     app:layout_constraintTop_toBottomOf="@+id/tv_other" />
@@ -115,5 +116,5 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
 

@@ -153,7 +153,7 @@ class PortraitViewHolder : ControlViewHolder {
 
             //xmVideoView?.layout(0, 0, screenW, screenH)    //设置宽高
             xmVideoView?.layoutParams?.height = screenH
-            xmVideoView?.layoutParams?.width = screenW
+            xmVideoView?.layoutParams?.width = screenW+ScreenUtil.getStatusBarHeight(activity)
 
             hideControlView()                  //隐藏控制界面  PS : 或者删除
             listener?.onState(AttachmentControl.LANDSCAPE)

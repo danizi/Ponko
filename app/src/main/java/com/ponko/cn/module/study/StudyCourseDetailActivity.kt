@@ -159,7 +159,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
         attachmentControl?.setOnPlayListItemClickListener(object : OnPlayListItemClickListener {
             override fun item(vid: String?, progress: Int?, view: View, postion: Int) {
-                p?.clickPlayListItem(vid,progress,view,postion)
+                p?.clickPlayListItem(vid, progress, view, postion)
                 //暂停播放
                 attachmentControl?.pause()
                 attachmentControl?.showLoading()
@@ -221,7 +221,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
     override fun setVideoPre(coursesDetailCBean: CoursesDetailCBean?) {
         val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
         val vid = coursesDetailCBean?.chapters!![0].sections[0].vid  //PS 游客模式vid获取不到
-        attachmentPre.load(vid = vid, preUrl = coursesDetailCBean.image)   //todo 窗口有销毁的可能
+        attachmentPre.load(vid = vid, preUrl = coursesDetailCBean.image)      //todo 窗口有销毁的可能
     }
 
     override fun displayVideoExtendableList(myExtendableListAdp: StudyCourseDetailContract.V.MyExtendableListViewAdapter?) {
@@ -240,5 +240,13 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
     override fun setTitle(title: String?) {
         attachmentControl?.setTitle(title!!)
+    }
+
+    override fun showCollectIcon() {
+        viewHolder?.ivColect?.setImageResource(R.mipmap.class_collection_p)
+    }
+
+    override fun hideCollectIcon() {
+        viewHolder?.ivColect?.setImageResource(R.mipmap.class_collection_n)
     }
 }
