@@ -39,9 +39,12 @@ class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConst
 
     override fun multiTypeData(body: CoursesCBean?): List<Any> {
         val multiData = ArrayList<Any>()
+
+        //p?.testWechat(body)
         if (body?.wechat?.isNotEmpty()!!) {
             multiData.add(WechatBean(body.wechat))
         }
+        //p?.testExchanged(body)
         if (body.exchanged?.isNotEmpty()!!) {
             multiData.add(ExchangedBean(body.exchanged))
         }
@@ -52,12 +55,13 @@ class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConst
         return multiData
     }
 
+
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
         return BindItemViewHolderBean.create(
                 arrayOf(0, 1, 2),
                 arrayOf(WechatViewHolder::class.java, ExchangedViewHolder::class.java, TrialViewHolder::class.java),
                 arrayOf(WechatBean::class.java, ExchangedBean::class.java, TrialBean::class.java),
-                arrayOf(R.layout.item_course_introduction, R.layout.item_course_introduction, R.layout.item_free_course_type)
+                arrayOf(R.layout.item_free_exchange_list, R.layout.item_free_exchange_list, R.layout.item_free_course_type)
         )
     }
 
