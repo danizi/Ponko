@@ -38,6 +38,11 @@ class LearnRankingAct : RefreshLoadAct<Any, LearnRankingCBean>() {
             override fun onSuccess(call: Call<LearnRankingCBean>?, response: Response<LearnRankingCBean>?) {
                 requestRefreshSuccess(response?.body())
             }
+
+            override fun onFailure(call: Call<LearnRankingCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
+            }
         })
     }
 

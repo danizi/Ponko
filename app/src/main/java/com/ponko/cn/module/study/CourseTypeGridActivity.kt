@@ -69,6 +69,11 @@ class CourseTypeGridActivity : RefreshLoadAct<Any, ArrayList<MainCBean.TypesBean
             override fun onSuccess(call: Call<ArrayList<MainCBean.TypesBeanX.TypesBean>>?, response: Response<ArrayList<MainCBean.TypesBeanX.TypesBean>>?) {
                 requestRefreshSuccess(response?.body())
             }
+
+            override fun onFailure(call: Call<ArrayList<MainCBean.TypesBeanX.TypesBean>>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
+            }
         })
     }
 

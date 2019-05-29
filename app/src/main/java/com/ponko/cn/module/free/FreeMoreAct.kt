@@ -62,6 +62,11 @@ class FreeMoreAct : RefreshLoadAct<Any, CoursesListCBean>() {
             override fun onSuccess(call: Call<CoursesListCBean>?, response: Response<CoursesListCBean>?) {
                 requestRefreshSuccess(response?.body())
             }
+
+            override fun onFailure(call: Call<CoursesListCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
+            }
         })
     }
 

@@ -265,6 +265,7 @@ class WebAct : PonkoBaseAct<Any>() {
 
                 override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
                     BKLog.e(TAG, "onReceivedError error  $error")
+                    viewState?.showError("加载失败", View.OnClickListener { })
                     super.onReceivedError(view, request, error)
                 }
 

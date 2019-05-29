@@ -44,6 +44,11 @@ class HistoryActivity : RefreshLoadAct<Any, ArrayList<RecordCBean.HistoryRecordB
 
                 requestMoreSuccess(data)
             }
+
+            override fun onFailure(call: Call<RecordCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestMoreFailure()
+            }
         })
     }
 
@@ -59,6 +64,11 @@ class HistoryActivity : RefreshLoadAct<Any, ArrayList<RecordCBean.HistoryRecordB
                     data.addAll(response.body()?.recordWithEarlier!!)
                 }
                 requestRefreshSuccess(data)
+            }
+
+            override fun onFailure(call: Call<RecordCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
             }
         })
     }

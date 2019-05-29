@@ -37,6 +37,11 @@ class OpenRollActivity : RefreshLoadAct<Any, List<OpenCBean>>() {
             override fun onSuccess(call: Call<List<OpenCBean>>?, response: Response<List<OpenCBean>>?) {
                 requestRefreshSuccess(response?.body())
             }
+
+            override fun onFailure(call: Call<List<OpenCBean>>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
+            }
         })
     }
 

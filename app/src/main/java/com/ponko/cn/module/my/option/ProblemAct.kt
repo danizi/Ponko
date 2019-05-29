@@ -6,7 +6,6 @@ import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.HelpCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
-import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.my.holder.MyProblemViewHolder
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import retrofit2.Call
@@ -38,6 +37,11 @@ class ProblemAct : RefreshLoadAct<Any, MutableList<HelpCBean>>() {
         PonkoApp.myApi?.getHelpList()?.enqueue(object : HttpCallBack<MutableList<HelpCBean>>() {
             override fun onSuccess(call: Call<MutableList<HelpCBean>>?, response: Response<MutableList<HelpCBean>>?) {
                 requestRefreshSuccess(response?.body())
+            }
+
+            override fun onFailure(call: Call<MutableList<HelpCBean>>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
             }
         })
     }

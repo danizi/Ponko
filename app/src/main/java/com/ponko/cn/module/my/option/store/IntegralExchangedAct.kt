@@ -33,6 +33,11 @@ class IntegralExchangedAct : RefreshLoadAct<Any, ArrayList<ExchangedHistoriesCBe
             override fun onSuccess(call: Call<ArrayList<ExchangedHistoriesCBean>>?, response: Response<ArrayList<ExchangedHistoriesCBean>>?) {
                 requestMoreSuccess(response?.body())
             }
+
+            override fun onFailure(call: Call<ArrayList<ExchangedHistoriesCBean>>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestMoreFailure()
+            }
         })
     }
 
@@ -40,6 +45,11 @@ class IntegralExchangedAct : RefreshLoadAct<Any, ArrayList<ExchangedHistoriesCBe
         PonkoApp.myApi?.integralObtainExchanged()?.enqueue(object : HttpCallBack<ArrayList<ExchangedHistoriesCBean>>() {
             override fun onSuccess(call: Call<ArrayList<ExchangedHistoriesCBean>>?, response: Response<ArrayList<ExchangedHistoriesCBean>>?) {
                 requestRefreshSuccess(response?.body())
+            }
+
+            override fun onFailure(call: Call<ArrayList<ExchangedHistoriesCBean>>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
             }
         })
     }

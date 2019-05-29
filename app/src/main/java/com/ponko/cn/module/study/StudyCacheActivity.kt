@@ -266,6 +266,11 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
                 coursesDetailCBean = response?.body()
                 requestRefreshSuccess(coursesDetailCBean)
             }
+
+            override fun onFailure(call: Call<CoursesDetailCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
+            }
         })
     }
 

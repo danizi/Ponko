@@ -72,6 +72,11 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
             override fun onSuccess(call: Call<ArrayList<OutInternalCourse>>?, response: Response<ArrayList<OutInternalCourse>>?) {
                 requestRefreshSuccess(response?.body())
             }
+
+            override fun onFailure(call: Call<ArrayList<OutInternalCourse>>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
+            }
         })
     }
 

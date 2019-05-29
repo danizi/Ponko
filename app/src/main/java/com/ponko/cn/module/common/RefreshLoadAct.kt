@@ -100,9 +100,10 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     }
 
     open fun requestMoreFailure() {
-        viewHolder?.viewState?.showError("网络开小差了....", View.OnClickListener {
-            requestMoreApi()
-        })
+//        viewHolder?.viewState?.showError("请求数据失败请重试....", View.OnClickListener {
+//            requestMoreApi()
+//        })
+        ToastUtil.show("加载更多失败...")
     }
 
 
@@ -134,7 +135,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     }
 
     open fun requestRefreshFailure() {
-        viewHolder?.viewState?.showError("网络开小差了....", View.OnClickListener {
+        viewHolder?.viewState?.showError("请求数据失败请重试....", View.OnClickListener {
             requestRefreshApi()
         })
     }

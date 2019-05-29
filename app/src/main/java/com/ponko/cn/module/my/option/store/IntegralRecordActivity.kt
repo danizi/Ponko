@@ -65,6 +65,11 @@ class IntegralRecordActivity : RefreshLoadAct<Any, StoreObtainLogBean>() {
 //                    viewHolder?.srl?.finishLoadMore(0)
 //                }
             }
+
+            override fun onFailure(call: Call<StoreObtainLogBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestMoreFailure()
+            }
         })
     }
 

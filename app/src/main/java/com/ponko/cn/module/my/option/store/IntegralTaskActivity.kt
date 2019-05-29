@@ -52,6 +52,11 @@ class IntegralTaskActivity : RefreshLoadAct<Any, StoreTaskBean>() {
             override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
                 requestMoreSuccess(response?.body())
             }
+
+            override fun onFailure(call: Call<StoreTaskBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestMoreFailure()
+            }
         })
     }
 

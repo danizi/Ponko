@@ -11,6 +11,7 @@ import android.view.ViewTreeObserver
 import com.ponko.cn.R
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.utils.BarUtil
+import com.ponko.cn.utils.ToastUtil
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
@@ -94,7 +95,7 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
     }
 
     open fun requestMoreFailure() {
-
+        ToastUtil.show("加载更多失败...")
     }
 
 
@@ -107,19 +108,25 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
         viewHolder?.srl?.finishRefresh()
         adapter?.data?.clear()
         adapter?.data?.addAll(multiTypeData(body))
-        //设置适配器
-        viewHolder?.rv?.adapter = adapter
-        viewHolder?.viewState?.hide()
-        if (!disableRefresh) {
-            viewHolder?.srl?.isEnableRefresh = true
-        }
-        if (!disableLoad) {
-            viewHolder?.isCanLoad(viewHolder?.rv, viewHolder?.srl) //判断RecyclerView内容的长度是否可以触发上拉加载
+        if (multiTypeData(body).isEmpty()) {
+            viewHolder?.viewState?.showNoData("暂无数据")
+        } else {
+            //设置适配器
+            viewHolder?.rv?.adapter = adapter
+            viewHolder?.viewState?.hide()
+            if (!disableRefresh) {
+                viewHolder?.srl?.isEnableRefresh = true
+            }
+            if (!disableLoad) {
+                viewHolder?.isCanLoad(viewHolder?.rv, viewHolder?.srl) //判断RecyclerView内容的长度是否可以触发上拉加载
+            }
         }
     }
 
     open fun requestRefreshFailure() {
-
+        viewHolder?.viewState?.showError("请求数据失败请重试....", View.OnClickListener {
+            requestRefreshApi()
+        })
     }
 
     abstract fun multiTypeData(body: D?): List<Any>

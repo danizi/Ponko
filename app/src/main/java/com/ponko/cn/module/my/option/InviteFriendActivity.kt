@@ -59,6 +59,11 @@ class InviteFriendActivity : RefreshLoadAct<Any, InviteFriendsBean>() {
                 //设置底部提示语
                 displayBottomTip(response?.body())
             }
+
+            override fun onFailure(call: Call<InviteFriendsBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
+            }
         })
     }
 
