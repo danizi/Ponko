@@ -6,22 +6,31 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
+import android.support.multidex.MultiDex
+import android.support.multidex.MultiDexApplication
+import com.ponko.cn.MainActivity
+import com.ponko.cn.R
 import com.ponko.cn.api.*
 import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constant.BASE_API
+import com.ponko.cn.constant.Constant.BUG_APP_ID
 import com.ponko.cn.db.PonkoDBHelp
 import com.ponko.cn.db.dao.CourseDao
 import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
 import com.ponko.cn.utils.CacheUtil
+import com.tencent.bugly.beta.Beta
+import com.tencent.bugly.beta.Beta.largeIconId
 import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.statistics.Statistics
 import java.io.File
 
 
-class PonkoApp : Application() {
+class PonkoApp : MultiDexApplication() {
     companion object {
         var APP_ID = "wxd37fb8ce51a02360"
         var app: Application? = null
@@ -75,6 +84,27 @@ class PonkoApp : Application() {
         initDb()
         //初始化m3u8文件下载器
         initDownManager()
+        //初始化bugly
+        initBugly()
+    }
+
+    private fun initBugly() {
+//        Beta.autoInit = true
+//        Beta.autoCheckUpgrade = true
+//        Beta.upgradeCheckPeriod = 60 * 1000 * 60 * 24 * 2 //2天检查一次
+//        Beta.upgradeCheckPeriod = 1 //2天检查一次
+//        Beta.initDelay = 30 * 1000//30秒延迟检查
+//        Beta.initDelay = 1//1秒延迟检查
+//        Beta.largeIconId = R.mipmap.ic_launcher //设置通知栏大图标
+//        Beta.smallIconId = R.mipmap.ic_launcher //设置通知栏小图标
+//        Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+//        Beta.enableNotification = true
+//        Beta.canShowApkInfo = true
+//        Beta.canShowUpgradeActs.add(MainActivity::class.java)
+//        Beta.showInterruptedStrategy = false
+        //Statistics.initCrashReport(applicationContext, BUG_APP_ID)   //ps:把这个配置打开会导致无法弹出升级框
+        Statistics.initBugly(applicationContext, BUG_APP_ID)
+        Statistics.initUpgradeCheck( R.mipmap.ic_launcher,MainActivity::class.java)
     }
 
     private fun iniLog() {
@@ -109,7 +139,7 @@ class PonkoApp : Application() {
     }
 
     private fun initActivityManager() {
-        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+        registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             override fun onActivityPaused(activity: Activity?) {
                 activityManager.onActivityPaused(activity)
             }
@@ -144,5 +174,10 @@ class PonkoApp : Application() {
         dbHelp = PonkoDBHelp(this, "Ponko.db", null, 101)
         courseSpecialDao = CourseSpecialDao(PonkoApp.dbHelp?.writableDatabase)
         courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
     }
 }

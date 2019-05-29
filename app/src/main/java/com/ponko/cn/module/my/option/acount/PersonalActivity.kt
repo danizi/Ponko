@@ -2,6 +2,7 @@ package com.ponko.cn.module.my.option.acount
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -10,6 +11,7 @@ import android.text.SpannableString
 import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.ponko.cn.R
@@ -79,7 +81,11 @@ class PersonalActivity : PonkoBaseAct<Any>() {
 
             override fun onResult(filePath: String, bmp: Bitmap?) {
                 BKLog.d("选取照片路径：$filePath")
-                val pair =  MultipartUtil.convertToPart("file", File(filePath))
+                //设置选取的头像
+                val circleImageView = viewHolder?.rvAccount?.getChildAt(0)?.findViewById<CircleImageView>(R.id.iv_head)
+                circleImageView?.setImageBitmap(bmp)
+                //上传头像
+                val pair = MultipartUtil.convertToPart("file", File(filePath))
                 PonkoApp.myApi?.saveProfilePhoto(pair)?.enqueue(object : HttpCallBack<GeneralBean>() {
                     override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                         savaHead(response?.body()?.url)
@@ -127,9 +133,9 @@ class PersonalActivity : PonkoBaseAct<Any>() {
             private fun setDisplayInfo(body: ProfileCBean?) {
                 val adapter = object : BaseRvAdapter() {}
                 adapter.addItemViewDelegate(0, AccountItemViewHolder::class.java, String::class.java, R.layout.item_account_my_edit)
-                adapter.data?.add(ItemBean("头像", body?.account?.avatar!!))//头像
-                adapter.data?.add(ItemBean("昵称", body?.account?.nickname!!))//昵称
-                adapter.data?.add(ItemBean("名字", body?.account?.realName!!))//名字
+                adapter.data?.add(ItemBean("头像", body?.account?.avatar))//头像
+                adapter.data?.add(ItemBean("昵称", body?.account?.nickname))//昵称
+                adapter.data?.add(ItemBean("名字", body?.account?.realName))//名字
                 viewHolder?.rvAccount?.adapter = adapter
                 viewHolder?.rvAccount?.layoutManager = LinearLayoutManager(this@PersonalActivity)
             }
@@ -140,9 +146,9 @@ class PersonalActivity : PonkoBaseAct<Any>() {
             private fun setDisplayAccount(body: ProfileCBean?) {
                 val adapter = object : BaseRvAdapter() {}
                 adapter.addItemViewDelegate(0, CommunicationItemViewHolder::class.java, String::class.java, R.layout.item_account_my_edit)
-                adapter.data?.add(ItemBean("qq", body?.account?.qq!!))//qq
-                adapter.data?.add(ItemBean("微信", body?.account?.weiXin!!))//微信
-                adapter.data?.add(ItemBean("邮箱", body?.account?.email!!)) //邮箱
+                adapter.data?.add(ItemBean("qq", body?.account?.qq))//qq
+                adapter.data?.add(ItemBean("微信", body?.account?.weiXin))//微信
+                adapter.data?.add(ItemBean("邮箱", body?.account?.email)) //邮箱
                 viewHolder?.rvCommunication?.adapter = adapter
                 viewHolder?.rvCommunication?.layoutManager = LinearLayoutManager(this@PersonalActivity)
             }
@@ -153,10 +159,10 @@ class PersonalActivity : PonkoBaseAct<Any>() {
             private fun setDisplayOther(body: ProfileCBean?) {
                 val adapter = object : BaseRvAdapter() {}
                 adapter.addItemViewDelegate(0, OtherItemViewHolder::class.java, String::class.java, R.layout.item_account_my_edit)
-                adapter.data?.add(ItemBean("公司名称", body?.account?.companyName!!))   //公司名称
-                adapter.data?.add(ItemBean("行业", body?.account?.industry!!))   //行业
-                adapter.data?.add(ItemBean("城市", body?.account?.city!!))   //城市
-                adapter.data?.add(ItemBean("用途", body?.account?.intention!!))   //用途
+                adapter.data?.add(ItemBean("公司名称", body?.account?.companyName))   //公司名称
+                adapter.data?.add(ItemBean("行业", body?.account?.industry))   //行业
+                adapter.data?.add(ItemBean("城市", body?.account?.city))   //城市
+                adapter.data?.add(ItemBean("用途", body?.account?.intention))   //用途
                 viewHolder?.rvOther?.adapter = adapter
                 viewHolder?.rvOther?.layoutManager = LinearLayoutManager(this@PersonalActivity)
 
@@ -324,5 +330,5 @@ class PersonalActivity : PonkoBaseAct<Any>() {
     /**
      * 实体bean
      */
-    private class ItemBean(val tip: String, var content: String)
+    private class ItemBean(val tip: String, var content: String?)
 }

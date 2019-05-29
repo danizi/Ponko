@@ -24,25 +24,25 @@
 
         <!--针对相册处理的 FileProvider共享文件、缓存-->
         <!--<provider-->
-            <!--android:name="android.support.v4.content.FileProvider"-->
-            <!--android:authorities="${applicationId}.fileProvider"-->
-            <!--android:exported="false"-->
-            <!--android:grantUriPermissions="true"-->
-            <!--tools:replace="name,authorities,exported,grantUriPermissions">-->
-            <!--<meta-data-->
-                <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
-                <!--android:resource="@xml/file_paths"-->
-                <!--tools:replace="name,resource" />-->
+        <!--android:name="android.support.v4.content.FileProvider"-->
+        <!--android:authorities="${applicationId}.fileProvider"-->
+        <!--android:exported="false"-->
+        <!--android:grantUriPermissions="true"-->
+        <!--tools:replace="name,authorities,exported,grantUriPermissions">-->
+        <!--<meta-data-->
+        <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
+        <!--android:resource="@xml/file_paths"-->
+        <!--tools:replace="name,resource" />-->
         <!--</provider>-->
 
         <!--<provider-->
-            <!--android:name="android.support.v4.content.FileProvider"-->
-            <!--android:authorities="com.ponko.cn.provider"-->
-            <!--android:exported="false"-->
-            <!--android:grantUriPermissions="true">-->
-            <!--<meta-data-->
-                <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
-                <!--android:resource="@xml/file_paths" />-->
+        <!--android:name="android.support.v4.content.FileProvider"-->
+        <!--android:authorities="com.ponko.cn.provider"-->
+        <!--android:exported="false"-->
+        <!--android:grantUriPermissions="true">-->
+        <!--<meta-data-->
+        <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
+        <!--android:resource="@xml/file_paths" />-->
         <!--</provider>-->
 
         <!-- ============================================主界面 start -->
@@ -79,7 +79,9 @@
         <activity android:name=".module.my.option.HistoryActivity" />
         <activity android:name=".module.my.option.CacheListAct" />
         <activity android:name=".module.my.option.acount.AddressActivity" />
-        <activity android:name=".module.my.option.acount.PersonalActivity" android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name=".module.my.option.acount.PersonalActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <!-- ============================================积分商城相关 end -->
 
 
@@ -150,7 +152,7 @@
         <!-- <activity android:name=".module.my.option.acount.CusTakePhotoActivity" /> -->
 
         <activity android:name=".module.my.option.InviteFriendShareActivity" />
-        <activity android:name=".module.my.option.InviteFriendRecordActivity"/>
+        <activity android:name=".module.my.option.InviteFriendRecordActivity" />
 
         <!--照片选取-->
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />

@@ -33,8 +33,8 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
                                 val intent = Intent(act, LoginStartAct::class.java)
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 ActivityUtil.startActivity(act, intent)
-                                dlg.dismiss()
                             }
+                            dlg.dismiss()
                         }
                     }
                     , null)

@@ -6,6 +6,14 @@ object Constant {
      */
     const val BASE_API = "https://api.tradestudy.cn/v3/"
     /**
+     * 微信id
+     */
+    var APP_ID = "wxd37fb8ce51a02360"
+    /**
+     * bugly id
+     */
+    val BUG_APP_ID = "c70a31a0a0"
+    /**
      * 签到成功广播
      */
     const val ACTION_SIGN_SUCCESS = "action_sign_success"
@@ -21,4 +29,10 @@ object Constant {
      * 点击搜索老师广播
      */
     const val ACTION_CLICK_SEARCH_TEACHER_ITEM = "action_click_search_teacher_item"
+
+    /**
+     * 图片延迟加载时间设定
+     */
+    @Deprecated("")
+    const val LOAD_IMAGE_DELAY=3000L
 }

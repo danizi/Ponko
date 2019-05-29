@@ -1,6 +1,7 @@
 package com.ponko.cn.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -14,6 +15,7 @@ import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.component.OnCancelListener
 import com.xm.lib.component.OnEnterListener
 import com.xm.lib.component.Type
@@ -51,12 +53,13 @@ object DialogUtil {
     }
 
     private fun newXmIOSDialog(context: Context, title: String, msg: String, isCancelable: Boolean, enterListener: OnEnterListener?, cancelListener: OnCancelListener?): AlertDialog {
+        val w = ScreenUtil.getNormalWH(context as Activity)[0] - ScreenUtil.dip2px(context,100)
         return XmIOSDialog(context)
                 .setType(Type.GENERAL)
                 .setMsg(msg)
                 .setTitle(title)
                 .setCancelable(isCancelable)
-                .setSize(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setSize(w, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .setOnEnterListener(enterListener)
                 .setOnCancelListener(cancelListener)
                 .build()

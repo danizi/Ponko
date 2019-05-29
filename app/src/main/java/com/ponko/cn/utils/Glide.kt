@@ -14,9 +14,20 @@ import com.xm.lib.common.util.TimerHelper
 import java.lang.Exception
 
 object Glide {
-    fun with(context: Context?, path: String?, imageView: ImageView?, flag: Boolean? = false) {
+    private val timerHelper = TimerHelper()
 
-        val g = Glide.with(context).load(path)
+    /**
+     * 针对一些第一次不显示图片使用
+     */
+    fun with(context: Context?, path: String?, imageView: ImageView?, delay: Long) {
+//        timerHelper.start(object : TimerHelper.OnDelayTimerListener {
+//            override fun onDelayTimerFinish() {
+//                with(context, path, imageView)
+//                timerHelper.stop()
+//            }
+//        }, delay)
+        // ps:如果使用该方法容易出现UI卡顿，但是能解决第一次不显示问题
+        Glide.with(context).load(path)
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.mipmap.load_img_default)
@@ -30,20 +41,29 @@ object Glide {
                     override fun onResourceReady(resource: GlideDrawable?, model: String?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
                         return false
                     }
-                })
+                }).into(object : SimpleTarget<GlideDrawable>() {
+                //ps:添加回调处理第一次不显示图片问题，但是没有动画了
+                override fun onResourceReady(resource: GlideDrawable?, glideAnimation: GlideAnimation<in GlideDrawable>?) {
+                    imageView?.setImageDrawable(resource)
+                }
+            })
+    }
 
-        if (flag == true) {
-            g.into(imageView)
-        } else {
-            g.into(imageView)
-            // ps:如果使用该方法容易出现UI卡顿，但是能解决第一次不显示问题
-//            g.into(object : SimpleTarget<GlideDrawable>() {
-//                //ps:添加回调处理第一次不显示图片问题，但是没有动画了
-//                override fun onResourceReady(resource: GlideDrawable?, glideAnimation: GlideAnimation<in GlideDrawable>?) {
-//                    imageView?.setImageDrawable(resource)
-//                }
-//            })
-        }
+    fun with(context: Context?, path: String?, imageView: ImageView?, flag: Boolean? = false) {
+        Glide.with(context).load(path)
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.mipmap.load_img_default)
+                .crossFade(300)
+                .listener(object : RequestListener<String, GlideDrawable> {
+                    override fun onException(e: Exception?, model: String?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
+                        //ToastUtil.showToast(e?.message)
+                        return false
+                    }
 
+                    override fun onResourceReady(resource: GlideDrawable?, model: String?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                        return false
+                    }
+                }).into(imageView)
     }
 }

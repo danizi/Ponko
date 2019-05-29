@@ -19,6 +19,7 @@ import com.ponko.cn.bean.Invite
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.Glide
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.mvp.MvpActivity
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.common.util.ViewUtil.getViewBitmap2
@@ -104,7 +105,11 @@ class InviteFriendShareActivity : MvpActivity<Any>() {
             //findViewById<ImageView>(R.id.iv_test).setImageBitmap(getViewBitmap2(ui?.vp?.getChildAt(index)!!))
             val wxShare = WxShare(this)
             wxShare.init(ShareConfig.Builder().appid(APP_ID).build())
-            wxShare.shareImage(getViewBitmap2(ui?.vp?.getChildAt(index)!!))
+            if (ui?.vp?.childCount!! > index) {
+                wxShare.shareImage(getViewBitmap2(ui?.vp?.getChildAt(index)!!))
+            } else {
+                ToastUtil.show("内容还未加载完成，请稍等。")
+            }
         }
     }
 

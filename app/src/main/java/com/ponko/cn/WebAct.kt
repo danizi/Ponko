@@ -283,7 +283,7 @@ class WebAct : PonkoBaseAct<Any>() {
                     tvTitle?.text = title
                 }
                 linkType = act.intent?.getStringExtra("link_type")!!
-                linkValue = act.intent?.getStringExtra("link_value")!!
+                linkValue = act.intent?.getStringExtra("link_value")!!   //todo 有为null的分享
 
                 //根据linkType底部展示不同的按钮
                 webViewBittomDisplay(exchangeViewHolder, payViewHolder, shareViewHolder)

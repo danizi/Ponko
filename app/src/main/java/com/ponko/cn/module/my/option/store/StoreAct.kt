@@ -25,6 +25,7 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.StoreProfileBean
 import com.ponko.cn.bean.StoreProfileCMoreBean
 import com.ponko.cn.bean.StoreTaskBean
+import com.ponko.cn.constant.Constant
 import com.ponko.cn.constant.Constant.ACTION_SIGN_SUCCESS
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
@@ -134,7 +135,7 @@ class StoreAct : PonkoBaseAct<Any>() {
             @SuppressLint("SetTextI18n")
             override fun onSuccess(call: Call<StoreProfileBean>?, response: Response<StoreProfileBean>?) {
                 storeProfileBean = response?.body()
-                Glide.with(this@StoreAct, storeProfileBean?.avatar, viewHolder?.ivHead, true)
+                Glide.with(this@StoreAct, storeProfileBean?.avatar, viewHolder?.ivHead,Constant.LOAD_IMAGE_DELAY)
                 viewHolder?.tvNick?.text = storeProfileBean?.name
                 viewHolder?.tvPayType?.text = storeProfileBean?.paid
                 viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"

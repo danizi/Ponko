@@ -3,6 +3,7 @@ package com.ponko.cn.module.my.holder
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
+import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -21,11 +22,13 @@ import com.ponko.cn.module.my.option.store.StoreAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.AnimUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
+import com.tencent.bugly.beta.Beta
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response
+import java.util.logging.Handler
 
 
 class MyViewHolder2(view: View) : BaseViewHolder(view) {
@@ -133,6 +136,9 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                 }
                 "常见问题" -> {
                     ActivityUtil.startActivity(context, Intent(context, ProblemAct::class.java))
+                }
+                "检查更新"->{
+                    Beta.checkUpgrade()
                 }
             }
             BKLog.d("点击${myListBean.des}")

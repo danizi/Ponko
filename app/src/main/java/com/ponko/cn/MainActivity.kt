@@ -14,6 +14,7 @@ import com.ponko.cn.module.my.MyFrg
 import com.ponko.cn.module.study.StudyFrg
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.IntoTargetUtil
+import com.tencent.bugly.beta.Beta
 import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.BottomMenu
@@ -89,7 +90,7 @@ class MainActivity : BaseActivity() {
                 try {
                     body = response?.body()
                     if (!TextUtils.isEmpty(body?.picture)) {
-                        show(body?.id, body?.picture)
+                        show(body?.id, body?.picture, body?.type, body?.target)
                     }
                 } catch (e: Exception) {
                     BKLog.e("未请求到广告数据")
@@ -97,7 +98,7 @@ class MainActivity : BaseActivity() {
                 }
             }
 
-            private fun show(adId: String?, adUrl: String?) {
+            private fun show(adId: String?, adUrl: String?, linkType: String?, linkValue: String?) {
                 xmAdView = XmAdView.Builder()
                         .context(this@MainActivity)
                         .activity(this@MainActivity)
@@ -107,7 +108,7 @@ class MainActivity : BaseActivity() {
                 xmAdView?.show()
                 xmAdView?.setOnAdListener(View.OnClickListener {
                     requestAdFeedbackApi(adId, 1)
-                    IntoTargetUtil.target(this@MainActivity, "url", body?.target)
+                    IntoTargetUtil.target(this@MainActivity, linkType, linkValue)
                 })
                 xmAdView?.setOnCloseListener(View.OnClickListener {
                     requestAdFeedbackApi(adId, 2)

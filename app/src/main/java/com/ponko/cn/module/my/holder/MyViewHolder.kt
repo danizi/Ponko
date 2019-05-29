@@ -1,5 +1,6 @@
 package com.ponko.cn.module.my.holder
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
@@ -13,6 +14,7 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.MyBean
 import com.ponko.cn.bean.MyTopBean
 import com.ponko.cn.bean.ProfileCBean
+import com.ponko.cn.constant.Constant.LOAD_IMAGE_DELAY
 import com.ponko.cn.module.login.LoginAccountAct
 import com.ponko.cn.module.my.option.HistoryActivity
 import com.ponko.cn.module.my.option.InviteFriendActivity
@@ -69,13 +71,14 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
 
     private var viewHolder: ViewHolder? = null
 
+    @SuppressLint("SetTextI18n")
     override fun bindData(d: Any, position: Int) {
         if (viewHolder == null) {
             viewHolder = ViewHolder.create(itemView)
         }
         val profileCBean = d as ProfileCBean
         val context = itemView.context
-        Glide.with(context, profileCBean.account.avatar, viewHolder?.ivCircleHead)  //头像
+        Glide.with(context, profileCBean.account.avatar, viewHolder?.ivCircleHead, LOAD_IMAGE_DELAY)  //头像
         viewHolder?.tvCourseNumber?.text = "" + profileCBean.account.study_count   //学习课程数量
         viewHolder?.tvTimeNumber?.text = "" + profileCBean.account.study_duration / 60  //学习时长
         viewHolder?.tvIntegralNumber?.text = "" + profileCBean.account.integration //当前积分

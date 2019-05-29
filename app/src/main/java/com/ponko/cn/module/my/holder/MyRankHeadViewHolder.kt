@@ -39,6 +39,7 @@ import com.ponko.cn.R.id.iv_number_one
 import com.ponko.cn.R.id.cl_number_one
 import com.ponko.cn.R.id.guideline_center
 import com.ponko.cn.bean.IntegralRankHeadBean
+import com.ponko.cn.constant.Constant
 import com.ponko.cn.utils.Glide
 
 
@@ -90,7 +91,7 @@ class MyRankHeadViewHolder(view: View) : BaseViewHolder(view) {
         }
         val context = itemView.context
         val integralRankHeadBean = d as IntegralRankHeadBean
-        Glide.with(context, integralRankHeadBean.ranking[0].headPicture, viewHolder?.ivHead1)
+        Glide.with(context, integralRankHeadBean.ranking[0].headPicture, viewHolder?.ivHead1, Constant.LOAD_IMAGE_DELAY)
         viewHolder?.tv1Name?.text = integralRankHeadBean.ranking[0].nickname
         viewHolder?.tv1Type?.text = integralRankHeadBean.ranking[0].productName
         viewHolder?.tv1Num?.text = integralRankHeadBean.ranking[0].scores.toString()
