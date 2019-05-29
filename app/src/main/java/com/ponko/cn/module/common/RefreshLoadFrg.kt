@@ -61,8 +61,8 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
 
     override fun iniData() {
         //viewHolder?.srl?.autoRefresh(0)  //PS:展现效果没有原生的好。
-        requestRefreshApi() //请求刷新数据
         adapter = adapter()
+        requestRefreshApi() //请求刷新数据
         bindItemViewHolder(bindItemViewHolderData())
     }
 

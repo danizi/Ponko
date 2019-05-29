@@ -26,6 +26,15 @@ class CourseCollectSpecialDbBean {
      */
     var column_title = ""
 
+    /**
+     * 是否显示删除
+     */
+    var isDelete = false
+    /**
+     * 选中还是非选中
+     */
+    var isSelect = false
+
     override fun toString(): String {
         return "CourseCollectSpecialDbBean(column_uid='$column_uid', column_course_id='$column_course_id', column_teacher='$column_teacher', column_num='$column_num', column_cover='$column_cover', column_title='$column_title')"
     }

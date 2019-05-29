@@ -73,7 +73,6 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
                 //获取播放地址
                 MediaUitl.getM3u8Url(url, object : MediaUitl.OnPlayUrlListener {
                     override fun onSuccess(url: String, size: Int?) {
-                        ToastUtil.show("获取播放地址失败 - ")
                         xmVideoView?.start(url, true)
                         xmVideoView?.bringChildToFront(this@AttachmentPre)
                     }

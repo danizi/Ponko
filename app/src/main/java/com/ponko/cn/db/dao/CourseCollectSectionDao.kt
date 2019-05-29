@@ -18,7 +18,7 @@ class CourseCollectSectionDao(private var db: SQLiteDatabase?) {
      * 插入数据
      */
     fun insert(bean: CourseCollectSectionDbBean) {
-        if (isOpen("数据插入失败")) return
+        if (!isOpen("数据插入失败")) return
         db?.execSQL(CacheContract.CourseCollectSectionTable.SQL_INSERT, arrayOf(
                 bean.column_uid,
                 bean.column_course_id,
@@ -31,7 +31,7 @@ class CourseCollectSectionDao(private var db: SQLiteDatabase?) {
      * 删除
      */
     fun deleteBySectionId(sectionId: String) {
-        if (isOpen("删除数据失败")) return
+        if (!isOpen("删除数据失败")) return
         if (isSelect("未删除数据", sectionId).isEmpty()) return
         val courseCollectSectionDbBeans = selectBySectionId(sectionId)
         for (bean in courseCollectSectionDbBeans) {
@@ -45,7 +45,7 @@ class CourseCollectSectionDao(private var db: SQLiteDatabase?) {
      * 更新
      */
     fun updateBySectionId(sectionId: String, bean: CourseCollectSectionDbBean) {
-        if (isOpen("更新数据失败")) return
+        if (!isOpen("更新数据失败")) return
         if (isSelect("未更新数据", sectionId).isEmpty()) return
         db?.execSQL(CacheContract.CourseCollectSectionTable.SQL_UPDATE_BY_COURSE_ID, arrayOf(
                 bean.column_uid,
@@ -56,7 +56,7 @@ class CourseCollectSectionDao(private var db: SQLiteDatabase?) {
     }
 
     /**
-     * 查找
+     * 查找-通过课程小节来查询
      */
     fun selectBySectionId(sectionId: String): ArrayList<CourseCollectSectionDbBean> {
         val data = ArrayList<CourseCollectSectionDbBean>()
@@ -65,10 +65,10 @@ class CourseCollectSectionDao(private var db: SQLiteDatabase?) {
             while (cursor.moveToNext()) {
                 val courseCollectSectionDbBean = CourseCollectSectionDbBean()
                 cursor.getColumnName(0) //主键值
-                courseCollectSectionDbBean.column_uid = cursor.getColumnName(1)
-                courseCollectSectionDbBean.column_course_id = cursor.getColumnName(2)
-                courseCollectSectionDbBean.column_section_id = cursor.getColumnName(3)
-                courseCollectSectionDbBean.column_section_name = cursor.getColumnName(4)
+                courseCollectSectionDbBean.column_uid = cursor.getString(1)
+                courseCollectSectionDbBean.column_course_id = cursor.getString(2)
+                courseCollectSectionDbBean.column_section_id = cursor.getString(3)
+                courseCollectSectionDbBean.column_section_name = cursor.getString(4)
                 data.add(courseCollectSectionDbBean)
             }
         } else {
@@ -77,6 +77,31 @@ class CourseCollectSectionDao(private var db: SQLiteDatabase?) {
         return data
     }
 
+    /**
+     * 查找-通过专题id来查询
+     */
+    fun selectByCourseId(courseId: String): ArrayList<CourseCollectSectionDbBean> {
+        val data = ArrayList<CourseCollectSectionDbBean>()
+        val cursor = db?.rawQuery(CacheContract.CourseCollectSectionTable.SQL_SELECT_BY_COURSE_ID, arrayOf(courseId))
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                val courseCollectSectionDbBean = CourseCollectSectionDbBean()
+                cursor.getColumnName(0) //主键值
+                courseCollectSectionDbBean.column_uid = cursor.getString(1)
+                courseCollectSectionDbBean.column_course_id = cursor.getString(2)
+                courseCollectSectionDbBean.column_section_id = cursor.getString(3)
+                courseCollectSectionDbBean.column_section_name = cursor.getString(4)
+                data.add(courseCollectSectionDbBean)
+            }
+        } else {
+            BKLog.e(TAG, "cursor is null")
+        }
+        return data
+    }
+
+    /**
+     * 查找所有
+     */
     fun selectAll(): ArrayList<CourseCollectSectionDbBean> {
         val data = ArrayList<CourseCollectSectionDbBean>()
         val cursor = db?.rawQuery(CacheContract.CourseCollectSectionTable.SQL_SELECT_ALL, arrayOf())
@@ -84,10 +109,10 @@ class CourseCollectSectionDao(private var db: SQLiteDatabase?) {
             while (cursor.moveToNext()) {
                 val courseCollectSectionDbBean = CourseCollectSectionDbBean()
                 cursor.getColumnName(0) //主键值
-                courseCollectSectionDbBean.column_uid = cursor.getColumnName(1)
-                courseCollectSectionDbBean.column_course_id = cursor.getColumnName(2)
-                courseCollectSectionDbBean.column_section_id = cursor.getColumnName(3)
-                courseCollectSectionDbBean.column_section_name = cursor.getColumnName(4)
+                courseCollectSectionDbBean.column_uid = cursor.getString(1)
+                courseCollectSectionDbBean.column_course_id = cursor.getString(2)
+                courseCollectSectionDbBean.column_section_id = cursor.getString(3)
+                courseCollectSectionDbBean.column_section_name = cursor.getString(4)
                 data.add(courseCollectSectionDbBean)
             }
         } else {

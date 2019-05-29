@@ -18,7 +18,7 @@ class CourseCollectSpecialDao(private var db: SQLiteDatabase?) {
      * 插入数据
      */
     fun insert(bean: CourseCollectSpecialDbBean) {
-        if (isOpen("数据插入失败")) return
+        if (!isOpen("数据插入失败")) return
         if (!isSelect("插入数据", bean.column_course_id).isEmpty()) return
         db?.execSQL(CacheContract.CourseCollectSpecialTable.SQL_INSERT, arrayOf(
                 bean.column_uid,
@@ -34,7 +34,7 @@ class CourseCollectSpecialDao(private var db: SQLiteDatabase?) {
      * 删除
      */
     fun deleteByCourseId(courseId: String) {
-        if (isOpen("删除数据失败")) return
+        if (!isOpen("删除数据失败")) return
         if (isSelect("未删除数据", courseId).isEmpty()) return
         val courseCollectSectionDbBeans = selectByCourseId(courseId)
         for (bean in courseCollectSectionDbBeans) {
@@ -48,7 +48,7 @@ class CourseCollectSpecialDao(private var db: SQLiteDatabase?) {
      * 更新
      */
     fun updateByCourseId(courseId: String, bean: CourseCollectSpecialDbBean) {
-        if (isOpen("更新数据失败")) return
+        if (!isOpen("更新数据失败")) return
         if (isSelect("未更新数据", courseId).isEmpty()) return
         db?.execSQL(CacheContract.CourseCollectSpecialTable.SQL_UPDATE_BY_COURSE_ID, arrayOf(
                 bean.column_uid,
@@ -69,13 +69,38 @@ class CourseCollectSpecialDao(private var db: SQLiteDatabase?) {
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 val courseCollectSpecialDbBean = CourseCollectSpecialDbBean()
-                cursor.getColumnName(0) //主键值
-                courseCollectSpecialDbBean.column_uid = cursor.getColumnName(1)
-                courseCollectSpecialDbBean.column_course_id = cursor.getColumnName(2)
-                courseCollectSpecialDbBean.column_teacher = cursor.getColumnName(3)
-                courseCollectSpecialDbBean.column_num = cursor.getColumnName(4)
-                courseCollectSpecialDbBean.column_cover = cursor.getColumnName(5)
-                courseCollectSpecialDbBean.column_title = cursor.getColumnName(6)
+                cursor.getString(0) //主键值
+                courseCollectSpecialDbBean.column_uid = cursor.getString(1)
+                courseCollectSpecialDbBean.column_course_id = cursor.getString(2)
+                courseCollectSpecialDbBean.column_teacher = cursor.getString(3)
+                courseCollectSpecialDbBean.column_num = cursor.getString(4)
+                courseCollectSpecialDbBean.column_cover = cursor.getString(5)
+                courseCollectSpecialDbBean.column_title = cursor.getString(6)
+                data.add(courseCollectSpecialDbBean)
+            }
+        } else {
+            BKLog.e(TAG, "cursor is null")
+        }
+        return data
+    }
+
+    /**
+     * 查找所有
+     */
+    fun selectAll(): ArrayList<CourseCollectSpecialDbBean> {
+        val data = ArrayList<CourseCollectSpecialDbBean>()
+        val cursor = db?.rawQuery(CacheContract.CourseCollectSpecialTable.SQL_SELECT_BY_ALL, arrayOf())
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                val courseCollectSpecialDbBean = CourseCollectSpecialDbBean()
+                cursor.getString(0) //主键值
+                courseCollectSpecialDbBean.column_uid = cursor.getString(1)
+                courseCollectSpecialDbBean.column_course_id = cursor.getString(2)
+                courseCollectSpecialDbBean.column_teacher = cursor.getString(3)
+                courseCollectSpecialDbBean.column_num = cursor.getString(4)
+                courseCollectSpecialDbBean.column_cover = cursor.getString(5)
+                courseCollectSpecialDbBean.column_title = cursor.getString(6)
+                data.add(courseCollectSpecialDbBean)
             }
         } else {
             BKLog.e(TAG, "cursor is null")

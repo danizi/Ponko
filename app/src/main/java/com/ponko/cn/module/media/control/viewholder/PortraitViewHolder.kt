@@ -253,7 +253,7 @@ class PortraitViewHolder : ControlViewHolder {
 
     override fun hideControlView() {
         hideBottom()
-        hideLoading()
+        //hideLoading()
         hideProgress()
     }
 

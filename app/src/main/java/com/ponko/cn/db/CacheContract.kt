@@ -187,7 +187,7 @@ class CacheContract {
                 "$COLUMN_NUM," +
                 "$COLUMN_COVER," +
                 "$COLUMN_TITLE" +
-                ")VALUE(?,?,?,?,?,?)"
+                ") VALUES (?,?,?,?,?,?)"
 
         //删
         const val SQL_DETELE_BY_COURSE_ID="DELETE FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
@@ -203,7 +203,8 @@ class CacheContract {
                 "$COLUMN_TITLE =?" +
                 "WHERE $COLUMN_COURSE_ID=?;"
         //查
-        const val SQL_SELECT_BY_COURSE_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID=?"
+        const val SQL_SELECT_BY_COURSE_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
+        const val SQL_SELECT_BY_ALL="SELECT * FROM $TABLE_NAME;"
     }
 
     /**
@@ -225,14 +226,14 @@ class CacheContract {
                 "$COLUMN_COURSE_ID TEXT NOT NULL," +
                 "$COLUMN_SECTION_ID TEXT NOT NULL," +
                 "$COLUMN_SECTION_NAME TEXT NOT NULL" +
-                ");"
+                ")"
         //增
         const val SQL_INSERT = "INSERT INTO $TABLE_NAME(" +
                 "$COLUMN_UID," +
                 "$COLUMN_COURSE_ID," +
                 "$COLUMN_SECTION_ID," +
                 "$COLUMN_SECTION_NAME" +
-                ")VALUE(?,?,?,?)"
+                ") VALUES (?,?,?,?)"
         //删
         const val SQL_DELETE_BY_COLUMN_SECTION_ID= "DELETE FROM $TABLE_NAME WHERE $COLUMN_SECTION_ID = ?;"
         const val SQL_DELETE_ALL = "DELETE FROM $TABLE_NAME;"
@@ -246,7 +247,8 @@ class CacheContract {
                 "WHERE $COLUMN_COURSE_ID=?;"
 
         //查
-        const val SQL_SELECT_BY_SECTION_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_SECTION_ID=?"
+        const val SQL_SELECT_BY_SECTION_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_SECTION_ID = ?;"
+        const val SQL_SELECT_BY_COURSE_ID="SELECT * FROM $TABLE_NAME WHERE $COLUMN_COURSE_ID = ?;"
         const val SQL_SELECT_ALL="SELECT * FROM $TABLE_NAME"
     }
 

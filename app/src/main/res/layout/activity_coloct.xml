@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:elevation="6dp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp">
 
@@ -79,8 +80,37 @@
         android:id="@+id/vp"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/ll_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cl_top_menu" />
+
+    <!--底部按钮-->
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btn_all_select"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#9DCAAE"
+            android:text="全选"
+            android:textColor="@color/white" />
+
+        <!--确认删除(x)或者是下载取决用户选中模式-->
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#FF5A5E"
+            android:text="删除"
+            android:textColor="@color/white" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

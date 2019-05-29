@@ -481,7 +481,7 @@ class StudyCourseDetailContract {
             if (model.isPay || isFree) {
 
                 //是否显示收藏
-                isDisplayCollect()
+                isDisplayCollect(groupPosition, childPosition)
 
                 //设置标题
                 this.v.setTitle(model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name)
@@ -507,8 +507,7 @@ class StudyCourseDetailContract {
             } else {
                 ToastUtil.show("请先购买课程！")
             }
-            model.myExtendableListAdp?.clickItemChildPos = childPosition
-            model.myExtendableListAdp?.clickItemGroupPos = groupPosition
+
             return true
         }
 
@@ -518,15 +517,19 @@ class StudyCourseDetailContract {
         fun clickPlayListItem(vid: String?, progress: Int?, view: View, postion: Int) {
             BKLog.d("横屏状态点击了播放列表:$postion")
             val (groupPosition, childPosition) = oneToTwo(postion)!!
-            model.clickItemGroupPos = groupPosition
-            model.clickItemChildPos = childPosition
-            isDisplayCollect()
+            isDisplayCollect(groupPosition, childPosition)
         }
 
         /**
          * 是否显示收藏
          */
-        private fun isDisplayCollect() {
+        private fun isDisplayCollect(groupPosition: Int = model.clickItemGroupPos, childPosition: Int = model.clickItemChildPos) {
+            //保存点击位置
+            model.clickItemGroupPos = groupPosition
+            model.clickItemChildPos = childPosition
+            model.myExtendableListAdp?.clickItemChildPos = childPosition
+            model.myExtendableListAdp?.clickItemGroupPos = groupPosition
+
             //判断数据库中是否有收藏
             val sectionId = getSectionId()
             if (PonkoApp.collectSectionDao?.exist(sectionId) == true) {
@@ -608,6 +611,8 @@ class StudyCourseDetailContract {
                     v.displayVideoExtendableList(model.myExtendableListAdp)
                     //设置标题
                     v.setTitle(model.coursesDetailCBean?.chapters!![0].sections[0].name)
+                    //是否收藏显示
+                    isDisplayCollect()
                 }
             })
         }
@@ -651,35 +656,35 @@ class StudyCourseDetailContract {
          * 上传播放进度
          */
         fun uploadVideoProgress(video: XmVideoView?) {
-            timerHelper.start(object : TimerHelper.OnPeriodListener {
-                override fun onPeriod() {
-                    val mediaPlayer = video?.mediaPlayer
-                    val isPlaying = mediaPlayer?.isPlaying()
-                    val isComplete = video?.isComplete
-                    if (isPlaying == true) {
-                        val sectionId = model.coursesDetailCBean?.chapters!![model.clickItemGroupPos].sections[model.clickItemChildPos].id
-                        val courseId = model.typeId
-                        val pos = mediaPlayer.getCurrentPosition()
-                        val params = HashMap<String, String>()
-                        params["completed"] = isComplete.toString()
-                        params["duration"] = mediaPlayer.getDuration().toString()
-                        params["position"] = (pos / 1000).toString()
-                        params["courseId"] = courseId
-                        params["sectionId"] = sectionId
-                        BKLog.d("上传内容 completed${isComplete.toString()} duration${(pos / 1000)} position:$pos courseId$courseId sectionId$sectionId")
-                        PonkoApp.studyApi?.updateVideoInfo(params)?.enqueue(object : HttpCallBack<NetBean>() {
-                            override fun onSuccess(call: Call<NetBean>?, response: Response<NetBean>?) {
-                                BKLog.d("上传视频进度成功")
-                            }
-
-                            override fun onFailure(call: Call<NetBean>?, msg: String?) {
-                                super.onFailure(call, msg)
-                                BKLog.d("上传视频进度失败")
-                            }
-                        })
-                    }
-                }
-            }, 10000)
+//            timerHelper.start(object : TimerHelper.OnPeriodListener {
+//                override fun onPeriod() {
+//                    val mediaPlayer = video?.mediaPlayer
+//                    val isPlaying = mediaPlayer?.isPlaying()
+//                    val isComplete = video?.isComplete
+//                    if (isPlaying == true) {
+//                        val sectionId = model.coursesDetailCBean?.chapters!![model.clickItemGroupPos].sections[model.clickItemChildPos].id
+//                        val courseId = model.typeId
+//                        val pos = mediaPlayer.getCurrentPosition()
+//                        val params = HashMap<String, String>()
+//                        params["completed"] = isComplete.toString()
+//                        params["duration"] = mediaPlayer.getDuration().toString()
+//                        params["position"] = (pos / 1000).toString()
+//                        params["courseId"] = courseId
+//                        params["sectionId"] = sectionId
+//                        BKLog.d("上传内容 completed${isComplete.toString()} duration${(pos / 1000)} position:$pos courseId$courseId sectionId$sectionId")
+//                        PonkoApp.studyApi?.updateVideoInfo(params)?.enqueue(object : HttpCallBack<NetBean>() {
+//                            override fun onSuccess(call: Call<NetBean>?, response: Response<NetBean>?) {
+//                                BKLog.d("上传视频进度成功")
+//                            }
+//
+//                            override fun onFailure(call: Call<NetBean>?, msg: String?) {
+//                                super.onFailure(call, msg)
+//                                BKLog.d("上传视频进度失败")
+//                            }
+//                        })
+//                    }
+//                }
+//            }, 10000)
         }
 
         /**

@@ -124,10 +124,10 @@ abstract class ControlViewHolder {
      * 隐藏播放器控制界面，PS : 横竖切屏所要隐藏的界面块不同，需要特定操作请覆盖写该方法
      */
     open fun hideControlView() {
-        rootView?.visibility = View.GONE
+        //rootView?.visibility = View.GONE
         hideTop()
         hideBottom()
-        hideLoading()
+        //hideLoading()
         hideProgress()
         hidePlayList()
         isControlViewShow = false

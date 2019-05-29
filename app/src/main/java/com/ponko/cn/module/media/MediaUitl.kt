@@ -38,7 +38,7 @@ object MediaUitl {
     /**
      * 三种选择 1 标准  2 高清 3超高清
      */
-    private const val QUALITY = 1
+    private var QUALITY = 3
 
     /**
      * 视频地址选择 ps:调用接口有时候地址是空的
@@ -46,6 +46,9 @@ object MediaUitl {
     fun hls(section: List<VideoInfoCBean.DataBean>?): String {
         if (section?.isEmpty()!!) {
             throw NullPointerException("请检查保利威视接口返回的视频播放地址信息")
+        }
+        if (section[0].hls.size < QUALITY) {
+            QUALITY = section[0].hls.size
         }
         return when (QUALITY) {
             1 -> section[0].hls[0]
@@ -63,6 +66,9 @@ object MediaUitl {
     fun fileSize(section: List<VideoInfoCBean.DataBean>?): Int {
         if (section?.isEmpty()!!) {
             throw NullPointerException("请检查保利威视接口返回的视频大小信息")
+        }
+        if (section[0].filesize.size < QUALITY) {
+            QUALITY = section[0].filesize.size
         }
         return when (QUALITY) {
             1 -> section[0].filesize[0]
@@ -154,8 +160,6 @@ object MediaUitl {
             }
 
             override fun onSuccess(videoInfo: VideoInfoCBean) {
-                //val m3u8 = videoInfo.data[0].hls[2]
-                //val total =videoInfo.data[0].filesize[2]
                 val m3u8 = hls(videoInfo.data)
                 val total = fileSize(videoInfo.data)
                 handler.post {

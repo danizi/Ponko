@@ -3,6 +3,7 @@ package com.ponko.cn.module.my.option
 import android.graphics.Color
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
+import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
@@ -18,6 +19,7 @@ import com.ponko.cn.module.my.constract.CollectContract
  * 收藏
  */
 class CollectAct : PonkoBaseAct<CollectContract.Present>(), CollectContract.V {
+
 
     /**
      * 收藏UI
@@ -70,13 +72,21 @@ class CollectAct : PonkoBaseAct<CollectContract.Present>(), CollectContract.V {
         ui?.ivDelete?.setOnClickListener {
             p?.clickDelete()
         }
+        ui?.btnDelete?.setOnClickListener {
+            p?.clickBottomDelete()
+        }
+        ui?.btnAllSelect?.setOnClickListener {
+            p?.clickBottomSelect()
+        }
     }
+
+    private var fragments: ArrayList<Fragment>? = null
 
     override fun iniData() {
         super.iniData()
-        val fragments = p?.getFragments()
+        fragments = p?.getFragments()
         if (fragments?.isNotEmpty()!!) {
-            ui?.vp?.adapter = CollectContract.M.ViewPagerAdapter(fragments, supportFragmentManager)
+            ui?.vp?.adapter = CollectContract.M.ViewPagerAdapter(fragments!!, supportFragmentManager)
         }
     }
 
@@ -87,28 +97,67 @@ class CollectAct : PonkoBaseAct<CollectContract.Present>(), CollectContract.V {
                 ui?.btnCourse?.setBackgroundResource(R.drawable.interflow_top_nav_btn_bk)
                 ui?.btnSection?.setTextColor(Color.parseColor("#FFFFFF"))
                 ui?.btnCourse?.setTextColor(Color.parseColor("#FFFF5A5E")) //红色
+                ui?.vp?.currentItem = 0
             }
             1 -> {
                 ui?.btnCourse?.setBackgroundResource(R.drawable.interflow_top_nav_btn_bk_s)
                 ui?.btnSection?.setBackgroundResource(R.drawable.interflow_top_nav_btn_bk)
                 ui?.btnCourse?.setTextColor(Color.parseColor("#FFFFFF"))
                 ui?.btnSection?.setTextColor(Color.parseColor("#FFFF5A5E")) //红色
+                ui?.vp?.currentItem = 1
             }
         }
     }
 
     override fun deleteModeDisplay(pageIndex: Int) {
-
+        ui?.llBottom?.visibility = View.VISIBLE
+        (fragments!![0] as CollectContract.V.CollectSectionFragment).deleteModeDisplay()
+        (fragments!![1] as CollectContract.V.CollectCourseFragment).deleteModeDisplay()
     }
 
     override fun unDeleteModeDisplay(pageIndex: Int) {
+        ui?.llBottom?.visibility = View.INVISIBLE
+        (fragments!![0] as CollectContract.V.CollectSectionFragment).unDeleteModeDisplay()
+        (fragments!![1] as CollectContract.V.CollectCourseFragment).unDeleteModeDisplay()
+    }
 
+    override fun selectAll(pageIndex: Int) {
+        when(pageIndex){
+            0->{
+                (fragments!![pageIndex] as CollectContract.V.CollectSectionFragment).selectAll()
+            }
+            1->{
+                (fragments!![pageIndex] as CollectContract.V.CollectCourseFragment).selectAll()
+            }
+        }
+    }
+
+    override fun unselectAll(pageIndex: Int) {
+        when(pageIndex){
+            0->{
+                (fragments!![pageIndex] as CollectContract.V.CollectSectionFragment).unselectAll()
+            }
+            1->{
+                (fragments!![pageIndex] as CollectContract.V.CollectCourseFragment).unselectAll()
+            }
+        }
+    }
+
+    override fun deleteData(pageIndex: Int) {
+        when(pageIndex){
+            0->{
+                (fragments!![pageIndex] as CollectContract.V.CollectSectionFragment).deleteData()
+            }
+            1->{
+                (fragments!![pageIndex] as CollectContract.V.CollectCourseFragment).deleteData()
+            }
+        }
     }
 
     /**
      * 窗口ui
      */
-    private class ViewHolder private constructor(val clTopMenu: ConstraintLayout, val ivBack: AppCompatImageButton, val linearLayout4: LinearLayout, val btnSection: Button, val btnCourse: Button, val ivDelete: AppCompatImageButton, val vp: ViewPager) {
+    private class ViewHolder private constructor(val clTopMenu: ConstraintLayout, val ivBack: AppCompatImageButton, val linearLayout4: LinearLayout, val btnSection: Button, val btnCourse: Button, val ivDelete: AppCompatImageButton, val vp: ViewPager, val llBottom: LinearLayout, val btnAllSelect: Button, val btnDelete: Button) {
         companion object {
 
             fun create(rootView: AppCompatActivity): ViewHolder {
@@ -119,9 +168,13 @@ class CollectAct : PonkoBaseAct<CollectContract.Present>(), CollectContract.V {
                 val btnCourse = rootView.findViewById<View>(R.id.btn_course) as Button
                 val ivDelete = rootView.findViewById<View>(R.id.iv_delete) as AppCompatImageButton
                 val vp = rootView.findViewById<View>(R.id.vp) as ViewPager
-                return ViewHolder(clTopMenu, ivBack, linearLayout4, btnSection, btnCourse, ivDelete, vp)
+                val llBottom = rootView.findViewById<View>(R.id.ll_bottom) as LinearLayout
+                val btnAllSelect = rootView.findViewById<View>(R.id.btn_all_select) as Button
+                val btnDelete = rootView.findViewById<View>(R.id.btn_delete) as Button
+                return ViewHolder(clTopMenu, ivBack, linearLayout4, btnSection, btnCourse, ivDelete, vp, llBottom, btnAllSelect, btnDelete)
             }
         }
     }
+
 
 }

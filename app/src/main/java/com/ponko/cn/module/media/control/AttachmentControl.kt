@@ -91,7 +91,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
 
             override fun onSeekComplete(mp: IXmMediaPlayer) {
                 super.onSeekComplete(mp)
-                ui?.hideLoading()
+                //ui?.hideLoading()
             }
 
             override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
