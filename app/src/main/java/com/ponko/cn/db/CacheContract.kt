@@ -228,10 +228,10 @@ class CacheContract {
                 ");"
         //增
         const val SQL_INSERT = "INSERT INTO $TABLE_NAME(" +
-                "$COLUMN_UID=?," +
-                "$COLUMN_COURSE_ID=?," +
-                "$COLUMN_SECTION_ID=?," +
-                "$COLUMN_SECTION_NAME=?" +
+                "$COLUMN_UID," +
+                "$COLUMN_COURSE_ID," +
+                "$COLUMN_SECTION_ID," +
+                "$COLUMN_SECTION_NAME" +
                 ")VALUE(?,?,?,?)"
         //删
         const val SQL_DELETE_BY_COLUMN_SECTION_ID= "DELETE FROM $TABLE_NAME WHERE $COLUMN_SECTION_ID = ?;"

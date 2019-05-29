@@ -30,6 +30,7 @@ import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
 import retrofit2.Response
+import kotlin.text.Typography.section
 
 /**
  * 课程学习详情页面契约类 - MVP模式
@@ -379,9 +380,10 @@ class StudyCourseDetailContract {
             if (model.isPay) {
                 BKLog.d("点击收藏")
                 //首先判断数据库中是否存在
-                if (PonkoApp.collectSectionDao?.exist(getSectionId()) == false) {
+                val section = getSection()
+                if (PonkoApp.collectSectionDao?.exist(section?.id!!) == false) {
                     //如果不存在则将数据插入小节数据库中
-                    val section = getSection()
+
                     val courseCollectSectionDbBean = CourseCollectSectionDbBean()
                     courseCollectSectionDbBean.column_uid = CacheUtil.getToken()!!
                     courseCollectSectionDbBean.column_section_id = section?.id!!
