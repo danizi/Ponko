@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <android.support.v7.widget.AppCompatImageButton
@@ -11,7 +12,7 @@
         android:layout_height="42dp"
         android:layout_margin="@dimen/dp_8"
         android:background="#FFFFFF"
-        android:src="@mipmap/back1" />
+        android:src="@mipmap/back2" />
 
     <TextView
         android:layout_width="wrap_content"

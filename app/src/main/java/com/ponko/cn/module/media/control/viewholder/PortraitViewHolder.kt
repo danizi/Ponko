@@ -132,6 +132,12 @@ class PortraitViewHolder : ControlViewHolder {
             ShareUtil.showShareDlg(activity, this.share?.url, this.share?.title, this.share?.description)
         }
 
+        val mediaPlayer=  (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).xmVideoView?.mediaPlayer
+        if(mediaPlayer?.isPlaying()==true){
+            ivAction?.setImageResource(pauseResID)
+        }else{
+            ivAction?.setImageResource(playResID)
+        }
         //底部
         ivAction?.setOnClickListener {
             try {
@@ -154,7 +160,7 @@ class PortraitViewHolder : ControlViewHolder {
 
             //xmVideoView?.layout(0, 0, screenW, screenH)    //设置宽高
             xmVideoView?.layoutParams?.height = screenH
-            xmVideoView?.layoutParams?.width = screenW+ScreenUtil.getStatusBarHeight(activity)
+            xmVideoView?.layoutParams?.width = screenW + ScreenUtil.getStatusBarHeight(activity)
 
             hideControlView()                  //隐藏控制界面  PS : 或者删除
             listener?.onState(AttachmentControl.LANDSCAPE)

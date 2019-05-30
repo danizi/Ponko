@@ -5,6 +5,8 @@ import android.view.View
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.RemindCBean
+import com.ponko.cn.constant.Constant
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.util.TimeUtil
 
@@ -33,7 +35,16 @@ class MyRemindHolder(view: View) : BaseViewHolder(view) {
         }
         val remindCBean = d as RemindCBean
         val context = itemView.context
-
+        if (remindCBean.type.equals("SIMPLE", true)) {
+            //不可跳转的
+            viewHolder?.llDetail?.visibility = View.GONE
+        } else {
+            //可跳转的
+            viewHolder?.llDetail?.visibility = View.VISIBLE
+            itemView.setOnClickListener {
+                IntoTargetUtil.target(context, remindCBean.type, remindCBean.url)
+            }
+        }
         viewHolder?.tvTitle?.text = remindCBean.title
         viewHolder?.tvDes?.text = remindCBean.description
         viewHolder?.tvTime?.text = TimeUtil.unixStr("yyyy/MM/dd HH:mm:ss", remindCBean.createTime)

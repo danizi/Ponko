@@ -1,5 +1,6 @@
 package com.ponko.cn.module.login
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -16,6 +17,7 @@ import android.widget.FrameLayout
 import com.ponko.cn.MainActivity
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
@@ -26,8 +28,89 @@ import retrofit2.Response
 /**
  * 用户未注册 微信登录 进入此窗口
  */
-class LoginWxAct : AppCompatActivity() {
+class LoginWxAct : PonkoBaseAct<Any>() {
 
+    companion object {
+        fun start(context: Context,code:String){
+
+        }
+    }
+    private var ui: ViewHolder? = null
+
+    override fun presenter(): Any {
+        return Any()
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_login_wx
+    }
+
+    override fun findViews() {
+        super.findViews()
+        if (ui == null) {
+            ui = ViewHolder.create(this)
+        }
+    }
+
+    override fun iniEvent() {
+        super.iniEvent()
+        val code = intent.getStringExtra("code")
+        ui?.flClose?.setOnClickListener {
+            finish()
+        }
+        ui?.tvFindPwd?.setOnClickListener {
+            ActivityUtil.startActivity(this, Intent(this, LoginFindPwdAct::class.java))
+        }
+        ui?.etAccount?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                ui?.btnEnter?.isEnabled = s.toString().isNotEmpty()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+        })
+        ui?.etPwd?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.toString().isNotEmpty()) {
+                    ui?.btnEnter?.isEnabled = true
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+        ui?.btnEnter?.setOnClickListener {
+            DialogUtil.showProcess(this)
+            PonkoApp.loginApi?.wxbind(ui?.etAccount?.text.toString(), ui?.etPwd?.text.toString(), code,  "wechat")?.enqueue(object : HttpCallBack<GeneralBean>() {
+                override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                    val token = response?.body()?.token
+                    CacheUtil.putToken(token)
+                    val intent = Intent(this@LoginWxAct, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    ActivityUtil.startActivity(this@LoginWxAct, intent)
+                    DialogUtil.hideProcess()
+                }
+
+                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    DialogUtil.hideProcess()
+                }
+            })
+        }
+    }
+
+
+    /**
+     * 窗口UI
+     */
     private class ViewHolder private constructor(val constraintLayout: ConstraintLayout, val flClose: FrameLayout, val tvFindPwd: TextView, val tvWxSuccess: TextView, val tvDes: TextView, val constraintLayout2: ConstraintLayout, val etAccount: EditText, val etPwd: EditText, val btnEnter: Button, val textView3: TextView, val tvUserAgreement: TextView) {
         companion object {
 
@@ -48,64 +131,11 @@ class LoginWxAct : AppCompatActivity() {
         }
     }
 
-    private var viewHolder: ViewHolder? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login_wx)
 
-        val code = intent.getStringExtra("code")
-
-        if (viewHolder == null) {
-            viewHolder = ViewHolder.create(this)
-        }
-        viewHolder?.flClose?.setOnClickListener {
-            finish()
-        }
-        viewHolder?.tvFindPwd?.setOnClickListener {
-            ActivityUtil.startActivity(this, Intent(this, LoginFindPwdAct::class.java))
-        }
-        viewHolder?.etAccount?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                viewHolder?.btnEnter?.isEnabled = s.toString().isNotEmpty()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-        })
-        viewHolder?.etPwd?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (s.toString().isNotEmpty()) {
-                    viewHolder?.btnEnter?.isEnabled = true
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-        })
-        viewHolder?.btnEnter?.setOnClickListener {
-            DialogUtil.showProcess(this)
-            PonkoApp.loginApi?.wxbind(viewHolder?.etAccount?.text.toString(), viewHolder?.etPwd?.text.toString(), code,  "wechat")?.enqueue(object : HttpCallBack<GeneralBean>() {
-                override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                    val token = response?.body()?.token
-                    CacheUtil.putToken(token)
-                    val intent = Intent(this@LoginWxAct, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    ActivityUtil.startActivity(this@LoginWxAct, intent)
-                    DialogUtil.hideProcess()
-                }
-
-                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
-                    super.onFailure(call, msg)
-                    DialogUtil.hideProcess()
-                }
-            })
-        }
-    }
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_login_wx)
+//        val code = intent.getStringExtra("code")
+//    }
 }

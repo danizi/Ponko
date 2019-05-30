@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.app.PonkoApp.Companion.UI_AD_DEBUG
 import com.ponko.cn.app.PonkoApp.Companion.UI_DEBUG
 import com.ponko.cn.bean.AdCBean
 import com.ponko.cn.http.HttpCallBack
@@ -106,7 +107,7 @@ class StartAct : BaseActivity() {
         adCBean = body
 
         //没有返回广告实体测试
-        if (UI_DEBUG) {
+        if (UI_AD_DEBUG) {
             body?.id = "http://img2.imgtn.bdimg.com/it/u=1395765958,3377106680&fm=26&gp=0.jpg"
             body?.countdown = 5
             body?.picture = "http://img2.imgtn.bdimg.com/it/u=1395765958,3377106680&fm=26&gp=0.jpg"

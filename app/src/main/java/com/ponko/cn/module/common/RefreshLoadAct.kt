@@ -104,6 +104,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
 //            requestMoreApi()
 //        })
         ToastUtil.show("加载更多失败...")
+        viewHolder?.srl?.finishLoadMore()
     }
 
 
@@ -135,6 +136,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     }
 
     open fun requestRefreshFailure() {
+        viewHolder?.srl?.finishRefresh(0)
         viewHolder?.viewState?.showError("请求数据失败请重试....", View.OnClickListener {
             requestRefreshApi()
         })

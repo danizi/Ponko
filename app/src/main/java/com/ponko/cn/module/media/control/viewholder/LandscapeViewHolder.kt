@@ -121,11 +121,17 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
         ivMore?.setOnClickListener {
             val xmPopWindow = XmPopWindow(activity)
             val view = LayoutInflater.from(activity).inflate(R.layout.attachment_control_landscape_setting_pop, null, false)
-            PopSettingViewHolder.create(xmVideoView, view)
+            PopSettingViewHolder.create(xmVideoView, view,xmPopWindow)
             xmPopWindow.ini(view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
             xmPopWindow.showAtLocation(XmPopWindow.Location.RIGHT, R.style.AnimationRightFade, activity?.window?.decorView!!, 0, 0)
         }
 
+       val mediaPlayer=  (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).xmVideoView?.mediaPlayer
+        if(mediaPlayer?.isPlaying()==true){
+            ivAction?.setImageResource(pauseResID)
+        }else{
+            ivAction?.setImageResource(playResID)
+        }
         //底部
         ivAction?.setOnClickListener {
             try {
@@ -355,10 +361,10 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
     /**
      * 弹出框设置
      */
-    private class PopSettingViewHolder private constructor(val xmVideoView: XmVideoView?, val context: Context, val tvEdit: TextView, val clAction: ConstraintLayout, val imageView: ImageView, val clSpeed: ConstraintLayout, val tvSpeedTitle: TextView, val tvSpeed05: TextView, val tvSpeed075: TextView, val tvSpeed10: TextView, val tvSpeed125: TextView, val tvSpeed15: TextView, val tvSpeed20: TextView, val clTimerTop: ConstraintLayout, val tvTimerTitle: TextView, val tvTimerNoOpen: TextView, val tvTimerComplete: TextView, val tvTimerCustom: TextView, val clPlayType: ConstraintLayout, val tvPlayTypeTitle: TextView, val tvPlayTypeAuto: TextView, val tvPlayTypeListLoop: TextView, val tvPlayTypeLoop: TextView, val tvPlayTypeCustom: TextView, val clCanvas: ConstraintLayout, val tvCanvasTitle: TextView, val tvCanvasFit: TextView, val tvCanvasFill: TextView, val tvCanvas169: TextView, val tvCanvas43: TextView) {
+    private class PopSettingViewHolder private constructor(val xmPopWindow:XmPopWindow,val xmVideoView: XmVideoView?, val context: Context, val tvEdit: TextView, val clAction: ConstraintLayout, val imageView: ImageView, val clSpeed: ConstraintLayout, val tvSpeedTitle: TextView, val tvSpeed05: TextView, val tvSpeed075: TextView, val tvSpeed10: TextView, val tvSpeed125: TextView, val tvSpeed15: TextView, val tvSpeed20: TextView, val clTimerTop: ConstraintLayout, val tvTimerTitle: TextView, val tvTimerNoOpen: TextView, val tvTimerComplete: TextView, val tvTimerCustom: TextView, val clPlayType: ConstraintLayout, val tvPlayTypeTitle: TextView, val tvPlayTypeAuto: TextView, val tvPlayTypeListLoop: TextView, val tvPlayTypeLoop: TextView, val tvPlayTypeCustom: TextView, val clCanvas: ConstraintLayout, val tvCanvasTitle: TextView, val tvCanvasFit: TextView, val tvCanvasFill: TextView, val tvCanvas169: TextView, val tvCanvas43: TextView) {
         companion object {
 
-            fun create(xmVideoView: XmVideoView?, rootView: View?): PopSettingViewHolder {
+            fun create(xmVideoView: XmVideoView?, rootView: View?, xmPopWindow: XmPopWindow): PopSettingViewHolder {
                 val tvEdit = rootView?.findViewById<View>(R.id.tv_edit) as TextView
                 val clAction = rootView.findViewById<View>(R.id.cl_action) as ConstraintLayout
                 val imageView = rootView.findViewById<View>(R.id.imageView) as ImageView
@@ -387,7 +393,7 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
                 val tvCanvasFill = rootView.findViewById<View>(R.id.tv_canvas_fill) as TextView
                 val tvCanvas169 = rootView.findViewById<View>(R.id.tv_canvas_16_9) as TextView
                 val tvCanvas43 = rootView.findViewById<View>(R.id.tv_canvas_4_3) as TextView
-                return PopSettingViewHolder(xmVideoView, rootView.context, tvEdit, clAction, imageView, clSpeed, tvSpeedTitle, tvSpeed05, tvSpeed075, tvSpeed10, tvSpeed125, tvSpeed15, tvSpeed20, clTimerTop, tvTimerTitle, tvTimerNoOpen, tvTimerComplete, tvTimerCustom, clPlayType, tvPlayTypeTitle, tvPlayTypeAuto, tvPlayTypeListLoop, tvPlayTypeLoop, tvPlayTypeCustom, clCanvas, tvCanvasTitle, tvCanvasFit, tvCanvasFill, tvCanvas169, tvCanvas43)
+                return PopSettingViewHolder(xmPopWindow,xmVideoView, rootView.context, tvEdit, clAction, imageView, clSpeed, tvSpeedTitle, tvSpeed05, tvSpeed075, tvSpeed10, tvSpeed125, tvSpeed15, tvSpeed20, clTimerTop, tvTimerTitle, tvTimerNoOpen, tvTimerComplete, tvTimerCustom, clPlayType, tvPlayTypeTitle, tvPlayTypeAuto, tvPlayTypeListLoop, tvPlayTypeLoop, tvPlayTypeCustom, clCanvas, tvCanvasTitle, tvCanvasFit, tvCanvasFill, tvCanvas169, tvCanvas43)
             }
         }
 
@@ -395,29 +401,42 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
             tvSpeed05.setOnClickListener {
                 xmVideoView?.mediaPlayer?.setSpeed(0.5f)
                 Toast.makeText(context, "0.5倍速度", Toast.LENGTH_SHORT).show()
+                dismiss(xmPopWindow)
             }
             tvSpeed075.setOnClickListener {
                 xmVideoView?.mediaPlayer?.setSpeed(0.75f)
                 Toast.makeText(context, "0.75倍速度", Toast.LENGTH_SHORT).show()
+                dismiss(xmPopWindow)
             }
             tvSpeed10.setOnClickListener {
                 xmVideoView?.mediaPlayer?.setSpeed(1.0f)
                 Toast.makeText(context, "1.0倍速度", Toast.LENGTH_SHORT).show()
+                dismiss(xmPopWindow)
             }
             tvSpeed125.setOnClickListener {
                 xmVideoView?.mediaPlayer?.setSpeed(1.25f)
                 Toast.makeText(context, "1.25倍速度", Toast.LENGTH_SHORT).show()
+                dismiss(xmPopWindow)
             }
             tvSpeed15.setOnClickListener {
                 xmVideoView?.mediaPlayer?.setSpeed(1.5f)
                 Toast.makeText(context, "1.5倍速度", Toast.LENGTH_SHORT).show()
+                dismiss(xmPopWindow)
             }
             tvSpeed20.setOnClickListener {
                 xmVideoView?.mediaPlayer?.setSpeed(2.0f)
                 Toast.makeText(context, "2.0倍速度", Toast.LENGTH_SHORT).show()
+                dismiss(xmPopWindow)
+            }
+        }
+        fun dismiss(xmPopWindow:XmPopWindow){
+            if(xmPopWindow.isShowing){
+                xmPopWindow.dismiss()
             }
         }
     }
+
+
 
     /**
      * 播放列表ViewHolder

@@ -40,11 +40,11 @@ class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConst
     override fun multiTypeData(body: CoursesCBean?): List<Any> {
         val multiData = ArrayList<Any>()
 
-        //p?.testWechat(body)
+        p?.testWechat(body)
         if (body?.wechat?.isNotEmpty()!!) {
             multiData.add(WechatBean(body.wechat))
         }
-        //p?.testExchanged(body)
+        p?.testExchanged(body)
         if (body.exchanged?.isNotEmpty()!!) {
             multiData.add(ExchangedBean(body.exchanged))
         }

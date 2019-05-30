@@ -117,6 +117,11 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         p?.closeUploadVideoProgress()
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewHolder?.video?.onPause()
+    }
+
     override fun presenter(): StudyCourseDetailContract.Present {
         return StudyCourseDetailContract.Present(context = this, v = this)
     }

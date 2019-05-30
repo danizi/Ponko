@@ -479,14 +479,14 @@ class WebAct : PonkoBaseAct<Any>() {
                                     .create()
                                     .show()
                         } else {
-                            btnExchange.isEnabled = false
-                            btnExchange.text = error
+                            //btnExchange.isEnabled = false
+                            //btnExchange.text = error
                             AlertDialog.Builder(act)
                                     .setTitle("提示")
-                                    .setMessage("亲爱的用户，您 $error ，请完善您的个人信息")
+                                    .setMessage("亲爱的用户，您$error，请完善您的个人信息。")
                                     .setPositiveButton("确定") { dialog, which ->
                                         BKLog.d("跳转到个人信息页面")
-                                        act.finish()
+                                        //act.finish()
                                         ActivityUtil.startActivity(act, Intent(act, AddressActivity::class.java))
                                     }
                                     .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }

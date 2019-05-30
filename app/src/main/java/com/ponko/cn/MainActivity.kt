@@ -17,10 +17,13 @@ import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.my.MyFrg
 import com.ponko.cn.module.study.StudyFrg
 import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
+import com.ponko.cn.utils.ToastUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.tencent.bugly.beta.Beta
 import com.xm.lib.common.base.BaseActivity
+import com.xm.lib.common.http.NetworkUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.BrightnessUtil
 import com.xm.lib.component.BottomMenu
@@ -73,6 +76,13 @@ class MainActivity : BaseActivity() {
                     }
                 })
                 .build()
+
+        if (NetworkUtil.is3GNet(this)) {
+            DialogUtil.show(this, "提示", "当前使用是手机流量", true, null, null)
+        }
+        if (!NetworkUtil.isNetworkConnected(this)) {
+            ToastUtil.show("当前处于断网状态...")
+        }
     }
 
     @SuppressLint("CheckResult")
@@ -86,7 +96,7 @@ class MainActivity : BaseActivity() {
                 Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
-                )
+        )
                 ?.subscribe { granted ->
                     if (granted!!) {
                         BKLog.d(AttachmentGesture.TAG, "All requested permissions are granted")

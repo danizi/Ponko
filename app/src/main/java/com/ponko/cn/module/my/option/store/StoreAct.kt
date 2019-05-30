@@ -22,7 +22,6 @@ import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.WebAct
 import com.ponko.cn.app.PonkoApp
-import com.ponko.cn.app.PonkoApp.Companion.app
 import com.ponko.cn.bean.StoreProfileBean
 import com.ponko.cn.bean.StoreProfileCMoreBean
 import com.ponko.cn.bean.StoreTaskBean
@@ -37,7 +36,6 @@ import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
-import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.CircleImageView
 import com.xm.lib.media.broadcast.BroadcastManager
 import retrofit2.Call
@@ -142,23 +140,26 @@ class StoreAct : PonkoBaseAct<Any>() {
                 viewHolder?.tvNick?.text = storeProfileBean?.name
                 viewHolder?.tvPayType?.text = storeProfileBean?.paid
                 viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"
-                frgs.clear()
-                val titls = ArrayList<String>()
-                var count = 1
-                for (list in storeProfileBean?.list?.iterator()!!) {
-                    viewHolder?.tb?.addTab(viewHolder?.tb?.newTab()?.setText(list.name)!!)
-                    frgs.add(ExchangeFrg.create(count++, list.name/*, viewHolder?.vp, viewHolder?.sv*/))
-                    titls.add(list.name)
+
+                if (frgs.isEmpty()) {
+                    //frgs.clear()
+                    val titls = ArrayList<String>()
+                    var count = 1
+                    for (list in storeProfileBean?.list?.iterator()!!) {
+                        viewHolder?.tb?.addTab(viewHolder?.tb?.newTab()?.setText(list.name)!!)
+                        frgs.add(ExchangeFrg.create(count++, list.name/*, viewHolder?.vp, viewHolder?.sv*/))
+                        titls.add(list.name)
+                    }
+
+                    if (count < 6) {
+                        viewHolder?.tb?.layoutParams?.width = ScreenUtil.dip2px(this@StoreAct, 50) * (count - 1)
+                    } else {
+                        viewHolder?.tb?.tabMode = TabLayout.MODE_SCROLLABLE
+                    }
+                    viewHolder?.vp?.adapter = Adapter(supportFragmentManager, frgs, titls)
+                    viewHolder?.tb?.setupWithViewPager(viewHolder?.vp)
                 }
 
-                if (count < 6) {
-                    viewHolder?.tb?.layoutParams?.width = ScreenUtil.dip2px(this@StoreAct, 50) * (count - 1)
-                } else {
-                    viewHolder?.tb?.tabMode = TabLayout.MODE_SCROLLABLE
-                }
-
-                viewHolder?.vp?.adapter = Adapter(supportFragmentManager, frgs, titls)
-                viewHolder?.tb?.setupWithViewPager(viewHolder?.vp)
             }
         })
     }
@@ -188,10 +189,10 @@ class StoreAct : PonkoBaseAct<Any>() {
             val view = viewHolder?.sv?.getChildAt(0)
             if (view?.height!! <= viewHolder?.sv?.scrollY!! + viewHolder?.sv?.height!!) {
                 BKLog.d("滑动到底部")
-                (frgs[indexPage] as ExchangeFrg).reqeustExchangeMoreApi()
+                (frgs[indexPage] as ExchangeFrg).reqeustExchangeMoreApi(viewHolder?.vp)
             } else if (viewHolder?.sv?.scrollY == 0) {
                 BKLog.d("滑动到顶部")
-                (frgs[indexPage] as ExchangeFrg).reqeustExchangeRefreshApi()
+                (frgs[indexPage] as ExchangeFrg).reqeustExchangeRefreshApi(viewHolder?.vp)
             }
             //}
         })
@@ -208,7 +209,7 @@ class StoreAct : PonkoBaseAct<Any>() {
             ActivityUtil.startActivity(this, Intent(this, IntegralExchangedAct::class.java))
         }
         viewHolder?.llRank?.setOnClickListener {
-            BKLog.d("点击积分排行版")
+            BKLog.d("点击积分排行榜")
             ActivityUtil.startActivity(this, Intent(this, IntegralRankingActivity::class.java))
         }
         viewHolder?.llRecord?.setOnClickListener {
@@ -282,7 +283,7 @@ class StoreAct : PonkoBaseAct<Any>() {
             /**
              * 上拉加载开关
              */
-            private val isDebug = false
+            private val isDebug = PonkoApp.UI_DEBUG
             private val m = M()
 
             fun reqeustExchangeRefreshApi(cid: String) {
@@ -295,7 +296,6 @@ class StoreAct : PonkoBaseAct<Any>() {
 
             fun reqeustExchangeMoreApi(cid: String, page: Int) {
                 if (isDebug) {
-
                     val body = ArrayList<StoreProfileCMoreBean>()
                     val testBean = StoreProfileCMoreBean()
                     testBean.id = 2
@@ -314,13 +314,13 @@ class StoreAct : PonkoBaseAct<Any>() {
                     }
                     body.add(testBean)
                     v?.reqeustExchangeMoreApiSuccess(body)
-
                 } else {
                     m.reqeustExchangeMoreApi(cid, page, object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
                         override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
                             val data = response?.body()
                             if (data != null && !data.isEmpty()) {
                                 v?.reqeustExchangeMoreApiSuccess(response.body())
+
                             }
                         }
                     })
@@ -371,10 +371,11 @@ class StoreAct : PonkoBaseAct<Any>() {
         }
 
         override fun iniEvent() {
-            rv?.isFocusableInTouchMode = false
-            rv?.isNestedScrollingEnabled = false
-            rv?.requestFocus()
-            rv?.setHasFixedSize(true)
+            //RecycerView加载更多加这些配置，viewpager第二个页面就会刷不出数据
+//            rv?.isFocusableInTouchMode = false
+//            rv?.isNestedScrollingEnabled = false
+//            rv?.requestFocus()
+//            rv?.setHasFixedSize(true)
         }
 
         override fun iniData() {
@@ -383,12 +384,15 @@ class StoreAct : PonkoBaseAct<Any>() {
             p?.reqeustExchangeRefreshApi(cid)
         }
 
-        fun reqeustExchangeRefreshApi() {
+        private var vp: ViewPager? = null
+        fun reqeustExchangeRefreshApi(vp: ViewPager?) {
             p?.reqeustExchangeRefreshApi(cid)
+            this.vp = vp
         }
 
-        fun reqeustExchangeMoreApi() {
+        fun reqeustExchangeMoreApi(vp: ViewPager?) {
             p?.reqeustExchangeMoreApi(cid, ++page)
+            this.vp = vp
         }
 
         override fun reqeustExchangeRefreshApiSuccess(body: ArrayList<StoreProfileCMoreBean>?) {
@@ -412,14 +416,17 @@ class StoreAct : PonkoBaseAct<Any>() {
                 }
             }
             rv?.adapter = adapter
+            this.vp?.requestLayout()
         }
 
         override fun reqeustExchangeMoreApiSuccess(body: ArrayList<StoreProfileCMoreBean>?) {
             val positionStart = adapter.data?.size
             val itemCount = body!![0].stores!!.size
             adapter.data?.addAll(body[0].stores!!)
-            //adapter.notifyItemRangeInserted(positionStart!!, itemCount)
-            adapter.notifyItemChanged(positionStart!!, itemCount)
+            adapter.notifyItemRangeInserted(positionStart!!, itemCount)
+            //adapter.notifyItemChanged(positionStart, itemCount)
+            adapter.notifyDataSetChanged()
+            this.vp?.requestLayout()
         }
 
         override fun presenter(): ExchangeContract.Present {

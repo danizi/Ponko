@@ -278,21 +278,18 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
      * @param index 播放列表下标
      */
     fun start(vid: String, progress: Int? = 0, index: Int) {
-        if (NetworkUtil.isNetworkConnected(context)) {
-            MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
-                override fun onFailure() {
-                    BKLog.e("获取视频失败")
-                }
 
-                override fun onSuccess(url: String, size: Int?) {
+        MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
+            override fun onFailure() {
+                BKLog.e("获取视频失败")
+                ToastUtil.show("当前没有网络...")
+            }
 
-                    xmVideoView?.start(url, true, progress)
-                }
-            })
-            this.index = index
-        } else {
-            ToastUtil.show("当前没有网络...")
-        }
+            override fun onSuccess(url: String, size: Int?) {
+                xmVideoView?.start(url, true, progress)
+                this@AttachmentControl.index = index
+            }
+        })
     }
 
     /**
@@ -302,7 +299,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         index++
         if (info?.mediaInfos?.size!! > index) {
             val mediaBean = this.info?.mediaInfos!![index]
-            listener?.item(mediaBean.vid!!,mediaBean.progress_duration,null,index)
+            listener?.item(mediaBean.vid!!, mediaBean.progress_duration, null, index)
             //start(mediaBean.vid!!, mediaBean.progress_duration, index)
         } else {
             ToastUtil.show("已经是最后一集了...")

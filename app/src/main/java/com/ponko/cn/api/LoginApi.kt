@@ -66,6 +66,10 @@ interface LoginApi {
     @FormUrlEncoded
     fun touristsSignIn(@Field("deviceId") deviceId: String): Call<GeneralBean>
 
+
+    ////////////////////////////////////
+    ///        账号绑定相关           //
+    ////////////////////////////////////
     /**
      * 微信登录 - 賬號創建加綁定
      * /user/login/oauth/bind?type=wechat&phone=xxxxx&password=xxxxx&token=上面返回的unionId（鉴权Info）&code=短信验证码
@@ -73,10 +77,6 @@ interface LoginApi {
     @POST("user/login/oauth/bind")
     fun wxbind(@Query("phone") phone: String, @Query("password") password: String, @Query("code") code: String, @Query("type") type: String = "wechat"): Call<GeneralBean>
 
-
-    ////////////////////////////////////
-    ///        账号绑定相关           //
-    ////////////////////////////////////
     /**
      * 微信绑定
      * @param map  params.put("token", unionId!!)

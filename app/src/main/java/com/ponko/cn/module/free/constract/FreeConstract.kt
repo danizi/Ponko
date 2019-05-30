@@ -20,6 +20,7 @@ class FreeConstract {
 
     class Present(private val context: Context?, private val view: View?) {
         private val model = Model()
+        private val isDebug = PonkoApp.UI_DEBUG
 
         fun requestFreeApi() {
             model.requestFreeApi(object : HttpCallBack<CoursesCBean>() {
@@ -30,31 +31,36 @@ class FreeConstract {
         }
 
 
-         fun testWechat(body: CoursesCBean?) {
-            for (i in 0..3) {
-                val exchanged = CoursesCBean.Exchanged()
-                exchanged.duration = ""
-                exchanged.image = "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2437088410,3383681288&fm=27&gp=0.jpg"
-                exchanged.num = 10.0
-                exchanged.id = ""
-                exchanged.title = ""
-                exchanged.duration = "60"
-                //exchanged.teachers.add("may")
-                body?.wechat?.add(exchanged)
+        fun testWechat(body: CoursesCBean?) {
+            if (isDebug) {
+                for (i in 0..3) {
+                    val exchanged = CoursesCBean.Exchanged()
+                    exchanged.duration = ""
+                    exchanged.image = "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2437088410,3383681288&fm=27&gp=0.jpg"
+                    exchanged.num = 10.0
+                    exchanged.id = ""
+                    exchanged.title = ""
+                    exchanged.duration = "60"
+                    //exchanged.teachers.add("may")
+                    body?.wechat?.add(exchanged)
+                }
             }
+
         }
 
-         fun testExchanged(body: CoursesCBean?) {
-            for (i in 0..10) {
-                val exchanged = CoursesCBean.Exchanged()
-                exchanged.duration = ""
-                exchanged.image = "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2437088410,3383681288&fm=27&gp=0.jpg"
-                exchanged.num = 10.0
-                exchanged.id = ""
-                exchanged.title = ""
-                exchanged.duration = "60"
-                //exchanged.teachers.add("may")
-                body?.exchanged?.add(exchanged)
+        fun testExchanged(body: CoursesCBean?) {
+            if (isDebug) {
+                for (i in 0..10) {
+                    val exchanged = CoursesCBean.Exchanged()
+                    exchanged.duration = ""
+                    exchanged.image = "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2437088410,3383681288&fm=27&gp=0.jpg"
+                    exchanged.num = 10.0
+                    exchanged.id = ""
+                    exchanged.title = ""
+                    exchanged.duration = "60"
+                    //exchanged.teachers.add("may")
+                    body?.exchanged?.add(exchanged)
+                }
             }
         }
     }

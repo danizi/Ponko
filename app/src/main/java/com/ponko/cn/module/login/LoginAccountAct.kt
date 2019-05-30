@@ -11,7 +11,6 @@ import com.ponko.cn.module.login.contract.LoginAccountContract
 import com.ponko.cn.utils.PolyvKeyBoardUtils
 import com.xm.lib.common.base.mvp.MvpActivity
 import com.xm.lib.common.log.BKLog
-import kotlinx.android.synthetic.main.item_account_my_edit.*
 
 
 class LoginAccountAct : MvpActivity<LoginAccountContract.Present>(), LoginAccountContract.View {

@@ -21,6 +21,7 @@ import com.ponko.cn.db.bean.CourseCollectSpecialDbBean
 import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.my.option.collect.CollectListActivity
 import com.ponko.cn.module.study.StudyCourseDetailActivity
+import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -99,7 +100,9 @@ class CollectContract {
 
             override fun requestRefreshApi() {
                 collectSections.clear()
-                collectSections.addAll(PonkoApp.collectSectionDao?.selectAll()!!)
+                if(CacheUtil.isUserTypeLogin()){
+                    collectSections.addAll(PonkoApp.collectSectionDao?.selectAll()!!)
+                }
                 requestRefreshSuccess(collectSections)
             }
 
@@ -231,13 +234,15 @@ class CollectContract {
 
             override fun requestRefreshApi() {
                 collectSpecialDaos.clear()
-                collectSpecialDaos.addAll(PonkoApp.collectSpecialDao?.selectAll()!!)
-                //查看章节中是否还有该课程id
-                for (collectSpecial in collectSpecialDaos) {
-                    val sections = PonkoApp.collectSectionDao?.selectByCourseId(collectSpecial.column_course_id)
-                    if (sections?.isEmpty()!!) {
-                        PonkoApp.collectSpecialDao?.deleteByCourseId(collectSpecial.column_course_id)
-                        collectSpecialDaos.remove(collectSpecial)
+                if(CacheUtil.isUserTypeLogin()){
+                    collectSpecialDaos.addAll(PonkoApp.collectSpecialDao?.selectAll()!!)
+                    //查看章节中是否还有该课程id
+                    for (collectSpecial in collectSpecialDaos) {
+                        val sections = PonkoApp.collectSectionDao?.selectByCourseId(collectSpecial.column_course_id)
+                        if (sections?.isEmpty()!!) {
+                            PonkoApp.collectSpecialDao?.deleteByCourseId(collectSpecial.column_course_id)
+                            collectSpecialDaos.remove(collectSpecial)
+                        }
                     }
                 }
                 requestRefreshSuccess(collectSpecialDaos)

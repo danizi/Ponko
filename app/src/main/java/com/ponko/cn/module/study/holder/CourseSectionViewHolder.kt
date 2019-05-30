@@ -39,7 +39,7 @@ class CourseSectionViewHolder(view: View?) : BaseViewHolder(view!!) {
         Glide.with(context, typeBean.picture, v?.ivCover)
         v?.tvCourseSection1?.text = typeBean.title
         v?.tvCourseSection2?.text = typeBean.subtitle2!!
-        v?.ivCover?.setOnClickListener {
+        itemView.setOnClickListener {
             BKLog.d("点击了课程专题")
             CourseTypeLinearActivity.start(context,typeBean.title,typeBean.id)
         }

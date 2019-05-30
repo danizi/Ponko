@@ -26,6 +26,7 @@ import com.ponko.cn.app.PonkoApp.Companion.freeApi
 import com.ponko.cn.bean.DetailCBean
 import com.ponko.cn.constant.Constant
 import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.media.AttachmentComplete
 import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.media.AttachmentPre
@@ -39,6 +40,7 @@ import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.broadcast.BroadcastManager
@@ -52,7 +54,8 @@ import retrofit2.Response
 /**
  * 免费详情页面
  */
-class FreeDetailsAct : BaseActivity() {
+class FreeDetailsAct : PonkoBaseAct<Any>() {
+
 
     companion object {
         private const val TAG = "FreeDetailsAct"
@@ -92,7 +95,7 @@ class FreeDetailsAct : BaseActivity() {
                 val vid = intent.getStringExtra("vid")
                 val sectionName = intent.getStringExtra("sectionName")
                 attachmentControl?.showLoading()
-                attachmentControl?.start(vid,0,0)
+                attachmentControl?.start(vid, 0, 0)
                 BKLog.d(TAG, "播放接受通知,播放$sectionName")
             }
         }
@@ -114,6 +117,12 @@ class FreeDetailsAct : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         broadcastManager?.unRegisterReceiver(clickFreeItemPlayReceiver)
+        ui?.video?.onDestroy()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        ui?.video?.onPause()
     }
 
     override fun getLayoutId(): Int {
@@ -127,8 +136,16 @@ class FreeDetailsAct : BaseActivity() {
     }
 
     override fun initDisplay() {
+        //系统栏颜色
+        com.jaeger.library.StatusBarUtil.setColor(this, this.resources.getColor(R.color.black), 0)
+
         MediaUitl.initXmVideoView(ui?.video!!, this)
         attachmentControl = ui?.video?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl
+        //按比例设置播放器View
+        val present = 1f / 1.8f
+        val layoutParams = ui?.video?.layoutParams
+        layoutParams?.height = ((ScreenUtil.getNormalWH(this)[0]) * present).toInt()
+        ui?.video?.layoutParams = layoutParams
         //initVideo(this, ui?.video!!)
     }
 
@@ -154,25 +171,13 @@ class FreeDetailsAct : BaseActivity() {
         })
     }
 
+    override fun presenter(): Any {
+        return Any()
+    }
+
     fun displayVideo(body: DetailCBean?) {
         val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
         attachmentPre.load(vid = body?.chapters!![0].sections[0].vid, preUrl = body.chapters!![0].sections[0]?.avatar!!)
-
-//        MediaUitl.getM3u8Url(body?.chapters!![0].sections[0].vid, object : MediaUitl.OnPlayUrlListener {
-//            override fun onFailure() {
-//                this@FreeDetailsAct.runOnUiThread {
-//                    Toast.makeText(this@FreeDetailsAct, "获取播放地址失败", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//
-//            override fun onSuccess(url: String, size: Int?) {
-//                //然后请求视频地址
-//                val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
-//                this@FreeDetailsAct.runOnUiThread {
-//                    attachmentPre.load(url, body.chapters!![0].sections[0]?.avatar!!)
-//                }
-//            }
-//        })
     }
 
     fun displayContent(body: DetailCBean?) {
@@ -201,7 +206,6 @@ class FreeDetailsAct : BaseActivity() {
             }
         })
     }
-
 
     @SuppressLint("SetTextI18n")
     fun displayTop(body: DetailCBean?) {

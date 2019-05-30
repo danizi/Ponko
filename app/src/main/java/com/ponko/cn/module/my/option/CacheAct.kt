@@ -17,6 +17,7 @@ import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.study.StudyCacheActivity
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
+import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -67,8 +68,11 @@ class CacheAct : RefreshLoadAct<Any, List<CourseSpecialDbBean>>() {
     }
 
     override fun requestRefreshApi() {
-        val courseSpecialDao = CourseSpecialDao(PonkoApp.dbHelp?.writableDatabase)
-        val data = courseSpecialDao.selectAll()
+        var data = ArrayList<CourseSpecialDbBean>()
+        if (CacheUtil.isUserTypeLogin()) {
+            val courseSpecialDao = CourseSpecialDao(PonkoApp.dbHelp?.writableDatabase)
+            data = courseSpecialDao.selectAll()
+        }
         requestRefreshSuccess(data)
     }
 

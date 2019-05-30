@@ -96,6 +96,7 @@ class LoginStartContract {
                         ActivityUtil.startActivity(context, intent)
                     }
                     false -> {
+
                         val params = HashMap<String, String>()
                         params["token"] = oauthBean?.info?.unionId!!
                         params["type"] = "wechat"
