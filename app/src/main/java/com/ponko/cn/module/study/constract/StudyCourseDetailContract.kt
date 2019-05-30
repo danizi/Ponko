@@ -625,7 +625,7 @@ class StudyCourseDetailContract {
             var groupPosition = 0
             var childPosition = 0
             for (chapters in model.coursesDetailCBean?.chapters!!) {
-                if (tempPostion >= chapters.sections.size) {
+                if (tempPostion > chapters.sections.size) {
                     groupPosition++
                     tempPostion -= chapters.sections.size
                 } else {
@@ -633,6 +633,7 @@ class StudyCourseDetailContract {
                 }
             }
             childPosition = tempPostion - 1
+
             return Pair(groupPosition, childPosition)
         }
 
