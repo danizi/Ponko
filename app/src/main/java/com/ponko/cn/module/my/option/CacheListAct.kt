@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.text.TextUtils
 import android.view.View
 import android.widget.*
 import com.ponko.cn.R
@@ -198,7 +199,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         }
         btnDelete?.setOnClickListener {
             BKLog.d(" ------> 点击了删除")
-            DialogUtil.show(this, "确定要删除已缓存的课程？", "删除后不可恢复", false, object : OnEnterListener {
+            DialogUtil.show(this, "确定要删除已缓存的课程？", "删除后不可恢复", true, object : OnEnterListener {
                 override fun onEnter(dlg: AlertDialog) {
 
                     val iterator = copyAdapterData()?.iterator()
@@ -213,7 +214,9 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                                 //删除数据库中的数据
                                 courseDao?.deleteByVid(courseDbBean)
                                 //删除本地缓存的数据
-                                FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url)))
+                                if (!TextUtils.isEmpty(m3u8DownManager?.dir) && !TextUtils.isEmpty(M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url))) {
+                                    FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url)))
+                                }
                                 //删除并让RecyclerView刷新
                                 notifyItem(courseDbBean)
                             }
@@ -296,7 +299,7 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
                 .subscribe { aBoolean ->
                     if (aBoolean!!) {
                         //当所有权限都允许之后，返回true
-                        Toast.makeText(this, "文件授权成功", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this, "文件授权成功", Toast.LENGTH_SHORT).show()
 
                     } else {
                         //只要有一个权限禁止，返回false，

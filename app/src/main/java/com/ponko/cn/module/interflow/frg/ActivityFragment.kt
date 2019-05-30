@@ -35,6 +35,11 @@ class ActivityFragment : RefreshLoadFrg<Any, List<ActivityCBean>>() {
             override fun onSuccess(call: Call<ArrayList<ActivityCBean>>?, response: Response<ArrayList<ActivityCBean>>?) {
                 requestMoreSuccess(response?.body()!!)
             }
+
+            override fun onFailure(call: Call<ArrayList<ActivityCBean>>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestMoreFailure()
+            }
         })
     }
 
@@ -43,6 +48,11 @@ class ActivityFragment : RefreshLoadFrg<Any, List<ActivityCBean>>() {
         PonkoApp.interflowApi?.getParties(1, 30)?.enqueue(object : HttpCallBack<ArrayList<ActivityCBean>>() {
             override fun onSuccess(call: Call<ArrayList<ActivityCBean>>?, response: Response<ArrayList<ActivityCBean>>?) {
                 requestRefreshSuccess(response?.body())
+            }
+
+            override fun onFailure(call: Call<ArrayList<ActivityCBean>>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
             }
         })
     }

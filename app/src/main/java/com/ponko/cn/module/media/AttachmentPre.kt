@@ -1,18 +1,13 @@
 package com.ponko.cn.module.media
 
+import android.app.Activity
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
+import android.support.v7.widget.AppCompatImageButton
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.ponko.cn.app.PonkoApp
-import com.ponko.cn.bean.VideoInfoCBean
-import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.utils.ToastUtil
-import com.xm.lib.common.log.BKLog
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
 import com.xm.lib.media.base.IXmMediaPlayer
@@ -20,19 +15,14 @@ import com.xm.lib.media.event.GestureObserver
 import com.xm.lib.media.event.PhoneStateObserver
 import com.xm.lib.media.event.PlayerObserver
 
+
 /**
  * 预览页面
  */
 class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseAttachmentView(context!!) {
-    companion object {
-        private const val TAG = "AttachmentPre"
-    }
 
-
-    private var ivStart: ImageView? = null
-    private var pbLoading: ProgressBar? = null
+    private var ui: UI? = null
     var url: String? = ""
-    private var ivPre: ImageView? = null
 
     init {
         observer = object : PlayerObserver {
@@ -46,13 +36,13 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
 
         }
         phoneObserver = object : PhoneStateObserver {}
-        Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ivPre)//加载图片
+        Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ui?.ivPre)//加载图片
     }
 
     fun load(vid: String?, preUrl: String?) {
         this.url = vid
         this.preUrl = preUrl
-        Glide.with(context).load(preUrl).error(R.mipmap.ic_launcher).into(ivPre)//加载图片  //TODO You cannot start a load for a destroyed activity
+        Glide.with(context).load(preUrl).error(R.mipmap.ic_launcher).into(ui?.ivPre)//加载图片  //TODO You cannot start a load for a destroyed activity
     }
 
     override fun layoutId(): Int {
@@ -60,35 +50,64 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
     }
 
     override fun findViews(view: View?) {
-        ivPre = view?.findViewById(R.id.iv_pre)
-        ivStart = view?.findViewById(R.id.iv_start)
-        pbLoading = view?.findViewById(R.id.pb_loading)
+        if (ui == null) {
+            ui = UI.create(view)
+        }
     }
 
     override fun initEvent() {
-        ivStart?.setOnClickListener {
-            if (ivStart?.visibility == View.VISIBLE) {
-                ivStart?.visibility = View.GONE
-                pbLoading?.visibility = View.VISIBLE
-                //获取播放地址
-                MediaUitl.getM3u8Url(url, object : MediaUitl.OnPlayUrlListener {
-                    override fun onSuccess(url: String, size: Int?) {
-                        xmVideoView?.start(url, true)
-                        xmVideoView?.bringChildToFront(this@AttachmentPre)
-                    }
+        ui?.ivStart?.setOnClickListener {
+            clickIvStart()
+        }
+        ui?.ivBack?.setOnClickListener {
+            clickBack()
 
-                    override fun onFailure() {
-                        ToastUtil.show("获取播放地址失败 - ")
-                    }
-                })
+        }
+    }
 
+    private fun clickIvStart() {
+        if (ui?.ivStart?.visibility == View.VISIBLE) {
+            ui?.ivStart?.visibility = View.GONE
+            ui?.pbLoading?.visibility = View.VISIBLE
+            //获取播放地址
+            MediaUitl.getM3u8Url(url, object : MediaUitl.OnPlayUrlListener {
+                override fun onSuccess(url: String, size: Int?) {
+                    xmVideoView?.start(url, true)
+                    xmVideoView?.bringChildToFront(this@AttachmentPre)
+                }
+
+                override fun onFailure() {
+                    ToastUtil.show("获取播放地址失败 - ")
+                }
+            })
+
+        }
+    }
+
+    private fun clickBack() {
+        (context as Activity).finish()
+    }
+
+    override fun initDisplay() {
+        ui?.ivPre?.visibility = View.VISIBLE
+        ui?.ivStart?.visibility = View.VISIBLE
+        ui?.pbLoading?.visibility = View.GONE
+    }
+
+    /**
+     * ui
+     */
+    private class UI private constructor(val ivPre: ImageView, val ivStart: ImageView, val pbLoading: ProgressBar, val ivBack: AppCompatImageButton) {
+        companion object {
+
+            fun create(rootView: View?): UI {
+                val ivPre = rootView?.findViewById<View>(R.id.iv_pre) as ImageView
+                val ivStart = rootView.findViewById<View>(R.id.iv_start) as ImageView
+                val pbLoading = rootView.findViewById<View>(R.id.pb_loading) as ProgressBar
+                val ivBack = rootView.findViewById<View>(R.id.iv_back) as AppCompatImageButton
+                return UI(ivPre, ivStart, pbLoading, ivBack)
             }
         }
     }
 
-    override fun initDisplay() {
-        ivPre?.visibility = View.VISIBLE
-        ivStart?.visibility = View.VISIBLE
-        pbLoading?.visibility = View.GONE
-    }
 }

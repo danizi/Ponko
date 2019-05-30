@@ -10,6 +10,7 @@ import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.viewholder.landscape.LandscapeViewHolder
 import com.ponko.cn.module.media.control.viewholder.PortraitViewHolder
+import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
@@ -17,6 +18,7 @@ import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
 import com.xm.lib.media.base.IXmMediaPlayer
+import com.xm.lib.media.base.MediaState
 import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.event.GestureObserver
 import com.xm.lib.media.event.PhoneStateObserver
@@ -26,7 +28,6 @@ import com.xm.lib.media.event.PlayerObserver
  * 控制器附着View
  */
 class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttachmentControl {
-
     /**
      * 课程标题
      */
@@ -115,7 +116,10 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
                 ui?.secondaryProgress(percent)
             }
 
-
+            override fun onError(mp: IXmMediaPlayer, what: Int, extra: Int) {
+                super.onError(mp, what, extra)
+                DialogUtil.show(context!!, "提示", "播放错误码what:$what extra:$extra", true, null, null)
+            }
         }
         //手势监听回调
         gestureObserver = object : GestureObserver {
@@ -208,10 +212,11 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
     }
 
     override fun start(vid: String, progress: Int?, index: Int) {
+        stop()
         MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
             override fun onFailure() {
                 BKLog.e("获取视频失败")
-                ToastUtil.show("当前没有网络...")
+                DialogUtil.show(context!!, "提示", "播放失败，当前没有网络...", true, null, null)
             }
 
             override fun onSuccess(url: String, size: Int?) {
@@ -219,6 +224,10 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
                 this@AttachmentControl.index = index
             }
         })
+    }
+
+    override fun stop() {
+        xmVideoView?.mediaPlayer?.stop()
     }
 
     override fun pause() {
@@ -379,6 +388,19 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
     override fun setShareListener(listener: OnClickListener) {
         ui?.setShareListener(listener)
     }
+
+    override fun ratio(ratioValue: Int) {
+        MediaUitl.QUALITY = ratioValue
+        val progress = xmVideoView?.mediaPlayer?.getCurrentPosition()?.toInt()
+        stop()
+        if (info?.mediaInfos?.size!! > index) {
+            val mediaBean = this.info?.mediaInfos!![index]
+            start(mediaBean.vid!!, progress, index)
+        } else {
+            ToastUtil.show("重播失败...")
+            BKLog.d("重播失败")
+        }
+    }
 }
 
 /**
@@ -393,6 +415,11 @@ interface IAttachmentControl {
      * @param index 播放列表下标
      */
     fun start(vid: String, progress: Int? = 0, index: Int)
+
+    /**
+     * 停止播放
+     */
+    fun stop()
 
     /**
      * 暂停播放
@@ -481,6 +508,12 @@ interface IAttachmentControl {
      * 选中播放列表的第几个item PS:一般用于横屏
      */
     fun setPlayList(listener: OnPlayListItemClickListener?)
+
+    /**
+     * 设置播放分辨率
+     * @param ratioValue 移除从高到低3 2 1
+     */
+    fun ratio(ratioValue: Int)
 
     @Deprecated("完全可以去掉")
     fun setShareListener(listener: View.OnClickListener)

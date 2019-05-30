@@ -50,6 +50,11 @@ object MediaUitl {
         if (section[0].hls.size < QUALITY) {
             QUALITY = section[0].hls.size
         }
+        when (QUALITY) {
+            1 -> BKLog.d("流畅")
+            2 -> BKLog.d("高清")
+            3 -> BKLog.d("超高清")
+        }
         return when (QUALITY) {
             1 -> section[0].hls[0]
             2 -> section[0].hls[1]

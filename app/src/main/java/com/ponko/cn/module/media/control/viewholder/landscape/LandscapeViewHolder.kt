@@ -26,7 +26,7 @@ import com.xm.lib.media.view.XmPopWindow
 /**
  * 横屏界面
  */
-class LandscapeViewHolder private constructor(private val view:View,private val clLandscapeTop: ConstraintLayout?, private val ivBack: ImageView?, private val tvTitle: TextView?, private val ivShare: ImageView?, private val ivMore: ImageView?, private val clLandscapeBottom: ConstraintLayout?, private val seekBar: SeekBar?, private val ivAction: ImageView?, private val tvTime: TextView?, private val tvRatio: TextView?, private val clSeek: ConstraintLayout?, private val tvTime2: TextView?, private val pbLoading: ProgressBar?, private val rv: RecyclerView?) : ControlViewHolder() {
+class LandscapeViewHolder private constructor(private val view: View, private val clLandscapeTop: ConstraintLayout?, private val ivBack: ImageView?, private val tvTitle: TextView?, private val ivShare: ImageView?, private val ivMore: ImageView?, private val clLandscapeBottom: ConstraintLayout?, private val seekBar: SeekBar?, private val ivAction: ImageView?, private val tvTime: TextView?, private val tvRatio: TextView?, private val clSeek: ConstraintLayout?, private val tvTime2: TextView?, private val pbLoading: ProgressBar?, private val rv: RecyclerView?) : ControlViewHolder() {
 
 
     companion object {
@@ -45,7 +45,7 @@ class LandscapeViewHolder private constructor(private val view:View,private val 
             val tvTime2 = rootView.findViewById<View>(R.id.tv_time2) as TextView
             val pbLoading = rootView.findViewById<View>(R.id.pb) as ProgressBar
             val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
-            return LandscapeViewHolder(rootView,clLandscapeTop, ivBack, tvTitle, ivShare, ivMore, clLandscapeBottom, seekBar, ivAction, tvTime, tvRatio, clSeek, tvTime2, pbLoading, rv)
+            return LandscapeViewHolder(rootView, clLandscapeTop, ivBack, tvTitle, ivShare, ivMore, clLandscapeBottom, seekBar, ivAction, tvTime, tvRatio, clSeek, tvTime2, pbLoading, rv)
         }
     }
 
@@ -87,18 +87,16 @@ class LandscapeViewHolder private constructor(private val view:View,private val 
     }
 
     private fun initDisplay() {
-        val mediaPlayer=  (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).xmVideoView?.mediaPlayer
-        if(mediaPlayer?.isPlaying()==true){
+        val mediaPlayer = (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).xmVideoView?.mediaPlayer
+        if (mediaPlayer?.isPlaying() == true) {
             ivAction?.setImageResource(pauseResID)
-        }else{
+        } else {
             ivAction?.setImageResource(playResID)
         }
     }
 
 
-
-
-    private fun clickBack(){
+    private fun clickBack() {
         BKLog.d(TAG, "点击退出 Landscape -> Portrait")
         // 横屏高度 > 宽度
         //设置竖屏
@@ -120,13 +118,13 @@ class LandscapeViewHolder private constructor(private val view:View,private val 
 
     private fun clickShare() {
         ShareUtil.showShareDlg(activity, this.share?.url, this.share?.title, this.share?.description)
-        BKLog.d(TAG,"点击分享")
+        BKLog.d(TAG, "点击分享")
     }
 
-    private fun clickMore(){
+    private fun clickMore() {
         val xmPopWindow = XmPopWindow(activity)
         val view = LayoutInflater.from(activity).inflate(R.layout.attachment_control_landscape_setting_pop, null, false)
-        PopSettingViewHolder.create(xmVideoView, view,xmPopWindow)
+        PopSettingViewHolder.create(xmVideoView, view, xmPopWindow)
         xmPopWindow.ini(view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
         xmPopWindow.showAtLocation(XmPopWindow.Location.RIGHT, R.style.AnimationRightFade, activity?.window?.decorView!!, 0, 0)
     }
@@ -136,11 +134,11 @@ class LandscapeViewHolder private constructor(private val view:View,private val 
             if (mediaPlayer?.isPlaying() == true) {
                 ivAction?.setImageResource(playResID)
                 mediaPlayer?.pause()
-                BKLog.d(TAG,"点击暂停")
+                BKLog.d(TAG, "点击暂停")
             } else {
                 ivAction?.setImageResource(pauseResID)
                 mediaPlayer?.start()
-                BKLog.d(TAG,"点击播放")
+                BKLog.d(TAG, "点击播放")
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -175,7 +173,7 @@ class LandscapeViewHolder private constructor(private val view:View,private val 
         BKLog.d(AttachmentControl.TAG, "结束触发滑动 progress:$progress")
     }
 
-    private fun clickRatio(){
+    private fun clickRatio() {
         val xmPopWindow = XmPopWindow(activity)
         val ratioView = LayoutInflater.from(activity).inflate(R.layout.attachment_control_landscape_ratio, null, false)
         val tvRatio360p: TextView = ratioView.findViewById(R.id.tv_ratio_360p)
@@ -184,24 +182,24 @@ class LandscapeViewHolder private constructor(private val view:View,private val 
         val tvRatio1080p: TextView = ratioView.findViewById(R.id.tv_ratio_1080p)
         tvRatio360p.setOnClickListener {
             Toast.makeText(activity, "360p", Toast.LENGTH_SHORT).show()
-            MediaUitl.QUALITY = 1
-            (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).replay()
+
+            (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(1)
             xmPopWindow.dismiss()
         }
         tvRatio480p.setOnClickListener {
             Toast.makeText(activity, "480p", Toast.LENGTH_SHORT).show()
-            MediaUitl.QUALITY = 2
-            (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).replay()
+            (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(2)
             xmPopWindow.dismiss()
         }
         tvRatio720p.setOnClickListener {
             Toast.makeText(activity, "720p", Toast.LENGTH_SHORT).show()
-            MediaUitl.QUALITY = 3
-            (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).replay()
+            (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(3)
             xmPopWindow.dismiss()
         }
         tvRatio1080p.setOnClickListener {
             Toast.makeText(activity, "1080p", Toast.LENGTH_SHORT).show()
+            (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(3)
+            xmPopWindow.dismiss()
         }
         xmPopWindow.ini(ratioView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
         xmPopWindow.showAtLocation(XmPopWindow.Location.RIGHT, R.style.AnimationRightFade, activity?.window?.decorView!!, 0, 0)
@@ -231,12 +229,14 @@ class LandscapeViewHolder private constructor(private val view:View,private val 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 progressChanged(seekBar, progress, fromUser)
             }
+
             /**
              * 只有手指触控了滑块触发
              */
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
                 startTrackingTouch(seekBar)
             }
+
             /**
              * 只有手指触控了滑块释放后触发
              */
@@ -398,9 +398,11 @@ class LandscapeViewHolder private constructor(private val view:View,private val 
     }
 
     @Deprecated("")
-    fun list() {}
+    fun list() {
+    }
 
 
     @Deprecated("可以不用了")
-    fun setPlayList(courseDetail: CoursesDetailCBean?) {}
+    fun setPlayList(courseDetail: CoursesDetailCBean?) {
+    }
 }

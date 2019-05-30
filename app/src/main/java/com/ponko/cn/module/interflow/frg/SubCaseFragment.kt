@@ -52,6 +52,11 @@ class SubCaseFragment : RefreshLoadFrg<Any, ArrayList<AnalysisCBean.ActivitiesBe
             override fun onSuccess(call: Call<AnalysisCBean>?, response: Response<AnalysisCBean>?) {
                 requestMoreSuccess(response?.body()?.activities)
             }
+
+            override fun onFailure(call: Call<AnalysisCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestMoreFailure()
+            }
         })
     }
 
@@ -60,7 +65,13 @@ class SubCaseFragment : RefreshLoadFrg<Any, ArrayList<AnalysisCBean.ActivitiesBe
             override fun onSuccess(call: Call<AnalysisCBean>?, response: Response<AnalysisCBean>?) {
                 requestRefreshSuccess(response?.body()?.activities)
             }
+
+            override fun onFailure(call: Call<AnalysisCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                requestRefreshFailure()
+            }
         })
+
     }
 
     override fun multiTypeData(body: ArrayList<AnalysisCBean.ActivitiesBean>?): List<Any> {

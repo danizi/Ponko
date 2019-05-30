@@ -99,7 +99,7 @@ class M3u8DownerTextAct : AppCompatActivity() {
                 .subscribe { aBoolean ->
                     if (aBoolean!!) {
                         //当所有权限都允许之后，返回true
-                        Toast.makeText(this, "文件授权成功", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this, "文件授权成功", Toast.LENGTH_SHORT).show()
 
                     } else {
                         //只要有一个权限禁止，返回false，
