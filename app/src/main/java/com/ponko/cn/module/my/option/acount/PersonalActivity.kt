@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar
 import android.text.SpannableString
 import android.text.TextUtils
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -255,6 +256,8 @@ class PersonalActivity : PonkoBaseAct<Any>() {
             } else {
                 viewHolder?.ivHead?.visibility = View.INVISIBLE
                 viewHolder?.et?.visibility = View.VISIBLE
+                (itemView as ViewGroup).removeView(viewHolder?.ivHead)
+                itemView.requestLayout()
                 if (TextUtils.isEmpty(itemBean.content)) {
                     viewHolder?.et?.hint = SpannableString("请输入内容")
                 } else {
@@ -279,6 +282,8 @@ class PersonalActivity : PonkoBaseAct<Any>() {
             viewHolder?.tv?.text = itemBean.tip
             viewHolder?.ivHead?.visibility = View.INVISIBLE
             viewHolder?.et?.visibility = View.VISIBLE
+            (itemView as ViewGroup).removeView(viewHolder?.ivHead)
+            itemView.requestLayout()
             if (TextUtils.isEmpty(itemBean.content)) {
                 viewHolder?.et?.hint = SpannableString("请输入内容")
             } else {
@@ -302,6 +307,8 @@ class PersonalActivity : PonkoBaseAct<Any>() {
             viewHolder?.tv?.text = itemBean.tip
             viewHolder?.ivHead?.visibility = View.INVISIBLE
             viewHolder?.et?.visibility = View.VISIBLE
+            (itemView as ViewGroup).removeView(viewHolder?.ivHead)
+            itemView.requestLayout()
             if (TextUtils.isEmpty(itemBean.content)) {
                 viewHolder?.et?.hint = SpannableString("请输入内容")
             } else {

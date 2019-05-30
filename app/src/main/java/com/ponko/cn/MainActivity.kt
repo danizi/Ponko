@@ -1,6 +1,9 @@
 package com.ponko.cn
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
@@ -10,13 +13,16 @@ import com.ponko.cn.bean.AdCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.free.FreeFrg
 import com.ponko.cn.module.interflow.frg.InterflowFrg
+import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.my.MyFrg
 import com.ponko.cn.module.study.StudyFrg
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.IntoTargetUtil
+import com.tbruyelle.rxpermissions2.RxPermissions
 import com.tencent.bugly.beta.Beta
 import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.BrightnessUtil
 import com.xm.lib.component.BottomMenu
 import com.xm.lib.component.OnItemClickListener
 import com.xm.lib.component.XmAdView
@@ -69,9 +75,26 @@ class MainActivity : BaseActivity() {
                 .build()
     }
 
+    @SuppressLint("CheckResult")
     override fun iniData() {
         PonkoApp.retrofitClient?.headers?.put("x-tradestudy-access-token", CacheUtil.getToken()!!)
         requestAdApi()
+        RxPermissions(this).request(
+                Manifest.permission.WRITE_SECURE_SETTINGS,
+                Manifest.permission.WRITE_SETTINGS,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+                ?.subscribe { granted ->
+                    if (granted!!) {
+                        BKLog.d(AttachmentGesture.TAG, "All requested permissions are granted")
+                    } else {
+
+                        BKLog.d(AttachmentGesture.TAG, "At least one permission is denied")
+                    }
+                }
     }
 
     override fun iniEvent() {

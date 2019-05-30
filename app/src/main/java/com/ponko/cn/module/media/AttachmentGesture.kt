@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import com.ponko.cn.utils.ToastUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.BrightnessUtil
@@ -24,7 +26,7 @@ import com.xm.lib.media.utils.GestureHelper
 class AttachmentGesture(context: Context?) : BaseAttachmentView(context) {
 
     private var viewHolder: ViewHolder? = null
-    private var rxPermissions: RxPermissions? = null
+    //private var rxPermissions: RxPermissions? = null
 
     companion object {
         const val TAG = "AttachmentGesture"
@@ -34,7 +36,7 @@ class AttachmentGesture(context: Context?) : BaseAttachmentView(context) {
     }
 
     init {
-        rxPermissions = RxPermissions((context as AppCompatActivity))
+        //rxPermissions = RxPermissions((context as AppCompatActivity))
         observer = object : PlayerObserver {
         }
         gestureObserver = object : GestureObserver {
@@ -50,39 +52,29 @@ class AttachmentGesture(context: Context?) : BaseAttachmentView(context) {
                 val damp = 0.7f
                 when (type) {
                     GestureHelper.VERTICAL_LEFT_VALUE -> {
-                        rxPermissions?.request(Manifest.permission.WRITE_SETTINGS)
+                        RxPermissions((context as AppCompatActivity)).request(Manifest.permission.WRITE_SETTINGS,
+                                Manifest.permission.WRITE_SECURE_SETTINGS,
+                                Manifest.permission.WRITE_SETTINGS)
                                 ?.subscribe { granted ->
                                     if (granted!!) {
+                                        show(BRIGHTNESS)
+                                        val curScreenBrightness = BrightnessUtil.getScreenBrightness(context)
+                                        viewHolder?.brightnessPb?.max = 100
+                                        viewHolder?.brightnessPb?.progress = (curScreenBrightness * 100).toInt()
+                                        val brightnessPresent = if (present > 0) {
+                                            curScreenBrightness + (1f - curScreenBrightness * present * damp) / 100f
+                                        } else {
+                                            curScreenBrightness - (1f - curScreenBrightness) * present * damp / 100f
+                                        }
+                                        BrightnessUtil.setSystemBrightness(context, brightnessPresent)
                                         BKLog.d(AttachmentGesture.TAG, "All requested permissions are granted")
                                     } else {
-                                        Log.d("", "At least one permission is denied")
-//                                        AlertDialog.Builder(context)
-//                                                .setTitle("设置亮度")
-//                                                .setMessage("设置权限")
-//                                                .setNegativeButton("确认") { dialog, which ->
-//                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                                        if (Settings.System.canWrite(context)) {
-//                                                            // Do stuff here
-//                                                        } else {
-//                                                            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
-//                                                            intent.data = Uri.parse("package:" + context.getPackageName())
-//                                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                                                            context.startActivity(intent)
-//                                                        }
-//                                                    }
-//                                                }.show()
+                                        //BrightnessUtil.startAutoBrightness(context)
+                                        ToastUtil.show("未获取到系统设置权限")
+                                        BKLog.d(AttachmentGesture.TAG, "At least one permission is denied")
                                     }
                                 }
-                        show(BRIGHTNESS)
-                        val curScreenBrightness = BrightnessUtil.getScreenBrightness(context)
-                        viewHolder?.brightnessPb?.max = 100
-                        viewHolder?.brightnessPb?.progress = (curScreenBrightness * 100).toInt()
-                        val brightnessPresent = if (present > 0) {
-                            curScreenBrightness + (1f - curScreenBrightness * present * damp) / 100f
-                        } else {
-                            curScreenBrightness - (1f - curScreenBrightness) * present * damp / 100f
-                        }
-                        BrightnessUtil.setSystemBrightness(context, brightnessPresent)
+
                     }
                     GestureHelper.VERTICAL_RIGHT_VALUE -> {
                         show(VOLUME)

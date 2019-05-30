@@ -22,6 +22,7 @@ import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.WebAct
 import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.app.PonkoApp.Companion.app
 import com.ponko.cn.bean.StoreProfileBean
 import com.ponko.cn.bean.StoreProfileCMoreBean
 import com.ponko.cn.bean.StoreTaskBean
@@ -35,6 +36,8 @@ import com.ponko.cn.utils.*
 import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.ScreenUtil
+import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.CircleImageView
 import com.xm.lib.media.broadcast.BroadcastManager
 import retrofit2.Call
@@ -135,7 +138,7 @@ class StoreAct : PonkoBaseAct<Any>() {
             @SuppressLint("SetTextI18n")
             override fun onSuccess(call: Call<StoreProfileBean>?, response: Response<StoreProfileBean>?) {
                 storeProfileBean = response?.body()
-                Glide.with(this@StoreAct, storeProfileBean?.avatar, viewHolder?.ivHead,Constant.LOAD_IMAGE_DELAY)
+                Glide.with(this@StoreAct, storeProfileBean?.avatar, viewHolder?.ivHead, Constant.LOAD_IMAGE_DELAY)
                 viewHolder?.tvNick?.text = storeProfileBean?.name
                 viewHolder?.tvPayType?.text = storeProfileBean?.paid
                 viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"
@@ -147,6 +150,13 @@ class StoreAct : PonkoBaseAct<Any>() {
                     frgs.add(ExchangeFrg.create(count++, list.name/*, viewHolder?.vp, viewHolder?.sv*/))
                     titls.add(list.name)
                 }
+
+                if (count < 6) {
+                    viewHolder?.tb?.layoutParams?.width = ScreenUtil.dip2px(this@StoreAct, 50) * (count - 1)
+                } else {
+                    viewHolder?.tb?.tabMode = TabLayout.MODE_SCROLLABLE
+                }
+
                 viewHolder?.vp?.adapter = Adapter(supportFragmentManager, frgs, titls)
                 viewHolder?.tb?.setupWithViewPager(viewHolder?.vp)
             }
@@ -167,19 +177,23 @@ class StoreAct : PonkoBaseAct<Any>() {
 
             override fun onPageSelected(p0: Int) {
                 indexPage = p0
+                //在刷新一次页面
+                viewHolder?.vp?.requestLayout()
+
             }
         })
         viewHolder?.sv?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { p0, p1, p2, p3, p4 ->
-            if (isFinishing) {
-                val view = viewHolder?.sv?.getChildAt(0)
-                if (view?.height!! <= viewHolder?.sv?.scrollY!! + viewHolder?.sv?.height!!) {
-                    BKLog.d("滑动到底部")
-                    (frgs[indexPage] as ExchangeFrg).reqeustExchangeMoreApi()
-                } else if (viewHolder?.sv?.scrollY == 0) {
-                    BKLog.d("滑动到顶部")
-                    (frgs[indexPage] as ExchangeFrg).reqeustExchangeRefreshApi()
-                }
+            // ps:最好做一次滑动停止判断
+            //if (isFinishing) {
+            val view = viewHolder?.sv?.getChildAt(0)
+            if (view?.height!! <= viewHolder?.sv?.scrollY!! + viewHolder?.sv?.height!!) {
+                BKLog.d("滑动到底部")
+                (frgs[indexPage] as ExchangeFrg).reqeustExchangeMoreApi()
+            } else if (viewHolder?.sv?.scrollY == 0) {
+                BKLog.d("滑动到顶部")
+                (frgs[indexPage] as ExchangeFrg).reqeustExchangeRefreshApi()
             }
+            //}
         })
         viewHolder?.ivHead?.setOnClickListener {
             BKLog.d("点击头像")

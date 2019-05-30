@@ -656,35 +656,38 @@ class StudyCourseDetailContract {
          * 上传播放进度
          */
         fun uploadVideoProgress(video: XmVideoView?) {
-//            timerHelper.start(object : TimerHelper.OnPeriodListener {
-//                override fun onPeriod() {
-//                    val mediaPlayer = video?.mediaPlayer
-//                    val isPlaying = mediaPlayer?.isPlaying()
-//                    val isComplete = video?.isComplete
-//                    if (isPlaying == true) {
-//                        val sectionId = model.coursesDetailCBean?.chapters!![model.clickItemGroupPos].sections[model.clickItemChildPos].id
-//                        val courseId = model.typeId
-//                        val pos = mediaPlayer.getCurrentPosition()
-//                        val params = HashMap<String, String>()
-//                        params["completed"] = isComplete.toString()
-//                        params["duration"] = mediaPlayer.getDuration().toString()
-//                        params["position"] = (pos / 1000).toString()
-//                        params["courseId"] = courseId
-//                        params["sectionId"] = sectionId
-//                        BKLog.d("上传内容 completed${isComplete.toString()} duration${(pos / 1000)} position:$pos courseId$courseId sectionId$sectionId")
-//                        PonkoApp.studyApi?.updateVideoInfo(params)?.enqueue(object : HttpCallBack<NetBean>() {
-//                            override fun onSuccess(call: Call<NetBean>?, response: Response<NetBean>?) {
-//                                BKLog.d("上传视频进度成功")
-//                            }
-//
-//                            override fun onFailure(call: Call<NetBean>?, msg: String?) {
-//                                super.onFailure(call, msg)
-//                                BKLog.d("上传视频进度失败")
-//                            }
-//                        })
-//                    }
-//                }
-//            }, 10000)
+            val period = 1000 * 10L
+            var watchDuration = period
+            timerHelper.start(object : TimerHelper.OnPeriodListener {
+                override fun onPeriod() {
+                    val mediaPlayer = video?.mediaPlayer
+                    val isPlaying = mediaPlayer?.isPlaying()
+                    val isComplete = video?.isComplete
+                    if (isPlaying == true) {
+                        watchDuration += period
+                        val sectionId = model.coursesDetailCBean?.chapters!![model.clickItemGroupPos].sections[model.clickItemChildPos].id
+                        val courseId = model.typeId
+                        val pos = mediaPlayer.getCurrentPosition()
+                        val params = HashMap<String, String>()
+                        params["completed"] = isComplete.toString()
+                        params["duration"] = (watchDuration / 1000).toString()   //当前观看时间 秒
+                        params["position"] = (pos / 1000).toString()
+                        params["courseId"] = courseId
+                        params["sectionId"] = sectionId
+                        BKLog.d("上传内容 completed${isComplete.toString()} duration${(pos / 1000)} position:$pos courseId$courseId sectionId$sectionId")
+                        PonkoApp.studyApi?.updateVideoInfo(params)?.enqueue(object : HttpCallBack<NetBean>() {
+                            override fun onSuccess(call: Call<NetBean>?, response: Response<NetBean>?) {
+                                BKLog.d("上传视频进度成功")
+                            }
+
+                            override fun onFailure(call: Call<NetBean>?, msg: String?) {
+                                super.onFailure(call, msg)
+                                BKLog.d("上传视频进度失败")
+                            }
+                        })
+                    }
+                }
+            }, period)
         }
 
         /**
