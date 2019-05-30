@@ -22,6 +22,7 @@ import com.xm.lib.media.view.XmPopWindow
  */
 class PortraitViewHolder : ControlViewHolder {
 
+
     override fun setTitle(title: String) {
         tvTitle?.text = title
     }
@@ -201,6 +202,10 @@ class PortraitViewHolder : ControlViewHolder {
 
     override fun setShareListener(listener: View.OnClickListener) {
         ivShare?.setOnClickListener(listener)
+    }
+
+    override fun isShowControlView(): Boolean {
+        return clPortraitBottom?.visibility == View.VISIBLE
     }
 
     override fun showOrHideControlView() {

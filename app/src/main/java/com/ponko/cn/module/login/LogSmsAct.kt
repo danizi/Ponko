@@ -88,7 +88,7 @@ class LogSmsAct : PonkoBaseAct<Any>() {
         timerHelper.countDown(object : TimerHelper.OnCountDownListener {
             @SuppressLint("SetTextI18n")
             override fun onDelayTimer(ms: Long) {
-                val s = ms / 1000
+                val s = ms
                 BKLog.d("倒计时$s")
                 this@LogSmsAct.runOnUiThread {
                     viewHolder?.tvTimer?.text = "重新发送（${s}S）"

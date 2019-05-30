@@ -10,10 +10,12 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.ToastUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.BrightnessUtil
+import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.VolumeUtil
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
@@ -49,6 +51,15 @@ class AttachmentGesture(context: Context?) : BaseAttachmentView(context) {
 
             override fun onVertical(type: String, present: Int) {
                 super.onVertical(type, present)
+
+                //显示控制页面上下滑动可以调节音量和亮度，否则只能弹出列表
+                if (ScreenUtil.isLandscape(context!!)) {
+                    if ((xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).isShowControlView()) {
+                        BKLog.e("控制页面处于显示状态,不可调节音量和亮度")
+                        return
+                    }
+                }
+
                 val damp = 0.7f
                 when (type) {
                     GestureHelper.VERTICAL_LEFT_VALUE -> {

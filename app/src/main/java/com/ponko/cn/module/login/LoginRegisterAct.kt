@@ -13,6 +13,7 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.utils.DialogUtil
+import com.ponko.cn.utils.PolyvKeyBoardUtils
 import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response
@@ -92,6 +93,7 @@ class LoginRegisterAct : AppCompatActivity() {
                     }
                 })
             }
+            PolyvKeyBoardUtils.closeKeybord( viewHolder?.etAccount, this)
         }
     }
 }

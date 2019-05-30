@@ -32,6 +32,7 @@ import com.xm.lib.media.view.XmPopWindow
  */
 class LandscapeViewHolder private constructor(private val clLandscapeTop: ConstraintLayout?, private val ivBack: ImageView?, private val tvTitle: TextView?, private val ivShare: ImageView?, private val ivMore: ImageView?, private val clLandscapeBottom: ConstraintLayout?, private val seekBar: SeekBar?, private val ivAction: ImageView?, private val tvTime: TextView?, private val tvRatio: TextView?, private val clSeek: ConstraintLayout?, private val tvTime2: TextView?, private val pbLoading: ProgressBar?, private val rv: RecyclerView?) : ControlViewHolder() {
 
+
     /**
      * 播放列表信息
      */
@@ -186,12 +187,21 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
             val tvRatio1080p: TextView = ratioView.findViewById(R.id.tv_ratio_1080p)
             tvRatio360p.setOnClickListener {
                 Toast.makeText(activity, "360p", Toast.LENGTH_SHORT).show()
+                MediaUitl.QUALITY = 1
+                (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).replay()
+                xmPopWindow.dismiss()
             }
             tvRatio480p.setOnClickListener {
                 Toast.makeText(activity, "480p", Toast.LENGTH_SHORT).show()
+                MediaUitl.QUALITY = 2
+                (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).replay()
+                xmPopWindow.dismiss()
             }
             tvRatio720p.setOnClickListener {
                 Toast.makeText(activity, "720p", Toast.LENGTH_SHORT).show()
+                MediaUitl.QUALITY = 3
+                (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).replay()
+                xmPopWindow.dismiss()
             }
             tvRatio1080p.setOnClickListener {
                 Toast.makeText(activity, "1080p", Toast.LENGTH_SHORT).show()
@@ -228,6 +238,10 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
         super.showPlayList()
         rv?.visibility = View.VISIBLE
 
+    }
+
+    override fun isShowControlView(): Boolean {
+        return clLandscapeBottom?.visibility == View.VISIBLE
     }
 
     override fun showOrHideControlView() {
@@ -430,7 +444,7 @@ class LandscapeViewHolder private constructor(private val clLandscapeTop: Constr
             itemView.setOnClickListener {
                 if (sectionsBean.isPay!! || sectionsBean.isFree!!) {
 
-                    listener?.item(sectionsBean.vid,sectionsBean.progress_duration,itemView, position)
+                    listener?.item(sectionsBean.vid, sectionsBean.progress_duration, itemView, position)
                 } else {
                     ToastUtil.show("请先购买")
                 }

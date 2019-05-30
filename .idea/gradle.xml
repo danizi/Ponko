@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/../XMLib/LIB_Common" />
+            <option value="$PROJECT_DIR$/../XMLib/LIB_Component" />
+            <option value="$PROJECT_DIR$/../XMLib/LIB_Downloader" />
+            <option value="$PROJECT_DIR$/../XMLib/LIB_Media" />
+            <option value="$PROJECT_DIR$/../XMLib/LIB_Pay" />
+            <option value="$PROJECT_DIR$/../XMLib/LIB_Share" />
+            <option value="$PROJECT_DIR$/../XMLib/LIB_Statistics" />
+            <option value="$PROJECT_DIR$/../XMLib/LIB_Web" />
+            <option value="$PROJECT_DIR$/../XMLib/Lib_IJKPlayer_Sdk" />
+          </set>
+        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

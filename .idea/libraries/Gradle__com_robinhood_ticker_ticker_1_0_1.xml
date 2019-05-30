@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.robinhood.ticker:ticker-1.0.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/ticker-1.0.1.aar/803d1171099bcd033b2dd8f2d3981833/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/ticker-1.0.1.aar/803d1171099bcd033b2dd8f2d3981833/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.robinhood.ticker/ticker/1.0.1/e86220c64056ffedbf55a3a08dc9482f9d218c0b/ticker-1.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

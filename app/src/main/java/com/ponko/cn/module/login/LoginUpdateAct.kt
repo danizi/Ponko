@@ -114,7 +114,7 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
             }
             else -> {
                 viewHolder?.etAccount?.hint = SpannableString("请输入新号码")
-                "重置号码"
+                "重置密码"
             }
         }
     }
@@ -144,6 +144,7 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
                     resetPhone()
                 }
             }
+
         }
     }
 

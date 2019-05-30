@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../XMLib/LIB_Common/LIB_Common.iml" filepath="$PROJECT_DIR$/../XMLib/LIB_Common/LIB_Common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../XMLib/LIB_Component/LIB_Component.iml" filepath="$PROJECT_DIR$/../XMLib/LIB_Component/LIB_Component.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../XMLib/LIB_Downloader/LIB_Downloader.iml" filepath="$PROJECT_DIR$/../XMLib/LIB_Downloader/LIB_Downloader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../XMLib/Lib_IJKPlayer_Sdk/LIB_IJKPlayer_Sdk.iml" filepath="$PROJECT_DIR$/../XMLib/Lib_IJKPlayer_Sdk/LIB_IJKPlayer_Sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../XMLib/LIB_Media/LIB_Media.iml" filepath="$PROJECT_DIR$/../XMLib/LIB_Media/LIB_Media.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../XMLib/LIB_Pay/LIB_Pay.iml" filepath="$PROJECT_DIR$/../XMLib/LIB_Pay/LIB_Pay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../XMLib/LIB_Share/LIB_Share.iml" filepath="$PROJECT_DIR$/../XMLib/LIB_Share/LIB_Share.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../XMLib/LIB_Statistics/LIB_Statistics.iml" filepath="$PROJECT_DIR$/../XMLib/LIB_Statistics/LIB_Statistics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../XMLib/LIB_Web/LIB_Web.iml" filepath="$PROJECT_DIR$/../XMLib/LIB_Web/LIB_Web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Ponko.iml" filepath="$PROJECT_DIR$/Ponko.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+    </modules>
+  </component>
+</project>

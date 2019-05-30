@@ -158,7 +158,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         }
 
         attachmentControl?.setOnPlayListItemClickListener(object : OnPlayListItemClickListener {
-            override fun item(vid: String?, progress: Int?, view: View, postion: Int) {
+            override fun item(vid: String?, progress: Int?, view: View?, postion: Int) {
                 p?.clickPlayListItem(vid, progress, view, postion)
                 //暂停播放
                 attachmentControl?.pause()

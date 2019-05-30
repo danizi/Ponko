@@ -9,9 +9,14 @@ import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.event.GestureObserver
 import com.xm.lib.media.event.PhoneStateObserver
 import com.xm.lib.media.event.PlayerObserver
+import android.widget.TextView
+import android.support.v7.widget.AppCompatImageButton
+import android.widget.ProgressBar
+import com.ponko.cn.module.media.control.AttachmentControl
+
 
 class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
-
+    private var ui: UI? = null
 
     init {
         observer = object : PlayerObserver {
@@ -41,4 +46,34 @@ class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
         return R.layout.attachment_complete
     }
 
+    override fun findViews(view: View?) {
+        super.findViews(view)
+        if (ui == null) {
+            ui = UI.create(view)
+        }
+    }
+
+    override fun initEvent() {
+        super.initEvent()
+        ui?.ivNext?.setOnClickListener {
+            (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).next()
+            this@AttachmentComplete.visibility = View.GONE
+        }
+        ui?.ivReplay?.setOnClickListener {
+            (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).replay()
+            this@AttachmentComplete.visibility = View.GONE
+        }
+    }
+
+    private class UI private constructor(val pb: ProgressBar, val ivReplay: AppCompatImageButton, val ivNext: AppCompatImageButton, val tvDes: TextView) {
+        companion object {
+            fun create(rootView: View?): UI {
+                val pb = rootView?.findViewById<View>(R.id.pb) as ProgressBar
+                val ivReplay = rootView.findViewById<View>(R.id.iv_replay) as AppCompatImageButton
+                val ivNext = rootView.findViewById<View>(R.id.iv_next) as AppCompatImageButton
+                val tvDes = rootView.findViewById<View>(R.id.tv_des) as TextView
+                return UI(pb, ivReplay, ivNext, tvDes)
+            }
+        }
+    }
 }

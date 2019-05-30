@@ -268,4 +268,9 @@ abstract class ControlViewHolder {
      * 设置标题
      */
     abstract fun setTitle(title: String)
+
+    /**
+     * 是否显示控制页面
+     */
+    abstract fun isShowControlView(): Boolean
 }

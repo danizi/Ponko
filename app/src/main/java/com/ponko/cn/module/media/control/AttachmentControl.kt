@@ -285,12 +285,41 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
                 }
 
                 override fun onSuccess(url: String, size: Int?) {
+
                     xmVideoView?.start(url, true, progress)
                 }
             })
             this.index = index
         } else {
             ToastUtil.show("当前没有网络...")
+        }
+    }
+
+    /**
+     * 下一首
+     */
+    fun next() {
+        index++
+        if (info?.mediaInfos?.size!! > index) {
+            val mediaBean = this.info?.mediaInfos!![index]
+            listener?.item(mediaBean.vid!!,mediaBean.progress_duration,null,index)
+            //start(mediaBean.vid!!, mediaBean.progress_duration, index)
+        } else {
+            ToastUtil.show("已经是最后一集了...")
+            BKLog.d("播放下一首失败")
+        }
+    }
+
+    /**
+     * 重播失败
+     */
+    fun replay() {
+        if (info?.mediaInfos?.size!! > index) {
+            val mediaBean = this.info?.mediaInfos!![index]
+            start(mediaBean.vid!!, mediaBean.progress_duration, index)
+        } else {
+            ToastUtil.show("重播失败...")
+            BKLog.d("重播失败")
         }
     }
 
@@ -321,7 +350,6 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         this.config = config
     }
 
-
     /**
      * 点击列表监听
      */
@@ -342,5 +370,12 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
     fun setTitle(title: String) {
         this.title = title
         ui?.setTitle(title)
+    }
+
+    /**
+     * 进度
+     */
+    fun isShowControlView(): Boolean {
+        return ui?.isShowControlView()!!
     }
 }

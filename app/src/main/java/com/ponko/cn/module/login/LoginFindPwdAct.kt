@@ -18,7 +18,9 @@ import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.utils.DialogUtil
+import com.ponko.cn.utils.PolyvKeyBoardUtils
 import com.xm.lib.common.base.BaseActivity
+import kotlinx.android.synthetic.main.item_account_my_edit.*
 import retrofit2.Call
 import retrofit2.Response
 
@@ -117,6 +119,7 @@ class LoginFindPwdAct : PonkoBaseAct<Any>() {
                     DialogUtil.hideProcess()
                 }
             })
+            PolyvKeyBoardUtils.closeKeybord( viewHolder?.etAccount, this)
         }
     }
 

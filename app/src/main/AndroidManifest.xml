@@ -16,7 +16,6 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
@@ -63,47 +62,50 @@
 
 
         <!-- ============================================我的-积分商城相关 start -->
-        <activity android:name=".module.my.option.store.StoreAct" />
-        <activity android:name=".module.my.option.CacheAct" />
-        <activity android:name=".module.my.option.CollectAct" />
-        <activity android:name=".module.my.option.StudyRecordAct" />
-        <activity android:name=".module.my.option.RemindAct" />
-        <activity android:name=".module.my.option.LearnRankingAct" />
-        <activity android:name=".module.my.option.ExchangeAct" />
-        <activity android:name=".module.my.option.store.IntegralExchangedAct" />
-        <activity android:name=".module.my.option.ProblemAct" />
-        <activity android:name=".module.my.option.acount.AccountAct" />
-        <activity android:name=".module.my.option.store.IntegralTaskActivity" />
-        <activity android:name=".module.my.option.store.IntegralRankingActivity" />
-        <activity android:name=".module.my.option.store.IntegralRecordActivity" />
-        <activity android:name=".module.my.option.OpenRollActivity" />
-        <activity android:name=".module.my.option.InviteFriendActivity" />
-        <activity android:name=".module.my.option.HistoryActivity" />
-        <activity android:name=".module.my.option.CacheListAct" />
-        <activity android:name=".module.my.option.acount.AddressActivity" />
+        <activity android:name=".module.my.option.store.StoreAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.CacheAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.CollectAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.StudyRecordAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.RemindAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.LearnRankingAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.ExchangeAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.store.IntegralExchangedAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.ProblemAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.acount.AccountAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.store.IntegralTaskActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.store.IntegralRankingActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.store.IntegralRecordActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.OpenRollActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.InviteFriendActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.HistoryActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.CacheListAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.acount.AddressActivity" android:launchMode="singleTop"/>
         <activity
+            android:launchMode="singleTop"
             android:name=".module.my.option.acount.PersonalActivity"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <!-- ============================================积分商城相关 end -->
 
 
         <!-- ============================================登录 start -->
-        <activity android:name=".module.login.LoginStartAct" />
-        <activity android:name=".module.login.LoginAccountAct" />
-        <activity android:name=".module.login.LoginRegisterAct" />
-        <activity android:name=".module.login.LoginWxAct" />
-        <activity android:name=".module.login.LogSmsAct" />
-        <activity android:name=".module.login.LoginFindPwdAct" />
-        <activity android:name=".module.login.LoginUpdateAct" />
-        <activity android:name=".module.login.LoginResetPhoneAct" />
+        <activity android:name=".module.login.LoginStartAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.login.LoginAccountAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.login.LoginRegisterAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.login.LoginWxAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.login.LogSmsAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.login.LoginFindPwdAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.login.LoginUpdateAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.login.LoginResetPhoneAct" android:launchMode="singleTop"/>
         <!-- ============================================登录 end -->
 
         <activity
+            android:launchMode="singleTop"
             android:name=".module.free.FreeDetailsAct"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard" />
-        <activity android:name=".WebAct" />
-        <activity android:name=".module.study.CourseTypeLinearActivity" />
+        <activity android:name=".WebAct" android:launchMode="singleTop"/>
+        <activity android:name=".module.study.CourseTypeLinearActivity" android:launchMode="singleTop"/>
         <activity
+            android:launchMode="singleTop"
             android:name=".module.study.StudyCourseDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard" />
 
@@ -137,28 +139,28 @@
 
 
         <!-- ============================================学习 start -->
-        <activity android:name=".module.study.StudyCacheActivity" />
-        <activity android:name=".module.study.CourseTypeGridActivity" />
-        <activity android:name=".module.study.SearchActivity" />
+        <activity android:name=".module.study.StudyCacheActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.study.CourseTypeGridActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.study.SearchActivity" android:launchMode="singleTop"/>
         <!-- ============================================学习 end -->
 
 
         <!-- ============================================免费 start -->
-        <activity android:name=".module.free.FreeMoreAct" />
+        <activity android:name=".module.free.FreeMoreAct" android:launchMode="singleTop"/>
         <!-- ============================================免费 end -->
 
 
         <!-- ============================================测试 start -->
-        <activity android:name=".module.m3u8downer.M3u8DownerTextAct" />
+        <activity android:name=".module.m3u8downer.M3u8DownerTextAct" android:launchMode="singleTop"/>
         <!-- ============================================测试 end -->
         <!-- <activity android:name=".module.my.option.acount.CusTakePhotoActivity" /> -->
 
-        <activity android:name=".module.my.option.InviteFriendShareActivity" />
-        <activity android:name=".module.my.option.InviteFriendRecordActivity" />
+        <activity android:name=".module.my.option.InviteFriendShareActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.InviteFriendRecordActivity" android:launchMode="singleTop"/>
 
         <!-- 照片选取 -->
-        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
-        <activity android:name=".module.my.option.collect.CollectListActivity"></activity>
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity" android:launchMode="singleTop"/>
+        <activity android:name=".module.my.option.collect.CollectListActivity" android:launchMode="singleTop"/>
     </application>
 
 </manifest>

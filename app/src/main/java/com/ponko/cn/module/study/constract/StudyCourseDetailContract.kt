@@ -514,7 +514,7 @@ class StudyCourseDetailContract {
         /**
          * 点击了视频列表的item
          */
-        fun clickPlayListItem(vid: String?, progress: Int?, view: View, postion: Int) {
+        fun clickPlayListItem(vid: String?, progress: Int?, view: View?, postion: Int) {
             BKLog.d("横屏状态点击了播放列表:$postion")
             val (groupPosition, childPosition) = oneToTwo(postion)!!
             isDisplayCollect(groupPosition, childPosition)

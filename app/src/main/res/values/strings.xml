@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ponko</string>
+    <string name="app_name">帮课大学</string>
 
     <!--登录-->
     <string name="login_tourist">游客模式 >></string>

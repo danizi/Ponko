@@ -8,8 +8,10 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.module.login.contract.LoginAccountContract
+import com.ponko.cn.utils.PolyvKeyBoardUtils
 import com.xm.lib.common.base.mvp.MvpActivity
 import com.xm.lib.common.log.BKLog
+import kotlinx.android.synthetic.main.item_account_my_edit.*
 
 
 class LoginAccountAct : MvpActivity<LoginAccountContract.Present>(), LoginAccountContract.View {
@@ -57,7 +59,7 @@ class LoginAccountAct : MvpActivity<LoginAccountContract.Present>(), LoginAccoun
         tvFindPwd?.setOnClickListener {
             p?.clickFindPwd()
         }
-       etAccount?.addTextChangedListener(object : TextWatcher {
+        etAccount?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 btnEnter?.isEnabled = s.toString().isNotEmpty()
             }
@@ -90,7 +92,8 @@ class LoginAccountAct : MvpActivity<LoginAccountContract.Present>(), LoginAccoun
 
         btnEnter?.setOnClickListener {
             BKLog.d("点击登录")
-            p?.clickEnter(etAccount?.text.toString(),etPwd?.text.toString())
+            p?.clickEnter(etAccount?.text.toString(), etPwd?.text.toString())
+            PolyvKeyBoardUtils.closeKeybord(etAccount, this)
         }
     }
 }
