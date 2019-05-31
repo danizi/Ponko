@@ -23,6 +23,7 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
 
     private var ui: UI? = null
     var url: String? = ""
+    var isPay: Boolean? = false
 
     init {
         observer = object : PlayerObserver {
@@ -39,9 +40,10 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
         Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ui?.ivPre)//加载图片
     }
 
-    fun load(vid: String?, preUrl: String?) {
+    fun load(vid: String?, preUrl: String?, isPay: Boolean) {
         this.url = vid
         this.preUrl = preUrl
+        this.isPay = isPay
         Glide.with(context).load(preUrl).error(R.mipmap.ic_launcher).into(ui?.ivPre)//加载图片  //TODO You cannot start a load for a destroyed activity
     }
 
@@ -57,11 +59,14 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
 
     override fun initEvent() {
         ui?.ivStart?.setOnClickListener {
-            clickIvStart()
+            if (isPay == true) {
+                clickIvStart()
+            } else {
+                ToastUtil.show("您尚未订购")
+            }
         }
         ui?.ivBack?.setOnClickListener {
             clickBack()
-
         }
     }
 

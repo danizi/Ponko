@@ -30,6 +30,7 @@ import com.ponko.cn.module.my.option.acount.AddressActivity
 import com.ponko.cn.module.my.option.acount.PersonalActivity
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.CacheUtil.getToken
+import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
@@ -464,20 +465,42 @@ class WebAct : PonkoBaseAct<Any>() {
 
                         //兑换
                         if (isCanExchange) {
+                            DialogUtil.showProcess(act)
                             btnExchange.isEnabled = true
-                            AlertDialog.Builder(act!!)
-                                    .setTitle("提示")
-                                    .setMessage("亲爱的用户，是否兑换？")
-                                    .setPositiveButton("确定") { dialog, which ->
-                                        PonkoApp.myApi?.exchangeProduct(exchangeProductId)?.enqueue(object : HttpCallBack<GeneralBean>() {
-                                            override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                                                ToastUtil.show("兑换成功")
+                            BKLog.d("exchangeProductId: $exchangeProductId")
+                            //请求接口地址
+                            PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
+                                override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
+                                    val d = response?.body()
+                                    val sb = StringBuilder()
+                                            .append("收件人地址 ：${d?.address}\n")
+                                            .append("收件人电话 ：${d?.tel}\n")
+                                            .append("收件人姓名 ：${d?.recipient}\n")
+                                            .append("亲爱的用户，是否兑换？")
+                                    DialogUtil.hideProcess()
+                                    AlertDialog.Builder(act)
+                                            .setTitle("提示")
+                                            .setMessage(sb.toString())
+                                            .setPositiveButton("确定") { dialog, which ->
+                                                PonkoApp.myApi?.exchangeProduct(exchangeProductId)?.enqueue(object : HttpCallBack<GeneralBean>() {
+                                                    override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                                                        //ToastUtil.show("兑换成功")
+                                                        DialogUtil.show(act,"","兑换成功",true,null,null)
+                                                    }
+
+                                                    override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                                                        super.onFailure(call, msg)
+                                                        //ToastUtil.show("兑换失败")
+                                                        DialogUtil.show(act,"","兑换失败",true,null,null)
+                                                    }
+                                                })
                                             }
-                                        })
-                                    }
-                                    .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
-                                    .create()
-                                    .show()
+                                            .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
+                                            .create()
+                                            .show()
+                                }
+                            })
+
                         } else {
                             //btnExchange.isEnabled = false
                             //btnExchange.text = error

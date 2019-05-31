@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.common.PonkoBaseAct
@@ -13,6 +14,7 @@ import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.module.study.constract.StudyCourseDetailContract
 import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
@@ -226,7 +228,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
     override fun setVideoPre(coursesDetailCBean: CoursesDetailCBean?) {
         val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
         val vid = coursesDetailCBean?.chapters!![0].sections[0].vid  //PS 游客模式vid获取不到
-        attachmentPre.load(vid = vid, preUrl = coursesDetailCBean.image)      //todo 窗口有销毁的可能
+        attachmentPre.load(vid = vid, preUrl = coursesDetailCBean.image,isPay = coursesDetailCBean.isPossess)      //todo 窗口有销毁的可能
     }
 
     override fun displayVideoExtendableList(myExtendableListAdp: StudyCourseDetailContract.V.MyExtendableListViewAdapter?) {

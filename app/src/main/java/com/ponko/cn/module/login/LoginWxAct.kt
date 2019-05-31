@@ -18,27 +18,44 @@ import com.ponko.cn.MainActivity
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
+import com.ponko.cn.module.login.contract.LoginWxContract
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
+import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response
 
 
 /**
  * 用户未注册 微信登录 进入此窗口
+ *
+ * 用户注册未绑定
+ *               1 填写账号密码
+ *               2 请求接口绑定微信，返回错误则是未注册，需要发送注册验证码，然后再请求绑定接口
+ *
+ * 用户注册未绑定
+ *               1 填写账号密码
+ *               2 请求接口绑定微信判断是否注册过，没有注册就发送短信验证码，然后再请求绑定接口
  */
-class LoginWxAct : PonkoBaseAct<Any>() {
+class LoginWxAct : PonkoBaseAct<LoginWxContract.Present>(), LoginWxContract.V {
 
     companion object {
-        fun start(context: Context,code:String){
-
+        fun start(context: Context, code: String?, unionId: String?) {
+            val intent = Intent(context, LoginWxAct::class.java)
+            intent.putExtra("code", code)
+            intent.putExtra("unionId", code)
+            ActivityUtil.startActivity(context, intent)
         }
     }
+
+    /**
+     * 窗口ui
+     */
     private var ui: ViewHolder? = null
 
-    override fun presenter(): Any {
-        return Any()
+    override fun presenter(): LoginWxContract.Present {
+        return LoginWxContract.Present(context = this, v = this)
     }
 
     override fun getLayoutId(): Int {
@@ -52,14 +69,18 @@ class LoginWxAct : PonkoBaseAct<Any>() {
         }
     }
 
+    override fun iniData() {
+        super.iniData()
+        p?.getIntentExtra(intent)
+    }
+
     override fun iniEvent() {
         super.iniEvent()
-        val code = intent.getStringExtra("code")
         ui?.flClose?.setOnClickListener {
             finish()
         }
         ui?.tvFindPwd?.setOnClickListener {
-            ActivityUtil.startActivity(this, Intent(this, LoginFindPwdAct::class.java))
+            p?.clickFindPwd()
         }
         ui?.etAccount?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -88,25 +109,24 @@ class LoginWxAct : PonkoBaseAct<Any>() {
             }
         })
         ui?.btnEnter?.setOnClickListener {
-            DialogUtil.showProcess(this)
-            PonkoApp.loginApi?.wxbind(ui?.etAccount?.text.toString(), ui?.etPwd?.text.toString(), code,  "wechat")?.enqueue(object : HttpCallBack<GeneralBean>() {
-                override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                    val token = response?.body()?.token
-                    CacheUtil.putToken(token)
-                    val intent = Intent(this@LoginWxAct, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    ActivityUtil.startActivity(this@LoginWxAct, intent)
-                    DialogUtil.hideProcess()
-                }
-
-                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
-                    super.onFailure(call, msg)
-                    DialogUtil.hideProcess()
-                }
-            })
+            val params = HashMap<String, String>()
+            params["phone"] = ui?.etAccount?.text.toString()
+            params["pwd"] = ui?.etPwd?.text.toString()
+            p?.clickEnter(params)
         }
     }
 
+    override fun showLoading() {
+        DialogUtil.showProcess(this)
+    }
+
+    override fun hideLoading() {
+        DialogUtil.hideProcess()
+    }
+
+    override fun showDialog(s: String) {
+        DialogUtil.show(this, "提示", s, true, null, null)
+    }
 
     /**
      * 窗口UI
@@ -130,12 +150,4 @@ class LoginWxAct : PonkoBaseAct<Any>() {
             }
         }
     }
-
-
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_login_wx)
-//        val code = intent.getStringExtra("code")
-//    }
 }

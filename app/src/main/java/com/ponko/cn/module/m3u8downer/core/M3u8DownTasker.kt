@@ -73,6 +73,9 @@ class M3u8DownTasker private constructor(builder: Builder) : IM3u8DownTasker {
 
         // 下载任务回调
         this.m3u8DownRunnable?.setOnDownListener(object : OnDownListener {
+            override fun onPause(vid: String, url: String) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
 
             override fun onQueue(vid: String?, url: String?) {
                 callBackQueue()

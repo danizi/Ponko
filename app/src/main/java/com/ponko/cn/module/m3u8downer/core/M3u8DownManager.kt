@@ -68,6 +68,7 @@ class M3u8DownManager internal constructor(builder: Builder?, context: Context) 
 
     override fun pause(url: String) {
         dispatcher?.remove(url)
+        listener?.onPause("",url)
     }
 
     override fun pause(urls: List<String>) {

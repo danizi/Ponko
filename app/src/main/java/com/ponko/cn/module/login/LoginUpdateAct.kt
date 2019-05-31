@@ -109,11 +109,11 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
                 "重置密码"
             }
             RESETPHONE->{
-                viewHolder?.etAccount?.hint = SpannableString("请输入新密码")
-                "重置密码"
+                viewHolder?.etAccount?.hint = SpannableString("请输入新号码")
+                "请输入新号码"
             }
             else -> {
-                viewHolder?.etAccount?.hint = SpannableString("请输入新号码")
+                viewHolder?.etAccount?.hint = SpannableString("请输入新密码")
                 "重置密码"
             }
         }

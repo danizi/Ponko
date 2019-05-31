@@ -230,5 +230,8 @@ interface OnDownListener {
      */
     fun onError(vid: String, url: String, msg: String)
 
-
+    /**
+     * 下载暂停
+     */
+    fun onPause(vid: String, url: String)
 }

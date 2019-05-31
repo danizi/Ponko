@@ -26,6 +26,7 @@ import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.m3u8downer.core.M3u8DownTask
 import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.MediaUitl.fileSize
+import com.ponko.cn.module.my.option.CacheAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.ToastUtil
@@ -98,6 +99,13 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
      * 下载按钮
      */
     private var btnDown: Button? = null
+
+    /**
+     * 查看下载列表
+     */
+    private var btnLook: Button? = null
+
+
     /**
      * 专题-选集返回实体
      */
@@ -134,6 +142,7 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
         super.findViews()
         btnAllSelect = findViewById(R.id.btn_all_select)
         btnDown = findViewById(R.id.btn_down)
+        btnLook = findViewById(R.id.btn_look)
     }
 
     override fun iniEvent() {
@@ -159,6 +168,10 @@ class StudyCacheActivity : RefreshLoadAct<Any, CoursesDetailCBean>() {
                     this@StudyCacheActivity.finish()
                 }
             }, 200)
+        }
+        btnLook?.setOnClickListener {
+            ActivityUtil.startActivity(this, Intent(this, CacheAct::class.java))
+            finish()
         }
     }
 

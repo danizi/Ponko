@@ -16,6 +16,7 @@ import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -34,6 +35,7 @@ import com.ponko.cn.module.my.holder.MyCourseViewHolder
 import com.ponko.cn.utils.*
 import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.component.CircleImageView
@@ -152,7 +154,7 @@ class StoreAct : PonkoBaseAct<Any>() {
                     }
 
                     if (count < 6) {
-                        viewHolder?.tb?.layoutParams?.width = ScreenUtil.dip2px(this@StoreAct, 50) * (count - 1)
+                        viewHolder?.tb?.layoutParams?.width = ScreenUtil.dip2px(this@StoreAct, 80) * (count - 1)
                     } else {
                         viewHolder?.tb?.tabMode = TabLayout.MODE_SCROLLABLE
                     }
@@ -356,7 +358,19 @@ class StoreAct : PonkoBaseAct<Any>() {
         private var rv: RecyclerView? = null
         private var type: String = "书籍"
         private var cid: String = ""
-        private var adapter = object : BaseRvAdapter() {}
+        private var adapter = object : BaseRvAdapter() {
+
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+                BKLog.d("StoreAct","onCreateViewHolder viewType:$viewType")
+                return super.onCreateViewHolder(parent, viewType)
+            }
+
+            override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+                super.onBindViewHolder(holder, position)
+                BKLog.d("StoreAct","onBindViewHolder holder:$holder position:$position")
+            }
+
+        }
 
         override fun getLayoutId(): Int {
             return R.layout.frg_rv
@@ -372,10 +386,10 @@ class StoreAct : PonkoBaseAct<Any>() {
 
         override fun iniEvent() {
             //RecycerView加载更多加这些配置，viewpager第二个页面就会刷不出数据
-//            rv?.isFocusableInTouchMode = false
+            rv?.isFocusableInTouchMode = false
 //            rv?.isNestedScrollingEnabled = false
 //            rv?.requestFocus()
-//            rv?.setHasFixedSize(true)
+            rv?.setHasFixedSize(true)
         }
 
         override fun iniData() {
@@ -424,8 +438,8 @@ class StoreAct : PonkoBaseAct<Any>() {
             val itemCount = body!![0].stores!!.size
             adapter.data?.addAll(body[0].stores!!)
             adapter.notifyItemRangeInserted(positionStart!!, itemCount)
-            //adapter.notifyItemChanged(positionStart, itemCount)
-            adapter.notifyDataSetChanged()
+            adapter.notifyItemChanged(positionStart, itemCount)
+//            adapter.notifyDataSetChanged()
             this.vp?.requestLayout()
         }
 

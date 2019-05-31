@@ -67,67 +67,22 @@ class LoginStartContract {
 
         private var broadcastManager: BroadcastManager? = null
         private var wxAuthBroadcastReceiver = object : BroadcastReceiver() {
-            /**
-             * 绑定微信操作
-             */
-            fun bind(oauthBean: OauthBean?) {
-                val userInfo = oauthBean?.info.toString()
-                BKLog.d("已綁定微信，$userInfo")
-                val token = oauthBean?.token
-                CacheUtil.putToken(token)
-                CacheUtil.putUserTypeWx()
-                val intent = Intent(context, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                ActivityUtil.startActivity(context, intent)
-            }
-
-            /**
-             * 未绑定微信操作
-             */
-            fun unbind(oauthBean: OauthBean?, code: String) {
-                val userInfo = oauthBean?.info.toString()
-                BKLog.d("未綁定微信，$userInfo")
-                //区分注册过还是未注册过
-                when (TextUtils.isEmpty(userInfo)) {
-                    true -> {
-                        //未注册跳转到微信注册页面
-                        val intent = Intent(context, LoginWxAct::class.java)
-                        intent.putExtra("code", code)
-                        ActivityUtil.startActivity(context, intent)
-                    }
-                    false -> {
-
-                        val params = HashMap<String, String>()
-                        params["token"] = oauthBean?.info?.unionId!!
-                        params["type"] = "wechat"
-                        PonkoApp.loginApi?.wechatBind(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
-                            override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                                BKLog.d("已注册账号前提下 - 綁定微信成功，$userInfo")
-                                val token = oauthBean.token
-                                CacheUtil.putToken(token)
-                                CacheUtil.putUserTypeWx()
-                                val intent = Intent(context, MainActivity::class.java)
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                ActivityUtil.startActivity(context, intent)
-                            }
-                        })
-                    }
-                }
-            }
-
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == "COMMAND_SENDAUTH") {
+                    //微信授权码
                     val code = intent.getStringExtra("code")
-                    BKLog.d("WechatAuth code:$code")
+                    BKLog.d("微信授权码:$code")
                     PonkoApp.loginApi?.weChatOauth("wechat", code)?.enqueue(object : HttpCallBack<OauthBean>() {
                         override fun onSuccess(call: Call<OauthBean>?, response: Response<OauthBean>?) {
                             when (response?.body()?.status) {
                                 "404" -> {
                                     //没有绑定微信
+                                    BKLog.d("没有绑定微信-执行绑定操作-${response.body()}")
                                     unbind(response.body(), code)
                                 }
                                 "" -> {
                                     //绑定了微信
+                                    BKLog.d("绑定了微信-直接进入应用")
                                     bind(response.body())
                                 }
                             }
@@ -151,6 +106,29 @@ class LoginStartContract {
             val wxShare = WxShare(context as Activity)
             wxShare.init(ShareConfig.Builder().appid(APP_ID).build())
             wxShare.oauth()
+        }
+
+        /**
+         * 绑定微信操作
+         */
+        private fun bind(oauthBean: OauthBean?) {
+            val userInfo = oauthBean?.info.toString()
+            BKLog.d("已綁定微信，$userInfo")
+            val token = oauthBean?.token
+            CacheUtil.putToken(token)
+            CacheUtil.putUserTypeWx()
+            val intent = Intent(context, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            ActivityUtil.startActivity(context, intent)
+        }
+
+        /**
+         * 未绑定微信操作
+         */
+        private fun unbind(oauthBean: OauthBean?, code: String) {
+            val userInfo = oauthBean?.info.toString()
+            LoginWxAct.start(context, code, oauthBean?.info?.unionId)
+
         }
 
         fun clickAccountLogin() {

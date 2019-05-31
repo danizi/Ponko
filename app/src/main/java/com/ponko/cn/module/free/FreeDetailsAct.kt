@@ -21,6 +21,7 @@ import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.*
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
 import com.ponko.cn.app.PonkoApp.Companion.freeApi
 import com.ponko.cn.bean.DetailCBean
@@ -34,6 +35,7 @@ import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.IntoTargetUtil
+import com.ponko.cn.utils.ToastUtil
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.base.rv.BaseRvAdapter
@@ -94,9 +96,14 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
             if (intent?.action == Constant.ACTION_CLICK_FREE_PLAY_ITEM) {
                 val vid = intent.getStringExtra("vid")
                 val sectionName = intent.getStringExtra("sectionName")
+                val free = intent.getBooleanExtra("free", false)
                 attachmentControl?.showLoading()
-                attachmentControl?.start(vid, 0, 0)
-                BKLog.d(TAG, "播放接受通知,播放$sectionName")
+                if (free || PonkoApp.mainCBean?.types!![0].isIs_vip || PonkoApp.mainCBean?.types!![1].isIs_vip) {
+                    attachmentControl?.start(vid, 0, 0)
+                    BKLog.d(TAG, "播放接受通知,播放$sectionName")
+                } else {
+                    ToastUtil.show("请先购买课程")
+                }
             }
         }
     }
@@ -177,7 +184,7 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
 
     fun displayVideo(body: DetailCBean?) {
         val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
-        attachmentPre.load(vid = body?.chapters!![0].sections[0].vid, preUrl = body.chapters!![0].sections[0]?.avatar!!)
+        attachmentPre.load(vid = body?.chapters!![0].sections[0].vid, preUrl = body.chapters!![0].sections[0]?.avatar!!, isPay = body.chapters!![0].sections[0].isFree)
     }
 
     fun displayContent(body: DetailCBean?) {
@@ -315,11 +322,16 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
             }
             adapter.addItemViewDelegate(0, ChapterNameViewHolder::class.java, String::class.java, R.layout.item_free_catalogue_content)
             adapter.addItemViewDelegate(1, SectionsBeanViewHolder::class.java, DetailCBean.ChaptersBean.SectionsBean::class.java, R.layout.item_free_catalogue_section)
-            rv?.layoutManager = LinearLayoutManager(context)
+            val linearLayoutManager=LinearLayoutManager(context)
+            linearLayoutManager.isSmoothScrollbarEnabled=true
+            linearLayoutManager.isAutoMeasureEnabled=true
+            rv?.layoutManager = linearLayoutManager
             rv?.adapter = adapter
             rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
             rv?.isFocusableInTouchMode = false
             rv?.requestFocus()
+            rv?.setHasFixedSize(true)
+            rv?.isNestedScrollingEnabled = false
 
             return v
         }
@@ -364,7 +376,7 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
             val context = itemView.context
             val sectionsBean = d as DetailCBean.ChaptersBean.SectionsBean
             ui?.tvContent?.text = sectionsBean.sectionName
-            if (sectionsBean.isFree) {
+            if (sectionsBean.isFree || PonkoApp.mainCBean?.types!![0].isIs_vip || PonkoApp.mainCBean?.types!![1].isIs_vip) {
                 ui?.ivLock?.visibility = View.GONE
             } else {
                 ui?.ivLock?.visibility = View.VISIBLE
@@ -375,6 +387,7 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
                 val intent = Intent(Constant.ACTION_CLICK_FREE_PLAY_ITEM)
                 intent.putExtra("vid", sectionsBean.vid)
                 intent.putExtra("sectionName", sectionsBean.sectionName)
+                intent.putExtra("free", sectionsBean.isFree)
                 context.sendBroadcast(intent)
             }
         }

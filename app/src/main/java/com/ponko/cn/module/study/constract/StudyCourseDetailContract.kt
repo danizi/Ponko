@@ -21,6 +21,7 @@ import com.ponko.cn.db.bean.CourseCollectSpecialDbBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.study.StudyCacheActivity
 import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ShareUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.http.NetBean
@@ -391,6 +392,8 @@ class StudyCourseDetailContract {
                     courseCollectSectionDbBean.column_course_id = model.typeId
                     PonkoApp.collectSectionDao?.insert(courseCollectSectionDbBean)
                     BKLog.d("小节插入数据库")
+                }else{
+                    PonkoApp.collectSectionDao?.deleteBySectionId(section?.id!!)
                 }
                 if (PonkoApp.collectSpecialDao?.exist(model.typeId) == false) {
                     val bean = CourseCollectSpecialDbBean()

@@ -52,12 +52,13 @@
 
         <!--确认删除(x)或者是下载取决用户选中模式-->
         <Button
-            android:id="@+id/btn_down"
+            android:id="@+id/btn_delete"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#FF5A5E"
             android:text="删除"
             android:textColor="@color/white" />
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

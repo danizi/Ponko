@@ -58,7 +58,7 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
             //将
             if (t.downTask?.vid == tasker?.downTask?.vid) {
                 runningQueue?.remove(t)
-                BKLog.d(TAG,"${t?.toString()} <移出> 运行队列")
+                BKLog.d(TAG, "${t?.toString()} <移出> 运行队列")
             }
         }
 
@@ -67,7 +67,7 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
             val readyTasker = readyQueue?.take()
             enqueue(readyTasker)
         } else {
-            BKLog.d(TAG,"<已全部完成> 队列")
+            BKLog.d(TAG, "<已全部完成> 队列")
         }
     }
 
@@ -76,6 +76,7 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
             if (url == tasker.downTask?.m3u8) {
                 tasker.m3u8DownRunnable?.stop()
                 runningQueue?.remove(tasker)
+                remove(tasker)
                 return
             }
         }
@@ -86,9 +87,10 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
                 return
             }
         }
+
     }
 
-    fun removeAll(){
+    fun removeAll() {
         for (tasker in runningQueue?.iterator()!!) {
             tasker.m3u8DownRunnable?.stop()
             runningQueue?.remove(tasker)
@@ -137,4 +139,23 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
             readyQueue = LinkedBlockingQueue<M3u8DownTasker>()
         }
     }
+
+
+}
+
+fun main(args: Array<String>) {
+    val runningQueue = LinkedBlockingQueue<String>()
+
+    runningQueue.add("1")
+    runningQueue.add("2")
+    runningQueue.add("3")
+    runningQueue.add("4")
+    runningQueue.offer("9")
+    runningQueue.clear()
+    runningQueue.add("10")
+    for (queue in runningQueue) {
+        print(queue + "")
+    }
+    print(runningQueue.toString())
+
 }

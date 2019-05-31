@@ -145,6 +145,10 @@ class M3u8DownerTextAct : AppCompatActivity() {
         }
 
         m3u8DownManager?.listener = object : OnDownListener {
+            override fun onPause(vid: String, url: String) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
             override fun onQueue(vid: String?, url: String?) {
                 BKLog.d(TAG, "M3u8DownTasker 队列中....")
             }

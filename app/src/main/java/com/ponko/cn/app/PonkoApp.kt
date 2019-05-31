@@ -36,7 +36,7 @@ class PonkoApp : MultiDexApplication() {
     companion object {
         var app: Application? = null
         var APP_ID = "wxd37fb8ce51a02360"
-        var UI_DEBUG = true
+        var UI_DEBUG = false
         var UI_AD_DEBUG = false
 
         //临时变量

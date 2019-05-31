@@ -1,38 +1,26 @@
 package com.ponko.cn.module.my.option
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.text.TextUtils
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
-import com.ponko.cn.app.PonkoApp.Companion.courseDao
-import com.ponko.cn.app.PonkoApp.Companion.m3u8DownManager
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.db.bean.CourseDbBean
 import com.ponko.cn.module.common.RefreshLoadAct
-import com.ponko.cn.module.m3u8downer.core.M3u8DownTask
 import com.ponko.cn.module.m3u8downer.core.M3u8Utils
-import com.ponko.cn.module.m3u8downer.core.OnDownListener
-import com.ponko.cn.module.study.StudyCacheActivity
-import com.ponko.cn.module.study.StudyCourseDetailActivity
+import com.ponko.cn.module.my.constract.CacheListContract
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.DialogUtil
-import com.ponko.cn.utils.Glide
-import com.tbruyelle.rxpermissions2.RxPermissions
-import com.tencent.wxop.stat.event.i
 import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.OnEnterListener
-import com.xm.lib.downloader.utils.FileUtil
-import com.xm.lib.media.broadcast.BroadcastManager
 import java.io.File
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -40,27 +28,30 @@ import java.util.concurrent.LinkedBlockingQueue
 /**
  * 缓存列表 - 缓存的章节
  */
-class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
+class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseDbBean>>(), CacheListContract.V {
+
     companion object {
         const val TAG = "CacheListAct"
-        private const val UPDATE_PROCESS = 1
-        private const val UPDATE_COMPLETE = 2
-        private const val UPDATE_STATE = 3
-        private const val UPDATE_QUEUE = 4
-        private const val UPDATE_ERROR = 5
+        const val UPDATE_PROCESS = 1
+        const val UPDATE_COMPLETE = 2
+        const val UPDATE_STATE = 3
+        const val UPDATE_QUEUE = 4
+        const val UPDATE_ERROR = 5
+        const val UPDATE_PAUSE = 6
 
-        private const val DOWN_STATE_START = "下载准备中...."
-        private const val DOWN_STATE_COMPLETE = "下载完成"
-        private const val DOWN_STATE_PROCESS = "下载中..."
-        private const val DOWN_STATE_ERROR = "下载错误"
-        private const val DOWN_STATE_PAUSE = "暂停"
-        private const val DOWN_STATE_READY = "已加入下载队列中..."
-        private const val DOWN_STATE_CLICK_DONW = "点击下载"
+        const val DOWN_STATE_START = "下载准备中...."
+        const val DOWN_STATE_COMPLETE = "下载完成"
+        const val DOWN_STATE_PROCESS = "下载中..."
+        const val DOWN_STATE_ERROR = "下载错误"
+        const val DOWN_STATE_PAUSE = "暂停"
+        const val DOWN_STATE_READY = "已加入下载队列中..."
+        const val DOWN_STATE_CLICK_DONW = "点击下载"
 
         /**
          * 下载全部任务广播
          */
-        const val ACTION_DOWN_ALL = "broadcast.action.down.all"
+        const val ACTION_DOWN_ALL = "broadcast.action.down.all"     //下载所有
+        const val ACTION_DOWN_PAUSE = "broadcast.action.pause.all"  //暂停所有
 
         var isDelete = false
         var isSelectAll = false
@@ -98,46 +89,36 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
     }
 
     /**
-     * 底部按钮全选/删除
+     * 窗口ui
      */
-    private var llbottom: LinearLayout? = null
-    private var btnAll: Button? = null
-    private var btnDelete: Button? = null
-
-    /**
-     * 下载所有广播
-     */
-    private var broadcastManager: BroadcastManager? = null
-    private var downAllBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == ACTION_DOWN_ALL) {
-                val datas = PonkoApp.courseDao?.selectBySpecialId(accept_special_id)
-                //任务全部加载队列中
-                for (data in datas!!) {
-                    data.column_state = DOWN_STATE_READY
-                }
-                down(datas)
-                //刷新列表页面
-                adapter?.notifyDataSetChanged()
-                BKLog.d(TAG, "开始所有任务，刷新列表页面")
-            }
-        }
-    }
+    private var ui: ViewHolder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (broadcastManager == null) {
-            broadcastManager = BroadcastManager.create(this)
-        }
-        broadcastManager?.registerReceiver(ACTION_DOWN_ALL, downAllBroadcastReceiver)
+        p?.registerDownAllBroadCast()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        broadcastManager?.unRegisterReceiver(downAllBroadcastReceiver)
-        isDelete = false
-        isSelectAll = false
-        selectItems.clear()
+        p?.unRegisterDownAllBroadCast()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requestRefreshApi()
+    }
+
+    override fun presenter(): CacheListContract.Present {
+        return CacheListContract.Present(context = this, v = this)
+    }
+
+    override fun bindItemViewHolderData(): BindItemViewHolderBean {
+        return BindItemViewHolderBean.create(
+                arrayOf(0, 1),
+                arrayOf(CacheListContract.V.CacheListTopHolder::class.java, CacheListContract.V.M3u8ViewHolder::class.java),
+                arrayOf(CacheListContract.V.CacheListTopBean::class.java, CourseDbBean::class.java),
+                arrayOf(R.layout.activity_cache_list_top, R.layout.item_down_m3u8)
+        )
     }
 
     override fun getLayoutId(): Int {
@@ -146,9 +127,9 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
 
     override fun findViews() {
         super.findViews()
-        llbottom = findViewById(R.id.ll_bottom)
-        btnAll = findViewById(R.id.btn_all_select)
-        btnDelete = findViewById(R.id.btn_down)
+        if (ui == null) {
+            ui = ViewHolder.create(this)
+        }
     }
 
     override fun initDisplay() {
@@ -157,89 +138,75 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
         addItemDecoration = false
         super.initDisplay()
         BarUtil.addBarIcon(this, viewHolder?.toolbar, "缓存", R.mipmap.delete, R.mipmap.cancel, View.OnClickListener {
-            if (llbottom?.visibility == View.GONE) {
-                llbottom?.visibility = View.VISIBLE
+            if (ui?.llBottom?.visibility == View.GONE) {
+                ui?.llBottom?.visibility = View.VISIBLE
                 isDelete = true
             } else {
-                llbottom?.visibility = View.GONE
+                ui?.llBottom?.visibility = View.GONE
                 isDelete = false
-                unSelectAll()
+                updateSelectDownList(false)
+                //unSelectAll()
             }
             adapter?.notifyDataSetChanged()
         })
     }
 
-    private fun select(select: Boolean) {
-        for (data in adapter?.data!!) {
-            if (data is CourseDbBean) {
-                data.isSelect = select
-            }
-        }
-    }
-
-    private fun selectAll() {
-        select(true)
-    }
-
-    private fun unSelectAll() {
-        select(false)
-    }
-
     override fun iniEvent() {
         super.iniEvent()
-        btnAll?.setOnClickListener {
-            BKLog.d("点击了全选")
-            isSelectAll = !isSelectAll
-            for (data in adapter?.data!!) {
-                if (data is CourseDbBean) {
-                    data.isSelect = isSelectAll
-                }
+        ui?.btnAllSelect?.setOnClickListener {
+            p?.clickAllBtn()
+//            BKLog.d("点击了全选")
+//            isSelectAll = !isSelectAll
+//            for (data in adapter?.data!!) {
+//                if (data is CourseDbBean) {
+//                    data.isSelect = isSelectAll
+//                }
+//            }
+//            adapter?.notifyDataSetChanged()
+        }
+        ui?.btnDelete?.setOnClickListener {
+            p?.clickDeleteBtn()
+//            BKLog.d(" ------> 点击了删除")
+//            DialogUtil.show(this, "确定要删除已缓存的课程？", "删除后不可恢复", true, object : OnEnterListener {
+//                override fun onEnter(dlg: AlertDialog) {
+//
+//                    val iterator = copyAdapterData()?.iterator()
+//                    while (iterator?.hasNext()!!) {
+//                        val data = iterator.next()
+//                        if (data is CourseDbBean) {
+//                            val courseDbBean = data as CourseDbBean
+//                            if (courseDbBean.isSelect) {
+//                                BKLog.d("选中删除 - ${courseDbBean.column_title}")
+//                                //删除下载库中的任务信息
+//                                m3u8DownManager?.dao?.delete2(courseDbBean.column_vid)
+//                                //删除数据库中的数据
+//                                courseDao?.deleteByVid(courseDbBean)
+//                                //删除本地缓存的数据
+//                                if (!TextUtils.isEmpty(m3u8DownManager?.dir) && !TextUtils.isEmpty(M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url))) {
+//                                    FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url)))
+//                                }
+//                                //删除并让RecyclerView刷新
+//                                notifyItem(courseDbBean)
+//                            }
+//                        }
+//                    }
+//                    dlg.dismiss()
+//                }
+//            }, null)
+        }
+
+    }
+
+    override fun updateSelectDownList(isSelect: Boolean) {
+        for (data in adapter?.data!!) {
+            if (data is CourseDbBean) {
+                data.isSelect = isSelect
             }
-            adapter?.notifyDataSetChanged()
         }
-        btnDelete?.setOnClickListener {
-            BKLog.d(" ------> 点击了删除")
-            DialogUtil.show(this, "确定要删除已缓存的课程？", "删除后不可恢复", true, object : OnEnterListener {
-                override fun onEnter(dlg: AlertDialog) {
-
-                    val iterator = copyAdapterData()?.iterator()
-                    while (iterator?.hasNext()!!) {
-                        val data = iterator.next()
-                        if (data is CourseDbBean) {
-                            val courseDbBean = data as CourseDbBean
-                            if (courseDbBean.isSelect) {
-                                BKLog.d("选中删除 - ${courseDbBean.column_title}")
-                                //删除下载库中的任务信息
-                                m3u8DownManager?.dao?.delete2(courseDbBean.column_vid)
-                                //删除数据库中的数据
-                                courseDao?.deleteByVid(courseDbBean)
-                                //删除本地缓存的数据
-                                if (!TextUtils.isEmpty(m3u8DownManager?.dir) && !TextUtils.isEmpty(M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url))) {
-                                    FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url)))
-                                }
-                                //删除并让RecyclerView刷新
-                                notifyItem(courseDbBean)
-                            }
-                        }
-                    }
-                    dlg.dismiss()
-                }
-            }, null)
-        }
+        adapter?.notifyDataSetChanged()
     }
 
-    /**
-     * 获取数据
-     */
-    private fun copyAdapterData(): ArrayList<Any>? {
-        val copyAdapterData = ArrayList<Any>()
-        for (copyData in adapter?.data!!) {
-            copyAdapterData.add(copyData)
-        }
-        return copyAdapterData
-    }
-
-    private fun notifyItem(courseDbBean: CourseDbBean) {
+    override fun updateDeleteDownList(courseDbBean: CourseDbBean) {
         var index = 0
         val it = adapter?.data?.iterator()
         while (it?.hasNext()!!) {
@@ -253,193 +220,112 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
             }
             index++
         }
-//        for (i in 1..(adapter?.data?.size!! - 1)) {
-//            if (courseDbBean == adapter?.data?.get(i)) {
-//                adapter?.data?.remove(courseDbBean)
-//                adapter?.notifyItemRemoved(i)
-//                adapter?.notifyItemChanged(i)
-//                break
-//            }
-//        }
     }
 
-
-    override fun bindItemViewHolderData(): BindItemViewHolderBean {
-        return BindItemViewHolderBean.create(
-                arrayOf(0, 1),
-                arrayOf(CacheListTopHolder::class.java, M3u8ViewHolder::class.java),
-                arrayOf(CacheListTopBean::class.java, CourseDbBean::class.java),
-                arrayOf(R.layout.activity_cache_list_top, R.layout.item_down_m3u8)
-        )
+    override fun showDeleteDialog(title: String, msg: String) {
+        DialogUtil.show(this, title, msg, true, object : OnEnterListener {
+            override fun onEnter(dlg: AlertDialog) {
+                p?.enterDelete()
+//                val iterator = p?.copyAdapterData()?.iterator()
+//                while (iterator?.hasNext()!!) {
+//                    val data = iterator.next()
+//                    if (data is CourseDbBean) {
+//                        val courseDbBean = data as CourseDbBean
+//                        if (courseDbBean.isSelect) {
+//                            BKLog.d("选中删除 - ${courseDbBean.column_title}")
+//                            //删除下载库中的任务信息
+//                            m3u8DownManager?.dao?.delete2(courseDbBean.column_vid)
+//                            //删除数据库中的数据
+//                            courseDao?.deleteByVid(courseDbBean)
+//                            //删除本地缓存的数据
+//                            if (!TextUtils.isEmpty(m3u8DownManager?.dir) && !TextUtils.isEmpty(M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url))) {
+//                                FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url)))
+//                            }
+//                            //删除并让RecyclerView刷新
+//                            notifyItem(courseDbBean)
+//                        }
+//                    }
+//                }
+                dlg.dismiss()
+            }
+        }, null)
     }
 
     override fun requestMoreApi() {}
 
-    override fun onResume() {
-        super.onResume()
-        requestRefreshApi()
-    }
-
     override fun requestRefreshApi() {
-        //从数据库中获取
-        val datas = PonkoApp.courseDao?.selectBySpecialId(accept_special_id)
+        p?.requestRefreshApi()
+    }
+
+    override fun requestCacheListSuccess(datas: ArrayList<CourseDbBean>?) {
         requestRefreshSuccess(datas)
-        //检查权限
-        checkPermission()
-        //开始下载
-        //down(datas)
-        //下载监听
-        downListener()
     }
 
-    @SuppressLint("CheckResult")
-    private fun checkPermission() {
-        RxPermissions(this)
-                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe { aBoolean ->
-                    if (aBoolean!!) {
-                        //当所有权限都允许之后，返回true
-                        //Toast.makeText(this, "文件授权成功", Toast.LENGTH_SHORT).show()
-
-                    } else {
-                        //只要有一个权限禁止，返回false，
-                        //下一次申请只申请没通过申请的权限
-                        BKLog.d("permissions", "btn_more_sametime：$aBoolean")
-                    }
-                }
-    }
-
-    private fun down(datas: ArrayList<CourseDbBean>?) {
-        for (course in datas?.iterator()!!) {
-            val m3u8DownTask = M3u8DownTask.Builder()
-                    .vid(course.column_vid)
-                    .m3u8(course.column_m3u8_url)
-                    .name(course.column_title)
-                    .fileSize(course.column_total.toLong())
-                    .build()
-            m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
-        }
-    }
-
-    private fun downListener() {
-        m3u8DownManager?.listener = object : OnDownListener {
-
-            override fun onQueue(vid: String?, url: String?) {
-                BKLog.d(TAG, "M3u8DownTasker $vid 添加到队列中....")
-                val courseDbBean = CourseDbBean()
-                courseDbBean.column_vid = vid!!
-                courseDbBean.column_m3u8_url = url!!
-                courseDbBean.column_complete = 1
-                courseDbBean.column_state = DOWN_STATE_READY
-                updateRv(vid, url, courseDbBean, UPDATE_QUEUE)
-            }
-
-            override fun onStart(vid: String, url: String, m3u8Analysis: ArrayList<String>) {
-                BKLog.d(TAG, "M3u8DownTasker 下载准备中....")
-                val courseDbBean = CourseDbBean()
-                courseDbBean.column_vid = vid
-                courseDbBean.column_m3u8_url = url
-                courseDbBean.column_complete = 0
-                courseDbBean.column_state = DOWN_STATE_START
-                updateRv(vid, url, courseDbBean, UPDATE_STATE)
-            }
-
-            override fun onComplete(vid: String, url: String) {
-                BKLog.d(TAG, "M3u8DownTasker $url 下载完成")
-
-                val courseDbBean = CourseDbBean()
-                courseDbBean.column_vid = vid
-                courseDbBean.column_m3u8_url = url
-                courseDbBean.column_complete = 1
-                courseDbBean.column_state = DOWN_STATE_COMPLETE
-                updateRv(vid, url, courseDbBean, UPDATE_COMPLETE)
-            }
-
-            override fun onProcess(vid: String, url: String, progress: Int) {
-                BKLog.d(TAG, "M3u8DownTasker $url 下载进度")
-
-                val courseDbBean = CourseDbBean()
-                courseDbBean.column_vid = vid
-                courseDbBean.column_m3u8_url = url
-                courseDbBean.column_progress = progress
-                courseDbBean.column_complete = 0
-                courseDbBean.column_state = DOWN_STATE_PROCESS
-                updateRv(vid, url, courseDbBean, UPDATE_PROCESS)
-            }
-
-            override fun onError(vid: String, url: String, msg: String) {
-                BKLog.d(TAG, "M3u8DownTasker下载错误")
-                val courseDbBean = CourseDbBean()
-                courseDbBean.column_vid = vid
-                courseDbBean.column_m3u8_url = url
-                courseDbBean.column_complete = 0
-                courseDbBean.column_state = DOWN_STATE_ERROR
-                updateRv(vid, url, courseDbBean, UPDATE_ERROR)
-            }
-        }
-    }
-
-    /**
-     * 更新Rv界面
-     */
-    private fun updateRv(vid: String, m3u8: String, value: CourseDbBean?, type: Int) {
+    override fun updateDownUI(vid: String?, m3u8: String?, value: CourseDbBean?, type: Int) {
         var progressIndex = -1
+        var progressCourseDbBean: CourseDbBean? = null
+        var stateType = ""
         for (i in 1..(adapter?.data?.size!! - 1)) {
             val courseDbBean = adapter?.data!![i] as CourseDbBean
-            if (vid == courseDbBean.column_vid) {
+
+            if (vid == courseDbBean.column_vid || m3u8 == courseDbBean.column_m3u8_url) {
+                progressCourseDbBean = courseDbBean
+                progressCourseDbBean.column_vid = vid!!
+                progressCourseDbBean.column_m3u8_url = m3u8!!
                 progressIndex = i
+
                 when (type) {
                     UPDATE_PROCESS -> {
-                        courseDbBean.column_progress = value?.column_progress!!
-                        courseDbBean.column_state = value.column_state
-                        courseDbBean.column_vid = vid
-                        courseDbBean.column_m3u8_url = m3u8
+                        stateType = "进度"
+                        progressCourseDbBean.column_complete = 0
+                        progressCourseDbBean.column_progress = value?.column_progress!!
+                        progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_PROCESS
                         //下载中状态更新到数据库当中
-                        PonkoApp.courseDao?.downProgressUpdate(vid, value.column_progress)
+                        //PonkoApp.courseDao?.downProgressUpdate(vid, value.column_progress)
                     }
                     UPDATE_COMPLETE -> {
-                        courseDbBean.column_complete = value?.column_complete!! //1代表成功
-                        courseDbBean.column_vid = vid
-                        courseDbBean.column_m3u8_url = m3u8
-                        courseDbBean.column_state = value.column_state
-
+                        stateType = "完成"
+                        progressCourseDbBean.column_complete = 1  //0 代表未下载完成 1代表成功
+                        progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_COMPLETE
                         //下载完成状态更新到数据库中
                         val cacheM3u8 = PonkoApp.m3u8DownManager?.path + File.separator + PonkoApp.m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(m3u8) + File.separator + M3u8Utils.m3u8FileName(m3u8)
-                        PonkoApp.courseDao?.downCompleteUpdate(vid, cacheM3u8, m3u8, 1)
+                        //PonkoApp.courseDao?.downCompleteUpdate(vid, cacheM3u8, m3u8, 1)
                     }
 
                     UPDATE_QUEUE -> {
-                        courseDbBean.column_state = value?.column_state!!
-                        courseDbBean.column_vid = vid
-                        courseDbBean.column_m3u8_url = m3u8
-                        PonkoApp.courseDao?.downQueueUpdate(vid)
+                        stateType = "队列"
+                        progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_READY
+                        //PonkoApp.courseDao?.downQueueUpdate(vid)
                     }
 
                     UPDATE_ERROR -> {
-                        courseDbBean.column_state = value?.column_state!!
-                        courseDbBean.column_vid = vid
-                        courseDbBean.column_m3u8_url = m3u8
-                        PonkoApp.courseDao?.downErrorUpdate(vid)
+                        stateType = "错误"
+                        progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_ERROR
+                        //PonkoApp.courseDao?.downErrorUpdate(vid)
                     }
 
                     UPDATE_STATE -> {
-                        courseDbBean.column_state = value?.column_state!!
-                        courseDbBean.column_vid = vid
-                        courseDbBean.column_m3u8_url = m3u8
-                        PonkoApp.courseDao?.downStateUpdate(vid)
+                        stateType = "状态"
+                        progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_START
+                        //PonkoApp.courseDao?.downStateUpdate(vid)
+                    }
+                    UPDATE_PAUSE -> {
+                        stateType = "暂停"
+                        progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_PAUSE
                     }
                 }
                 break
             }
         }
         this.runOnUiThread {
+            BKLog.d(CacheListAct.TAG, "【更新类型】：$stateType 【更新位置】：$progressIndex 【更新标题】：${progressCourseDbBean?.column_title}")
             adapter?.notifyItemChanged(progressIndex)
         }
     }
 
     override fun multiTypeData(body: ArrayList<CourseDbBean>?): List<Any> {
         val data = ArrayList<Any>()
-        data.add(CacheListTopBean(
+        data.add(CacheListContract.V.CacheListTopBean(
                 accept_special_id,
                 accept_title,
                 accept_teacher,
@@ -451,322 +337,88 @@ class CacheListAct : RefreshLoadAct<Any, ArrayList<CourseDbBean>>() {
     }
 
     override fun adapter(): BaseRvAdapter? {
-        return object : BaseRvAdapter() {}
-    }
-
-    override fun presenter(): Any {
-        return Any()
+        return p?.getAdapter()
     }
 
     /**
-     * 缓存顶部内容
+     * 窗口ui
      */
-    class CacheListTopHolder(view: View) : BaseViewHolder(view) {
-        private class ViewHolder private constructor(val imageView5: ImageView, val tvSection: TextView, val btnDownAll: Button) {
-            companion object {
+    private class ViewHolder private constructor(val toolbar: android.support.v7.widget.Toolbar, val llBottom: LinearLayout, val btnAllSelect: Button, val btnDelete: Button) {
+        companion object {
 
-                fun create(rootView: View): ViewHolder {
-                    val imageView5 = rootView.findViewById<View>(R.id.imageView5) as ImageView
-                    val tvSection = rootView.findViewById<View>(R.id.tv_section) as TextView
-                    val btnDownAll = rootView.findViewById<View>(R.id.btn_down_all) as Button
-                    return ViewHolder(imageView5, tvSection, btnDownAll)
-                }
-            }
-        }
-
-        private var ui: ViewHolder? = null
-
-        override fun bindData(d: Any, position: Int) {
-            if (ui == null) {
-                ui = ViewHolder.create(itemView)
-            }
-            val cacheListTopBean = d as CacheListTopBean
-            val context = itemView.context
-            itemView.setOnClickListener {
-                BKLog.d("跳转到本课程其他章节")
-                StudyCacheActivity.start(context, cacheListTopBean.id, cacheListTopBean.teacher, cacheListTopBean.num.toLong(), cacheListTopBean.duration.toLong())
-            }
-            ui?.btnDownAll?.setOnClickListener {
-                BKLog.d("全部开始")
-                context.sendBroadcast(Intent(ACTION_DOWN_ALL))
-                //为了安全起见 首先将运行队列全部移除
-                m3u8DownManager?.dispatcher?.removeAll()
+            @SuppressLint("NewApi")
+            fun create(rootView: AppCompatActivity?): ViewHolder {
+                val toolbar = rootView?.findViewById<View>(R.id.toolbar) as android.support.v7.widget.Toolbar
+                val llBottom = rootView.findViewById<View>(R.id.ll_bottom) as LinearLayout
+                val btnAllSelect = rootView.findViewById<View>(R.id.btn_all_select) as Button
+                val btnDelete = rootView.findViewById<View>(R.id.btn_delete) as Button
+                return ViewHolder(toolbar, llBottom, btnAllSelect, btnDelete)
             }
         }
     }
 
-    class CacheListTopBean(var id: String, var title: String, var teacher: String, var num: Int, var duration: Int)
+}
 
-    /**
-     * 下载任务页面ViewHolder
-     */
-    class M3u8ViewHolder(view: View) : BaseViewHolder(view) {
-        private var viewHolder: ViewHolder? = null
-        private var context: Context? = null
-        private var courseDbBean: CourseDbBean? = null
-        @SuppressLint("SetTextI18n")
-        override fun bindData(d: Any, position: Int) {
-            if (viewHolder == null) {
-                viewHolder = ViewHolder.create(itemView)
-            }
-            courseDbBean = d as CourseDbBean
-            context = itemView.context
 
-            //是否是删除模式
-            displayMode(courseDbBean!!)
-
-            //任务名称
-            viewHolder?.tvCourseName?.text = courseDbBean?.column_title
-
-            //下载状态信息提示显示
-            displayDownState(courseDbBean)
-
-            //设置界面内容
-            Glide.with(context, courseDbBean?.column_cover, viewHolder?.ivCover) //设置封面
-
-            //下载修改“进度提示字”和“进度条”
-            progress(courseDbBean!!)
-
-            //监听
-            viewHolder?.cb?.setOnClickListener {
-                //点击选中
-                courseDbBean?.isSelect = !courseDbBean?.isSelect!!
-            }
-            itemView.setOnClickListener {
-                when (isDelete) {
-                    true -> {
-                        //删除模式点击处理
-                        deleteClickItem(courseDbBean!!)
-                        //点击选中
-                        courseDbBean?.isSelect = !courseDbBean?.isSelect!!
-                    }
-                    false -> {
-                        //普通下载模式点击处理
-                        ordinaryClickItem(context!!, courseDbBean!!)
-                    }
-                }
-            }
-        }
-
-        /**
-         * 删除模式、普通下载模式
-         */
-        private fun displayMode(courseDbBean: CourseDbBean) {
-            if (isDelete) {
-                //删除模式
-//                if (isSelectAll) {
-//                    //全选
-//                    //addSelectItem()
-//                    viewHolder?.cb?.isChecked = true
-//                    courseDbBean.isSelect = true
-//                } else {
-//                    //不全选
-//                    //deleteSelectItem()
-//                    viewHolder?.cb?.isChecked = false
-//                    courseDbBean.isSelect = false
-//                }
-                viewHolder?.cb?.visibility = View.VISIBLE
-            } else {
-                //非删除模式
-                viewHolder?.cb?.visibility = View.GONE
-                viewHolder?.cb?.isChecked = false
-                courseDbBean.isSelect = false
-            }
-
-            if (courseDbBean.isSelect) {
-                BKLog.d("选中")
-                viewHolder?.cb?.isChecked = true
-            } else {
-                BKLog.d("未选中")
-                viewHolder?.cb?.isChecked = false
-            }
-        }
-
-        @Deprecated("")
-        private fun addSelectItem() {
-            var addFlag = true
-            for (course in selectItems) {
-                if (course.column_vid == courseDbBean?.column_vid) {
-                    addFlag = false
-                    break
-                }
-            }
-            if (addFlag) {
-                selectItems.add(courseDbBean)
-                BKLog.d("${courseDbBean?.column_title}添加到选中队列中")
-            }
-            print()
-        }
-
-        @Deprecated("")
-        private fun print() {
-            for (item in selectItems) {
-                BKLog.d("添加选中 - ${item?.column_title}")
-            }
-        }
-
-        @Deprecated("")
-        private fun deleteSelectItem() {
-            for (course in selectItems) {
-                if (course.column_vid == courseDbBean?.column_vid) {
-                    selectItems.remove(course)
-                    BKLog.d("${courseDbBean?.column_title}添加到选中队列中")
-                }
-            }
-            print()
-        }
-
-        /**
-         * 下载状态显示
-         */
-        private fun displayDownState(courseDbBean: CourseDbBean?) {
-
-            //数据库中状态不是很准确
-            //viewHolder?.tvState?.text = courseDbBean?.column_state
-
-            //对上面状态的补充
-            if (courseDbBean?.column_complete == 1) {
-                viewHolder?.tvState?.text = DOWN_STATE_COMPLETE    //下载状态提示字
-                BKLog.d(TAG, "${courseDbBean.column_title}任务处于 - 【完成状态】")
-            } else {
-                when {
-                    m3u8DownManager?.isReady(courseDbBean?.column_vid!!) == true -> {
-                        viewHolder?.tvState?.text = DOWN_STATE_READY
-                        BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【队列状态】")
-                    }
-                    m3u8DownManager?.isRun(courseDbBean?.column_vid!!) == true -> {
-                        viewHolder?.tvState?.text = DOWN_STATE_PROCESS
-                        BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【运行状态】")
-                    }
-                    else -> {
-                        if (courseDbBean?.column_state == CourseDbBean.DOWN_STATE_ERROR) {
-                            viewHolder?.tvState?.text = CourseDbBean.DOWN_STATE_ERROR
-                            BKLog.d(TAG, "${courseDbBean.column_title}任务处于 - 【错误状态】")
-                        } else {
-                            viewHolder?.tvState?.text = DOWN_STATE_CLICK_DONW   //点击下载
-                            BKLog.d(TAG, "${courseDbBean?.column_title}任务处于 - 【默认状态，点击下载】")
-                        }
-
-                    }
-                }
-            }
-        }
-
-        /**
-         * 非删除模式点击item处理
-         */
-        private fun ordinaryClickItem(context: Context, courseDbBean: CourseDbBean) {
-            BKLog.d(TAG, "点击下载任务item")
-            when (courseDbBean.column_complete) {
-                0 -> {
-                    notDownComplete(courseDbBean)          //未完成点击处理
-                }
-                1 -> {
-                    downComplete(context, courseDbBean)    //完成点击处理
-                }
-            }
-        }
-
-        /**
-         * 删除模式点击item处理
-         */
-        private fun deleteClickItem(courseDbBean: CourseDbBean) {
-            if (viewHolder?.cb?.isChecked == true) {
-                viewHolder?.cb?.isChecked = false
-                //selectItems.remove(courseDbBean)
-                //deleteSelectItem()
-            } else {
-                //selectItems.add(courseDbBean)
-                //addSelectItem()
-                viewHolder?.cb?.isChecked = true
-            }
-        }
-
-        /**
-         * 下载完成点击item处理
-         */
-        private fun downComplete(context: Context, courseDbBean: CourseDbBean) {
-            val courseSpecialDbBeans = PonkoApp.courseSpecialDao?.select(courseDbBean.column_special_id)
-            if (!courseSpecialDbBeans?.isEmpty()!!) {
-                val value_typeId = courseSpecialDbBeans[0].special_id
-                val value_teachers = courseSpecialDbBeans[0].teacher
-                val value_num = courseSpecialDbBeans[0].num.toLong()
-                val value_duration = courseSpecialDbBeans[0].duration.toLong()
-                StudyCourseDetailActivity.startFromCacheCourse(context, value_typeId, value_teachers, value_num, value_duration, courseDbBean.column_vid)
-            } else {
-                BKLog.e(TAG, "请检查专题数据库")
-            }
-            //StudyCourseDetailActivity.startFromCacheCourse(context, value_typeId, value_teachers, value_num, value_duration, courseDbBean.column_vid)
-        }
-
-        /**
-         * 没有下载完成点击item处理
-         */
-        private fun notDownComplete(courseDbBean: CourseDbBean) {
-            //处于下载状态点击暂停
-            when {
-                m3u8DownManager?.isRun(courseDbBean.column_m3u8_url) == true -> {
-                    //处于下载状态 点击item 暂停处理 PS：将任务从队列中移除，下载恢复的时候需要重新加入队列
-                    m3u8DownManager?.pause(courseDbBean.column_m3u8_url)
-                    viewHolder?.tvState?.text = DOWN_STATE_PAUSE     //点击暂停后
-                    Toast.makeText(context, "暂停", Toast.LENGTH_SHORT).show()
-                    BKLog.d(TAG, "${courseDbBean.column_title}任务处于 - 【暂停状态】")
-                }
-                m3u8DownManager?.isReady(courseDbBean.column_vid) == true -> {
-                    //处于队列状态 点击item 提示处理
-                    Toast.makeText(context, "亲该任务已加入到下载队列了...", Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    //处于恢复状态 点击item 重新加入任务
-                    m3u8DownManager?.resume(
-                            M3u8DownTask.Builder()
-                                    .vid(courseDbBean.column_vid)
-                                    .name(courseDbBean.column_title)
-                                    .m3u8(courseDbBean.column_m3u8_url)
-                                    .fileSize(courseDbBean.column_total.toLong())
-                                    .build())
-                    viewHolder?.tvState?.text = DOWN_STATE_START
-                    BKLog.d(TAG, "${courseDbBean.column_title}任务处于 - 【恢复状态】")
-                    Toast.makeText(context, "恢复任务", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        /**
-         * 进度显示处理
-         */
-        @SuppressLint("SetTextI18n")
-        fun progress(courseDbBean: CourseDbBean) {
-            viewHolder?.pb?.max = courseDbBean.column_total//进度条最大值设置
-            val total = FileUtil.getSizeUnit(courseDbBean.column_total.toLong())
-            val progress = FileUtil.getSizeUnit(courseDbBean.column_progress.toLong())
-            if (courseDbBean.column_complete == 1) {
-                //完成
-                //viewHolder?.tvState?.text = "下载完成"
-                viewHolder?.pb?.progress = courseDbBean.column_total
-                viewHolder?.tvProcessTotal?.text = "$total | $total"
-            } else {
-                //未完成
-                //viewHolder?.tvState?.text = "下载中"
-                viewHolder?.pb?.progress = courseDbBean.column_progress
-                viewHolder?.tvProcessTotal?.text = "$progress | $total"
-            }
-        }
-
-        private class ViewHolder private constructor(val cb: CheckBox, val ivCover: ImageView, val tvCourseName: TextView, val pb: ProgressBar, val tvState: TextView, val tvProcessTotal: TextView) {
-            companion object {
-
-                fun create(rootView: View): ViewHolder {
-                    val cb = rootView.findViewById<View>(R.id.cb) as CheckBox
-                    val ivCover = rootView.findViewById<View>(R.id.iv_cover) as ImageView
-                    val tvCourseName = rootView.findViewById<View>(R.id.tv_course_name) as TextView
-                    val pb = rootView.findViewById<View>(R.id.pb) as ProgressBar
-                    val tvState = rootView.findViewById<View>(R.id.tv_state) as TextView
-                    val tvProcessTotal = rootView.findViewById<View>(R.id.tv_process_total) as TextView
-                    return ViewHolder(cb, ivCover, tvCourseName, pb, tvState, tvProcessTotal)
-                }
-            }
-        }
-
+fun main(args: Array<String>) {
+    val core = 32
+    val spaces = ArrayList<Int>(32)
+    for (i in 0 until core) {
+        spaces.add(i)
     }
+
+    var a = 0
+    var b = 0
+    for (num in 10000..40000) {
+        if (num % 2 == 0) {
+            continue
+        }
+        var temp = num
+        val numStr = num.toString()
+        val numInt = numStr.substring(numStr.length - 2, numStr.length - 1).toInt()
+
+        if (numInt % 2 != 0) {
+            temp -= 1
+        }
+
+        if (numInt == 1) {
+            temp -= 10
+        }
+
+        when (numInt) {
+            1 , 2 -> {
+                temp -= 10
+            }
+            3 , 4 -> {
+                temp -= 20
+            }
+            5 , 6 -> {
+                temp -= 30
+            }
+            7 , 8 -> {
+                temp -= 40
+            }
+            9 -> {
+                temp -= 50
+            }
+        }
+
+        if (temp % 2 == 0) {
+            a++
+        } else {
+            b++
+        }
+
+        spaces[test(temp, core)]++
+    }
+
+    for (i in 0 until core) {
+        println(spaces[i])
+    }
+//    println(a)
+//    println(b)
+}
+
+fun test(num: Int, core: Int): Int {
+    return num % core
 }

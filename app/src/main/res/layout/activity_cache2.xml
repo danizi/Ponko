@@ -58,6 +58,15 @@
             android:background="#FF5A5E"
             android:text="下载"
             android:textColor="@color/white" />
+
+        <Button
+            android:textColor="@color/white"
+            android:background="#b282ce"
+            android:id="@+id/btn_look"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="查看下载列表"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

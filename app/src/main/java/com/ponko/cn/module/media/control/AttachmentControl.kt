@@ -18,7 +18,7 @@ import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
 import com.xm.lib.media.base.IXmMediaPlayer
-import com.xm.lib.media.base.MediaState
+//import com.xm.lib.media.base.MediaState
 import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.event.GestureObserver
 import com.xm.lib.media.event.PhoneStateObserver
