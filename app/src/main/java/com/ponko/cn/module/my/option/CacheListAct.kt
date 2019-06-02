@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -43,15 +44,9 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
         const val DOWN_STATE_COMPLETE = "下载完成"
         const val DOWN_STATE_PROCESS = "下载中..."
         const val DOWN_STATE_ERROR = "下载错误"
-        const val DOWN_STATE_PAUSE = "暂停"
-        const val DOWN_STATE_READY = "已加入下载队列中..."
+        const val DOWN_STATE_PAUSE = "已暂停"
+        const val DOWN_STATE_READY = "队列中..."
         const val DOWN_STATE_CLICK_DONW = "点击下载"
-
-        /**
-         * 下载全部任务广播
-         */
-        const val ACTION_DOWN_ALL = "broadcast.action.down.all"     //下载所有
-        const val ACTION_DOWN_PAUSE = "broadcast.action.pause.all"  //暂停所有
 
         var isDelete = false
         var isSelectAll = false
@@ -145,7 +140,6 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
                 ui?.llBottom?.visibility = View.GONE
                 isDelete = false
                 updateSelectDownList(false)
-                //unSelectAll()
             }
             adapter?.notifyDataSetChanged()
         })
@@ -155,46 +149,33 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
         super.iniEvent()
         ui?.btnAllSelect?.setOnClickListener {
             p?.clickAllBtn()
-//            BKLog.d("点击了全选")
-//            isSelectAll = !isSelectAll
-//            for (data in adapter?.data!!) {
-//                if (data is CourseDbBean) {
-//                    data.isSelect = isSelectAll
-//                }
-//            }
-//            adapter?.notifyDataSetChanged()
         }
         ui?.btnDelete?.setOnClickListener {
             p?.clickDeleteBtn()
-//            BKLog.d(" ------> 点击了删除")
-//            DialogUtil.show(this, "确定要删除已缓存的课程？", "删除后不可恢复", true, object : OnEnterListener {
-//                override fun onEnter(dlg: AlertDialog) {
-//
-//                    val iterator = copyAdapterData()?.iterator()
-//                    while (iterator?.hasNext()!!) {
-//                        val data = iterator.next()
-//                        if (data is CourseDbBean) {
-//                            val courseDbBean = data as CourseDbBean
-//                            if (courseDbBean.isSelect) {
-//                                BKLog.d("选中删除 - ${courseDbBean.column_title}")
-//                                //删除下载库中的任务信息
-//                                m3u8DownManager?.dao?.delete2(courseDbBean.column_vid)
-//                                //删除数据库中的数据
-//                                courseDao?.deleteByVid(courseDbBean)
-//                                //删除本地缓存的数据
-//                                if (!TextUtils.isEmpty(m3u8DownManager?.dir) && !TextUtils.isEmpty(M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url))) {
-//                                    FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url)))
-//                                }
-//                                //删除并让RecyclerView刷新
-//                                notifyItem(courseDbBean)
-//                            }
-//                        }
-//                    }
-//                    dlg.dismiss()
-//                }
-//            }, null)
         }
+    }
 
+    override fun requestMoreApi() {}
+
+    override fun requestRefreshApi() {
+        p?.requestRefreshApi()
+    }
+
+    override fun multiTypeData(body: ArrayList<CourseDbBean>?): List<Any> {
+        val data = ArrayList<Any>()
+        data.add(CacheListContract.V.CacheListTopBean(
+                accept_special_id,
+                accept_title,
+                accept_teacher,
+                accept_num,
+                accept_duration
+        ))
+        data.addAll(body!!)
+        return data
+    }
+
+    override fun adapter(): BaseRvAdapter? {
+        return p?.getAdapter()
     }
 
     override fun updateSelectDownList(isSelect: Boolean) {
@@ -226,35 +207,9 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
         DialogUtil.show(this, title, msg, true, object : OnEnterListener {
             override fun onEnter(dlg: AlertDialog) {
                 p?.enterDelete()
-//                val iterator = p?.copyAdapterData()?.iterator()
-//                while (iterator?.hasNext()!!) {
-//                    val data = iterator.next()
-//                    if (data is CourseDbBean) {
-//                        val courseDbBean = data as CourseDbBean
-//                        if (courseDbBean.isSelect) {
-//                            BKLog.d("选中删除 - ${courseDbBean.column_title}")
-//                            //删除下载库中的任务信息
-//                            m3u8DownManager?.dao?.delete2(courseDbBean.column_vid)
-//                            //删除数据库中的数据
-//                            courseDao?.deleteByVid(courseDbBean)
-//                            //删除本地缓存的数据
-//                            if (!TextUtils.isEmpty(m3u8DownManager?.dir) && !TextUtils.isEmpty(M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url))) {
-//                                FileUtil.del(File(m3u8DownManager?.path + File.separator + m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(courseDbBean.column_m3u8_url)))
-//                            }
-//                            //删除并让RecyclerView刷新
-//                            notifyItem(courseDbBean)
-//                        }
-//                    }
-//                }
                 dlg.dismiss()
             }
         }, null)
-    }
-
-    override fun requestMoreApi() {}
-
-    override fun requestRefreshApi() {
-        p?.requestRefreshApi()
     }
 
     override fun requestCacheListSuccess(datas: ArrayList<CourseDbBean>?) {
@@ -265,6 +220,7 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
         var progressIndex = -1
         var progressCourseDbBean: CourseDbBean? = null
         var stateType = ""
+        var isRefrsh = false
         for (i in 1..(adapter?.data?.size!! - 1)) {
             val courseDbBean = adapter?.data!![i] as CourseDbBean
 
@@ -281,7 +237,7 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
                         progressCourseDbBean.column_progress = value?.column_progress!!
                         progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_PROCESS
                         //下载中状态更新到数据库当中
-                        //PonkoApp.courseDao?.downProgressUpdate(vid, value.column_progress)
+                        PonkoApp.courseDao?.downProgressUpdate(vid, value.column_progress)
                     }
                     UPDATE_COMPLETE -> {
                         stateType = "完成"
@@ -289,55 +245,53 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
                         progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_COMPLETE
                         //下载完成状态更新到数据库中
                         val cacheM3u8 = PonkoApp.m3u8DownManager?.path + File.separator + PonkoApp.m3u8DownManager?.dir + File.separator + M3u8Utils.m3u8Unique(m3u8) + File.separator + M3u8Utils.m3u8FileName(m3u8)
-                        //PonkoApp.courseDao?.downCompleteUpdate(vid, cacheM3u8, m3u8, 1)
+                        PonkoApp.courseDao?.downCompleteUpdate(vid, cacheM3u8, m3u8, 1)
                     }
-
                     UPDATE_QUEUE -> {
                         stateType = "队列"
                         progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_READY
-                        //PonkoApp.courseDao?.downQueueUpdate(vid)
+                        PonkoApp.courseDao?.downQueueUpdate(vid)
                     }
-
                     UPDATE_ERROR -> {
                         stateType = "错误"
                         progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_ERROR
-                        //PonkoApp.courseDao?.downErrorUpdate(vid)
+                        PonkoApp.courseDao?.downErrorUpdate(vid)
                     }
-
                     UPDATE_STATE -> {
                         stateType = "状态"
                         progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_START
-                        //PonkoApp.courseDao?.downStateUpdate(vid)
+                        PonkoApp.courseDao?.downStateUpdate(vid)
                     }
                     UPDATE_PAUSE -> {
-                        stateType = "暂停"
+                        stateType = "已暂停"
                         progressCourseDbBean.column_state = CacheListAct.DOWN_STATE_PAUSE
                     }
+                    else -> {
+
+                    }
                 }
+                isRefrsh = true
                 break
             }
         }
-        this.runOnUiThread {
-            BKLog.d(CacheListAct.TAG, "【更新类型】：$stateType 【更新位置】：$progressIndex 【更新标题】：${progressCourseDbBean?.column_title}")
-            adapter?.notifyItemChanged(progressIndex)
+        if (isRefrsh) {
+            this.runOnUiThread {
+                //打印日志
+                val sb = StringBuilder()
+                        .append("***********")
+                        .append("【更新下标】：$progressIndex ")
+                        .append("【更新类型】：$stateType ")
+                        .append("【更新标题】：${progressCourseDbBean?.column_title}")
+                BKLog.d(CacheListAct.TAG, sb.toString())
+                //更新RecycleView
+                adapter?.notifyItemChanged(progressIndex)
+            }
+        } else {
+            BKLog.d("m3u8: $m3u8 队列中未存在")
+            if (!TextUtils.isEmpty(vid) && !TextUtils.isEmpty(m3u8)) {
+                //PonkoApp.m3u8DownManager?.pause(vid!!, m3u8!!)
+            }
         }
-    }
-
-    override fun multiTypeData(body: ArrayList<CourseDbBean>?): List<Any> {
-        val data = ArrayList<Any>()
-        data.add(CacheListContract.V.CacheListTopBean(
-                accept_special_id,
-                accept_title,
-                accept_teacher,
-                accept_num,
-                accept_duration
-        ))
-        data.addAll(body!!)
-        return data
-    }
-
-    override fun adapter(): BaseRvAdapter? {
-        return p?.getAdapter()
     }
 
     /**
@@ -386,16 +340,16 @@ fun main(args: Array<String>) {
         }
 
         when (numInt) {
-            1 , 2 -> {
+            1, 2 -> {
                 temp -= 10
             }
-            3 , 4 -> {
+            3, 4 -> {
                 temp -= 20
             }
-            5 , 6 -> {
+            5, 6 -> {
                 temp -= 30
             }
-            7 , 8 -> {
+            7, 8 -> {
                 temp -= 40
             }
             9 -> {

@@ -56,9 +56,13 @@ class CourseDbBean {
     var column_vid = ""
 
     /**
+     * 是否是删除模式 PS：这个是要下载列表页面中使用的，不用存入数据库
+     */
+    var isDelete = false
+    /**
      * 是否被选中 PS：这个是要下载列表页面中使用的，不用存入数据库
      */
-    var isSelect=false
+    var isSelect = false
 
     override fun toString(): String {
         return "CourseDbBean(column_uid='$column_uid', column_special_id='$column_special_id', column_course_id='$column_course_id', column_cover='$column_cover', column_title='$column_title', column_total=$column_total, column_progress=$column_progress, column_complete=$column_complete, column_m3u8_url='$column_m3u8_url', column_key_ts_url='$column_key_ts_url', column_down_path='$column_down_path', column_state='$column_state', column_vid='$column_vid')"
@@ -70,7 +74,7 @@ class CourseDbBean {
         const val DOWN_STATE_PROCESS = "下载中..."
         const val DOWN_STATE_ERROR = "下载错误"
         const val DOWN_STATE_PAUSE = "暂停"
-        const val DOWN_STATE_READY = "已加入下载队列中..."
+        const val DOWN_STATE_READY = "队列中..."
         const val DOWN_STATE_CLICK_DONW = "点击下载"
     }
 }

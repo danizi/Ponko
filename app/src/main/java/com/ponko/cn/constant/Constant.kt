@@ -29,10 +29,26 @@ object Constant {
      * 点击搜索老师广播
      */
     const val ACTION_CLICK_SEARCH_TEACHER_ITEM = "action_click_search_teacher_item"
-
+    /**
+     * 下载所有下载广播
+     */
+    const val ACTION_DOWN_ALL = "broadcast.action.down.all"
+    /**
+     * 暂停所有下载广播
+     */
+    const val ACTION_DOWN_All_PAUSE = "broadcast.action.pause.all"
+    /**
+     * 点击了item 运行- >暂停 处理广播
+     */
+    const val ACTION_DOWN_CLICK_PAUSE = "broadcast.action.pause"
+    /**
+     * 点击了item 队列- >运行处理广播
+     */
+    const val ACTION_DOWN_CLICK_READY = "broadcast.action.ready"
     /**
      * 图片延迟加载时间设定
      */
     @Deprecated("")
-    const val LOAD_IMAGE_DELAY=3000L
+    const val LOAD_IMAGE_DELAY = 3000L
+
 }

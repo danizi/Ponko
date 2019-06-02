@@ -20,13 +20,14 @@ interface IM3u8DownManager {
      * 任务是否已经在下载准备队列中了
      * @param url 可以传入真实的视频播放地址 也可以传入视频vid
      */
-    fun isReady(vid:String):Boolean
+    fun isReady(vid: String): Boolean
 
     /**
      * 暂停任务
+     * @param vid 视频唯一id
      * @param url m3u8地址
      */
-    fun pause(url: String)
+    fun pause(vid: String, url: String)
 
     /**
      * 暂停所有任务

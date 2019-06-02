@@ -46,6 +46,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
     }
 
     override fun run() {
+        m3u8DownTasker.callBackProcess(m3u8DownTasker.m3u8DownRunnable?.progress?.toInt()!!)   //PS：马上回调下载回调，因为真正等待下载进度需要很久
         isRuning = AtomicBoolean(true)
         MediaUitl.getM3u8Url(m3u8DownTasker.downTask?.vid, object : MediaUitl.OnPlayUrlListener {
 
@@ -54,9 +55,11 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
             }
 
             override fun onSuccess(url: String, size: Int?) {
+
                 m3u8DownTasker.downTask?.m3u8 = url
                 //m3u8 = url
                 analysisM3u8(url)
+
             }
         })
     }
@@ -71,17 +74,19 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val (stream1, stream2) = M3u8Utils.copyInputStream(response.body()?.byteStream())
-                val (m3u8Key, m3u8Ts) = M3u8Utils.analysis(stream1)
-                val path = m3u8DownTasker.m3u8DownManager?.path!!
-                val dir = "${m3u8DownTasker.m3u8DownManager?.dir!!}/${M3u8Utils.m3u8Unique(m3u8)}"
-                writeLocal(stream2, m3u8, path, dir, m3u8Key, m3u8Ts)
+                if (isRuning.get()) {
+                    val (stream1, stream2) = M3u8Utils.copyInputStream(response.body()?.byteStream())
+                    val (m3u8Key, m3u8Ts) = M3u8Utils.analysis(stream1)
+                    val path = m3u8DownTasker.m3u8DownManager?.path!!
+                    val dir = "${m3u8DownTasker.m3u8DownManager?.dir!!}/${M3u8Utils.m3u8Unique(m3u8)}"
+                    writeLocal(stream2, m3u8, path, dir, m3u8Key, m3u8Ts)
 
-                //解析地址存入集合
-                val m3u8AnalysisUrls = ArrayList<String>()
-                m3u8AnalysisUrls.add(m3u8Key)
-                m3u8AnalysisUrls.addAll(m3u8Ts)
-                down(path, dir, m3u8AnalysisUrls, m3u8Ts)
+                    //解析地址存入集合
+                    val m3u8AnalysisUrls = ArrayList<String>()
+                    m3u8AnalysisUrls.add(m3u8Key)
+                    m3u8AnalysisUrls.addAll(m3u8Ts)
+                    down(path, dir, m3u8AnalysisUrls, m3u8Ts)
+                }
             }
         })
     }
@@ -112,6 +117,7 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
             task.url = url
             downManager?.createDownTasker(task)?.enqueue()
         }
+
         downManager?.downObserverable()?.registerObserver(object : DownObserver {
             override fun onComplete(tasker: DownTasker, total: Long) {
                 if (tasker.task.url == m3u8AnalysisUrls[m3u8AnalysisUrls.size - 1]) {
@@ -130,7 +136,6 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
             }
 
             override fun onProcess(tasker: DownTasker, process: Long, total: Long, present: Float) {
-
             }
 
             override fun onPause(tasker: DownTasker) {

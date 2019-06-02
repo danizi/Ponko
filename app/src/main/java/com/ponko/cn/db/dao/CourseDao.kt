@@ -153,7 +153,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
     /**
      * 通过vid来删除课程
      */
-    fun deleteByVid(bean: CourseDbBean){
+    fun deleteByVid(bean: CourseDbBean) {
         db?.execSQL(CacheContract.CourseTable.SQL_DEL_BY_VID, arrayOf(bean.column_vid))
     }
 
@@ -264,6 +264,11 @@ class CourseDao(private var db: SQLiteDatabase?) {
                 courseDbBean.column_key_ts_url = cursor.getString(10)
                 courseDbBean.column_down_path = cursor.getString(11)
                 courseDbBean.column_state = cursor.getString(12)
+                if (courseDbBean.column_complete == 1) {
+                    courseDbBean.column_state = "已完成"
+                } else {
+                    courseDbBean.column_state = "已暂停"
+                }
                 courseDbBean.column_vid = cursor.getString(13)
                 data.add(courseDbBean)
             }

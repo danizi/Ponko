@@ -57,6 +57,7 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
         for (t in runningQueue?.iterator()!!) {
             //将
             if (t.downTask?.vid == tasker?.downTask?.vid) {
+                tasker?.m3u8DownRunnable?.isRuning?.set(false)
                 runningQueue?.remove(t)
                 BKLog.d(TAG, "${t?.toString()} <移出> 运行队列")
             }
@@ -71,6 +72,7 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
         }
     }
 
+    @Deprecated("统一使用下载管理比较好")
     fun remove(url: String) {
         for (tasker in runningQueue?.iterator()!!) {
             if (url == tasker.downTask?.m3u8) {
@@ -100,16 +102,6 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
             tasker.m3u8DownRunnable?.stop()
         }
     }
-
-//    @Deprecated("不再使用")
-//    fun isRun(url: String): Boolean {
-//        for (tasker in runningQueue?.iterator()!!) {
-//            if (url == tasker.downTask?.m3u8) {
-//                return true
-//            }
-//        }
-//        return false
-//    }
 
     /**
      * 建造者

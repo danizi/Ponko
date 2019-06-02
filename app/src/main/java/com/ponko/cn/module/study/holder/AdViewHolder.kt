@@ -1,6 +1,7 @@
 package com.ponko.cn.module.study.holder
 
 import android.app.Activity
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -45,7 +46,12 @@ class AdViewHolder(view: View) : BaseViewHolder(view) {
         v?.tvAdTitle?.text = ad.title
         Glide.with(context, ad.image, v?.ivAd)
         v?.ivAd?.setOnClickListener {
-            IntoTargetUtil.target(context, ad.type, ad.link)
+            // ps:一般情况都是使用link 除了调整课程之外用url
+            if (TextUtils.isEmpty(ad.link)) {
+                IntoTargetUtil.target(context, ad.type, ad.url)
+            } else {
+                IntoTargetUtil.target(context, ad.type, ad.link)
+            }
         }
     }
 }

@@ -124,7 +124,7 @@ object IntoTargetUtil {
 
     private fun storeProductDetail(linkValue: String?) {
         BKLog.d(TAG, "积分产品详情页 linkValue:$linkValue")
-        WebAct.startExChange(context, "", linkValue, "", linkValue, "", "")
+        WebAct.startExChange(context, "", linkValue, "", linkValue, "", "", 0)
     }
 
     private fun storeScoreRanking(linkValue: String?) {
@@ -154,7 +154,7 @@ object IntoTargetUtil {
 
     private fun courseDetail(linkValue: String?) {
         BKLog.d(TAG, "课程详情 linkValue:$linkValue")
-        StudyCourseDetailActivity.start(context, "", "", 0L, 0L)
+        StudyCourseDetailActivity.start(context, linkValue, "", 0L, 0L)
     }
 
     private fun courseType(linkValue: String?) {

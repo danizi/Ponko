@@ -27,15 +27,11 @@ import com.ponko.cn.bean.OrderCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.my.option.acount.AddressActivity
-import com.ponko.cn.module.my.option.acount.PersonalActivity
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.CacheUtil.getToken
 import com.ponko.cn.utils.DialogUtil
-import com.ponko.cn.utils.ToastUtil
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.common.util.TimeUtil
-import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.XmPopWindow
 import com.xm.lib.component.XmStateView
@@ -82,7 +78,7 @@ class WebAct : PonkoBaseAct<Any>() {
          * @param needScore   需要的积分
          * @param needScore   用户总积分
          */
-        fun startExChange(context: Context?, link_type: String?, link_value: String?, title: String?, id: String?, needScore: String, aggregateScore: String) {
+        fun startExChange(context: Context?, link_type: String?, link_value: String?, title: String?, id: String?, needScore: String, aggregateScore: String, total: Int?) {
             val intent = Intent(context, WebAct::class.java)
             intent.putExtra("title", title)
             intent.putExtra("link_type", link_type)
@@ -90,6 +86,7 @@ class WebAct : PonkoBaseAct<Any>() {
             intent.putExtra("need_score", needScore)
             intent.putExtra("exchange_product_id", id)
             intent.putExtra("aggregate_score", aggregateScore)
+            intent.putExtra("total", total)
             context?.startActivity(intent)
         }
     }
@@ -151,6 +148,7 @@ class WebAct : PonkoBaseAct<Any>() {
         when (viewHolder?.linkType) {
             "exchange" -> {
                 exchangeViewHolder?.totalScores = intent.getStringExtra("aggregate_score")
+                exchangeViewHolder?.total = intent.getIntExtra("total", 0)
                 exchangeViewHolder?.needScores = intent.getStringExtra("need_score")
                 exchangeViewHolder?.exchangeProductId = intent.getStringExtra("exchange_product_id")
             }
@@ -407,6 +405,7 @@ class WebAct : PonkoBaseAct<Any>() {
             }
         }
 
+        var total = 0
         var totalScores = ""
         var needScores = ""
         var exchangeProductId = ""
@@ -417,6 +416,10 @@ class WebAct : PonkoBaseAct<Any>() {
                     btnExchange.isEnabled = false
                     btnExchange.text = "您的积分不足"
                 }
+            }
+            if (total == 0) {
+                btnExchange.isEnabled = false
+                btnExchange.text = "商品不足"
             }
             btnExchange.setOnClickListener {
                 enterExchange()
@@ -485,13 +488,13 @@ class WebAct : PonkoBaseAct<Any>() {
                                                 PonkoApp.myApi?.exchangeProduct(exchangeProductId)?.enqueue(object : HttpCallBack<GeneralBean>() {
                                                     override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                                                         //ToastUtil.show("兑换成功")
-                                                        DialogUtil.show(act,"","兑换成功",true,null,null)
+                                                        DialogUtil.show(act, "", "兑换成功", true, null, null)
                                                     }
 
                                                     override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
                                                         super.onFailure(call, msg)
                                                         //ToastUtil.show("兑换失败")
-                                                        DialogUtil.show(act,"","兑换失败",true,null,null)
+                                                        DialogUtil.show(act, "", "兑换失败", true, null, null)
                                                     }
                                                 })
                                             }

@@ -66,14 +66,40 @@ class M3u8DownManager internal constructor(builder: Builder?, context: Context) 
         return false
     }
 
-    override fun pause(url: String) {
-        dispatcher?.remove(url)
-        listener?.onPause("",url)
+    override fun pause(vid: String, url: String) {
+        //从队列中移除该任务，并执行下一个队列任务
+        //dispatcher?.remove(url)
+        //暂停回调
+        listener?.onPause(vid, url)
+
+        for (tasker in dispatcher?.runningQueue?.iterator()!!) {
+            if (url == tasker.downTask?.m3u8) {
+                tasker.m3u8DownRunnable?.stop()
+                dispatcher?.runningQueue?.remove(tasker)
+                dispatcher?.remove(tasker)
+                return
+            }
+        }
+        for (tasker in dispatcher?.readyQueue?.iterator()!!) {
+            if (url == tasker.downTask?.m3u8) {
+                dispatcher?.readyQueue?.remove(tasker)
+                tasker.m3u8DownRunnable?.stop()
+                return
+            }
+        }
+    }
+
+    fun pauseCurrent() {
+        for (tasker in dispatcher?.runningQueue?.iterator()!!) {
+            tasker.m3u8DownRunnable?.stop()
+            dispatcher?.runningQueue?.remove(tasker)
+            listener?.onPause(tasker.downTask?.vid!!, tasker.downTask?.m3u8!!)
+        }
     }
 
     override fun pause(urls: List<String>) {
         for (url in urls) {
-            pause(url)
+            pause("", url)
         }
     }
 

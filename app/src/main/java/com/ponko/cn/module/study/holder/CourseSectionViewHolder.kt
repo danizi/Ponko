@@ -1,5 +1,7 @@
 package com.ponko.cn.module.study.holder
 
+import android.app.Activity
+import android.content.Context
 import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.ImageView
@@ -10,6 +12,7 @@ import com.ponko.cn.module.study.CourseTypeLinearActivity
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.ScreenUtil
 
 class CourseSectionViewHolder(view: View?) : BaseViewHolder(view!!) {
 
@@ -37,12 +40,19 @@ class CourseSectionViewHolder(view: View?) : BaseViewHolder(view!!) {
         val typeBean = d as MainCBean.TypesBeanX.TypesBean
         val context = itemView.context
         Glide.with(context, typeBean.picture, v?.ivCover)
+        ivivCoverSize(context)
         v?.tvCourseSection1?.text = typeBean.title
         v?.tvCourseSection2?.text = typeBean.subtitle2!!
         itemView.setOnClickListener {
             BKLog.d("点击了课程专题")
-            CourseTypeLinearActivity.start(context,typeBean.title,typeBean.id)
+            CourseTypeLinearActivity.start(context, typeBean.title, typeBean.id)
         }
+    }
+
+    private fun ivivCoverSize(context: Context) {
+        var w = ScreenUtil.getNormalWH(context as Activity)[0]
+        w = (w - ScreenUtil.dip2px(context, 40)) / 2
+        v?.ivCover?.layoutParams?.height = w * 94 / 164
     }
 
 }

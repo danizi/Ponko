@@ -1,7 +1,5 @@
 package com.ponko.cn.module.m3u8downer.core
 
-import com.ponko.cn.module.m3u8downer.core.M3u8DownTasker
-
 interface IM3u8Dispatcher {
     /**
      * 入下载队列

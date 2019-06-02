@@ -21,8 +21,6 @@ class M3u8DownTask private constructor(builder: Builder) {
         this.fileSize = builder.fileSize
     }
 
-
-
     class Builder {
         /**
          * 获取m3u8地址的唯一标识
@@ -89,4 +87,5 @@ class M3u8DownTask private constructor(builder: Builder) {
     override fun toString(): String {
         return "M3u8DownTask(vid='$vid', m3u8='$m3u8', name='$name', fileSize=$fileSize)"
     }
+
 }

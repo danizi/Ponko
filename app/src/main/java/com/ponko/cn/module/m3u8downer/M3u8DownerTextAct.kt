@@ -44,7 +44,7 @@ class M3u8DownerTextAct : AppCompatActivity() {
         private const val DOWN_STATE_COMPLETE = "下载完成"
         private const val DOWN_STATE_PROCESS = "下载中..."
         private const val DOWN_STATE_ERROR = "下载错误"
-        private const val DOWN_STATE_PAUSE = "暂停"
+        private const val DOWN_STATE_PAUSE = "已暂停"
 
         private var value_typeId = ""
         private var value_teachers = ""
@@ -288,7 +288,7 @@ class M3u8DownerTextAct : AppCompatActivity() {
 
         private fun notDownComplete(courseDbBean: CourseDbBean) {
             if (m3u8DownManager?.isRun(courseDbBean.column_m3u8_url) == true) {
-                m3u8DownManager?.pause(courseDbBean.column_m3u8_url)
+                m3u8DownManager?.pause("",courseDbBean.column_m3u8_url)
                 viewHolder?.tvState?.text = DOWN_STATE_PAUSE     //点击暂停后
             } else {
                 m3u8DownManager?.resume(
