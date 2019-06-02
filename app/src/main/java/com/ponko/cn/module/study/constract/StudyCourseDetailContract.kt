@@ -28,6 +28,7 @@ import com.xm.lib.common.http.NetBean
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.common.util.TimerHelper
+import com.xm.lib.component.XmStateView
 import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
 import retrofit2.Response
@@ -102,6 +103,16 @@ class StudyCourseDetailContract {
          * 收藏图标不点亮
          */
         fun hideCollectIcon()
+
+        /**
+         * 请求失败
+         */
+        fun requestCourseDetailApiFailure()
+
+        /**
+         * 隐藏状态页面
+         */
+        fun hideStateView()
 
         /**
          * 二级列表的适配器
@@ -285,7 +296,7 @@ class StudyCourseDetailContract {
         /**
          * 课程详情窗口ViewHolder
          */
-        open class ViewHolder private constructor(val video: XmVideoView, val constraintLayout5: ConstraintLayout, val ivShare: ImageView, val ivColect: ImageView, val ivDown: ImageView, val expandList: ExpandableListView) {
+        open class ViewHolder private constructor(val video: XmVideoView, val constraintLayout5: ConstraintLayout, val ivShare: ImageView, val ivColect: ImageView, val ivDown: ImageView, val expandList: ExpandableListView, val xmStateView: XmStateView) {
             companion object {
 
                 fun create(rootView: AppCompatActivity): ViewHolder {
@@ -295,7 +306,9 @@ class StudyCourseDetailContract {
                     val ivColect = rootView.findViewById<View>(R.id.iv_colect) as ImageView
                     val ivDown = rootView.findViewById<View>(R.id.iv_down) as ImageView
                     val expandList = rootView.findViewById<View>(R.id.expand_list) as ExpandableListView
-                    return ViewHolder(video, constraintLayout5, ivShare, ivColect, ivDown, expandList)
+                    val xmStateView = rootView.findViewById<View>(R.id.view_state) as XmStateView
+
+                    return ViewHolder(video, constraintLayout5, ivShare, ivColect, ivDown, expandList, xmStateView)
                 }
             }
         }
@@ -392,7 +405,7 @@ class StudyCourseDetailContract {
                     courseCollectSectionDbBean.column_course_id = model.typeId
                     PonkoApp.collectSectionDao?.insert(courseCollectSectionDbBean)
                     BKLog.d("小节插入数据库")
-                }else{
+                } else {
                     PonkoApp.collectSectionDao?.deleteBySectionId(section?.id!!)
                 }
                 if (PonkoApp.collectSpecialDao?.exist(model.typeId) == false) {
@@ -595,6 +608,7 @@ class StudyCourseDetailContract {
          * 请求课程详情
          */
         fun requestCourseDetailApi() {
+            DialogUtil.showProcess(context)
             model.requestCourseDetailApi(model.typeId, object : HttpCallBack<CoursesDetailCBean>() {
                 override fun onSuccess(call: Call<CoursesDetailCBean>?, response: Response<CoursesDetailCBean>?) {
                     //保存请求的实体
@@ -616,6 +630,16 @@ class StudyCourseDetailContract {
                     v.setTitle(model.coursesDetailCBean?.chapters!![0].sections[0].name)
                     //是否收藏显示
                     isDisplayCollect()
+                    //隱藏加載框
+                    DialogUtil.hideProcess()
+                    //
+                    v.hideStateView()
+                }
+
+                override fun onFailure(call: Call<CoursesDetailCBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    v.requestCourseDetailApiFailure()
+                    DialogUtil.hideProcess()
                 }
             })
         }

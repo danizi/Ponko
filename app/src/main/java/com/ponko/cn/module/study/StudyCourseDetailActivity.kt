@@ -25,6 +25,7 @@ import com.xm.lib.media.broadcast.BroadcastManager
  */
 class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present>(), StudyCourseDetailContract.V {
 
+
     companion object {
         const val TAG = "StudyCourseDetailActivity"
         const val TYPE_FROM_GENERAL = "from_general"
@@ -201,6 +202,18 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         p?.requestCourseDetailApi()
     }
 
+    override fun requestCourseDetailApiFailure() {
+        viewHolder?.xmStateView?.showError("加载数据错误...", object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                p?.requestCourseDetailApi()
+            }
+        })
+    }
+
+    override fun hideStateView() {
+        viewHolder?.xmStateView?.hide()
+    }
+
     override fun setVideoControlConfigInfo(coursesDetailCBean: CoursesDetailCBean?) {
         //设置配置信息
         attachmentControl?.setConfigInfo(MediaBean.ConfigBean())
@@ -228,7 +241,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
     override fun setVideoPre(coursesDetailCBean: CoursesDetailCBean?) {
         val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
         val vid = coursesDetailCBean?.chapters!![0].sections[0].vid  //PS 游客模式vid获取不到
-        attachmentPre.load(vid = vid, preUrl = coursesDetailCBean.image,isPay = coursesDetailCBean.isPossess)      //todo 窗口有销毁的可能
+        attachmentPre.load(vid = vid, preUrl = coursesDetailCBean.image, isPay = coursesDetailCBean.isPossess)      //todo 窗口有销毁的可能
     }
 
     override fun displayVideoExtendableList(myExtendableListAdp: StudyCourseDetailContract.V.MyExtendableListViewAdapter?) {

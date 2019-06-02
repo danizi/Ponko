@@ -28,12 +28,14 @@ import com.ponko.cn.bean.DetailCBean
 import com.ponko.cn.constant.Constant
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
+import com.ponko.cn.module.free.constract.FreeDetailsConstract
 import com.ponko.cn.module.media.AttachmentComplete
 import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.media.AttachmentPre
 import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
@@ -44,6 +46,7 @@ import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.TimeUtil
+import com.xm.lib.component.XmStateView
 import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.broadcast.BroadcastManager
 import com.xm.lib.pay.wx.uikit.Constants
@@ -56,8 +59,7 @@ import retrofit2.Response
 /**
  * 免费详情页面
  */
-class FreeDetailsAct : PonkoBaseAct<Any>() {
-
+class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetailsConstract.V {
 
     companion object {
         private const val TAG = "FreeDetailsAct"
@@ -108,7 +110,6 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
         }
     }
 
-
     override fun setContentViewBefore() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
@@ -156,8 +157,15 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
         //initVideo(this, ui?.video!!)
     }
 
+    private var id = ""
     override fun iniData() {
-        val id = intent.getStringExtra("id")
+        id = intent.getStringExtra("id")
+        DialogUtil.showProcess(this)
+        requestFreeDetailApi()
+    }
+
+    private fun requestFreeDetailApi() {
+        DialogUtil.showProcess(this)
         freeApi?.freeDetail(id)?.enqueue(object : HttpCallBack<DetailCBean>() {
             override fun onSuccess(call: Call<DetailCBean>?, response: Response<DetailCBean>?) {
                 //设置内容
@@ -174,12 +182,22 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
 
                 //ViewPager设置 设置网页&课程
                 displayContent(body)
+                DialogUtil.hideProcess()
+                ui?.xmStateView?.hide()
+            }
+
+            override fun onFailure(call: Call<DetailCBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                ui?.xmStateView?.showError("请求数据失败", View.OnClickListener {
+                    requestFreeDetailApi()
+                })
+                DialogUtil.hideProcess()
             }
         })
     }
 
-    override fun presenter(): Any {
-        return Any()
+    override fun presenter(): FreeDetailsConstract.Present {
+        return FreeDetailsConstract.Present()
     }
 
     fun displayVideo(body: DetailCBean?) {
@@ -322,9 +340,9 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
             }
             adapter.addItemViewDelegate(0, ChapterNameViewHolder::class.java, String::class.java, R.layout.item_free_catalogue_content)
             adapter.addItemViewDelegate(1, SectionsBeanViewHolder::class.java, DetailCBean.ChaptersBean.SectionsBean::class.java, R.layout.item_free_catalogue_section)
-            val linearLayoutManager=LinearLayoutManager(context)
-            linearLayoutManager.isSmoothScrollbarEnabled=true
-            linearLayoutManager.isAutoMeasureEnabled=true
+            val linearLayoutManager = LinearLayoutManager(context)
+            linearLayoutManager.isSmoothScrollbarEnabled = true
+            linearLayoutManager.isAutoMeasureEnabled = true
             rv?.layoutManager = linearLayoutManager
             rv?.adapter = adapter
             rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
@@ -409,7 +427,7 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
     /**
      * 免费页面窗口ui ViewHolder
      */
-    private class ViewHolder private constructor(val video: XmVideoView, val tvCourseTitle: TextView, val llDes: LinearLayout, val tvTeacher: TextView, val tvClass: TextView, val tvTime: TextView, val btnPay: Button, val llShareWx: LinearLayout, val llShareFriend: LinearLayout, val tb: TabLayout, val vp: ViewPager) {
+    private class ViewHolder private constructor(val video: XmVideoView, val tvCourseTitle: TextView, val llDes: LinearLayout, val tvTeacher: TextView, val tvClass: TextView, val tvTime: TextView, val btnPay: Button, val llShareWx: LinearLayout, val llShareFriend: LinearLayout, val tb: TabLayout, val vp: ViewPager, val xmStateView: XmStateView) {
         companion object {
 
             fun create(rootView: AppCompatActivity): ViewHolder {
@@ -424,7 +442,8 @@ class FreeDetailsAct : PonkoBaseAct<Any>() {
                 val llShareFriend = rootView.findViewById<View>(R.id.ll_share_friend) as LinearLayout
                 val tb = rootView.findViewById<View>(R.id.tb) as TabLayout
                 val vp = rootView.findViewById<View>(R.id.vp) as ViewPager
-                return ViewHolder(video, tvCourseTitle, llDes, tvTeacher, tvClass, tvTime, btnPay, llShareWx, llShareFriend, tb, vp)
+                val viewState = rootView.findViewById<View>(R.id.view_state) as XmStateView
+                return ViewHolder(video, tvCourseTitle, llDes, tvTeacher, tvClass, tvTime, btnPay, llShareWx, llShareFriend, tb, vp, viewState)
             }
         }
     }

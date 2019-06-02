@@ -41,7 +41,7 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
         const val UPDATE_PAUSE = 6
 
         const val DOWN_STATE_START = "下载准备中...."
-        const val DOWN_STATE_COMPLETE = "下载完成"
+        const val DOWN_STATE_COMPLETE = "已完成"
         const val DOWN_STATE_PROCESS = "下载中..."
         const val DOWN_STATE_ERROR = "下载错误"
         const val DOWN_STATE_PAUSE = "已暂停"

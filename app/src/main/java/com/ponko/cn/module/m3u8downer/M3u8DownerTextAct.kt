@@ -41,7 +41,7 @@ class M3u8DownerTextAct : AppCompatActivity() {
         private const val UPDATE_COMPLETE = 2
         private const val UPDATE_STATE = 3
         private const val DOWN_STATE_START = "下载准备中...."
-        private const val DOWN_STATE_COMPLETE = "下载完成"
+        private const val DOWN_STATE_COMPLETE = "已完成"
         private const val DOWN_STATE_PROCESS = "下载中..."
         private const val DOWN_STATE_ERROR = "下载错误"
         private const val DOWN_STATE_PAUSE = "已暂停"
