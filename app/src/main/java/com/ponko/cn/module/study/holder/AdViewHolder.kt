@@ -26,7 +26,6 @@ class AdViewHolder(view: View) : BaseViewHolder(view) {
         }
     }
 
-
     private var v: ViewHolder? = null
 
     override fun bindData(d: Any, position: Int) {
