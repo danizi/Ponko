@@ -38,7 +38,7 @@ object MediaUitl {
     /**
      * 三种选择 1 标准  2 高清 3超高清
      */
-    var QUALITY = 1
+    var QUALITY = 3
 
     /**
      * 视频地址选择 ps:调用接口有时候地址是空的

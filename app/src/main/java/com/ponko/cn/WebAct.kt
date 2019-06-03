@@ -412,8 +412,6 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
             tvBarRight?.visibility = View.GONE
         }
     }
-
-
 }
 
 /**
@@ -763,7 +761,5 @@ class WebContract {
     /**
      * 数据控制层
      */
-    class Present(context: Context?, v: V?) {
-
-    }
+    class Present(context: Context?, v: V?) {}
 }

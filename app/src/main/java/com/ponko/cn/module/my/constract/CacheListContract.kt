@@ -306,7 +306,7 @@ class CacheListContract {
                         viewHolder?.tvState?.text = courseDbBean.column_state
                         //viewHolder?.ivState?.visibility = View.GONE
                         viewHolder?.ivState?.setImageResource(R.mipmap.down_play)
-                        //viewHolder?.flState?.setBackgroundColor(Color.TRANSPARENT)
+                       // viewHolder?.flState?.setBackgroundColor(Color.TRANSPARENT)
                     }
                     else -> {
                         viewHolder?.tvState?.text = courseDbBean?.column_state

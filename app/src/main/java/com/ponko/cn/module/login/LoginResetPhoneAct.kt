@@ -25,7 +25,7 @@ class LoginResetPhoneAct : PonkoBaseAct<Any>() {
             finish()
         }
         ui?.btnEnter?.setOnClickListener {
-            LoginUpdateAct.startFromResetPhone(this, "")
+            LoginUpdateAct.startFromResetPhone(this,"")
         }
     }
 

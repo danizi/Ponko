@@ -104,11 +104,11 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
     override fun initDisplay() {
         super.initDisplay()
         viewHolder?.tvWxSuccess?.text = when (from) {
-            FINDPWD  -> {
+            FINDPWD -> {
                 viewHolder?.etAccount?.hint = SpannableString("请输入新密码")
                 "重置密码"
             }
-            RESETPHONE->{
+            RESETPHONE -> {
                 viewHolder?.etAccount?.hint = SpannableString("请输入新号码")
                 "请输入新号码"
             }
@@ -144,7 +144,6 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
                     resetPhone()
                 }
             }
-
         }
     }
 
@@ -177,7 +176,7 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
     }
 
     private fun resetPhone() {
-
+        DialogUtil.showProcess(this)
     }
 
     /**
