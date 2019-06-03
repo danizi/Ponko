@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
@@ -287,11 +288,36 @@ class CacheListContract {
 //                    }
 //                }
 
-                if (PonkoApp.m3u8DownManager?.isReady(courseDbBean?.column_vid!!) == true) {
-                    viewHolder?.tvState?.text = CacheListAct.DOWN_STATE_READY
-                } else {
-                    viewHolder?.tvState?.text = courseDbBean?.column_state
+                //设置状态图标
+                when {
+                    PonkoApp.m3u8DownManager?.isReady(courseDbBean?.column_vid!!) == true -> {
+                        viewHolder?.ivState?.setImageResource(R.mipmap.down_wait)
+                        viewHolder?.tvState?.text = CacheListAct.DOWN_STATE_READY
+                    }
+                    PonkoApp.m3u8DownManager?.isRun(courseDbBean?.column_vid!!) == true -> {
+                        viewHolder?.tvState?.text = courseDbBean?.column_state
+                        viewHolder?.ivState?.setImageResource(R.mipmap.down_load)
+                    }
+                    courseDbBean?.column_state == "已暂停" -> {
+                        viewHolder?.tvState?.text = courseDbBean.column_state
+                        viewHolder?.ivState?.setImageResource(R.mipmap.down_pause)
+                    }
+                    courseDbBean?.column_state == "已完成" -> {
+                        viewHolder?.tvState?.text = courseDbBean.column_state
+                        //viewHolder?.ivState?.visibility = View.GONE
+                        viewHolder?.ivState?.setImageResource(R.mipmap.down_play)
+                        //viewHolder?.flState?.setBackgroundColor(Color.TRANSPARENT)
+                    }
+                    else -> {
+                        viewHolder?.tvState?.text = courseDbBean?.column_state
+                        viewHolder?.ivState?.setImageResource(R.mipmap.down_pause)
+                    }
                 }
+//                if (PonkoApp.m3u8DownManager?.isReady(courseDbBean?.column_vid!!) == true) {
+//                    viewHolder?.tvState?.text = CacheListAct.DOWN_STATE_READY
+//                } else {
+//                    viewHolder?.tvState?.text = courseDbBean?.column_state
+//                }
 
                 //BKLog.d(CacheListAct.TAG, "tvState ${courseDbBean?.column_state}")
             }
@@ -315,15 +341,7 @@ class CacheListContract {
              * 删除模式点击item处理
              */
             private fun deleteClickItem(courseDbBean: CourseDbBean) {
-                if (viewHolder?.cb?.isChecked == true) {
-                    viewHolder?.cb?.isChecked = false
-                    //selectItems.remove(courseDbBean)
-                    //deleteSelectItem()
-                } else {
-                    //selectItems.add(courseDbBean)
-                    //addSelectItem()
-                    viewHolder?.cb?.isChecked = true
-                }
+                viewHolder?.cb?.isChecked = viewHolder?.cb?.isChecked != true
             }
 
             /**
@@ -357,7 +375,8 @@ class CacheListContract {
 //                        context?.sendBroadcast(intent)
                         //处于下载状态 点击item 暂停处理 PS：将任务从队列中移除，下载恢复的时候需要重新加入队列
                         PonkoApp.m3u8DownManager?.pause(courseDbBean.column_vid, courseDbBean.column_m3u8_url)
-                        Toast.makeText(context, "暂停...", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "已暂停...", Toast.LENGTH_SHORT).show()
+
                     }
                     PonkoApp.m3u8DownManager?.isReady(courseDbBean.column_vid) == true -> {
                         //处于队列状态 点击item 提示处理  PS:如果使用广播就会出现 状态文字为空的现象
@@ -376,7 +395,7 @@ class CacheListContract {
                                         .m3u8(courseDbBean.column_m3u8_url)
                                         .fileSize(courseDbBean.column_total.toLong())
                                         .build())
-                        Toast.makeText(context, "队列...", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "队列...${courseDbBean.column_title}", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
                         //处于恢复状态 点击item 重新加入任务
@@ -416,7 +435,7 @@ class CacheListContract {
                 }
             }
 
-            private class ViewHolder private constructor(val cb: CheckBox, val ivCover: ImageView, val tvCourseName: TextView, val pb: ProgressBar, val tvState: TextView, val tvProcessTotal: TextView) {
+            private class ViewHolder private constructor(val cb: CheckBox, val ivCover: ImageView, val tvCourseName: TextView, val pb: ProgressBar, val tvState: TextView, val tvProcessTotal: TextView, val ivState: ImageView, val flState: FrameLayout) {
                 companion object {
 
                     fun create(rootView: View): ViewHolder {
@@ -426,7 +445,9 @@ class CacheListContract {
                         val pb = rootView.findViewById<View>(R.id.pb) as ProgressBar
                         val tvState = rootView.findViewById<View>(R.id.tv_state) as TextView
                         val tvProcessTotal = rootView.findViewById<View>(R.id.tv_process_total) as TextView
-                        return ViewHolder(cb, ivCover, tvCourseName, pb, tvState, tvProcessTotal)
+                        val ivState = rootView.findViewById<View>(R.id.iv_state) as ImageView
+                        val flState = rootView.findViewById<View>(R.id.fl_state) as FrameLayout
+                        return ViewHolder(cb, ivCover, tvCourseName, pb, tvState, tvProcessTotal, ivState, flState)
                     }
                 }
             }
@@ -448,7 +469,7 @@ class CacheListContract {
         val DOWN_STATE_COMPLETE = "下载完成"
         val DOWN_STATE_PROCESS = "下载中..."
         val DOWN_STATE_ERROR = "下载错误"
-        val DOWN_STATE_PAUSE = "暂停"
+        val DOWN_STATE_PAUSE = "已暂停"
         val DOWN_STATE_READY = "队列中..."
         val DOWN_STATE_CLICK_DONW = "点击下载"
         var isSelectAll: Boolean = false
@@ -607,6 +628,8 @@ class CacheListContract {
                         BKLog.d("选中删除 - ${courseDbBean.column_title}")
                         //删除下载库中的任务信息
                         PonkoApp.m3u8DownManager?.dao?.delete2(courseDbBean.column_vid)
+                        //暂停下载线程
+                        PonkoApp.m3u8DownManager?.pause(courseDbBean.column_vid, courseDbBean.column_m3u8_url)
                         //删除数据库中的数据
                         PonkoApp.courseDao?.deleteByVid(courseDbBean)
                         //删除本地缓存的数据
@@ -669,7 +692,7 @@ class CacheListContract {
             PonkoApp.m3u8DownManager?.listener = object : OnDownListener {
 
                 override fun onPause(vid: String, url: String) {
-                    BKLog.d(CacheListAct.TAG, "M3u8DownTasker $vid 暂停....")
+                    BKLog.d(CacheListAct.TAG, "M3u8DownTasker $vid 已暂停....")
                     val courseDbBean = CourseDbBean()
                     courseDbBean.column_vid = vid
                     courseDbBean.column_m3u8_url = url

@@ -73,7 +73,7 @@ class CourseDbBean {
         const val DOWN_STATE_COMPLETE = "已完成"
         const val DOWN_STATE_PROCESS = "下载中..."
         const val DOWN_STATE_ERROR = "下载错误"
-        const val DOWN_STATE_PAUSE = "暂停"
+        const val DOWN_STATE_PAUSE = "已暂停"
         const val DOWN_STATE_READY = "队列中..."
         const val DOWN_STATE_CLICK_DONW = "点击下载"
     }

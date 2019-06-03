@@ -10,6 +10,7 @@ import retrofit2.Response
 class FreeConstract {
     interface View {
         fun requestFreeApiSuccess(body: CoursesCBean?)
+        fun requestFreeApiFailure()
     }
 
     class Model {
@@ -26,6 +27,11 @@ class FreeConstract {
             model.requestFreeApi(object : HttpCallBack<CoursesCBean>() {
                 override fun onSuccess(call: Call<CoursesCBean>?, response: Response<CoursesCBean>?) {
                     view?.requestFreeApiSuccess(response?.body())
+                }
+
+                override fun onFailure(call: Call<CoursesCBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    view?.requestFreeApiFailure()
                 }
             })
         }

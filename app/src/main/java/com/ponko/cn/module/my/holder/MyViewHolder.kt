@@ -165,6 +165,9 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
                     viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
                 }
                 name = profileCBean.account.nickname
+                if (TextUtils.isEmpty(name)) {
+                    name = profileCBean.account.realName
+                }
             }
         }
 

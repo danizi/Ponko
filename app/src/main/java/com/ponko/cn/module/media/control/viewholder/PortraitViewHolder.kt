@@ -12,6 +12,7 @@ import com.ponko.cn.utils.ShareUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.TimeUtil
+import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
 
@@ -196,6 +197,7 @@ class PortraitViewHolder private constructor(private val view: View, private val
         ScreenUtil.hideStatusBar(activity) //隐藏系统状态栏
 
         //xmVideoView?.layout(0, 0, screenW, screenH)    //设置宽高
+        // ps:设置了播放组件填充整个屏幕还是出现白色细线，所以在surfaceChanged回调中再处理一次
         xmVideoView?.layoutParams?.height = screenH
         xmVideoView?.layoutParams?.width = screenW + ScreenUtil.getStatusBarHeight(activity)
 

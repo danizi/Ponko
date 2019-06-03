@@ -39,6 +39,7 @@ import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.component.CircleImageView
+import com.xm.lib.component.XmStateView
 import com.xm.lib.media.broadcast.BroadcastManager
 import retrofit2.Call
 import retrofit2.Response
@@ -133,7 +134,9 @@ class StoreAct : PonkoBaseAct<Any>() {
             }
         })
 
+
         //请求首页接口
+        DialogUtil.showProcess(this)
         PonkoApp.myApi?.home()?.enqueue(object : HttpCallBack<StoreProfileBean>() {
             @SuppressLint("SetTextI18n")
             override fun onSuccess(call: Call<StoreProfileBean>?, response: Response<StoreProfileBean>?) {
@@ -161,7 +164,13 @@ class StoreAct : PonkoBaseAct<Any>() {
                     viewHolder?.vp?.adapter = Adapter(supportFragmentManager, frgs, titls)
                     viewHolder?.tb?.setupWithViewPager(viewHolder?.vp)
                 }
+                DialogUtil.hideProcess()
+            }
 
+            override fun onFailure(call: Call<StoreProfileBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                DialogUtil.hideProcess()
+                viewHolder?.viewState?.showError("请求数据错误，请检查您的网络", View.OnClickListener {})
             }
         })
     }
@@ -223,7 +232,7 @@ class StoreAct : PonkoBaseAct<Any>() {
     /**
      * 积分商城UI
      */
-    private class ViewHolder private constructor(val sv: NestedScrollView, val toolbar: Toolbar, val clInfo: ConstraintLayout, val container: ConstraintLayout, val ivHead: CircleImageView, val tvNick: TextView, val tvPayType: TextView, val tvIntegralNum: TextView, val llObtainLog: LinearLayout, val llRecord: LinearLayout, val clAction: ConstraintLayout, val llIntegral: LinearLayout, val ivIntegral: AppCompatImageView, val tvIntegral: TextView, val ivSign: ImageView, val llExchange: LinearLayout, val ivExchange: AppCompatImageView, val tvExchange: TextView, val llRank: LinearLayout, val ivRank: AppCompatImageView, val tvRank: TextView, val tb: TabLayout, val vp: ViewPager) {
+    private class ViewHolder private constructor(val sv: NestedScrollView, val toolbar: Toolbar, val clInfo: ConstraintLayout, val container: ConstraintLayout, val ivHead: CircleImageView, val tvNick: TextView, val tvPayType: TextView, val tvIntegralNum: TextView, val llObtainLog: LinearLayout, val llRecord: LinearLayout, val clAction: ConstraintLayout, val llIntegral: LinearLayout, val ivIntegral: AppCompatImageView, val tvIntegral: TextView, val ivSign: ImageView, val llExchange: LinearLayout, val ivExchange: AppCompatImageView, val tvExchange: TextView, val llRank: LinearLayout, val ivRank: AppCompatImageView, val tvRank: TextView, val tb: TabLayout, val vp: ViewPager, val viewState: XmStateView) {
         companion object {
 
             fun create(act: AppCompatActivity): ViewHolder {
@@ -250,7 +259,8 @@ class StoreAct : PonkoBaseAct<Any>() {
                 val tvRank = act.findViewById<View>(R.id.tv_rank) as TextView
                 val tb = act.findViewById<View>(R.id.tb) as TabLayout
                 val vp = act.findViewById<View>(R.id.vp) as ViewPager
-                return ViewHolder(sv, toolbar, clInfo, container, ivHead, tvNick, tvPayType, tvIntegralNum, llObtainLog, llRecord, clAction, llIntegral, ivIntegral, tvIntegral, ivSign, llExchange, ivExchange, tvExchange, llRank, ivRank, tvRank, tb, vp)
+                val viewState = act.findViewById<View>(R.id.view_state) as XmStateView
+                return ViewHolder(sv, toolbar, clInfo, container, ivHead, tvNick, tvPayType, tvIntegralNum, llObtainLog, llRecord, clAction, llIntegral, ivIntegral, tvIntegral, ivSign, llExchange, ivExchange, tvExchange, llRank, ivRank, tvRank, tb, vp, viewState)
             }
         }
     }
@@ -361,13 +371,13 @@ class StoreAct : PonkoBaseAct<Any>() {
         private var adapter = object : BaseRvAdapter() {
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-                BKLog.d("StoreAct","onCreateViewHolder viewType:$viewType")
+                BKLog.d("StoreAct", "onCreateViewHolder viewType:$viewType")
                 return super.onCreateViewHolder(parent, viewType)
             }
 
             override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
                 super.onBindViewHolder(holder, position)
-                BKLog.d("StoreAct","onBindViewHolder holder:$holder position:$position")
+                BKLog.d("StoreAct", "onBindViewHolder holder:$holder position:$position")
             }
 
         }

@@ -74,9 +74,10 @@ class CourseTypeViewHolder(view: View) : BaseViewHolder(view) {
     }
 
     private fun ivDetailsSize(context: Context) {
-//        var w = ScreenUtil.getNormalWH(context as Activity)[0]
-//        w = (w - ScreenUtil.dip2px(context, 30)) / 2
-//        v?.ivDetails?.layoutParams?.height = w * 113 / 347
+        var w = ScreenUtil.getNormalWH(context as Activity)[0]
+        w = (w - ScreenUtil.dip2px(context, 30)) / 2
+        v?.ivDetails?.layoutParams?.height = w * 113 / 347
+        v?.ivDetails?.layoutParams?.height = w * 2 / 3
     }
 
     private fun courseSection(context: Context, typesBeanX: MainCBean.TypesBeanX) {

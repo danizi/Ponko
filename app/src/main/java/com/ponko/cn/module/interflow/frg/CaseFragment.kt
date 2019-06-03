@@ -41,7 +41,10 @@ class CaseFragment : BaseFragment() {
     override fun iniData() {
         //请求数据
         viewHolder?.viewState?.showLoading("正在加载中...")
+        requestApi()
+    }
 
+    private fun requestApi() {
         PonkoApp.interflowApi?.getAnalysis(1, 0)?.enqueue(object : HttpCallBack<AnalysisCBean>() {
             override fun onSuccess(call: Call<AnalysisCBean>?, response: Response<AnalysisCBean>?) {
                 //选项卡个数
@@ -64,6 +67,9 @@ class CaseFragment : BaseFragment() {
             override fun onFailure(call: Call<AnalysisCBean>?, msg: String?) {
                 super.onFailure(call, msg)
                 //请求失败
+                viewHolder?.viewState?.showError("请求数据失败请重试...", View.OnClickListener {
+                    requestApi()
+                })
             }
         })
     }

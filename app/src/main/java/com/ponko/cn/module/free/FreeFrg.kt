@@ -13,7 +13,19 @@ import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 
+/**
+ * 我的页面
+ */
 class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConstract.View {
+
+    override fun bindItemViewHolderData(): BindItemViewHolderBean {
+        return BindItemViewHolderBean.create(
+                arrayOf(0, 1, 2),
+                arrayOf(WechatViewHolder::class.java, ExchangedViewHolder::class.java, TrialViewHolder::class.java),
+                arrayOf(WechatBean::class.java, ExchangedBean::class.java, TrialBean::class.java),
+                arrayOf(R.layout.item_free_exchange_list, R.layout.item_free_exchange_list, R.layout.item_free_course_type)
+        )
+    }
 
     override fun presenter(): FreeConstract.Present {
         return FreeConstract.Present(context, this)
@@ -32,9 +44,12 @@ class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConst
         })
     }
 
-
     override fun requestFreeApiSuccess(body: CoursesCBean?) {
         requestRefreshSuccess(body)
+    }
+
+    override fun requestFreeApiFailure() {
+        requestRefreshFailure()
     }
 
     override fun multiTypeData(body: CoursesCBean?): List<Any> {
@@ -53,16 +68,6 @@ class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConst
             multiData.add(TrialBean(body.trial[1]))
         }
         return multiData
-    }
-
-
-    override fun bindItemViewHolderData(): BindItemViewHolderBean {
-        return BindItemViewHolderBean.create(
-                arrayOf(0, 1, 2),
-                arrayOf(WechatViewHolder::class.java, ExchangedViewHolder::class.java, TrialViewHolder::class.java),
-                arrayOf(WechatBean::class.java, ExchangedBean::class.java, TrialBean::class.java),
-                arrayOf(R.layout.item_free_exchange_list, R.layout.item_free_exchange_list, R.layout.item_free_course_type)
-        )
     }
 
     override fun requestMoreApi() {

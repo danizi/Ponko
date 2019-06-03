@@ -3,6 +3,7 @@ package com.ponko.cn.module.study
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
@@ -24,7 +25,6 @@ import com.xm.lib.media.broadcast.BroadcastManager
  * 学习详情页面
  */
 class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present>(), StudyCourseDetailContract.V {
-
 
     companion object {
         const val TAG = "StudyCourseDetailActivity"
@@ -187,6 +187,15 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
                 attachmentControl?.start(vid!!, progress, postion)
             }
         })
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            if (ScreenUtil.isLandscape(this)){
+                attachmentControl?.addPortraitView()
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun iniData() {

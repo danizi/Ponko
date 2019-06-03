@@ -14,15 +14,15 @@
         android:background="@color/black" />
 
     <android.support.v4.widget.NestedScrollView
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/video">
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/white">
 
             <LinearLayout
@@ -36,6 +36,7 @@
             </LinearLayout>
 
             <com.xm.lib.component.XmStateView
+                android:background="@color/red"
                 android:id="@+id/view_state"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

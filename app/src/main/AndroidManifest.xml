@@ -102,7 +102,7 @@
             android:launchMode="singleTop"
             android:name=".module.free.FreeDetailsAct"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard" />
-        <activity android:name=".WebAct" android:launchMode="singleTop"/>
+        <activity android:name=".WebAct" />
         <activity android:name=".module.study.CourseTypeLinearActivity" android:launchMode="singleTop"/>
         <activity
             android:launchMode="singleTop"

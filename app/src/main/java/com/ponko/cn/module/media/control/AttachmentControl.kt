@@ -8,8 +8,8 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.media.MediaUitl
-import com.ponko.cn.module.media.control.viewholder.landscape.LandscapeViewHolder
 import com.ponko.cn.module.media.control.viewholder.PortraitViewHolder
+import com.ponko.cn.module.media.control.viewholder.landscape.LandscapeViewHolder
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.log.BKLog
@@ -18,7 +18,6 @@ import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
 import com.xm.lib.media.base.IXmMediaPlayer
-//import com.xm.lib.media.base.MediaState
 import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.event.GestureObserver
 import com.xm.lib.media.event.PhoneStateObserver
@@ -338,6 +337,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
                     }
                     LANDSCAPE -> {
                         addLandscapeView(View.VISIBLE)
+                        xmVideoView?.setSufaceViewSize()
                     }
                 }
             }

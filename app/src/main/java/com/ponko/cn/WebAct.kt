@@ -19,6 +19,9 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.google.gson.Gson
+import com.ponko.cn.WebContract.V.PayViewHolder.Companion.javascriptPayGuide
+import com.ponko.cn.WebContract.V.PayViewHolder.Companion.javascriptPayProductid
+import com.ponko.cn.WebContract.V.ShareViewHolder.Companion.javascriptShare
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
 import com.ponko.cn.bean.AddressBean
@@ -50,7 +53,7 @@ import retrofit2.Response
 /**
  * 分享 & 支付 & 普通网页 & 积分兑换(exchange)
  */
-class WebAct : PonkoBaseAct<Any>() {
+class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
     companion object {
         private const val TAG = "WebAct"
         /**
@@ -60,8 +63,9 @@ class WebAct : PonkoBaseAct<Any>() {
          * @param link_value  网页操作值
          * @param title       标题
          */
-        fun start(context: Context?, link_type: String?, link_value: String?, title: String? = "") {
+        fun start(context: Context?, link_type: String?, link_value: String?, title: String? = "", lunMode: Int? = Intent.FLAG_ACTIVITY_SINGLE_TOP) {
             val intent = Intent(context, WebAct::class.java)
+            intent.flags = lunMode!!
             intent.putExtra("title", title)
             intent.putExtra("link_type", link_type)
             intent.putExtra("link_value", link_value)
@@ -81,6 +85,7 @@ class WebAct : PonkoBaseAct<Any>() {
         fun startExChange(context: Context?, link_type: String?, link_value: String?, title: String?, id: String?, needScore: String, aggregateScore: String, total: Int?) {
             val intent = Intent(context, WebAct::class.java)
             intent.putExtra("title", title)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             intent.putExtra("link_type", link_type)
             intent.putExtra("link_value", link_value)
             intent.putExtra("need_score", needScore)
@@ -92,12 +97,12 @@ class WebAct : PonkoBaseAct<Any>() {
     }
 
     private var viewHolder: ViewHolder? = null
-    private var exchangeViewHolder: ExchangeViewHolder? = null
-    private var payViewHolder: PayViewHolder? = null
-    private var shareViewHolder: ShareViewHolder? = null
+    private var exchangeViewHolder: WebContract.V.ExchangeViewHolder? = null
+    private var payViewHolder: WebContract.V.PayViewHolder? = null
+    private var shareViewHolder: WebContract.V.ShareViewHolder? = null
 
-    override fun presenter(): Any {
-        return Any()
+    override fun presenter(): WebContract.Present {
+        return WebContract.Present(context = this, v = this)
     }
 
     override fun getLayoutId(): Int {
@@ -111,15 +116,15 @@ class WebAct : PonkoBaseAct<Any>() {
 
             //底部兑换积分
             val exchangeView = ViewUtil.viewById(this, R.layout.web_bottom_exchange)
-            exchangeViewHolder = ExchangeViewHolder.create(this, exchangeView!!)
+            exchangeViewHolder = WebContract.V.ExchangeViewHolder.create(this, exchangeView!!)
 
             //底部支付按钮，其中根据获取页面值，判断是否添加“老师介绍”、“老师课程”按钮
             val payView = ViewUtil.viewById(this, R.layout.web_bottom_pay)
-            payViewHolder = PayViewHolder.create(this, payView!!)
+            payViewHolder = WebContract.V.PayViewHolder.create(this, payView!!)
 
             //分享底部弹出框
             val shareView = ViewUtil.viewById(this, R.layout.view_share)
-            shareViewHolder = ShareViewHolder.create(shareView!!, this)
+            shareViewHolder = WebContract.V.ShareViewHolder.create(shareView!!, this)
         }
     }
 
@@ -200,9 +205,9 @@ class WebAct : PonkoBaseAct<Any>() {
         @SuppressLint("SetJavaScriptEnabled", "AddJavascriptInterface")
         fun initWebView() {
             //初始化webview
-            val javascriptShare = ShareViewHolder.javascriptShare
-            val javascriptPayProductid = PayViewHolder.javascriptPayProductid
-            val javascriptPayGuide = PayViewHolder.javascriptPayGuide
+            val javascriptShare = WebContract.V.ShareViewHolder.javascriptShare
+            val javascriptPayProductid = WebContract.V.PayViewHolder.javascriptPayProductid
+            val javascriptPayGuide = WebContract.V.PayViewHolder.javascriptPayGuide
 
             //
             val webView: WebView? = web
@@ -218,6 +223,13 @@ class WebAct : PonkoBaseAct<Any>() {
             }
 
             //监听
+            initWebViewListener(webView, progressBar)
+        }
+
+        /**
+         * WebView监听
+         */
+        private fun initWebViewListener(webView: WebView?, progressBar: ProgressBar?) {
             webView?.webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView, newProgress: Int) {
                     handleProgressBar(newProgress)
@@ -274,7 +286,10 @@ class WebAct : PonkoBaseAct<Any>() {
             }
         }
 
-        fun iniData(act: Activity? = null, exchangeViewHolder: ExchangeViewHolder?, payViewHolder: PayViewHolder?, shareViewHolder: ShareViewHolder?) {
+        /**
+         * 设置数据
+         */
+        fun iniData(act: Activity? = null, exchangeViewHolder: WebContract.V.ExchangeViewHolder?, payViewHolder: WebContract.V.PayViewHolder?, shareViewHolder: WebContract.V.ShareViewHolder?) {
             if (act != null) {
                 this.act = act
                 //获取intent中携带的信息
@@ -286,12 +301,12 @@ class WebAct : PonkoBaseAct<Any>() {
                 linkValue = act.intent?.getStringExtra("link_value")!!   //todo 有为null的分享
 
                 //根据linkType底部展示不同的按钮
-                webViewBittomDisplay(exchangeViewHolder, payViewHolder, shareViewHolder)
+                webViewBottomDisplay(exchangeViewHolder, payViewHolder, shareViewHolder)
 
                 //加载网页
                 web.loadUrl(loadUrl(linkValue), heads())
                 //注入java对象
-                web.addJavascriptInterface(InJavaScriptLocalObj(object : InJavaScriptLocalObj.OnInJavaScriptLocalObjListener {
+                web.addJavascriptInterface(WebContract.M.InJavaScriptLocalObj(object : WebContract.M.InJavaScriptLocalObj.OnInJavaScriptLocalObjListener {
                     override fun onShare(t: String, des: String, l: String) {
                         act.runOnUiThread {
                             BKLog.d(TAG, "t:$t des:$des l:$l")
@@ -321,17 +336,23 @@ class WebAct : PonkoBaseAct<Any>() {
                                     payViewHolder?.btnPay?.visibility = View.VISIBLE
                                 }
                                 "1" -> {
+//                                    exchangeViewHolder.guideATitle = guideATitle
+//                                    exchangeViewHolder.guideAUrl = guideAUrl
+//                                    exchangeViewHolder.guideBTitle = guideBTitle
+//                                    exchangeViewHolder.guideBUrl = guideBUrl
+//                                    exchangeViewHolder.guideCTitle = guideBUrl
                                     //显示课程信息课程介绍
                                     payViewHolder?.btnCourse?.visibility = View.VISIBLE
                                     payViewHolder?.btnIntroduce?.visibility = View.VISIBLE
                                     payViewHolder?.btnPay?.visibility = View.VISIBLE
                                     payViewHolder?.btnPay?.text = guideCTitle
                                     payViewHolder?.btnCourse?.setOnClickListener {
-                                        start(act, "url", guideAUrl, guideATitle)
+                                        start(act, "url", guideAUrl, guideATitle, Intent.FLAG_ACTIVITY_NEW_TASK)
                                     }
                                     payViewHolder?.btnIntroduce?.setOnClickListener {
-                                        start(act, "url", guideBUrl, guideBTitle)
+                                        start(act, "url", guideBUrl, guideBTitle, Intent.FLAG_ACTIVITY_NEW_TASK)
                                     }
+                                    payViewHolder?.btnPay?.text = guideCTitle
                                 }
                             }
                         }
@@ -340,7 +361,7 @@ class WebAct : PonkoBaseAct<Any>() {
             }
         }
 
-        private fun webViewBittomDisplay(exchangeViewHolder: ExchangeViewHolder?, payViewHolder: PayViewHolder?, shareViewHolder: ShareViewHolder?) {
+        private fun webViewBottomDisplay(exchangeViewHolder: WebContract.V.ExchangeViewHolder?, payViewHolder: WebContract.V.PayViewHolder?, shareViewHolder: WebContract.V.ShareViewHolder?) {
             when (linkType) {
                 "exchange" -> {
                     flBottomBtn.visibility = View.VISIBLE
@@ -392,39 +413,50 @@ class WebAct : PonkoBaseAct<Any>() {
         }
     }
 
+
+}
+
+/**
+ * 契约类
+ */
+class WebContract {
     /**
-     * 积分兑换相关操作ViewHolder
+     * 视图层
      */
-    private class ExchangeViewHolder private constructor(val act: Activity, val rootView: View, val btnExchange: AppCompatButton) {
-        companion object {
-            private const val javascriptInterfaceName = "local_obj"
+    interface V {
+        /**
+         * 积分兑换相关操作ViewHolder
+         */
+        class ExchangeViewHolder private constructor(val act: Activity, val rootView: View, val btnExchange: AppCompatButton) {
+            companion object {
+                private const val javascriptInterfaceName = "local_obj"
 
-            fun create(act: Activity, rootView: View): ExchangeViewHolder {
-                val btnExchange = rootView.findViewById<View>(R.id.btn_exchange) as AppCompatButton
-                return ExchangeViewHolder(act, rootView, btnExchange)
-            }
-        }
-
-        var total = 0
-        var totalScores = ""
-        var needScores = ""
-        var exchangeProductId = ""
-
-        fun initEvent() {
-            if (!TextUtils.isEmpty(totalScores) && !TextUtils.isEmpty(needScores)) {
-                if (totalScores.toInt() < needScores.toInt()) {
-                    btnExchange.isEnabled = false
-                    btnExchange.text = "您的积分不足"
+                fun create(act: Activity, rootView: View): ExchangeViewHolder {
+                    val btnExchange = rootView.findViewById<View>(R.id.btn_exchange) as AppCompatButton
+                    return ExchangeViewHolder(act, rootView, btnExchange)
                 }
             }
-            if (total == 0) {
-                btnExchange.isEnabled = false
-                btnExchange.text = "商品不足"
+
+            var total = 0
+            var totalScores = ""
+            var needScores = ""
+            var exchangeProductId = ""
+
+            fun initEvent() {
+                if (!TextUtils.isEmpty(totalScores) && !TextUtils.isEmpty(needScores)) {
+                    if (totalScores.toInt() < needScores.toInt()) {
+                        btnExchange.isEnabled = false
+                        btnExchange.text = "您的积分不足"
+                    }
+                }
+                if (total == 0) {
+                    btnExchange.isEnabled = false
+                    btnExchange.text = "商品不足"
+                }
+                btnExchange.setOnClickListener {
+                    enterExchange()
+                }
             }
-            btnExchange.setOnClickListener {
-                enterExchange()
-            }
-        }
 
 //        fun iniData(act: Activity? = null) {
 //            if (act != null) {
@@ -439,179 +471,187 @@ class WebAct : PonkoBaseAct<Any>() {
 //            }
 //        }
 
-        private fun enterExchange() {
-            BKLog.d("点击积分兑换")
-            //1 判断积分是否足够
-            if (totalScores.toInt() > needScores.toInt()) {
-                //2 判断地址是否填写
-                PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
-                    override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
-                        var isCanExchange = true
-                        val error = when {
-                            TextUtils.isEmpty(response?.body()?.tel) -> {
-                                btnExchange.isEnabled = false
-                                isCanExchange = false
-                                "电话号码为空"
+            private fun enterExchange() {
+                BKLog.d("点击积分兑换")
+                //1 判断积分是否足够
+                if (totalScores.toInt() > needScores.toInt()) {
+                    //2 判断地址是否填写
+                    PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
+                        override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
+                            var isCanExchange = true
+                            val error = when {
+                                TextUtils.isEmpty(response?.body()?.tel) -> {
+                                    btnExchange.isEnabled = false
+                                    isCanExchange = false
+                                    "电话号码为空"
+                                }
+                                TextUtils.isEmpty(response?.body()?.recipient) -> {
+                                    isCanExchange = false
+                                    "收货人为空"
+                                }
+                                TextUtils.isEmpty(response?.body()?.address) -> {
+                                    isCanExchange = false
+                                    "收货地址为空"
+                                }
+                                else -> {
+                                    ""
+                                }
                             }
-                            TextUtils.isEmpty(response?.body()?.recipient) -> {
-                                isCanExchange = false
-                                "收货人为空"
-                            }
-                            TextUtils.isEmpty(response?.body()?.address) -> {
-                                isCanExchange = false
-                                "收货地址为空"
-                            }
-                            else -> {
-                                ""
+
+                            //兑换
+                            if (isCanExchange) {
+                                DialogUtil.showProcess(act)
+                                btnExchange.isEnabled = true
+                                BKLog.d("exchangeProductId: $exchangeProductId")
+                                //请求接口地址
+                                PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
+                                    override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
+                                        val d = response?.body()
+                                        val sb = StringBuilder()
+                                                .append("收件人地址 ：${d?.address}\n")
+                                                .append("收件人电话 ：${d?.tel}\n")
+                                                .append("收件人姓名 ：${d?.recipient}\n")
+                                                .append("亲爱的用户，是否兑换？")
+                                        DialogUtil.hideProcess()
+                                        AlertDialog.Builder(act)
+                                                .setTitle("提示")
+                                                .setMessage(sb.toString())
+                                                .setPositiveButton("确定") { dialog, which ->
+                                                    PonkoApp.myApi?.exchangeProduct(exchangeProductId)?.enqueue(object : HttpCallBack<GeneralBean>() {
+                                                        override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                                                            //ToastUtil.show("兑换成功")
+                                                            DialogUtil.show(act, "", "兑换成功", true, null, null)
+                                                        }
+
+                                                        override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                                                            super.onFailure(call, msg)
+                                                            //ToastUtil.show("兑换失败")
+                                                            DialogUtil.show(act, "", "兑换失败", true, null, null)
+                                                        }
+                                                    })
+                                                }
+                                                .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
+                                                .create()
+                                                .show()
+                                    }
+                                })
+
+                            } else {
+                                //btnExchange.isEnabled = false
+                                //btnExchange.text = error
+                                AlertDialog.Builder(act)
+                                        .setTitle("提示")
+                                        .setMessage("亲爱的用户，您$error，请完善您的个人信息。")
+                                        .setPositiveButton("确定") { dialog, which ->
+                                            BKLog.d("跳转到个人信息页面")
+                                            //act.finish()
+                                            ActivityUtil.startActivity(act, Intent(act, AddressActivity::class.java))
+                                        }
+                                        .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
+                                        .create()
+                                        .show()
+                                BKLog.d("兑换失败:$error")
                             }
                         }
+                    })
+                }
+            }
+        }
 
-                        //兑换
-                        if (isCanExchange) {
-                            DialogUtil.showProcess(act)
-                            btnExchange.isEnabled = true
-                            BKLog.d("exchangeProductId: $exchangeProductId")
-                            //请求接口地址
-                            PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
-                                override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
-                                    val d = response?.body()
-                                    val sb = StringBuilder()
-                                            .append("收件人地址 ：${d?.address}\n")
-                                            .append("收件人电话 ：${d?.tel}\n")
-                                            .append("收件人姓名 ：${d?.recipient}\n")
-                                            .append("亲爱的用户，是否兑换？")
-                                    DialogUtil.hideProcess()
-                                    AlertDialog.Builder(act)
-                                            .setTitle("提示")
-                                            .setMessage(sb.toString())
-                                            .setPositiveButton("确定") { dialog, which ->
-                                                PonkoApp.myApi?.exchangeProduct(exchangeProductId)?.enqueue(object : HttpCallBack<GeneralBean>() {
-                                                    override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                                                        //ToastUtil.show("兑换成功")
-                                                        DialogUtil.show(act, "", "兑换成功", true, null, null)
-                                                    }
+        /**
+         * 支付相关操作ViewHolder
+         */
+        class PayViewHolder private constructor(var act: Activity?, val rootView: View, val btnCourse: AppCompatButton, val btnIntroduce: AppCompatButton, val btnPay: AppCompatButton) {
+            companion object {
+                private const val javascriptInterfaceName = "local_obj"
+                val javascriptPayProductid = "javascript:window.$javascriptInterfaceName.getValueById(" +
+                        "document.getElementById('productId').value" +
+                        ");"
+                const val javascriptPayGuide = "javascript:window.$javascriptInterfaceName.getProductGuide(" +
+                        "document.getElementById('productGuideHave').value," +
+                        "document.getElementById('productGuideATitle').value," +
+                        "document.getElementById('productGuideAUrl').value," +
+                        "document.getElementById('productGuideBTitle').value," +
+                        "document.getElementById('productGuideBUrl').value," +
+                        "document.getElementById('productGuideCTitle').value" +
+                        ")"
 
-                                                    override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
-                                                        super.onFailure(call, msg)
-                                                        //ToastUtil.show("兑换失败")
-                                                        DialogUtil.show(act, "", "兑换失败", true, null, null)
-                                                    }
-                                                })
-                                            }
-                                            .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
-                                            .create()
-                                            .show()
+                fun create(act: Activity?, ll_pay: View): PayViewHolder {
+                    val btnCourse = ll_pay.findViewById<View>(R.id.btn_course) as AppCompatButton
+                    val btnIntroduce = ll_pay.findViewById<View>(R.id.btn_introduce) as AppCompatButton
+                    val btnPay = ll_pay.findViewById<View>(R.id.btn_pay) as AppCompatButton
+                    return PayViewHolder(act, ll_pay, btnCourse, btnIntroduce, btnPay)
+                }
+            }
+
+            var payProductId: String = ""
+
+            fun initEvent() {
+                btnCourse.setOnClickListener {
+                    BKLog.d("点击课程")
+
+                }
+                btnIntroduce.setOnClickListener {
+                    BKLog.d("点击介绍")
+                }
+                btnPay.setOnClickListener {
+                    BKLog.d("点击支付")
+                    enterPay()
+                }
+            }
+
+            private fun enterPay() {
+                BKLog.d("点击支付,弹出支付框选项")
+                AlertDialog.Builder(act!!).setItems(arrayOf("微信", "支付宝")) { dialog, which ->
+
+                    var absPay: AbsPay? = null
+                    var payWay = ""
+                    when (which) {
+                        0 -> {
+                            payWay = "weiXin"
+                            absPay = WxPay(act!!)
+                            absPay.init(PayConfig.Builder().appid(APP_ID).build())
+                            BKLog.d("点击了微信支付")
+                        }
+                        1 -> {
+                            payWay = "alipay"
+                            absPay = AliPay(act!!)
+                            BKLog.d("点击了支付宝")
+                        }
+                    }
+                    PonkoApp.payApi?.createProductOrder(payWay, payProductId)?.enqueue(object : HttpCallBack<OrderCBean>() {
+                        override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
+                            val orderCBean = response?.body()
+                            orderCBean?.wechat
+
+                            var order = ""
+                            when (payWay) {
+                                "weiXin" -> {
+                                    order = Gson().toJson(orderCBean?.wechat)
+                                }
+                                "alipay" -> {
+                                    order = orderCBean?.alipay!!
+                                }
+                            }
+
+                            absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
+                                override fun onSuccess() {
+                                    BKLog.d("支付成功")
+                                }
+
+                                override fun onFailure() {
+                                    BKLog.d("支付失败")
+                                }
+
+                                override fun onCancel() {
+                                    BKLog.d("支付取消")
                                 }
                             })
-
-                        } else {
-                            //btnExchange.isEnabled = false
-                            //btnExchange.text = error
-                            AlertDialog.Builder(act)
-                                    .setTitle("提示")
-                                    .setMessage("亲爱的用户，您$error，请完善您的个人信息。")
-                                    .setPositiveButton("确定") { dialog, which ->
-                                        BKLog.d("跳转到个人信息页面")
-                                        //act.finish()
-                                        ActivityUtil.startActivity(act, Intent(act, AddressActivity::class.java))
-                                    }
-                                    .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
-                                    .create()
-                                    .show()
-                            BKLog.d("兑换失败:$error")
+                            dialog.dismiss()
                         }
-                    }
-                })
+                    })
+                }.show()
             }
-        }
-    }
-
-    /**
-     * 支付相关操作ViewHolder
-     */
-    private class PayViewHolder private constructor(var act: Activity?, val rootView: View, val btnCourse: AppCompatButton, val btnIntroduce: AppCompatButton, val btnPay: AppCompatButton) {
-        companion object {
-            private const val javascriptInterfaceName = "local_obj"
-            val javascriptPayProductid = "javascript:window.$javascriptInterfaceName.getValueById(" +
-                    "document.getElementById('productId').value" +
-                    ");"
-            const val javascriptPayGuide = "javascript:window.$javascriptInterfaceName.getProductGuide(" +
-                    "document.getElementById('productGuideHave').value," +
-                    "document.getElementById('productGuideATitle').value," +
-                    "document.getElementById('productGuideAUrl').value," +
-                    "document.getElementById('productGuideBTitle').value," +
-                    "document.getElementById('productGuideBUrl').value," +
-                    "document.getElementById('productGuideCTitle').value" +
-                    ")"
-
-            fun create(act: Activity?, ll_pay: View): PayViewHolder {
-                val btnCourse = ll_pay.findViewById<View>(R.id.btn_course) as AppCompatButton
-                val btnIntroduce = ll_pay.findViewById<View>(R.id.btn_introduce) as AppCompatButton
-                val btnPay = ll_pay.findViewById<View>(R.id.btn_pay) as AppCompatButton
-                return PayViewHolder(act, ll_pay, btnCourse, btnIntroduce, btnPay)
-            }
-        }
-
-        var payProductId: String = ""
-
-        fun initEvent() {
-            btnPay.setOnClickListener {
-                enterPay()
-            }
-        }
-
-        private fun enterPay() {
-            BKLog.d("点击支付,弹出支付框选项")
-            AlertDialog.Builder(act!!).setItems(arrayOf("微信", "支付宝")) { dialog, which ->
-
-                var absPay: AbsPay? = null
-                var payWay = ""
-                when (which) {
-                    0 -> {
-                        payWay = "weiXin"
-                        absPay = WxPay(act!!)
-                        absPay.init(PayConfig.Builder().appid(APP_ID).build())
-                        BKLog.d("点击了微信支付")
-                    }
-                    1 -> {
-                        payWay = "alipay"
-                        absPay = AliPay(act!!)
-                        BKLog.d("点击了支付宝")
-                    }
-                }
-                PonkoApp.payApi?.createProductOrder(payWay, payProductId)?.enqueue(object : HttpCallBack<OrderCBean>() {
-                    override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
-                        val orderCBean = response?.body()
-                        orderCBean?.wechat
-
-                        var order = ""
-                        when (payWay) {
-                            "weiXin" -> {
-                                order = Gson().toJson(orderCBean?.wechat)
-                            }
-                            "alipay" -> {
-                                order = orderCBean?.alipay!!
-                            }
-                        }
-
-                        absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
-                            override fun onSuccess() {
-                                BKLog.d("支付成功")
-                            }
-
-                            override fun onFailure() {
-                                BKLog.d("支付失败")
-                            }
-
-                            override fun onCancel() {
-                                BKLog.d("支付取消")
-                            }
-                        })
-                        dialog.dismiss()
-                    }
-                })
-            }.show()
-        }
 
 //        fun iniData(act: Activity? = null) {
 //            if (act != null) {
@@ -625,92 +665,105 @@ class WebAct : PonkoBaseAct<Any>() {
 //                }
 //            }
 //        }
+        }
+
+        /**
+         * 分享相关操作ViewHolder
+         */
+        class ShareViewHolder private constructor(val ctx: Context?, val rootView: View, val tvRemind: TextView, val flFriend: FrameLayout, val flFriendMoment: FrameLayout, val tvCancel: TextView, val popWindow: XmPopWindow) {
+            companion object {
+
+                private const val javascriptInterfaceName = "local_obj"
+                const val javascriptShare = "javascript:window.$javascriptInterfaceName.getShare(" +
+                        "document.getElementById('share_title').value," +
+                        "document.getElementById('share_description').value," +
+                        "document.getElementById('share_link').value" +
+                        ");"
+
+                fun create(rootView: View, context: Context?): ShareViewHolder {
+                    val tvRemind = rootView.findViewById<View>(R.id.tv_remind) as TextView
+                    val flFriend = rootView.findViewById<View>(R.id.fl_friend) as FrameLayout
+                    val flFriendMoment = rootView.findViewById<View>(R.id.fl_friend_moment) as FrameLayout
+                    val tvCancel = rootView.findViewById<View>(R.id.tv_cancel) as TextView
+                    val popWindow = XmPopWindow(context)
+                    popWindow.ini(rootView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    //popWindow.showAtLocation(XmPopWindow.Location.BOTTOM, R.style.AnimationBottomFade, window.decorView, 0, 0)
+                    return ShareViewHolder(context, rootView, tvRemind, flFriend, flFriendMoment, tvCancel, popWindow)
+                }
+            }
+
+            var shareTitle: String? = null
+            var shareDescription: String? = null
+            var shareUrl: String? = null
+            var wxShare: WxShare? = WxShare(ctx as Activity)
+
+            fun initEvent() {
+                wxShare?.init(ShareConfig.Builder().appid(APP_ID).build())
+                tvCancel.setOnClickListener {
+                    popWindow.dismiss()
+                }
+                flFriend.setOnClickListener {
+                    wxShare?.shareWebPage(R.mipmap.ic_launcher, shareUrl!!, shareTitle!!, shareDescription!!, SendMessageToWX.Req.WXSceneSession)
+                }
+                flFriendMoment.setOnClickListener {
+                    wxShare?.shareWebPage(R.mipmap.ic_launcher, shareUrl!!, shareTitle!!, shareDescription!!, SendMessageToWX.Req.WXSceneTimeline)
+                }
+            }
+
+            fun share() {
+                popWindow.showAtLocation(XmPopWindow.Location.BOTTOM, com.xm.lib.media.R.style.AnimationBottomFade, (ctx as Activity).window.decorView, 0, 0)
+            }
+        }
     }
 
     /**
-     * 分享相关操作ViewHolder
+     * 数据层
      */
-    private class ShareViewHolder private constructor(val ctx: Context?, val rootView: View, val tvRemind: TextView, val flFriend: FrameLayout, val flFriendMoment: FrameLayout, val tvCancel: TextView, val popWindow: XmPopWindow) {
-        companion object {
+    class M {
+        /**
+         * 注入到网页中的对象
+         */
+        class InJavaScriptLocalObj(val listener: OnInJavaScriptLocalObjListener?) {
 
-            private const val javascriptInterfaceName = "local_obj"
-            const val javascriptShare = "javascript:window.$javascriptInterfaceName.getShare(" +
-                    "document.getElementById('share_title').value," +
-                    "document.getElementById('share_description').value," +
-                    "document.getElementById('share_link').value" +
-                    ");"
-
-            fun create(rootView: View, context: Context?): ShareViewHolder {
-                val tvRemind = rootView.findViewById<View>(R.id.tv_remind) as TextView
-                val flFriend = rootView.findViewById<View>(R.id.fl_friend) as FrameLayout
-                val flFriendMoment = rootView.findViewById<View>(R.id.fl_friend_moment) as FrameLayout
-                val tvCancel = rootView.findViewById<View>(R.id.tv_cancel) as TextView
-                val popWindow = XmPopWindow(context)
-                popWindow.ini(rootView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                //popWindow.showAtLocation(XmPopWindow.Location.BOTTOM, R.style.AnimationBottomFade, window.decorView, 0, 0)
-                return ShareViewHolder(context, rootView, tvRemind, flFriend, flFriendMoment, tvCancel, popWindow)
+            interface OnInJavaScriptLocalObjListener {
+                fun onShare(t: String, des: String, l: String)
+                fun onProductId(value: String)
+                fun onPayGuide(have: String?, guideATitle: String?, guideAUrl: String, guideBTitle: String, guideBUrl: String, guideCTitle: String)
             }
-        }
 
-        var shareTitle: String? = null
-        var shareDescription: String? = null
-        var shareUrl: String? = null
-        var wxShare: WxShare? = WxShare(ctx as Activity)
+            /**
+             * @param t 分享标题
+             * @param des 分享描述
+             * @param link 分享地址
+             */
+            @JavascriptInterface
+            fun getShare(t: String, des: String, l: String) {
 
-        fun initEvent() {
-            wxShare?.init(ShareConfig.Builder().appid(APP_ID).build())
-            tvCancel.setOnClickListener {
-                popWindow.dismiss()
+                listener?.onShare(t, des, l)
             }
-            flFriend.setOnClickListener {
-                wxShare?.shareWebPage(R.mipmap.ic_launcher, shareUrl!!, shareTitle!!, shareDescription!!, SendMessageToWX.Req.WXSceneSession)
-            }
-            flFriendMoment.setOnClickListener {
-                wxShare?.shareWebPage(R.mipmap.ic_launcher, shareUrl!!, shareTitle!!, shareDescription!!, SendMessageToWX.Req.WXSceneTimeline)
-            }
-        }
 
-        fun share() {
-            popWindow.showAtLocation(XmPopWindow.Location.BOTTOM, com.xm.lib.media.R.style.AnimationBottomFade, (ctx as Activity).window.decorView, 0, 0)
+            /**
+             * @param value 支付产品ID
+             */
+            @JavascriptInterface
+            fun getValueById(value: String) {
+                listener?.onProductId(value)
+            }
+
+            /**
+             * @param have 1代表网页还有老师介绍选项 ，0 则没有
+             */
+            @JavascriptInterface
+            fun getProductGuide(have: String?, guideATitle: String?, guideAUrl: String, guideBTitle: String, guideBUrl: String, guideCTitle: String) {
+                listener?.onPayGuide(have, guideATitle, guideAUrl, guideBTitle, guideBUrl, guideCTitle)
+            }
         }
     }
 
     /**
-     * 注入到网页中的对象
+     * 数据控制层
      */
-    class InJavaScriptLocalObj(val listener: OnInJavaScriptLocalObjListener?) {
+    class Present(context: Context?, v: V?) {
 
-        interface OnInJavaScriptLocalObjListener {
-            fun onShare(t: String, des: String, l: String)
-            fun onProductId(value: String)
-            fun onPayGuide(have: String?, guideATitle: String?, guideAUrl: String, guideBTitle: String, guideBUrl: String, guideCTitle: String)
-        }
-
-        /**
-         * @param t 分享标题
-         * @param des 分享描述
-         * @param link 分享地址
-         */
-        @JavascriptInterface
-        fun getShare(t: String, des: String, l: String) {
-
-            listener?.onShare(t, des, l)
-        }
-
-        /**
-         * @param value 支付产品ID
-         */
-        @JavascriptInterface
-        fun getValueById(value: String) {
-            listener?.onProductId(value)
-        }
-
-        /**
-         * @param have 1代表网页还有老师介绍选项 ，0 则没有
-         */
-        @JavascriptInterface
-        fun getProductGuide(have: String?, guideATitle: String?, guideAUrl: String, guideBTitle: String, guideBUrl: String, guideCTitle: String) {
-            listener?.onPayGuide(have, guideATitle, guideAUrl, guideBTitle, guideBUrl, guideCTitle)
-        }
     }
 }
