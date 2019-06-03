@@ -9,7 +9,10 @@
         android:id="@+id/banner"
         android:layout_width="wrap_content"
         android:layout_height="129dp"
-        android:background="?android:attr/selectableItemBackground" />
+        android:background="?android:attr/selectableItemBackground"
+        app:indicator_drawable_selected="@drawable/shape_indicator_select"
+        app:indicator_drawable_unselected="@drawable/shape_indicator_un_select"
+        app:indicator_width="5dp" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="0dp"

@@ -3,6 +3,7 @@ package com.ponko.cn.module.study.holder
 import android.app.Activity
 import android.content.Context
 import android.support.constraint.Guideline
+import android.support.v4.view.ViewPager
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -15,11 +16,13 @@ import com.ponko.cn.module.study.CourseTypeGridActivity
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.youth.banner.Banner
 import com.youth.banner.BannerConfig
 import com.youth.banner.Transformer
 import com.youth.banner.loader.ImageLoader
+import java.lang.reflect.Field
 
 class BannerViewHolder(view: View) : BaseViewHolder(view) {
 
@@ -50,15 +53,21 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
         }
         val context = itemView.context
         val bannerBean = d as BannerBean
+        val ads: ArrayList<MainCBean.ScrollsBean> = bannerBean.scrolls as ArrayList<MainCBean.ScrollsBean>
+        val ad = ads.get(0)
+        ads.add(ad)
+//        val banner = ads
+
         //处理横幅
         val banner = bannerBean.scrolls
+
         if (banner?.isEmpty()!!) {
             v?.banner?.visibility = View.GONE
         } else {
             v?.banner?.visibility = android.view.View.VISIBLE
             v?.banner?.isAutoPlay(true)
             v?.banner?.setDelayTime(1500)
-            v?.banner?.setBannerAnimation(Transformer.DepthPage)
+            //v?.banner?.setBannerAnimation(Transformer.DepthPage)
             v?.banner?.setIndicatorGravity(BannerConfig.CENTER)
             v?.banner?.setImageLoader(object : ImageLoader() {
                 override fun displayImage(context: Context?, path: Any?, imageView: ImageView?) {
@@ -67,6 +76,41 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
             })
             v?.banner?.setImages(banner)
             v?.banner?.start()
+            v?.banner?.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(p0: Int) {
+
+                }
+
+                override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+
+                }
+
+                override fun onPageSelected(p0: Int) {
+                    //设置选中指示器的宽度
+                    val indicators = getFieldValueByFieldName("indicatorImages", v?.banner!!)
+                    for (img in indicators!!) {
+                        img.layoutParams?.width = ScreenUtil.dip2px(context, 5)
+                    }
+                    indicators[p0].layoutParams?.width = ScreenUtil.dip2px(context, 10)
+                }
+
+
+                private fun getFieldValueByFieldName(fieldName: String, `object`: Any): ArrayList<ImageView>? {
+                    try {
+                        val field = `object`.javaClass.getDeclaredField(fieldName)
+                        //设置对象的访问权限，保证对private的属性的访问
+                        field.isAccessible = true
+                        val data = field.get(`object`) as ArrayList<ImageView>
+                        BKLog.d("属性值:${field.name}属性名称:$data")
+                        return data
+                    } catch (e: Exception) {
+
+                        return null
+                    }
+
+                }
+
+            })
             //点击横幅
             v?.banner?.setOnBannerListener { position ->
                 IntoTargetUtil.target(context, banner[position].link_type, banner[position].link_value)
