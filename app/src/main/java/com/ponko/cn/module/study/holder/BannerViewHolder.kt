@@ -94,7 +94,6 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
                     indicators[p0].layoutParams?.width = ScreenUtil.dip2px(context, 10)
                 }
 
-
                 private fun getFieldValueByFieldName(fieldName: String, `object`: Any): ArrayList<ImageView>? {
                     try {
                         val field = `object`.javaClass.getDeclaredField(fieldName)
