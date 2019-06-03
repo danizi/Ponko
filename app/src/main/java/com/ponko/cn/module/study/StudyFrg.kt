@@ -7,7 +7,6 @@ import com.ponko.cn.bean.*
 import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.my.option.HistoryActivity
 import com.ponko.cn.module.my.option.ProblemAct
-import com.ponko.cn.module.my.option.StudyRecordAct
 import com.ponko.cn.module.study.adapter.StudyAdapter
 import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.module.study.holder.AdViewHolder

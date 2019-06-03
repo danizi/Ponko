@@ -8,6 +8,7 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.DialogUtil
+import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.OnEnterListener
@@ -48,7 +49,8 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
                 , true,
                 object : OnEnterListener {
                     override fun onEnter(dlg: AlertDialog) {
-                        if (msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"] /*|| 还需要判断密码错误*/) {
+
+                        if (msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"] || (ActManager.instance?.getTopActivity()!!::class.java.simpleName == "MainActivity" && msg == errorCodeMaps["TokenPasswordDoesNotMatch"])) {
                             val act = PonkoApp.activityManager.getTopActivity()
                             val intent = Intent(act, LoginStartAct::class.java)
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
