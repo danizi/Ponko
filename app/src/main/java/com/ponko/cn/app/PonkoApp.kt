@@ -121,7 +121,7 @@ class PonkoApp : MultiDexApplication() {
         retrofitClient = RetrofitClient.intance
                 .setBaseUrl(BASE_API)
                 .setHttpCacheDirectory(File(cacheDir, "PonkoCache"))
-                .setTimeout(4000)
+                .setTimeout(6000)
                 .setHeaders(heads)
                 .createRetrofit(app = this)
         loginApi = retrofitClient?.retrofit?.create(LoginApi::class.java)

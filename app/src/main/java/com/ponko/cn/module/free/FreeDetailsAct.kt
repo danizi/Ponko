@@ -44,6 +44,7 @@ import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.component.XmStateView
+import com.xm.lib.media.attachment.OnPlayListItemClickListener
 import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.broadcast.BroadcastManager
 import com.xm.lib.share.ShareConfig
@@ -248,7 +249,6 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
         ui?.tvTime?.text = "${detailTopBean?.duration!!}分钟"
     }
 
-
     override fun iniEvent() {
         ui?.llShareFriend?.setOnClickListener {
             BKLog.d("点击微信朋友圈分享按钮")
@@ -266,6 +266,28 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
             BKLog.d("点击支付按钮")
             IntoTargetUtil.target(this, "pay", detailTopBean?.pay_url)
         }
+        attachmentControl?.setOnPlayListItemClickListener(object : OnPlayListItemClickListener {
+            override fun item(vid: String?, progress: Int?, view: View?, postion: Int) {
+//                p?.clickPlayListItem(vid, progress, view, postion)
+//                //暂停播放
+//                attachmentControl?.pause()
+//                attachmentControl?.showLoading()
+//
+//                //更新下横屏列表item
+//                attachmentControl?.updateListItem(postion)
+//
+//                //更新下竖屏列表item
+//                val (groupPosition, childPosition) = p?.oneToTwo(postion)!!
+//                p?.updateExtendableListItem(groupPosition, childPosition)
+//                BKLog.d("选中groupPosition:$groupPosition childPosition:$childPosition")
+//
+//                //设置标题
+//                setTitle(coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name)
+//
+//                //播放视频
+//                attachmentControl?.start(vid!!, progress, postion)
+            }
+        })
     }
 
     class DetailTopBean(var id: String?, var teacher: String?, var count: Int? = 0, var duration: Int? = 0, var course_id: String?, var share_title: String?, var share_description: String?, var share_url: String?, var pay_url: String?, var pay_btn: String?, var title: String?)

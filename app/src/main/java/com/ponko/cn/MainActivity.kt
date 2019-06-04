@@ -66,7 +66,7 @@ class MainActivity : BaseActivity() {
                 .setContainer(R.id.container)
                 .setTitleColor(R.color.grey, R.color.red)
                 .setItemLayoutId(R.layout.item_bottom_menu)
-                .addItem(StudyFrg(), "学习", R.mipmap.bottom_icon_study_n, R.mipmap.bottom_icon_study_h)
+                .addItem(StudyFrg2(), "学习", R.mipmap.bottom_icon_study_n, R.mipmap.bottom_icon_study_h)
                 .addItem(FreeFrg(), "免费", R.mipmap.bottom_tab_icon_free_n, R.mipmap.bottom_tab_icon_free_h)
                 .addItem(InterflowFrg(), "交流", R.mipmap.bottom_tab_icon_exchange_n, R.mipmap.bottom_tab_icon_exchange_h)
                 .addItem(MyFrg(), "我的", R.mipmap.bottom_tab_icon_my_n, R.mipmap.bottom_tab_icon_my_h)

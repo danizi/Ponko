@@ -1,6 +1,7 @@
 package com.ponko.cn
 
 import android.content.Intent
+import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.text.TextUtils
@@ -31,7 +32,7 @@ class GuideAct : BaseActivity() {
             R.mipmap.guide_06
     )
 
-    override fun setContentViewBefore() {
+    override fun onCreate(savedInstanceState: Bundle?) {
         // 判断用户是否第一次启动app
         if (!TextUtils.isEmpty(CacheUtil.getJoinGuide())/*用户进入过应用*/ && !TextUtils.isEmpty(CacheUtil.getUserType())/*用户标识位不为空*/) {
             joinStartActivity()
@@ -39,6 +40,11 @@ class GuideAct : BaseActivity() {
             joinStartLogin()
         }
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun setContentViewBefore() {
+
     }
 
     override fun getLayoutId(): Int {

@@ -90,11 +90,13 @@ class PersonalActivity : PonkoBaseAct<Any>() {
                 PonkoApp.myApi?.saveProfilePhoto(pair)?.enqueue(object : HttpCallBack<GeneralBean>() {
                     override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                         savaHead(response?.body()?.url)
+                        ToastUtil.show("上传头像成功")
                     }
 
                     override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
                         super.onFailure(call, msg)
                         DialogUtil.hideProcess()
+                        ToastUtil.show("上传头像失败")
                     }
 
                     private fun savaHead(upload: String?) {
