@@ -70,7 +70,7 @@ class GuideAct : BaseActivity() {
                 val iv = ImageView(this@GuideAct)
                 iv.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 iv.setImageResource(array[position])
-                iv.scaleType = ImageView.ScaleType.FIT_XY
+                iv.scaleType = ImageView.ScaleType.CENTER_CROP
                 if (iv.parent != null) {
                     (iv.parent as ViewGroup).removeView(iv)
                 }

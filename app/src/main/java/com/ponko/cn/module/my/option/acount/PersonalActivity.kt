@@ -204,10 +204,18 @@ class PersonalActivity : PonkoBaseAct<Any>() {
         params["currentCompanyName"] = accountBean.companyName
         params["intention"] = accountBean.intention
         params["currentCity"] = accountBean.city
+        DialogUtil.showProcess(this)
         myApi?.saveProfile(params)?.enqueue(object : HttpCallBack<GeneralBean>() {
             override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                 BKLog.d("保存编辑好的个人信息${accountBean.toString()}")
                 Toast.makeText(this@PersonalActivity, "保存信息成功", Toast.LENGTH_SHORT).show()
+                DialogUtil.hideProcess()
+            }
+
+            override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                DialogUtil.hideProcess()
+                DialogUtil.show(this@PersonalActivity, "提示", "保存信息失败，请检查您的网络是否正常。", true, null, null)
             }
         })
     }

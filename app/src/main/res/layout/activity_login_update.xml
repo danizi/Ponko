@@ -42,7 +42,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="设置新密码or设置新信号"
+        android:text="设置新密码or设置新号码"
         android:textColor="@color/lighter_black"
         android:textSize="@dimen/sp_29"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"

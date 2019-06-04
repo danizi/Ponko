@@ -50,7 +50,7 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
                 object : OnEnterListener {
                     override fun onEnter(dlg: AlertDialog) {
 
-                        if (msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"] || (ActManager.instance?.getTopActivity()!!::class.java.simpleName == "MainActivity" && msg == errorCodeMaps["TokenPasswordDoesNotMatch"])) {
+                        if (msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"] /*|| (ActManager.instance?.getTopActivity()!!::class.java.simpleName == "MainActivity" && msg == errorCodeMaps["TokenPasswordDoesNotMatch"])*/) {
                             val act = PonkoApp.activityManager.getTopActivity()
                             val intent = Intent(act, LoginStartAct::class.java)
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

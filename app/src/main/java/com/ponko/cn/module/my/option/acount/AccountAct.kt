@@ -25,6 +25,7 @@ import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.login.LoginFindPwdAct
 import com.ponko.cn.module.login.LoginResetPhoneAct
 import com.ponko.cn.module.login.LoginStartAct
+import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.utils.*
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -213,6 +214,8 @@ class AccountAct : PonkoBaseAct<Any>() {
 
             //是否是是带开关的
             if (itemBean.isSwitch == true) {
+                //请求下首页接口，再判断微信是否绑定
+                StudyContract.Present(context, null).requestStudyApi()
                 viewHolder?.sc?.isChecked = PonkoApp.mainCBean?.account?.isIs_bind_wechat == true
 
                 //发起微信鉴权

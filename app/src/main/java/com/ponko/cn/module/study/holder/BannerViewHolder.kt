@@ -2,6 +2,7 @@ package com.ponko.cn.module.study.holder
 
 import android.app.Activity
 import android.content.Context
+import android.support.constraint.ConstraintLayout
 import android.support.constraint.Guideline
 import android.support.v4.view.ViewPager
 import android.view.View
@@ -26,7 +27,7 @@ import java.lang.reflect.Field
 
 class BannerViewHolder(view: View) : BaseViewHolder(view) {
 
-    private class ViewHolder private constructor(val banner: Banner, val llB2b: LinearLayout, val ivB2b: ImageView, val tvB2b: TextView, val view: View, val llB2c: LinearLayout, val ivB2c: ImageView, val tvB2c: TextView, val guideline7: Guideline) {
+    private class ViewHolder private constructor(val banner: Banner, val llB2b: LinearLayout, val ivB2b: ImageView, val tvB2b: TextView, val view: View, val llB2c: LinearLayout, val ivB2c: ImageView, val tvB2c: TextView, val guideline7: Guideline, val clTaber: ConstraintLayout) {
         companion object {
 
             fun create(rootView: View): ViewHolder {
@@ -39,7 +40,8 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
                 val ivB2c = rootView.findViewById<View>(R.id.iv_b2c) as ImageView
                 val tvB2c = rootView.findViewById<View>(R.id.tv_b2c) as TextView
                 val guideline7 = rootView.findViewById<View>(R.id.guideline7) as Guideline
-                return ViewHolder(banner, llB2b, ivB2b, tvB2b, view, llB2c, ivB2c, tvB2c, guideline7)
+                val clTaber = rootView.findViewById<View>(R.id.cl_taber) as ConstraintLayout
+                return ViewHolder(banner, llB2b, ivB2b, tvB2b, view, llB2c, ivB2c, tvB2c, guideline7, clTaber)
             }
         }
     }
@@ -53,9 +55,9 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
         }
         val context = itemView.context
         val bannerBean = d as BannerBean
-        val ads: ArrayList<MainCBean.ScrollsBean> = bannerBean.scrolls as ArrayList<MainCBean.ScrollsBean>
-        val ad = ads.get(0)
-        ads.add(ad)
+//        val ads: ArrayList<MainCBean.ScrollsBean> = bannerBean.scrolls as ArrayList<MainCBean.ScrollsBean>
+//        val ad = ads.get(0)
+//        ads.add(ad)
 //        val banner = ads
 
         //处理横幅
@@ -103,7 +105,7 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
                         BKLog.d("属性值:${field.name}属性名称:$data")
                         return data
                     } catch (e: Exception) {
-
+                        e.printStackTrace()
                         return null
                     }
 
@@ -120,6 +122,11 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
         }
 
         //处理横幅下面两个按钮
+        if (bannerBean.tabbar?.isEmpty()!!) {
+            v?.clTaber?.visibility = View.GONE
+            return
+        }
+        v?.clTaber?.visibility = View.VISIBLE
         val b2b = bannerBean.tabbar?.get(0)
         val b2c = bannerBean.tabbar?.get(1)
         Glide.with(context, b2b?.icon_url, v?.ivB2b)

@@ -306,7 +306,7 @@ class CacheListContract {
                         viewHolder?.tvState?.text = courseDbBean.column_state
                         //viewHolder?.ivState?.visibility = View.GONE
                         viewHolder?.ivState?.setImageResource(R.mipmap.down_play)
-                       // viewHolder?.flState?.setBackgroundColor(Color.TRANSPARENT)
+                        // viewHolder?.flState?.setBackgroundColor(Color.TRANSPARENT)
                     }
                     else -> {
                         viewHolder?.tvState?.text = courseDbBean?.column_state
@@ -395,7 +395,8 @@ class CacheListContract {
                                         .m3u8(courseDbBean.column_m3u8_url)
                                         .fileSize(courseDbBean.column_total.toLong())
                                         .build())
-                        Toast.makeText(context, "队列...${courseDbBean.column_title}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "队列...", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(context, "队列...${courseDbBean.column_title}", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
                         //处于恢复状态 点击item 重新加入任务

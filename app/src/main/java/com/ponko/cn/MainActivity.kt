@@ -16,6 +16,7 @@ import com.ponko.cn.module.interflow.frg.InterflowFrg
 import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.my.MyFrg
 import com.ponko.cn.module.study.StudyFrg
+import com.ponko.cn.module.study2.StudyFrg2
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
@@ -183,17 +184,25 @@ class MainActivity : BaseActivity() {
         })
     }
 
-
+    /**
+     * 点击两次退出应用
+     */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return back(keyCode, event)
     }
 
+    /**
+     * 窗口销毁之前保存状态
+     */
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putInt("pos", bottomPos)
         BKLog.d("应用销毁保存的数据 -> $bottomPos")
     }
 
+    /**
+     * 应用重启取保存数据恢复状态
+     */
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         bottomPos = savedInstanceState?.getInt("pos")!!

@@ -19,6 +19,7 @@ import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.db.bean.CourseCollectSectionDbBean
 import com.ponko.cn.db.bean.CourseCollectSpecialDbBean
 import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.study.StudyCacheActivity
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
@@ -32,7 +33,6 @@ import com.xm.lib.component.XmStateView
 import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
 import retrofit2.Response
-import kotlin.text.Typography.section
 
 /**
  * 课程学习详情页面契约类 - MVP模式
@@ -431,6 +431,8 @@ class StudyCourseDetailContract {
          */
         fun clickDown() {
             if (model.isPay) {
+                //标清播放 PS：下载就选择高清下载
+                MediaUitl.QUALITY = 3
                 BKLog.d("点击下载缓存页面")
                 val num = if (model.num == 0L) {
                     getNum()
@@ -495,6 +497,8 @@ class StudyCourseDetailContract {
         fun clickExpandListItem(parent: ExpandableListView, v: View, groupPosition: Int, childPosition: Int, id: Long): Boolean? {
             val isFree = model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].isFree
             if (model.isPay || isFree) {
+                //标清播放
+                MediaUitl.QUALITY = 1
 
                 //是否显示收藏
                 isDisplayCollect(groupPosition, childPosition)
@@ -532,6 +536,8 @@ class StudyCourseDetailContract {
          */
         fun clickPlayListItem(vid: String?, progress: Int?, view: View?, postion: Int) {
             BKLog.d("横屏状态点击了播放列表:$postion")
+            //标清播放 PS：下载就选择高清下载
+            MediaUitl.QUALITY = 1
             val (groupPosition, childPosition) = oneToTwo(postion)!!
             isDisplayCollect(groupPosition, childPosition)
         }
@@ -684,7 +690,7 @@ class StudyCourseDetailContract {
          * 上传播放进度
          */
         fun uploadVideoProgress(video: XmVideoView?) {
-            val period = 1000 * 10L
+            val period = 1000 * 60L * 5
             var watchDuration = period
             timerHelper.start(object : TimerHelper.OnPeriodListener {
                 override fun onPeriod() {

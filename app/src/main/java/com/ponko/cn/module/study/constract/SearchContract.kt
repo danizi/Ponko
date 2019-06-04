@@ -59,84 +59,6 @@ class SearchContract {
         fun displaySearchText(record: String?)
 
         /**
-         * 搜索结果课程
-         */
-        class CoursesViewHold(view: View) : BaseViewHolder(view) {
-
-            private class ViewHolder private constructor(val ivCover: ImageView, val tvCourseTitle: TextView, val tvTeacher: TextView, val courseNumber: TextView, val imageView2: ImageView) {
-                companion object {
-
-                    fun create(rootView: View): ViewHolder {
-                        val ivCover = rootView.findViewById<View>(R.id.iv_cover) as ImageView
-                        val tvCourseTitle = rootView.findViewById<View>(R.id.tv_course_title) as TextView
-                        val tvTeacher = rootView.findViewById<View>(R.id.tv_teacher) as TextView
-                        val courseNumber = rootView.findViewById<View>(R.id.course_number) as TextView
-                        val imageView2 = rootView.findViewById<View>(R.id.imageView2) as ImageView
-                        return ViewHolder(ivCover, tvCourseTitle, tvTeacher, courseNumber, imageView2)
-                    }
-                }
-            }
-
-            private var ui: ViewHolder? = null
-            @SuppressLint("SetTextI18n")
-            override fun bindData(d: Any, position: Int) {
-                if (ui == null) {
-                    ui = ViewHolder.create(itemView)
-                }
-                val coursesBean = d as SearchCBean.CoursesBean
-                val context = itemView.context
-
-                Glide.with(context, coursesBean.image, ui?.ivCover)
-                ui?.tvCourseTitle?.text = coursesBean.title.toString()
-
-                var teachers = ""
-                for (i in 0..(coursesBean.teachers.size - 1)) {
-                    teachers += if (i == 0) {
-                        coursesBean.teachers[i]
-                    } else {
-                        " | " + coursesBean.teachers[i]
-                    }
-                }
-                ui?.tvTeacher?.text = "${teachers}老师"
-                ui?.courseNumber?.text = "共${coursesBean.num}集 | ${NumUtil.getDecimalPoint(coursesBean.duration?.toFloat()!! / 60f / 60f)}小时"
-                itemView.setOnClickListener {
-                    StudyCourseDetailActivity.start(context, coursesBean.id, teachers, coursesBean.num.toLong(), coursesBean.duration.toLong())
-                }
-            }
-        }
-
-        /**
-         * 搜索结果章节
-         */
-        class SectionsViewHold(view: View) : BaseViewHolder(view) {
-
-            private class ViewHolder private constructor(val tv: TextView, val rlClear: RelativeLayout, val divider: View) {
-                companion object {
-
-                    fun create(rootView: View): ViewHolder {
-                        val tv = rootView.findViewById<View>(R.id.tv) as TextView
-                        val rlClear = rootView.findViewById<View>(R.id.rl_clear) as RelativeLayout
-                        val divider = rootView.findViewById(R.id.divider) as View
-                        return ViewHolder(tv, rlClear, divider)
-                    }
-                }
-            }
-
-            private var ui: ViewHolder? = null
-            override fun bindData(d: Any, position: Int) {
-                if (ui == null) {
-                    ui = ViewHolder.create(itemView)
-                }
-                val sectionsBean = d as SearchCBean.SectionsBean
-                val context = itemView.context
-                ui?.tv?.text = sectionsBean.sectionName
-                itemView.setOnClickListener {
-                    BKLog.d("点击章节：${sectionsBean.sectionName}")
-                }
-            }
-        }
-
-        /**
          * 最近学习记录
          */
         class StudyRecordViewHold(view: View) : BaseViewHolder(view) {
@@ -338,6 +260,86 @@ class SearchContract {
 
             override fun bindData(d: Any, position: Int) {
 
+            }
+        }
+
+
+        /**
+         * 搜索[结果]课程
+         */
+        class CoursesViewHold(view: View) : BaseViewHolder(view) {
+
+            private class ViewHolder private constructor(val ivCover: ImageView, val tvCourseTitle: TextView, val tvTeacher: TextView, val courseNumber: TextView, val imageView2: ImageView) {
+                companion object {
+
+                    fun create(rootView: View): ViewHolder {
+                        val ivCover = rootView.findViewById<View>(R.id.iv_cover) as ImageView
+                        val tvCourseTitle = rootView.findViewById<View>(R.id.tv_course_title) as TextView
+                        val tvTeacher = rootView.findViewById<View>(R.id.tv_teacher) as TextView
+                        val courseNumber = rootView.findViewById<View>(R.id.course_number) as TextView
+                        val imageView2 = rootView.findViewById<View>(R.id.imageView2) as ImageView
+                        return ViewHolder(ivCover, tvCourseTitle, tvTeacher, courseNumber, imageView2)
+                    }
+                }
+            }
+
+            private var ui: ViewHolder? = null
+            @SuppressLint("SetTextI18n")
+            override fun bindData(d: Any, position: Int) {
+                if (ui == null) {
+                    ui = ViewHolder.create(itemView)
+                }
+                val coursesBean = d as SearchCBean.CoursesBean
+                val context = itemView.context
+
+                Glide.with(context, coursesBean.image, ui?.ivCover)
+                ui?.tvCourseTitle?.text = coursesBean.title.toString()
+
+                var teachers = ""
+                for (i in 0..(coursesBean.teachers.size - 1)) {
+                    teachers += if (i == 0) {
+                        coursesBean.teachers[i]
+                    } else {
+                        " | " + coursesBean.teachers[i]
+                    }
+                }
+                ui?.tvTeacher?.text = "${teachers}老师"
+                ui?.courseNumber?.text = "共${coursesBean.num}集 | ${NumUtil.getDecimalPoint(coursesBean.duration?.toFloat()!! / 60f / 60f)}小时"
+                itemView.setOnClickListener {
+                    StudyCourseDetailActivity.start(context, coursesBean.id, teachers, coursesBean.num.toLong(), coursesBean.duration.toLong())
+                }
+            }
+        }
+
+        /**
+         * 搜索[结果]章节
+         */
+        class SectionsViewHold(view: View) : BaseViewHolder(view) {
+
+            private class ViewHolder private constructor(val tv: TextView, val rlClear: RelativeLayout, val divider: View) {
+                companion object {
+
+                    fun create(rootView: View): ViewHolder {
+                        val tv = rootView.findViewById<View>(R.id.tv) as TextView
+                        val rlClear = rootView.findViewById<View>(R.id.rl_clear) as RelativeLayout
+                        val divider = rootView.findViewById(R.id.divider) as View
+                        return ViewHolder(tv, rlClear, divider)
+                    }
+                }
+            }
+
+            private var ui: ViewHolder? = null
+            override fun bindData(d: Any, position: Int) {
+                if (ui == null) {
+                    ui = ViewHolder.create(itemView)
+                }
+                val sectionsBean = d as SearchCBean.SectionsBean
+                val context = itemView.context
+                ui?.tv?.text = sectionsBean.sectionName
+                itemView.setOnClickListener {
+                    BKLog.d("点击章节：${sectionsBean.sectionName}")
+                    StudyCourseDetailActivity.start(context, sectionsBean.courseId, "", 0L, 0L)
+                }
             }
         }
     }

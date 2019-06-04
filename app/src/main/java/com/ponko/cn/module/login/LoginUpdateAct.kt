@@ -85,9 +85,9 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         from = intent.getStringExtra(TYPE)
         code = intent.getStringExtra(CODE)
+        super.onCreate(savedInstanceState)
     }
 
     override fun getLayoutId(): Int {
