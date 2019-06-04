@@ -264,7 +264,7 @@ object MediaUitl {
      * 构建播放列表数据 - 学习免费页面
      */
     fun buildPlayListByFree(detailCBean: DetailCBean?): MediaBean {
-        val isPay = PonkoApp.mainCBean?.types!![0].isIs_vip || PonkoApp.mainCBean?.types!![1].isIs_vip
+        val isPay = (!PonkoApp.mainCBean?.types?.isEmpty()!!&&PonkoApp.mainCBean?.types!![0].isIs_vip) || (!PonkoApp.mainCBean?.types?.isEmpty()!!&&PonkoApp.mainCBean?.types!![1].isIs_vip)
         val mediaInfos = ArrayList<MediaBean.MediaInfo>()
         for (chapter in detailCBean?.chapters!!) {
             for (section in chapter.sections) {

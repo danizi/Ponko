@@ -4,8 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
-
+    android:background="?android:selectableItemBackground"
+    android:clickable="true"
+    tools:ignore="KeyboardInaccessibleWidget,HardcodedText">
+    <!--android:textColor="#646464"-->
     <TextView
         android:id="@+id/tv_content"
         android:layout_width="0dp"
@@ -16,7 +18,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="1.为什么要学习邮件模板及一封邮件是如何构..."
-        android:textColor="#646464"
+        android:textColor="@drawable/selector_detail_course_tv"
+        android:enabled="false"
         app:layout_constraintEnd_toStartOf="@+id/iv_lock"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,6 +31,8 @@
         android:layout_marginTop="15dp"
         android:layout_marginBottom="13dp"
         android:text="12:20"
+        android:textColor="@drawable/selector_detail_course_tv"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_content"
         app:layout_constraintTop_toBottomOf="@+id/tv_content" />

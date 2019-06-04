@@ -134,14 +134,14 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
         v?.tvB2b?.text = b2b?.icon_text
         v?.tvB2c?.text = b2c?.icon_text
         v?.llB2b?.setOnClickListener {
-            if (PonkoApp.mainCBean?.types!![0].isIs_vip) {
+            if ((!PonkoApp.mainCBean?.types?.isEmpty()!!&&PonkoApp.mainCBean?.types!![0].isIs_vip)) {
                 CourseTypeGridActivity.start(context, PonkoApp.mainCBean?.types!![0].title, PonkoApp.mainCBean?.types!![0].type_id)
             } else {
                 IntoTargetUtil.target(context, b2b?.link_type, b2b?.link_value)
             }
         }
         v?.llB2c?.setOnClickListener {
-            if (PonkoApp.mainCBean?.types!![1].isIs_vip) {
+            if ((!PonkoApp.mainCBean?.types?.isEmpty()!!&&PonkoApp.mainCBean?.types!![1].isIs_vip)) {
                 CourseTypeGridActivity.start(context, PonkoApp.mainCBean?.types!![1].title, PonkoApp.mainCBean?.types!![1].type_id)
             } else {
                 IntoTargetUtil.target(context, b2c?.link_type, b2c?.link_value)

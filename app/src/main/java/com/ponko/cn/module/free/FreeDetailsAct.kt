@@ -1,56 +1,35 @@
 package com.ponko.cn.module.free
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
-import android.webkit.WebView
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
-import com.ponko.cn.app.PonkoApp.Companion.APP_ID
-import com.ponko.cn.app.PonkoApp.Companion.freeApi
 import com.ponko.cn.bean.DetailCBean
-import com.ponko.cn.constant.Constants
-import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.bean.DetailTopBean
+import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.common.PonkoBaseAct
+import com.ponko.cn.module.free.adapter.FreeDetailFragmentPagerAdapter
 import com.ponko.cn.module.free.constract.FreeDetailsConstract
 import com.ponko.cn.module.media.AttachmentPre
 import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
-import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
-import com.ponko.cn.utils.IntoTargetUtil
-import com.ponko.cn.utils.ToastUtil
-import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
-import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
-import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.component.XmStateView
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
 import com.xm.lib.media.base.XmVideoView
-import com.xm.lib.media.broadcast.BroadcastManager
-import com.xm.lib.share.ShareConfig
-import com.xm.lib.share.wx.WxShare
-import retrofit2.Call
-import retrofit2.Response
 
 
 /**
@@ -59,7 +38,7 @@ import retrofit2.Response
 class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetailsConstract.V {
 
     companion object {
-        private const val TAG = "FreeDetailsAct"
+        const val TAG = "FreeDetailsAct"
         /**
          * 进入免费详情页面
          * @param context 上下文对象
@@ -76,58 +55,38 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
      * 窗口ui相关控件
      */
     private var ui: ViewHolder? = null
+
     /**
      * 附着播放器控制器
      */
     private var attachmentControl: AttachmentControl? = null
-    /**
-     * ViewPager适配器
-     */
-    //private var freeDetailFragmentPagerAdapter: FreeDetailFragmentPagerAdapter? = null
-    /**
-     * 详情顶部操作实体
-     */
-    private var detailTopBean: DetailTopBean? = null
-
-    private var broadcastManager: BroadcastManager? = null
-    private var clickFreeItemPlayReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == Constants.ACTION_CLICK_FREE_PLAY_ITEM) {
-                val vid = intent.getStringExtra("vid")
-                val sectionName = intent.getStringExtra("sectionName")
-                val free = intent.getBooleanExtra("free", false)
-                attachmentControl?.showLoading()
-                if (free || PonkoApp.mainCBean?.types!![0].isIs_vip || PonkoApp.mainCBean?.types!![1].isIs_vip) {
-                    attachmentControl?.start(vid, 0, 0)
-                    BKLog.d(TAG, "播放接受通知,播放$sectionName")
-                } else {
-                    ToastUtil.show("请先购买课程")
-                }
-            }
-        }
-    }
 
     override fun setContentViewBefore() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        p?.getIntentExtras(intent)
         super.onCreate(savedInstanceState)
-        if (broadcastManager == null) {
-            broadcastManager = BroadcastManager.create(this)
-        }
-        broadcastManager?.registerReceiver(Constants.ACTION_CLICK_FREE_PLAY_ITEM, clickFreeItemPlayReceiver)
+        //注册item点击广播
+        p?.registerClickFreeItemReceiver()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        broadcastManager?.unRegisterReceiver(clickFreeItemPlayReceiver)
+        //取消item点击广播
+        p?.unRegisterClickFreeItemReceiver()
         ui?.video?.onDestroy()
     }
 
     override fun onPause() {
         super.onPause()
+        //播放器暂停
         ui?.video?.onPause()
+    }
+
+    override fun presenter(): FreeDetailsConstract.Present {
+        return FreeDetailsConstract.Present(context = this, v = this)
     }
 
     override fun getLayoutId(): Int {
@@ -144,75 +103,54 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
         //系统栏颜色
         com.jaeger.library.StatusBarUtil.setColor(this, this.resources.getColor(R.color.black), 0)
 
+        //初始化播放器View附着页面
         MediaUitl.initXmVideoView(ui?.video!!, this)
         attachmentControl = ui?.video?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl
+
+        //动态设置播放器View的大小，适配
+        setVideoSize()
+    }
+
+    private fun setVideoSize() {
         //按比例设置播放器View
         val present = 1f / 1.8f
         val layoutParams = ui?.video?.layoutParams
         layoutParams?.height = ((ScreenUtil.getNormalWH(this)[0]) * present).toInt()
         ui?.video?.layoutParams = layoutParams
-        //initVideo(this, ui?.video!!)
     }
 
-    private var id = ""
     override fun iniData() {
-        id = intent.getStringExtra("id")
+        //获取intent携带信息
+        p?.getIntentExtras(intent)
+        //显示加载框
         DialogUtil.showProcess(this)
-        requestFreeDetailApi()
+        //请求免费页面详情接口
+        p?.reqeustFreeDetailApi()
     }
 
-    private fun requestFreeDetailApi() {
-        DialogUtil.showProcess(this)
-        freeApi?.freeDetail(id)?.enqueue(object : HttpCallBack<DetailCBean>() {
-            override fun onSuccess(call: Call<DetailCBean>?, response: Response<DetailCBean>?) {
-                //设置内容
-                val body = response?.body()
+    override fun requestFreeDetailApiSuccess(detailCBean: DetailCBean?) {
+        DialogUtil.hideProcess()
+        ui?.xmStateView?.hide()
+    }
 
-                //设置播放列表信息
-                attachmentControl?.setMediaInfo(MediaUitl.buildPlayListByFree(body))
-
-                //初始化播放器预览页面
-                displayVideo(body)
-
-                //设置内容顶部老师说明
-                displayTop(body)
-
-                //ViewPager设置 设置网页&课程
-                displayContent(body)
-                DialogUtil.hideProcess()
-                ui?.xmStateView?.hide()
-            }
-
-            override fun onFailure(call: Call<DetailCBean>?, msg: String?) {
-                super.onFailure(call, msg)
-                ui?.xmStateView?.showError("请求数据失败", View.OnClickListener {
-                    requestFreeDetailApi()
-                })
-                DialogUtil.hideProcess()
-            }
+    override fun requestFreeDetailApiFailure() {
+        ui?.xmStateView?.showError("请求数据失败", View.OnClickListener {
+            p?.reqeustFreeDetailApi()
         })
+        DialogUtil.hideProcess()
     }
 
-    override fun presenter(): FreeDetailsConstract.Present {
-        return FreeDetailsConstract.Present()
-    }
+    override fun iniEvent() {
+        ui?.llShareFriend?.setOnClickListener {
+            p?.clickShareFriend()
+        }
+        ui?.llShareWx?.setOnClickListener {
+            p?.clickShareWx()
+        }
+        ui?.btnPay?.setOnClickListener {
+            p?.clickPay()
 
-    fun displayVideo(body: DetailCBean?) {
-        val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
-        attachmentPre.load(vid = body?.chapters!![0].sections[0].vid, preUrl = body.chapters!![0].sections[0]?.avatar!!, isPay = body.chapters!![0].sections[0].isFree)
-    }
-
-    fun displayContent(body: DetailCBean?) {
-        val frgs = ArrayList<Fragment>()
-        WebFragment.detailContentBean = DetailContentBean(body?.summary_url, body?.chapters)
-        ChaptersFragment.detailContentBean = DetailContentBean(body?.summary_url, body?.chapters)
-        frgs.add(WebFragment())
-        frgs.add(ChaptersFragment())
-        val titles = ArrayList<String>()
-        titles.add("介绍")
-        titles.add("目录")
-        ui?.vp?.adapter = FreeDetailFragmentPagerAdapter(frgs, titles, supportFragmentManager)
-        ui?.tb?.setupWithViewPager(ui?.vp)
+        }
         ui?.vp?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
@@ -227,219 +165,61 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
 
             }
         })
+        attachmentControl?.setOnPlayListItemClickListener(object : OnPlayListItemClickListener {
+            override fun item(vid: String?, progress: Int?, view: View?, postion: Int) {
+                //更新下竖屏列表item
+                p?.clickPlayListItem(vid, progress, view, postion)
+
+                //暂停播放
+                attachmentControl?.pause()
+                attachmentControl?.showLoading()
+
+                //更新下横屏列表item
+                attachmentControl?.updateListItem(postion)
+
+                //设置标题
+                attachmentControl?.setTitle(detailCBean?.title!!)
+
+                //播放视频
+                attachmentControl?.start(vid!!, progress, postion)
+            }
+        })
+    }
+
+    override fun showPlayLoading() {
+        attachmentControl?.showLoading()
+    }
+
+    override fun play(vid: String?) {
+        attachmentControl?.start(vid!!, 0, 0)
+    }
+
+    override fun setMediaInfo(buildPlayListByFree: MediaBean) {
+        //设置播放列表信息
+        attachmentControl?.setMediaInfo(buildPlayListByFree)
     }
 
     @SuppressLint("SetTextI18n")
-    fun displayTop(body: DetailCBean?) {
-        detailTopBean = DetailTopBean(
-                body?.id,
-                body?.teacher,
-                body?.count,
-                body?.duration,
-                body?.course_id,
-                body?.share_title,
-                body?.share_description,
-                body?.share_url,
-                body?.pay_url,
-                body?.pay_btn,
-                body?.title
-        )
+    override fun displayTop(detailTopBean: DetailTopBean?) {
         ui?.tvTeacher?.text = "${detailTopBean?.teacher}老师"
         ui?.tvClass?.text = "${detailTopBean?.count}节课"
         ui?.tvTime?.text = "${detailTopBean?.duration!!}分钟"
     }
 
-    override fun iniEvent() {
-        ui?.llShareFriend?.setOnClickListener {
-            BKLog.d("点击微信朋友圈分享按钮")
-            val wxShare = WxShare(this)
-            wxShare.init(ShareConfig.Builder().appid(APP_ID).build())
-            wxShare.shareWebPage(R.mipmap.ic_launcher, detailTopBean?.share_url!!, detailTopBean?.share_title!!, detailTopBean?.share_description!!, SendMessageToWX.Req.WXSceneSession)
-        }
-        ui?.llShareWx?.setOnClickListener {
-            BKLog.d("点击微信分享按钮")
-            val wxShare = WxShare(this)
-            wxShare.init(ShareConfig.Builder().appid(APP_ID).build())
-            wxShare.shareWebPage(R.mipmap.ic_launcher, detailTopBean?.share_url!!, detailTopBean?.share_title!!, detailTopBean?.share_description!!, SendMessageToWX.Req.WXSceneSession)
-        }
-        ui?.btnPay?.setOnClickListener {
-            BKLog.d("点击支付按钮")
-            IntoTargetUtil.target(this, "pay", detailTopBean?.pay_url)
-        }
-        attachmentControl?.setOnPlayListItemClickListener(object : OnPlayListItemClickListener {
-            override fun item(vid: String?, progress: Int?, view: View?, postion: Int) {
-//                p?.clickPlayListItem(vid, progress, view, postion)
-//                //暂停播放
-//                attachmentControl?.pause()
-//                attachmentControl?.showLoading()
-//
-//                //更新下横屏列表item
-//                attachmentControl?.updateListItem(postion)
-//
-//                //更新下竖屏列表item
-//                val (groupPosition, childPosition) = p?.oneToTwo(postion)!!
-//                p?.updateExtendableListItem(groupPosition, childPosition)
-//                BKLog.d("选中groupPosition:$groupPosition childPosition:$childPosition")
-//
-//                //设置标题
-//                setTitle(coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name)
-//
-//                //播放视频
-//                attachmentControl?.start(vid!!, progress, postion)
-            }
-        })
+    private var detailCBean: DetailCBean? = null
+
+    override fun displayVideo(detailCBean: DetailCBean?) {
+        this.detailCBean = detailCBean
+        val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
+        attachmentPre.load(
+                vid = detailCBean?.chapters!![0].sections[0].vid,
+                preUrl = detailCBean.chapters!![0].sections[0]?.avatar!!,
+                isPay = detailCBean.chapters!![0].sections[0].isFree || (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip) || (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip))
     }
 
-    class DetailTopBean(var id: String?, var teacher: String?, var count: Int? = 0, var duration: Int? = 0, var course_id: String?, var share_title: String?, var share_description: String?, var share_url: String?, var pay_url: String?, var pay_btn: String?, var title: String?)
-
-    class DetailContentBean(var summary_url: String?, var chapters: List<DetailCBean.ChaptersBean>?)
-
-    /**
-     * 适配器
-     */
-    class FreeDetailFragmentPagerAdapter(private val frgs: List<Fragment>?, private val titles: List<String>?, private val fm: FragmentManager) : FragmentPagerAdapter(fm) {
-
-        override fun getItem(p0: Int): Fragment {
-            return frgs!![p0]
-        }
-
-        override fun getCount(): Int {
-            return frgs?.size!!
-        }
-
-        override fun getPageTitle(position: Int): CharSequence? {
-            return titles!![position]
-        }
-    }
-
-    /**
-     * 网页fragment
-     */
-    class WebFragment : Fragment() {
-        companion object {
-            var detailContentBean: DetailContentBean? = null
-        }
-
-        private var webView: WebView? = null
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            val v = inflater.inflate(R.layout.fragment_free_detail_web, container, false)
-            webView = v.findViewById(R.id.web)
-            webView?.loadUrl(detailContentBean?.summary_url, heads())
-            return v
-        }
-
-        private fun heads(): Map<String, String> {
-            val heads = HashMap<String, String>()
-            heads["x-tradestudy-client-version"] = "3.4.6"
-            heads["x-tradestudy-client-device"] = "android_phone"
-            heads["x-tradestudy-access-key-id"] = "c"
-            heads["x-tradestudy-access-token"] = CacheUtil.getToken()!!
-            return heads
-        }
-    }
-
-    /**
-     * 章节fragment
-     */
-    class ChaptersFragment : Fragment() {
-        companion object {
-            var detailContentBean: DetailContentBean? = null
-        }
-
-        private var rv: RecyclerView? = null
-
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            val v = inflater.inflate(R.layout.fragment_free_detail_chapters, container, false)
-            rv = v.findViewById(R.id.rv)
-            val adapter = object : BaseRvAdapter() {}
-            for (chapter in detailContentBean?.chapters!!) {
-                adapter.data?.add(chapter.chapterName!!)
-                adapter.data?.addAll(chapter.sections)
-            }
-            adapter.addItemViewDelegate(0, ChapterNameViewHolder::class.java, String::class.java, R.layout.item_free_catalogue_content)
-            adapter.addItemViewDelegate(1, SectionsBeanViewHolder::class.java, DetailCBean.ChaptersBean.SectionsBean::class.java, R.layout.item_free_catalogue_section)
-            val linearLayoutManager = LinearLayoutManager(context)
-            linearLayoutManager.isSmoothScrollbarEnabled = true
-            linearLayoutManager.isAutoMeasureEnabled = true
-            rv?.layoutManager = linearLayoutManager
-            rv?.adapter = adapter
-            rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
-            rv?.isFocusableInTouchMode = false
-            rv?.requestFocus()
-            rv?.setHasFixedSize(true)
-            rv?.isNestedScrollingEnabled = false
-
-            return v
-        }
-    }
-
-    /**
-     * 章节标题ViewHolder
-     */
-    class ChapterNameViewHolder(view: View) : BaseViewHolder(view) {
-
-        private var ui: ViewHolder? = null
-        override fun bindData(d: Any, position: Int) {
-            if (ui == null) {
-                ui = ViewHolder.create(itemView)
-            }
-            val context = itemView.context
-            val title = d as String
-            ui?.tv?.text = title
-        }
-
-        private class ViewHolder private constructor(val tv: TextView) {
-            companion object {
-
-                fun create(rootView: View): ViewHolder {
-                    val tv = rootView.findViewById<View>(R.id.tv) as TextView
-                    return ViewHolder(tv)
-                }
-            }
-        }
-
-    }
-
-    /**
-     * 课程内容ViewHolder
-     */
-    class SectionsBeanViewHolder(view: View) : BaseViewHolder(view) {
-        private var ui: ViewHolder? = null
-        override fun bindData(d: Any, position: Int) {
-            if (ui == null) {
-                ui = ViewHolder.create(itemView)
-            }
-            val context = itemView.context
-            val sectionsBean = d as DetailCBean.ChaptersBean.SectionsBean
-            ui?.tvContent?.text = sectionsBean.sectionName
-            if (sectionsBean.isFree || PonkoApp.mainCBean?.types!![0].isIs_vip || PonkoApp.mainCBean?.types!![1].isIs_vip) {
-                ui?.ivLock?.visibility = View.GONE
-            } else {
-                ui?.ivLock?.visibility = View.VISIBLE
-            }
-            ui?.tvTime?.text = TimeUtil.hhmmss(sectionsBean.duration.toLong() * 1000)
-            itemView.setOnClickListener {
-                BKLog.d("点击播放${sectionsBean.sectionName}")
-                val intent = Intent(Constants.ACTION_CLICK_FREE_PLAY_ITEM)
-                intent.putExtra("vid", sectionsBean.vid)
-                intent.putExtra("sectionName", sectionsBean.sectionName)
-                intent.putExtra("free", sectionsBean.isFree)
-                context.sendBroadcast(intent)
-            }
-        }
-
-
-        private class ViewHolder private constructor(val tvContent: TextView, val tvTime: TextView, val ivLock: ImageView) {
-            companion object {
-
-                fun create(rootView: View): ViewHolder {
-                    val tvContent = rootView.findViewById<View>(R.id.tv_content) as TextView
-                    val tvTime = rootView.findViewById<View>(R.id.tv_time) as TextView
-                    val ivLock = rootView.findViewById<View>(R.id.iv_lock) as ImageView
-                    return ViewHolder(tvContent, tvTime, ivLock)
-                }
-            }
-        }
+    override fun displayContent(frgs: ArrayList<Fragment>, titles: ArrayList<String>) {
+        ui?.vp?.adapter = FreeDetailFragmentPagerAdapter(frgs, titles, supportFragmentManager)
+        ui?.tb?.setupWithViewPager(ui?.vp)
     }
 
     /**

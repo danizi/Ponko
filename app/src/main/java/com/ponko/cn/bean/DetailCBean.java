@@ -256,6 +256,19 @@ public class DetailCBean {
             private int progressDuration;
             private boolean collection;
 
+            /**
+             * 是否選中臨時字段
+             */
+            private boolean isSelect=false;
+
+            public boolean isSelect() {
+                return isSelect;
+            }
+
+            public void setSelect(boolean select) {
+                isSelect = select;
+            }
+
             public String getId() {
                 return id;
             }
