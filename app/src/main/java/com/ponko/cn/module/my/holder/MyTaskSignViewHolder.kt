@@ -13,7 +13,7 @@ import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.MyTaskSignBean
 import com.ponko.cn.bean.StoreTaskBean
-import com.ponko.cn.constant.Constant
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.utils.DialogUtil
 import com.robinhood.ticker.TickerUtils
@@ -76,7 +76,7 @@ class MyTaskSignViewHolder(view: View) : BaseViewHolder(view) {
                     BKLog.d("签到成功")
                     showSignContent() //签到积分数显示
                     hideSignBtn()     //点击圆按钮隐藏
-                    context?.sendBroadcast(Intent(Constant.ACTION_SIGN_SUCCESS)) //签到成功发送广播，让我的页面和积分商城页面刷新
+                    context?.sendBroadcast(Intent(Constants.ACTION_SIGN_SUCCESS)) //签到成功发送广播，让我的页面和积分商城页面刷新
                 }
 
                 override fun onFailure(call: Call<NetBean>?, msg: String?) {

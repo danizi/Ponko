@@ -15,6 +15,7 @@ import retrofit2.Response
 class StudyContract {
     interface View {
         fun requestStudyApiSuccess(body: MainCBean?)
+        fun requestStudyApiFailure()
     }
 
     class Model {
@@ -34,6 +35,11 @@ class StudyContract {
                     PonkoApp.mainCBean = response?.body()
                     putPolyvConfig(Gson().toJson(PonkoApp.mainCBean?.polyv))
                     view?.requestStudyApiSuccess(response?.body())
+                }
+
+                override fun onFailure(call: Call<MainCBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    view?.requestStudyApiFailure()
                 }
             })
         }

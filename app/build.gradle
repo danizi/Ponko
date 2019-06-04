@@ -12,14 +12,21 @@ android {
         versionName rootProject.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+
+        //删除无用的语言资源
+        resConfigs "zh"
         ndk {
             abiFilters "armeabi-v7a"
         }
     }
     buildTypes {
         release {
+            //开启混淆
             minifyEnabled rootProject.minifyEnabled
+            //混淆文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //去除无用资源
+            //shrinkResources true
         }
     }
 }

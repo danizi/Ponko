@@ -38,7 +38,7 @@ object MediaUitl {
     /**
      * 三种选择 1 标准  2 高清 3超高清
      */
-    var QUALITY = 1
+    var QUALITY = 3
 
     /**
      * 视频地址选择 ps:调用接口有时候地址是空的
@@ -51,9 +51,9 @@ object MediaUitl {
             QUALITY = section[0].hls.size
         }
         when (QUALITY) {
-            1 -> BKLog.d("流畅")
-            2 -> BKLog.d("高清")
-            3 -> BKLog.d("超高清")
+            1 -> BKLog.d(TAG,"流畅")
+            2 -> BKLog.d(TAG,"高清")
+            3 -> BKLog.d(TAG,"超高清")
         }
         return when (QUALITY) {
             1 -> section[0].hls[0]
@@ -74,6 +74,11 @@ object MediaUitl {
         }
         if (section[0].filesize.size < QUALITY) {
             QUALITY = section[0].filesize.size
+        }
+        when (QUALITY) {
+            1 -> BKLog.d(TAG,"流畅 ${section[0].filesize[0]}")
+            2 -> BKLog.d(TAG,"高清 ${section[0].filesize[1]}")
+            3 -> BKLog.d(TAG,"超高清 ${section[0].filesize[2]}")
         }
         return when (QUALITY) {
             1 -> section[0].filesize[0]

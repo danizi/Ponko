@@ -161,6 +161,7 @@ class AccountAct : PonkoBaseAct<Any>() {
         secureAdapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my)
         secureAdapter.data?.add(ItemBean("修改手机"))
         secureAdapter.data?.add(ItemBean("修改密码"))
+        //secureAdapter.data?.add(ItemBean("设置"))
         viewHolder?.rvSecure?.adapter = secureAdapter
         viewHolder?.rvSecure?.layoutManager = LinearLayoutManager(this)
     }
@@ -251,6 +252,9 @@ class AccountAct : PonkoBaseAct<Any>() {
                         BKLog.d("点击修改密码")
                         LoginFindPwdAct.startUpdatePwd(context)
                         //ActivityUtil.startActivity(context, Intent(context, LoginFindPwdAct::class.java))
+                    }
+                    "设置" -> {
+
                     }
                 }
             }

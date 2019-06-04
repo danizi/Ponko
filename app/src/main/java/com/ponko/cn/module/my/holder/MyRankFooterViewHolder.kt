@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.IntegralRankFooterBean
-import com.ponko.cn.constant.Constant
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.utils.Glide
 import com.xm.lib.common.base.rv.BaseViewHolder
 import de.hdodenhof.circleimageview.CircleImageView
@@ -35,7 +35,7 @@ class MyRankFooterViewHolder(view: View) : BaseViewHolder(view) {
         }
         val context = itemView.context
         val integralRankFooterBean = d as IntegralRankFooterBean
-        Glide.with(context, integralRankFooterBean.mine?.head_picture, viewHolder?.ivHead,Constant.LOAD_IMAGE_DELAY)
+        Glide.with(context, integralRankFooterBean.mine?.head_picture, viewHolder?.ivHead,Constants.LOAD_IMAGE_DELAY)
         viewHolder?.tvIntegral?.text = integralRankFooterBean.mine?.scores.toString()
         viewHolder?.tvMe?.text = integralRankFooterBean.mine?.nickname
         viewHolder?.tvPayType?.text = integralRankFooterBean.mine?.productName

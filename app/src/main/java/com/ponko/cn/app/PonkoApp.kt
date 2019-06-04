@@ -6,7 +6,6 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Environment
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
 import com.ponko.cn.MainActivity
@@ -14,8 +13,8 @@ import com.ponko.cn.R
 import com.ponko.cn.api.*
 import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.bean.StoreTaskBean
-import com.ponko.cn.constant.Constant.BASE_API
-import com.ponko.cn.constant.Constant.BUG_APP_ID
+import com.ponko.cn.constant.Constants.BASE_API
+import com.ponko.cn.constant.Constants.BUG_APP_ID
 import com.ponko.cn.db.PonkoDBHelp
 import com.ponko.cn.db.dao.CourseCollectSectionDao
 import com.ponko.cn.db.dao.CourseCollectSpecialDao
@@ -23,8 +22,6 @@ import com.ponko.cn.db.dao.CourseDao
 import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
 import com.ponko.cn.utils.CacheUtil
-import com.tencent.bugly.beta.Beta
-import com.tencent.bugly.beta.Beta.largeIconId
 import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import com.xm.lib.common.log.BKLog

@@ -5,9 +5,8 @@ import android.content.Context
 import android.content.Intent
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.ProfileCBean
-import com.ponko.cn.constant.Constant
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
-import com.tencent.bugly.proguard.p
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.media.broadcast.BroadcastManager
 import retrofit2.Call
@@ -65,7 +64,7 @@ class MyConstract {
          */
         private var refreshBroadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == Constant.ACTION_SIGN_SUCCESS) {
+                if (intent?.action == Constants.ACTION_SIGN_SUCCESS) {
                     BKLog.d("用户签到成功，刷新我的页面")
                     requestMyInfoApi()
                 }
@@ -77,7 +76,7 @@ class MyConstract {
          */
         fun registerRefreshBroadcast() {
             broadcastManager = BroadcastManager.create(context)
-            broadcastManager?.registerReceiver(Constant.ACTION_SIGN_SUCCESS, refreshBroadcastReceiver)
+            broadcastManager?.registerReceiver(Constants.ACTION_SIGN_SUCCESS, refreshBroadcastReceiver)
         }
 
         /**

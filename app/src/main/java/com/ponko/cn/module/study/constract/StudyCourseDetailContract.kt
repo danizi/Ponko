@@ -497,8 +497,6 @@ class StudyCourseDetailContract {
         fun clickExpandListItem(parent: ExpandableListView, v: View, groupPosition: Int, childPosition: Int, id: Long): Boolean? {
             val isFree = model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].isFree
             if (model.isPay || isFree) {
-                //标清播放
-                MediaUitl.QUALITY = 1
 
                 //是否显示收藏
                 isDisplayCollect(groupPosition, childPosition)
@@ -536,8 +534,6 @@ class StudyCourseDetailContract {
          */
         fun clickPlayListItem(vid: String?, progress: Int?, view: View?, postion: Int) {
             BKLog.d("横屏状态点击了播放列表:$postion")
-            //标清播放 PS：下载就选择高清下载
-            MediaUitl.QUALITY = 1
             val (groupPosition, childPosition) = oneToTwo(postion)!!
             isDisplayCollect(groupPosition, childPosition)
         }

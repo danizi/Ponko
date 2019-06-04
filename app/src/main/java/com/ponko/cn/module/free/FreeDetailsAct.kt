@@ -25,12 +25,10 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
 import com.ponko.cn.app.PonkoApp.Companion.freeApi
 import com.ponko.cn.bean.DetailCBean
-import com.ponko.cn.constant.Constant
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.free.constract.FreeDetailsConstract
-import com.ponko.cn.module.media.AttachmentComplete
-import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.media.AttachmentPre
 import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
@@ -39,7 +37,6 @@ import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
-import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
@@ -49,7 +46,6 @@ import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.component.XmStateView
 import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.broadcast.BroadcastManager
-import com.xm.lib.pay.wx.uikit.Constants
 import com.xm.lib.share.ShareConfig
 import com.xm.lib.share.wx.WxShare
 import retrofit2.Call
@@ -95,7 +91,7 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
     private var broadcastManager: BroadcastManager? = null
     private var clickFreeItemPlayReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == Constant.ACTION_CLICK_FREE_PLAY_ITEM) {
+            if (intent?.action == Constants.ACTION_CLICK_FREE_PLAY_ITEM) {
                 val vid = intent.getStringExtra("vid")
                 val sectionName = intent.getStringExtra("sectionName")
                 val free = intent.getBooleanExtra("free", false)
@@ -119,7 +115,7 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
         if (broadcastManager == null) {
             broadcastManager = BroadcastManager.create(this)
         }
-        broadcastManager?.registerReceiver(Constant.ACTION_CLICK_FREE_PLAY_ITEM, clickFreeItemPlayReceiver)
+        broadcastManager?.registerReceiver(Constants.ACTION_CLICK_FREE_PLAY_ITEM, clickFreeItemPlayReceiver)
     }
 
     override fun onDestroy() {
@@ -402,7 +398,7 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
             ui?.tvTime?.text = TimeUtil.hhmmss(sectionsBean.duration.toLong() * 1000)
             itemView.setOnClickListener {
                 BKLog.d("点击播放${sectionsBean.sectionName}")
-                val intent = Intent(Constant.ACTION_CLICK_FREE_PLAY_ITEM)
+                val intent = Intent(Constants.ACTION_CLICK_FREE_PLAY_ITEM)
                 intent.putExtra("vid", sectionsBean.vid)
                 intent.putExtra("sectionName", sectionsBean.sectionName)
                 intent.putExtra("free", sectionsBean.isFree)

@@ -24,13 +24,13 @@ class StudyFrg : RefreshLoadFrg<StudyContract.Present, MainCBean>(), StudyContra
         disableLoad = true
         addSearchBar(View.OnClickListener {
             BKLog.d("点击搜索框")
-            ActivityUtil.startActivity(context, Intent(context,SearchActivity::class.java))
+            ActivityUtil.startActivity(context, Intent(context, SearchActivity::class.java))
         }, View.OnClickListener {
             BKLog.d("点击学习历史")
-            ActivityUtil.startActivity(context, Intent(context,HistoryActivity::class.java))
+            ActivityUtil.startActivity(context, Intent(context, HistoryActivity::class.java))
         }, View.OnClickListener {
             BKLog.d("点击帮助")
-            ActivityUtil.startActivity(context, Intent(context,ProblemAct::class.java))
+            ActivityUtil.startActivity(context, Intent(context, ProblemAct::class.java))
         })
     }
 
@@ -62,6 +62,10 @@ class StudyFrg : RefreshLoadFrg<StudyContract.Present, MainCBean>(), StudyContra
         requestRefreshSuccess(body)
     }
 
+    override fun requestStudyApiFailure() {
+        requestRefreshFailure()
+    }
+
     override fun multiTypeData(body: MainCBean?): List<Any> {
         val multiData = ArrayList<Any>()
         if (body?.tabbar != null) {
@@ -70,7 +74,7 @@ class StudyFrg : RefreshLoadFrg<StudyContract.Present, MainCBean>(), StudyContra
         }
         if (body?.ad != null && body.ad.isNotEmpty()) {
             //广告
-            for (ad in body.ad){
+            for (ad in body.ad) {
                 multiData.add(AdBean2(ad))
             }
         }

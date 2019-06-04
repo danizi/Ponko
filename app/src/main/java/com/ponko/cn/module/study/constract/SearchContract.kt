@@ -16,8 +16,8 @@ import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.SearchCBean
 import com.ponko.cn.bean.SearchRecordCBean
-import com.ponko.cn.constant.Constant
-import com.ponko.cn.constant.Constant.ACTION_CLICK_SEARCH_TEACHER_ITEM
+import com.ponko.cn.constant.Constants
+import com.ponko.cn.constant.Constants.ACTION_CLICK_SEARCH_TEACHER_ITEM
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.module.study.StudyCourseDetailActivity
@@ -234,7 +234,7 @@ class SearchContract {
                 ui?.clear?.visibility = View.VISIBLE
                 itemView.setOnClickListener {
                     BKLog.d("点击搜索记录条目")
-                    val intent = Intent(Constant.ACTION_CLICK_SEARCH_RECORD_ITEM)
+                    val intent = Intent(Constants.ACTION_CLICK_SEARCH_RECORD_ITEM)
                     intent.putExtra("search", record)
                     context.sendBroadcast(intent)
                 }
@@ -367,7 +367,7 @@ class SearchContract {
          */
         private var searchReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == Constant.ACTION_CLICK_SEARCH_RECORD_ITEM || intent?.action == ACTION_CLICK_SEARCH_TEACHER_ITEM) {
+                if (intent?.action == Constants.ACTION_CLICK_SEARCH_RECORD_ITEM || intent?.action == ACTION_CLICK_SEARCH_TEACHER_ITEM) {
                     val record = intent.getStringExtra("search")
                     search(record)
                     v.displaySearchText(record)
@@ -404,7 +404,7 @@ class SearchContract {
             if (broadcastManager == null) {
                 broadcastManager = BroadcastManager.create(context)
             }
-            broadcastManager?.registerReceiver(Constant.ACTION_CLICK_SEARCH_RECORD_ITEM, searchReceiver)
+            broadcastManager?.registerReceiver(Constants.ACTION_CLICK_SEARCH_RECORD_ITEM, searchReceiver)
             broadcastManager?.registerReceiver(ACTION_CLICK_SEARCH_TEACHER_ITEM, searchReceiver)
         }
 

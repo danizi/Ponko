@@ -1,45 +1,14 @@
 package com.ponko.cn.module.my.holder
 
 import android.view.View
-import com.ponko.cn.R.id.view
 import com.xm.lib.common.base.rv.BaseViewHolder
-import com.ponko.cn.R.id.tv_integral
 import android.widget.TextView
-import com.ponko.cn.R.id.tv_pay_type
-import com.ponko.cn.R.id.tv_me
-import com.ponko.cn.R.id.iv_head
 import de.hdodenhof.circleimageview.CircleImageView
-import com.ponko.cn.R.id.textView7
-import com.ponko.cn.R.id.line
-import com.ponko.cn.R.id.tv_3
-import com.ponko.cn.R.id.tv_2
-import com.ponko.cn.R.id.tv_1
-import com.ponko.cn.R.id.constraintLayout3
 import android.support.constraint.ConstraintLayout
-import com.ponko.cn.R.id.tv_3_num
-import com.ponko.cn.R.id.tv_3_type
-import com.ponko.cn.R.id.tv_3_name
-import com.ponko.cn.R.id.tv_2_num
-import com.ponko.cn.R.id.tv_2_type
-import com.ponko.cn.R.id.tv_2_name
-import com.ponko.cn.R.id.tv_1_num
-import com.ponko.cn.R.id.tv_1_type
-import com.ponko.cn.R.id.tv_1_name
-import com.ponko.cn.R.id.constraintLayout2
-import com.ponko.cn.R.id.iv_head_3
-import com.ponko.cn.R.id.iv_number_three
 import android.support.v7.widget.AppCompatImageView
 import com.ponko.cn.R
-import com.ponko.cn.R.id.cl_number_three
-import com.ponko.cn.R.id.iv_head_2
-import com.ponko.cn.R.id.iv_number_two
-import com.ponko.cn.R.id.cl_number_two
-import com.ponko.cn.R.id.iv_head_1
-import com.ponko.cn.R.id.iv_number_one
-import com.ponko.cn.R.id.cl_number_one
-import com.ponko.cn.R.id.guideline_center
 import com.ponko.cn.bean.IntegralRankHeadBean
-import com.ponko.cn.constant.Constant
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.utils.Glide
 
 
@@ -91,7 +60,7 @@ class MyRankHeadViewHolder(view: View) : BaseViewHolder(view) {
         }
         val context = itemView.context
         val integralRankHeadBean = d as IntegralRankHeadBean
-        Glide.with(context, integralRankHeadBean.ranking[0].headPicture, viewHolder?.ivHead1, Constant.LOAD_IMAGE_DELAY)
+        Glide.with(context, integralRankHeadBean.ranking[0].headPicture, viewHolder?.ivHead1, Constants.LOAD_IMAGE_DELAY)
         viewHolder?.tv1Name?.text = integralRankHeadBean.ranking[0].nickname
         viewHolder?.tv1Type?.text = integralRankHeadBean.ranking[0].productName
         viewHolder?.tv1Num?.text = integralRankHeadBean.ranking[0].scores.toString()

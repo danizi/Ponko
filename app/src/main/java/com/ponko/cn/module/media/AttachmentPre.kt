@@ -75,8 +75,6 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
             ui?.ivStart?.visibility = View.GONE
             ui?.pbLoading?.visibility = View.VISIBLE
             //获取播放地址
-            //标清播放 PS：下载就选择高清下载
-            MediaUitl.QUALITY = 1
             MediaUitl.getM3u8Url(url, object : MediaUitl.OnPlayUrlListener {
                 override fun onSuccess(url: String, size: Int?) {
                     xmVideoView?.start(url, true)

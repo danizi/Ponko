@@ -5,18 +5,16 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
 import android.widget.*
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
-import com.ponko.cn.constant.Constant
-import com.ponko.cn.constant.Constant.ACTION_DOWN_ALL
-import com.ponko.cn.constant.Constant.ACTION_DOWN_All_PAUSE
-import com.ponko.cn.constant.Constant.ACTION_DOWN_CLICK_PAUSE
-import com.ponko.cn.constant.Constant.ACTION_DOWN_CLICK_READY
+import com.ponko.cn.constant.Constants.ACTION_DOWN_ALL
+import com.ponko.cn.constant.Constants.ACTION_DOWN_All_PAUSE
+import com.ponko.cn.constant.Constants.ACTION_DOWN_CLICK_PAUSE
+import com.ponko.cn.constant.Constants.ACTION_DOWN_CLICK_READY
 import com.ponko.cn.db.bean.CourseDbBean
 import com.ponko.cn.module.m3u8downer.core.*
 import com.ponko.cn.module.my.option.CacheListAct
@@ -369,7 +367,7 @@ class CacheListContract {
                 when {
                     PonkoApp.m3u8DownManager?.isRun(courseDbBean.column_m3u8_url) == true -> {
                         // PS:如果使用广播就会出现 状态文字为空的现象
-//                        val intent = Intent(Constant.ACTION_DOWN_CLICK_PAUSE)
+//                        val intent = Intent(Constants.ACTION_DOWN_CLICK_PAUSE)
 //                        intent.putExtra("vid", courseDbBean.column_vid)
 //                        intent.putExtra("m3u8", courseDbBean.column_m3u8_url)
 //                        context?.sendBroadcast(intent)
@@ -380,7 +378,7 @@ class CacheListContract {
                     }
                     PonkoApp.m3u8DownManager?.isReady(courseDbBean.column_vid) == true -> {
                         //处于队列状态 点击item 提示处理  PS:如果使用广播就会出现 状态文字为空的现象
-//                        val intent = Intent(Constant.ACTION_DOWN_CLICK_READY)
+//                        val intent = Intent(Constants.ACTION_DOWN_CLICK_READY)
 //                        intent.putExtra("vid", courseDbBean.column_vid)
 //                        intent.putExtra("m3u8", courseDbBean.column_m3u8_url)
 //                        intent.putExtra("title", courseDbBean.column_title)

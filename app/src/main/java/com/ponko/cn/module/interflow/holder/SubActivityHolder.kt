@@ -4,7 +4,6 @@ import android.view.View
 import android.widget.ImageView
 import com.ponko.cn.R
 import com.ponko.cn.bean.ActivityCBean
-import com.ponko.cn.constant.Constant
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder

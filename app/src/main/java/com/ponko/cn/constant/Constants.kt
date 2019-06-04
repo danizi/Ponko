@@ -1,6 +1,6 @@
 package com.ponko.cn.constant
 
-object Constant {
+object Constants {
     /**
      * 接口BaseApi
      */
