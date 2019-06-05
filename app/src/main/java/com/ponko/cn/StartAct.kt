@@ -36,6 +36,7 @@ class StartAct : BaseActivity() {
     private var flAdOver: FrameLayout? = null
     private var tvAdOver: TextView? = null
     private var ivAd: ImageView? = null
+    private var tvVersion: TextView? = null
 
     override fun setContentViewBefore() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -50,13 +51,16 @@ class StartAct : BaseActivity() {
         flAdOver = findViewById(R.id.fl_ad_over)
         tvAdOver = findViewById(R.id.tv_ad_over)
         ivAd = findViewById(R.id.iv_ad)
+        tvVersion = findViewById(R.id.tv_version)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun initDisplay() {
         clAd?.visibility = View.GONE
         flAdOver?.isClickable = false
         ivAd?.isClickable = false
         clAd?.isClickable = false
+        tvVersion?.text = "版本号:${PonkoApp.getLocalVersion2(this)}"
     }
 
     override fun iniData() {

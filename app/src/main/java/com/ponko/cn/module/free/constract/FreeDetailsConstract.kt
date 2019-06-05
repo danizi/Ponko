@@ -184,34 +184,53 @@ class FreeDetailsConstract {
                 }
                 val context = itemView.context
                 val sectionsBean = d as DetailCBean.ChaptersBean.SectionsBean
+                //是否显示锁图标
+                isShowLock(sectionsBean)
+                //是否选中
+                isSelect(sectionsBean)
+                //item点击监听
+                initEvent(sectionsBean, position, context)
+            }
 
-                if (sectionsBean.isFree || (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip) || (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)) {
+            private fun initEvent(sectionsBean: DetailCBean.ChaptersBean.SectionsBean, position: Int, context: Context) {
+                itemView.setOnClickListener {
+                    val isB2BVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
+                    val isB2CVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+                    if (sectionsBean.isFree || isB2BVip || isB2CVip) {
+                        BKLog.d("点击播放${sectionsBean.sectionName}")
+                        val intent = Intent(Constants.ACTION_CLICK_FREE_PLAY_ITEM)
+                        intent.putExtra("vid", sectionsBean.vid)
+                        intent.putExtra("sectionName", sectionsBean.sectionName)
+                        intent.putExtra("free", sectionsBean.isFree)
+                        intent.putExtra("position", position)
+                        context.sendBroadcast(intent)
+                    } else {
+                        ToastUtil.show("请先购买课程")
+                    }
+                }
+            }
+
+            private fun isShowLock(sectionsBean: DetailCBean.ChaptersBean.SectionsBean) {
+                val isB2BVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
+                val isB2CVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+                if (sectionsBean.isFree || isB2BVip || isB2CVip) {
                     ui?.ivLock?.visibility = View.GONE
                 } else {
                     ui?.ivLock?.visibility = View.VISIBLE
                 }
+            }
 
-                if(sectionsBean.isSelect){
-                    ui?.tvContent?.isEnabled=true
-                    ui?.tvTime?.isEnabled=true
+            private fun isSelect(sectionsBean: DetailCBean.ChaptersBean.SectionsBean) {
+                if (sectionsBean.isSelect) {
+                    ui?.tvContent?.isEnabled = true
+                    ui?.tvTime?.isEnabled = true
                     ui?.tvContent?.text = sectionsBean.sectionName
                     ui?.tvTime?.text = TimeUtil.hhmmss(sectionsBean.duration.toLong() * 1000)
-                }else{
-                    ui?.tvContent?.isEnabled=false
-                    ui?.tvTime?.isEnabled=false
+                } else {
+                    ui?.tvContent?.isEnabled = false
+                    ui?.tvTime?.isEnabled = false
                     ui?.tvContent?.text = sectionsBean.sectionName
                     ui?.tvTime?.text = TimeUtil.hhmmss(sectionsBean.duration.toLong() * 1000)
-                }
-
-                itemView.setOnClickListener {
-                    BKLog.d("点击播放${sectionsBean.sectionName}")
-                    val intent = Intent(Constants.ACTION_CLICK_FREE_PLAY_ITEM)
-                    intent.putExtra("vid", sectionsBean.vid)
-                    intent.putExtra("sectionName", sectionsBean.sectionName)
-                    intent.putExtra("free", sectionsBean.isFree)
-                    intent.putExtra("postion", position)
-
-                    context.sendBroadcast(intent)
                 }
             }
 
@@ -260,26 +279,27 @@ class FreeDetailsConstract {
      */
     class Present(val context: Context, val v: V?) {
         private val m = M()
-
+        /**
+         * 广播管理
+         */
         private var broadcastManager: BroadcastManager? = null
+        /**
+         * 点击item广播接收器
+         */
         private var clickFreeItemPlayReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == Constants.ACTION_CLICK_FREE_PLAY_ITEM) {
                     val vid = intent.getStringExtra("vid")
                     val sectionName = intent.getStringExtra("sectionName")
                     val free = intent.getBooleanExtra("free", false)
-                    val position = intent.getIntExtra("postion", 0)
-
-                    //刷新
-                    clickPlayListItem(vid, 0, null, position)
-
+                    val position = intent.getIntExtra("position", 0)
+                    //显示播放加载
                     v?.showPlayLoading()
-                    if (free || (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip) || (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)) {
-                        v?.play(vid)
-                        BKLog.d(FreeDetailsAct.TAG, "播放接受通知,播放$sectionName")
-                    } else {
-                        ToastUtil.show("请先购买课程")
-                    }
+                    //点击刷新
+                    clickPlayListItem(vid, 0, null, position)
+                    //执行播放操作
+                    v?.play(vid)
+                    BKLog.d(FreeDetailsAct.TAG, "播放接受通知,播放$sectionName")
                 }
             }
         }
@@ -304,7 +324,7 @@ class FreeDetailsConstract {
         /**
          * 请求免费详情接口
          */
-        fun reqeustFreeDetailApi() {
+        fun requestFreeDetailApi() {
             m.requestFreeDetailApi(m.id, object : HttpCallBack<DetailCBean>() {
                 override fun onSuccess(call: Call<DetailCBean>?, response: Response<DetailCBean>?) {
                     //设置内容

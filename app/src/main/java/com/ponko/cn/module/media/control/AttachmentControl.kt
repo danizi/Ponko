@@ -10,6 +10,7 @@ import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.viewholder.PortraitViewHolder
 import com.ponko.cn.module.media.control.viewholder.landscape.LandscapeViewHolder
+import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.log.BKLog
@@ -390,7 +391,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
     }
 
     override fun ratio(ratioValue: Int) {
-        MediaUitl.QUALITY = ratioValue
+        CacheUtil.putMediaType(ratioValue.toString())
         val progress = xmVideoView?.mediaPlayer?.getCurrentPosition()?.toInt()
         stop()
         if (info?.mediaInfos?.size!! > index) {

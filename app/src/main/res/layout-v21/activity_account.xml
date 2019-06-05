@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     android:background="@color/divider"
     android:fitsSystemWindows="true"
-    tools:context="com.ponko.cn.module.my.option.acount.AccountAct"
-    tools:ignore="UnusedAttribute,HardcodedText">
+    tools:context="com.ponko.cn.module.my.option.acount.AccountAct">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="HardcodedText">
 
         <!--标题栏-->
         <android.support.v7.widget.Toolbar

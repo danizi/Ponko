@@ -31,8 +31,10 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.my.option.acount.AddressActivity
 import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.CacheUtil.getToken
 import com.ponko.cn.utils.DialogUtil
+import com.ponko.cn.utils.ToastUtil
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
@@ -600,69 +602,60 @@ class WebContract {
 
             private fun enterPay() {
                 BKLog.d("点击支付,弹出支付框选项")
-                AlertDialog.Builder(act!!).setItems(arrayOf("微信", "支付宝")) { dialog, which ->
+                if (CacheUtil.isUserTypeLogin()) {
+                    AlertDialog.Builder(act!!).setItems(arrayOf("微信", "支付宝")) { dialog, which ->
 
-                    var absPay: AbsPay? = null
-                    var payWay = ""
-                    when (which) {
-                        0 -> {
-                            payWay = "weiXin"
-                            absPay = WxPay(act!!)
-                            absPay.init(PayConfig.Builder().appid(APP_ID).build())
-                            BKLog.d("点击了微信支付")
-                        }
-                        1 -> {
-                            payWay = "alipay"
-                            absPay = AliPay(act!!)
-                            BKLog.d("点击了支付宝")
-                        }
-                    }
-                    PonkoApp.payApi?.createProductOrder(payWay, payProductId)?.enqueue(object : HttpCallBack<OrderCBean>() {
-                        override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
-                            val orderCBean = response?.body()
-                            orderCBean?.wechat
-
-                            var order = ""
-                            when (payWay) {
-                                "weiXin" -> {
-                                    order = Gson().toJson(orderCBean?.wechat)
-                                }
-                                "alipay" -> {
-                                    order = orderCBean?.alipay!!
-                                }
+                        var absPay: AbsPay? = null
+                        var payWay = ""
+                        when (which) {
+                            0 -> {
+                                payWay = "weiXin"
+                                absPay = WxPay(act!!)
+                                absPay.init(PayConfig.Builder().appid(APP_ID).build())
+                                BKLog.d("点击了微信支付")
                             }
-
-                            absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
-                                override fun onSuccess() {
-                                    BKLog.d("支付成功")
-                                }
-
-                                override fun onFailure() {
-                                    BKLog.d("支付失败")
-                                }
-
-                                override fun onCancel() {
-                                    BKLog.d("支付取消")
-                                }
-                            })
-                            dialog.dismiss()
+                            1 -> {
+                                payWay = "alipay"
+                                absPay = AliPay(act!!)
+                                BKLog.d("点击了支付宝")
+                            }
                         }
-                    })
-                }.show()
-            }
+                        PonkoApp.payApi?.createProductOrder(payWay, payProductId)?.enqueue(object : HttpCallBack<OrderCBean>() {
+                            override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
+                                val orderCBean = response?.body()
+                                orderCBean?.wechat
 
-//        fun iniData(act: Activity? = null) {
-//            if (act != null) {
-//                this.act = act
-//                if (TextUtils.isEmpty(payProductId)) {
-//                    try {
-//                        payProductId = act.intent.getStringExtra("pay_product_id")
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-//                }
-//            }
-//        }
+                                var order = ""
+                                when (payWay) {
+                                    "weiXin" -> {
+                                        order = Gson().toJson(orderCBean?.wechat)
+                                    }
+                                    "alipay" -> {
+                                        order = orderCBean?.alipay!!
+                                    }
+                                }
+
+                                absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
+                                    override fun onSuccess() {
+                                        BKLog.d("支付成功")
+                                    }
+
+                                    override fun onFailure() {
+                                        BKLog.d("支付失败")
+                                    }
+
+                                    override fun onCancel() {
+                                        BKLog.d("支付取消")
+                                    }
+                                })
+                                dialog.dismiss()
+                            }
+                        })
+                    }.show()
+                } else {
+                    ToastUtil.show("亲，请先登录账号....")
+                }
+            }
         }
 
         /**

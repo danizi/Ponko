@@ -42,7 +42,7 @@ class WechatViewHolder(view: View?) : BaseViewHolder(view!!) {
     /**
      * 兑换列表Item ViewHolder
      */
-     class CourseViewHolder(view: View) : BaseViewHolder(view) {
+    class CourseViewHolder(view: View) : BaseViewHolder(view) {
         private var ui: UI? = null
         @SuppressLint("SetTextI18n")
         override fun bindData(d: Any, position: Int) {
@@ -55,7 +55,7 @@ class WechatViewHolder(view: View?) : BaseViewHolder(view!!) {
             ui?.tvCourseTitle?.text = exchanged.title.toString()
 
             var teachers = "帮课"
-            if(exchanged.teachers!=null){
+            if (exchanged.teachers != null) {
                 for (i in 0..(exchanged.teachers.size - 1)) {
                     teachers += if (i == 0) {
                         exchanged.teachers[i]
@@ -68,6 +68,7 @@ class WechatViewHolder(view: View?) : BaseViewHolder(view!!) {
             ui?.tvTeacher?.text = "${teachers}老师"
             ui?.courseNumber?.text = "共${exchanged.num}集 | ${NumUtil.getDecimalPoint(exchanged.duration?.toFloat()!! / 60f / 60f)}小时"
             itemView.setOnClickListener {
+                exchanged.id = "e90b1cbc845411e5a95900163e000c35"
                 StudyCourseDetailActivity.start(context, exchanged.id, teachers, exchanged.num.toLong(), exchanged.duration.toLong())
             }
         }

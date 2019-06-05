@@ -15,6 +15,7 @@ import com.ponko.cn.utils.ToastUtil
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.XmStateView
@@ -46,7 +47,7 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
         viewHolder?.srl?.isEnableLoadMore = false
         viewHolder?.rv?.layoutManager = LinearLayoutManager(context)
         if (addItemDecoration) {
-            viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
+            viewHolder?.rv?.addItemDecoration(MyDividerItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
         }
         viewHolder?.viewState?.showLoading("正在加载中...")
     }

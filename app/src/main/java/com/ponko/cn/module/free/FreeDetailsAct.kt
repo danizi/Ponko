@@ -25,7 +25,6 @@ import com.ponko.cn.module.media.AttachmentPre
 import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.DialogUtil
-import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.component.XmStateView
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
@@ -60,6 +59,11 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
      * 附着播放器控制器
      */
     private var attachmentControl: AttachmentControl? = null
+
+    /**
+     * 免费详情反馈实体
+     */
+    private var detailCBean: DetailCBean? = null
 
     override fun setContentViewBefore() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -125,7 +129,7 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
         //显示加载框
         DialogUtil.showProcess(this)
         //请求免费页面详情接口
-        p?.reqeustFreeDetailApi()
+        p?.requestFreeDetailApi()
     }
 
     override fun requestFreeDetailApiSuccess(detailCBean: DetailCBean?) {
@@ -135,7 +139,7 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
 
     override fun requestFreeDetailApiFailure() {
         ui?.xmStateView?.showError("请求数据失败", View.OnClickListener {
-            p?.reqeustFreeDetailApi()
+            p?.requestFreeDetailApi()
         })
         DialogUtil.hideProcess()
     }
@@ -206,15 +210,18 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
         ui?.tvTime?.text = "${detailTopBean?.duration!!}分钟"
     }
 
-    private var detailCBean: DetailCBean? = null
-
     override fun displayVideo(detailCBean: DetailCBean?) {
         this.detailCBean = detailCBean
         val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
+        val vid = detailCBean?.chapters!![0].sections[0].vid
+        val preUrl = detailCBean.chapters!![0].sections[0]?.avatar
+        val isB2BVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
+        val isB2CVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+        val isPay = detailCBean.chapters!![0].sections[0].isFree || isB2BVip || isB2CVip
         attachmentPre.load(
-                vid = detailCBean?.chapters!![0].sections[0].vid,
-                preUrl = detailCBean.chapters!![0].sections[0]?.avatar!!,
-                isPay = detailCBean.chapters!![0].sections[0].isFree || (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip) || (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip))
+                vid = vid,
+                preUrl = preUrl,
+                isPay = isPay)
     }
 
     override fun displayContent(frgs: ArrayList<Fragment>, titles: ArrayList<String>) {

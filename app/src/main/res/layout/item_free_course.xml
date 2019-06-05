@@ -46,6 +46,7 @@
             android:id="@+id/iv_play_pause"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:layout_marginTop="25dp"
             android:src="@mipmap/media_play"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

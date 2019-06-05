@@ -25,6 +25,7 @@ import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.login.LoginFindPwdAct
 import com.ponko.cn.module.login.LoginResetPhoneAct
 import com.ponko.cn.module.login.LoginStartAct
+import com.ponko.cn.module.my.option.SettingActivity
 import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.utils.*
 import com.xm.lib.common.base.rv.BaseRvAdapter
@@ -130,7 +131,7 @@ class AccountAct : PonkoBaseAct<Any>() {
         super.initDisplay()
         //设置顶部栏
         BarUtil.addBar1(this, viewHolder?.toolbar, "账号安全")
-        viewHolder?.tvVersion?.text = "版本号:${PonkoApp.getLocalVersion(this)}"
+//        viewHolder?.tvVersion?.text = "版本号:${PonkoApp.getLocalVersion(this)}"
     }
 
     override fun iniEvent() {
@@ -161,7 +162,7 @@ class AccountAct : PonkoBaseAct<Any>() {
         secureAdapter.addItemViewDelegate(0, ItemViewHolder::class.java, ItemBean::class.java, R.layout.item_account_my)
         secureAdapter.data?.add(ItemBean("修改手机"))
         secureAdapter.data?.add(ItemBean("修改密码"))
-        //secureAdapter.data?.add(ItemBean("设置"))
+        secureAdapter.data?.add(ItemBean("设置"))
         viewHolder?.rvSecure?.adapter = secureAdapter
         viewHolder?.rvSecure?.layoutManager = LinearLayoutManager(this)
     }
@@ -254,7 +255,8 @@ class AccountAct : PonkoBaseAct<Any>() {
                         //ActivityUtil.startActivity(context, Intent(context, LoginFindPwdAct::class.java))
                     }
                     "设置" -> {
-
+                        ActivityUtil.startActivity(context, Intent(context, SettingActivity::class.java))
+                        BKLog.d("点击设置")
                     }
                 }
             }

@@ -432,7 +432,6 @@ class StudyCourseDetailContract {
         fun clickDown() {
             if (model.isPay) {
                 //标清播放 PS：下载就选择高清下载
-                MediaUitl.QUALITY = 3
                 BKLog.d("点击下载缓存页面")
                 val num = if (model.num == 0L) {
                     getNum()

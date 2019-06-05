@@ -68,15 +68,32 @@ class PonkoApp : MultiDexApplication() {
 
         fun getLocalVersion(ctx: Context): Int {
             var localVersion = 0
+            var localVersionName=""
             try {
                 val packageInfo = ctx.applicationContext
                         .packageManager
                         .getPackageInfo(ctx.packageName, 0)
                 localVersion = packageInfo.versionCode
+                localVersionName = packageInfo.versionName
             } catch (e: PackageManager.NameNotFoundException) {
                 e.printStackTrace()
             }
             return localVersion
+        }
+
+        fun getLocalVersion2(ctx: Context): String {
+            var localVersion = 0
+            var localVersionName=""
+            try {
+                val packageInfo = ctx.applicationContext
+                        .packageManager
+                        .getPackageInfo(ctx.packageName, 0)
+                localVersion = packageInfo.versionCode
+                localVersionName = packageInfo.versionName
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+            }
+            return localVersionName
         }
     }
 

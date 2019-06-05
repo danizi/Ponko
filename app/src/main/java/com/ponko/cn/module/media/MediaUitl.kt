@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.*
 import com.ponko.cn.module.media.control.AttachmentControl
+import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.CacheUtil.getPolycConfig
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.media.base.XmVideoView
@@ -38,7 +39,7 @@ object MediaUitl {
     /**
      * 三种选择 1 标准  2 高清 3超高清
      */
-    var QUALITY = 3
+    private var QUALITY = 3
 
     /**
      * 视频地址选择 ps:调用接口有时候地址是空的
@@ -47,13 +48,14 @@ object MediaUitl {
         if (section?.isEmpty()!!) {
             throw NullPointerException("请检查保利威视接口返回的视频播放地址信息")
         }
+        QUALITY = CacheUtil.getMediaType().toInt()
         if (section[0].hls.size < QUALITY) {
             QUALITY = section[0].hls.size
         }
         when (QUALITY) {
-            1 -> BKLog.d(TAG,"流畅")
-            2 -> BKLog.d(TAG,"高清")
-            3 -> BKLog.d(TAG,"超高清")
+            1 -> BKLog.d(TAG, "流畅")
+            2 -> BKLog.d(TAG, "高清")
+            3 -> BKLog.d(TAG, "超高清")
         }
         return when (QUALITY) {
             1 -> section[0].hls[0]
@@ -72,13 +74,14 @@ object MediaUitl {
         if (section?.isEmpty()!!) {
             throw NullPointerException("请检查保利威视接口返回的视频大小信息")
         }
+        QUALITY = CacheUtil.getMediaType().toInt()
         if (section[0].filesize.size < QUALITY) {
             QUALITY = section[0].filesize.size
         }
         when (QUALITY) {
-            1 -> BKLog.d(TAG,"流畅 ${section[0].filesize[0]}")
-            2 -> BKLog.d(TAG,"高清 ${section[0].filesize[1]}")
-            3 -> BKLog.d(TAG,"超高清 ${section[0].filesize[2]}")
+            1 -> BKLog.d(TAG, "流畅 ${section[0].filesize[0]}")
+            2 -> BKLog.d(TAG, "高清 ${section[0].filesize[1]}")
+            3 -> BKLog.d(TAG, "超高清 ${section[0].filesize[2]}")
         }
         return when (QUALITY) {
             1 -> section[0].filesize[0]
@@ -97,6 +100,7 @@ object MediaUitl {
         if (section == null) {
             throw NullPointerException("请检查保利威视接口返回的视频大小信息")
         }
+        QUALITY = CacheUtil.getMediaType().toInt()
         return when (QUALITY) {
             1 -> section.filesize1
             2 -> section.filesize2
@@ -264,7 +268,7 @@ object MediaUitl {
      * 构建播放列表数据 - 学习免费页面
      */
     fun buildPlayListByFree(detailCBean: DetailCBean?): MediaBean {
-        val isPay = (!PonkoApp.mainCBean?.types?.isEmpty()!!&&PonkoApp.mainCBean?.types!![0].isIs_vip) || (!PonkoApp.mainCBean?.types?.isEmpty()!!&&PonkoApp.mainCBean?.types!![1].isIs_vip)
+        val isPay = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip) || (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
         val mediaInfos = ArrayList<MediaBean.MediaInfo>()
         for (chapter in detailCBean?.chapters!!) {
             for (section in chapter.sections) {

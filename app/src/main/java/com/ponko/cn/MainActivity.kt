@@ -18,6 +18,7 @@ import com.ponko.cn.module.my.MyFrg
 import com.ponko.cn.module.study.StudyFrg
 import com.ponko.cn.module.study2.StudyFrg2
 import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.CacheUtil.getStudyUI
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
@@ -62,11 +63,23 @@ class MainActivity : BaseActivity() {
 
     override fun initDisplay() {
         BKLog.d("应用销毁保存数据接受的数据：")
+        //根据标志位选择使用哪个学习页面Fragment
+        val studyFragment = when (getStudyUI()) {
+            "1" -> {
+                StudyFrg()
+            }
+            "2" -> {
+                StudyFrg2()
+            }
+            else -> {
+                StudyFrg2()
+            }
+        }
         bottomMenu.select(bottomPos)
                 .setContainer(R.id.container)
                 .setTitleColor(R.color.grey, R.color.red)
                 .setItemLayoutId(R.layout.item_bottom_menu)
-                .addItem(StudyFrg2(), "学习", R.mipmap.bottom_icon_study_n, R.mipmap.bottom_icon_study_h)
+                .addItem(studyFragment, "学习", R.mipmap.bottom_icon_study_n, R.mipmap.bottom_icon_study_h)
                 .addItem(FreeFrg(), "免费", R.mipmap.bottom_tab_icon_free_n, R.mipmap.bottom_tab_icon_free_h)
                 .addItem(InterflowFrg(), "交流", R.mipmap.bottom_tab_icon_exchange_n, R.mipmap.bottom_tab_icon_exchange_h)
                 .addItem(MyFrg(), "我的", R.mipmap.bottom_tab_icon_my_n, R.mipmap.bottom_tab_icon_my_h)

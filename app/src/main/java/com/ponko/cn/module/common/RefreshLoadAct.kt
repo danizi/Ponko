@@ -18,6 +18,7 @@ import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
 
@@ -53,7 +54,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
         viewHolder?.srl?.isEnableLoadMore = false
         viewHolder?.rv?.layoutManager = LinearLayoutManager(this)
         if (addItemDecoration) {
-            viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(this, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
+            viewHolder?.rv?.addItemDecoration(MyDividerItemDecoration.divider(this, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
         }
         viewHolder?.viewState?.showLoading("正在加载中...")
     }
