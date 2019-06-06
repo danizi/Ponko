@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -54,7 +55,7 @@ class WechatViewHolder(view: View?) : BaseViewHolder(view!!) {
             Glide.with(context, exchanged.image, ui?.ivCover)
             ui?.tvCourseTitle?.text = exchanged.title.toString()
 
-            var teachers = "帮课"
+            var teachers = ""
             if (exchanged.teachers != null) {
                 for (i in 0..(exchanged.teachers.size - 1)) {
                     teachers += if (i == 0) {
@@ -64,11 +65,15 @@ class WechatViewHolder(view: View?) : BaseViewHolder(view!!) {
                     }
                 }
             }
-
-            ui?.tvTeacher?.text = "${teachers}老师"
+            if (TextUtils.isEmpty(teachers)) {
+                ui?.tvTeacher?.visibility = View.GONE
+            } else {
+                ui?.tvTeacher?.text = "${teachers}老师"
+            }
             ui?.courseNumber?.text = "共${exchanged.num}集 | ${NumUtil.getDecimalPoint(exchanged.duration?.toFloat()!! / 60f / 60f)}小时"
             itemView.setOnClickListener {
-                exchanged.id = "e90b1cbc845411e5a95900163e000c35"
+                //测试使用
+                //exchanged.id = "e90b1cbc845411e5a95900163e000c35"
                 StudyCourseDetailActivity.start(context, exchanged.id, teachers, exchanged.num.toLong(), exchanged.duration.toLong())
             }
         }

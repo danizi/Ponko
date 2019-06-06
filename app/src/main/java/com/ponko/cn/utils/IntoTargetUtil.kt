@@ -75,6 +75,9 @@ object IntoTargetUtil {
             linkType.equals("case", true) -> {
                 case(linkValue)
             }
+            linkType.equals("free", true) -> {
+                free(linkValue)
+            }
             linkType.equals("wechat_bind", true) -> {
                 wechatBind(linkValue)
             }
@@ -115,6 +118,11 @@ object IntoTargetUtil {
     private fun case(linkValue: String?) {
         BKLog.d(TAG, "交流页面 linkValue:$linkValue")
         MainActivity.bottomMenu.select(2)
+    }
+
+    private fun free(linkValue: String?){
+        BKLog.d(TAG, "免费页面 linkValue:$linkValue")
+        MainActivity.bottomMenu.select(1)
     }
 
     private fun trial(linkValue: String?) {

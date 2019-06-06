@@ -1,9 +1,13 @@
 package com.ponko.cn.module.free.constract
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesCBean
+import com.ponko.cn.constant.Constants.ACTION_FREE_REFRESH
 import com.ponko.cn.http.HttpCallBack
+import com.xm.lib.media.broadcast.BroadcastManager
 import retrofit2.Call
 import retrofit2.Response
 
@@ -22,6 +26,25 @@ class FreeConstract {
     class Present(private val context: Context?, private val view: View?) {
         private val model = Model()
         private val isDebug = PonkoApp.UI_DEBUG
+        private var broadcastManager: BroadcastManager? = null
+        private val refreshBroadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == ACTION_FREE_REFRESH) {
+                    requestFreeApi()
+                }
+            }
+        }
+
+        fun registerRefreshBroadcast() {
+            if (broadcastManager == null) {
+                broadcastManager = BroadcastManager.create(context)
+            }
+            broadcastManager?.registerReceiver(ACTION_FREE_REFRESH, refreshBroadcastReceiver)
+        }
+
+        fun unRegisterRefreshBroadcast() {
+            broadcastManager?.unRegisterReceiver(refreshBroadcastReceiver)
+        }
 
         fun requestFreeApi() {
             model.requestFreeApi(object : HttpCallBack<CoursesCBean>() {
@@ -35,7 +58,6 @@ class FreeConstract {
                 }
             })
         }
-
 
         fun testWechat(body: CoursesCBean?) {
             if (isDebug) {

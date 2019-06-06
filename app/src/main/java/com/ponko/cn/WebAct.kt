@@ -30,11 +30,8 @@ import com.ponko.cn.bean.OrderCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.my.option.acount.AddressActivity
-import com.ponko.cn.utils.ActivityUtil
-import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.*
 import com.ponko.cn.utils.CacheUtil.getToken
-import com.ponko.cn.utils.DialogUtil
-import com.ponko.cn.utils.ToastUtil
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
@@ -46,6 +43,7 @@ import com.xm.lib.pay.OnPayListener
 import com.xm.lib.pay.PayConfig
 import com.xm.lib.pay.ali.AliPay
 import com.xm.lib.pay.wx.WxPay
+import com.xm.lib.share.AbsShare
 import com.xm.lib.share.ShareConfig
 import com.xm.lib.share.wx.WxShare
 import retrofit2.Call
@@ -278,7 +276,7 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
 
                 override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
                     BKLog.e(TAG, "onReceivedError error  $error")
-                    viewState?.showError("加载失败", View.OnClickListener { })
+                    viewState.showError("加载失败", View.OnClickListener { })
                     super.onReceivedError(view, request, error)
                 }
 
@@ -638,6 +636,9 @@ class WebContract {
                                 absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
                                     override fun onSuccess() {
                                         BKLog.d("支付成功")
+                                        if (CacheUtil.getStudyUI() == "2"/*1 旧版 2 新版学习Fragment*/) {
+                                            DialogUtil.show(act!!, "提示", PonkoApp.main2CBean?.tips?.pay_success!!, true, null, null)
+                                        }
                                     }
 
                                     override fun onFailure() {
@@ -747,6 +748,54 @@ class WebContract {
             @JavascriptInterface
             fun getProductGuide(have: String?, guideATitle: String?, guideAUrl: String, guideBTitle: String, guideBUrl: String, guideCTitle: String) {
                 listener?.onPayGuide(have, guideATitle, guideAUrl, guideBTitle, guideBUrl, guideCTitle)
+            }
+        }
+
+        /**
+         * 支付
+         */
+        class AndroidPayObj(private val act: Activity?) {
+            private var aliPay: AbsPay? = null
+            private var wxPay: AbsPay? = null
+
+            init {
+                if (act != null) {
+                    aliPay = AliPay(act)
+                    wxPay = WxPay(act)
+                    wxPay?.init(PayConfig.Builder().build())
+                }
+            }
+
+            @JavascriptInterface
+            fun pay(type: String) {
+            }
+        }
+
+        /**
+         * 分享
+         */
+        class AndroidShareObj(private val act: Activity?) {
+
+            private var share: AbsShare? = null
+
+            init {
+                share = WxShare(act!!)
+                share?.init(ShareConfig.Builder().build())
+            }
+
+            @JavascriptInterface
+            fun share() {
+
+            }
+        }
+
+        /**
+         * 跳转
+         */
+        class AndroidGotoObj(val context: Context?) {
+            @JavascriptInterface
+            fun goto(link_type: String?, link_value: String?) {
+                IntoTargetUtil.target(context, link_type, link_value)
             }
         }
     }

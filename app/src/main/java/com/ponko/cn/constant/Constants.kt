@@ -4,11 +4,11 @@ object Constants {
     /**
      * 接口BaseApi
      */
-    //const val BASE_API = "https://api.tradestudy.cn/v3/"
+    const val BASE_API = "https://api.tradestudy.cn/v3/"
     /**
      * 测试服务器
      */
-    const val BASE_API = "http://192.168.253.160:8092/v3/"
+//    const val BASE_API = "http://192.168.253.160:8092/v3/"
     /**
      * 微信id
      */
@@ -21,6 +21,10 @@ object Constants {
      * 签到成功广播
      */
     const val ACTION_SIGN_SUCCESS = "action_sign_success"
+    /**
+     * 码兑换成功免费页面刷新广播
+     */
+    const val ACTION_FREE_REFRESH= "action_free_refresh"
     /**
      * 点击免费视频详情页面Item广播
      */

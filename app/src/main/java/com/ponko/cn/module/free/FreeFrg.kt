@@ -1,5 +1,6 @@
 package com.ponko.cn.module.free
 
+import android.os.Bundle
 import android.view.View
 import com.ponko.cn.R
 import com.ponko.cn.bean.*
@@ -17,6 +18,16 @@ import com.xm.lib.common.log.BKLog
  * 我的页面
  */
 class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConstract.View {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        p?.registerRefreshBroadcast()
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        p?.unRegisterRefreshBroadcast()
+    }
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
         return BindItemViewHolderBean.create(
@@ -54,7 +65,6 @@ class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConst
 
     override fun multiTypeData(body: CoursesCBean?): List<Any> {
         val multiData = ArrayList<Any>()
-
         p?.testWechat(body)
         if (body?.wechat?.isNotEmpty()!!) {
             multiData.add(WechatBean(body.wechat))

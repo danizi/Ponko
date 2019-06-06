@@ -12,6 +12,7 @@ import android.widget.EditText
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.GeneralBean
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.xm.lib.common.log.BKLog
@@ -47,13 +48,13 @@ object DialogUtil {
             if (dlg != null && dlg?.isShowing!!) {
                 dlg?.dismiss()
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
     private fun newXmIOSDialog(context: Context, title: String, msg: String, isCancelable: Boolean, enterListener: OnEnterListener?, cancelListener: OnCancelListener?): AlertDialog {
-        val w = ScreenUtil.getNormalWH(context as Activity)[0] - ScreenUtil.dip2px(context,100)
+        val w = ScreenUtil.getNormalWH(context as Activity)[0] - ScreenUtil.dip2px(context, 100)
         return XmIOSDialog(context)
                 .setType(Type.GENERAL)
                 .setMsg(msg)
@@ -85,12 +86,14 @@ object DialogUtil {
                             alertDialog.setNegativeButton("开始学习") { dialog, _ ->
                                 dialog.dismiss()
                                 BKLog.d("兑换成功，跳转到已兑课程") //PS:跳转到免费页面还是已兑课程
-                                ActivityUtil.startActivity(context, Intent(context, IntegralExchangedAct::class.java))
+                                //跳转到免费页面
+                                context.sendBroadcast(Intent(Constants.ACTION_FREE_REFRESH))
+                                //IntoTargetUtil.target(context, "free", 1.toString())
+//                                ActivityUtil.startActivity(context, Intent(context, IntegralExchangedAct::class.java))
                                 //sendBroadcast(Intent("com.moudle.free.startRefresh"))  //PS:广播通知免费界面刷新
                             }.create().show()
                         }
                     })
-
                 }.show()
     }
 
@@ -113,7 +116,7 @@ object DialogUtil {
                 progressDialog?.dismiss()
             }
             progressDialog?.show()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 

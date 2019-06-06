@@ -1,6 +1,8 @@
 package com.ponko.cn.module.my.holder
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Looper
@@ -9,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
@@ -21,11 +24,16 @@ import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.ponko.cn.module.my.option.store.StoreAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.AnimUtil
+import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.ToastUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.tencent.bugly.beta.Beta
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.ViewUtil
+import com.xm.lib.component.CommonUtil
+import com.xm.lib.component.XmPopWindow
 import retrofit2.Call
 import retrofit2.Response
 import java.util.logging.Handler
@@ -81,6 +89,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
 
     private var viewHolder: ViewHolder? = null
 
+    @SuppressLint("SetTextI18n")
     override fun bindData(d: Any, position: Int) {
         if (viewHolder == null) {
             viewHolder = ViewHolder.create(itemView)
@@ -123,10 +132,36 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                             .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             .subscribe { aBoolean ->
                                 if (aBoolean!!) {
-                                    //当所有权限都允许之后，返回true
-                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + PonkoApp.mainCBean?.public_phone))
-                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                    context.startActivity(intent)
+                                    if (CacheUtil.getStudyUI() == "2"/*1 旧版 2 新版学习Fragment*/) {
+                                        val popWindow = XmPopWindow(context)
+                                        val rootView = ViewUtil.viewById(context, R.layout.item_server_tip, null)
+                                        val tvPhone = rootView?.findViewById<TextView>(R.id.tv_phone)
+                                        val tvWx = rootView?.findViewById<TextView>(R.id.tv_wx)
+                                        val tvCancel = rootView?.findViewById<TextView>(R.id.tv_cancel)
+                                        tvWx?.text = "请添加客服微信：${PonkoApp.main2CBean?.service?.wechat}"
+                                        tvPhone?.text = "请拨打客服电话：${PonkoApp.main2CBean?.service?.phone}"
+                                        tvPhone?.setOnClickListener {
+                                            //当所有权限都允许之后，返回true
+                                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + PonkoApp.mainCBean?.public_phone))
+                                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                            context.startActivity(intent)
+                                        }
+                                        tvWx?.setOnClickListener {
+                                            //复制微信账号成功
+                                            CommonUtil.copyToClipboard(context, PonkoApp.main2CBean?.service?.wechat!!)
+                                            ToastUtil.show("复制成功")
+                                        }
+                                        tvCancel?.setOnClickListener {
+                                            popWindow.dismiss()
+                                        }
+                                        popWindow.ini(rootView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                                        popWindow.showAtLocation(XmPopWindow.Location.BOTTOM, com.xm.lib.media.R.style.AnimationBottomFade, (context as Activity).window.decorView, 0, 0)
+                                    } else {
+                                        //当所有权限都允许之后，返回true
+                                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + PonkoApp.mainCBean?.public_phone))
+                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                        context.startActivity(intent)
+                                    }
                                 } else {
                                     //只要有一个权限禁止，返回false，
                                     //下一次申请只申请没通过申请的权限
@@ -137,7 +172,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                 "常见问题" -> {
                     ActivityUtil.startActivity(context, Intent(context, ProblemAct::class.java))
                 }
-                "检查更新"->{
+                "检查更新" -> {
                     Beta.checkUpgrade()
                 }
             }
