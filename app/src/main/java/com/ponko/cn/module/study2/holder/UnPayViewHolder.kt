@@ -8,8 +8,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
+import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.StudyHomePayBean
 import com.ponko.cn.bean.StudyHomeUnPayBean
+import com.ponko.cn.utils.Glide
+import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
@@ -31,7 +34,7 @@ class UnPayViewHolder(view: View) : BaseViewHolder(view) {
         ui?.tvTitle?.text = "未入学"
         val adapter = object : BaseRvAdapter() {}
         adapter.addItemViewDelegate(0, ItemViewHolder::class.java, Any::class.java, R.layout.item_study_home_course)
-        adapter.data?.addAll(studyHomeUnPayBean.courses)
+        adapter.data?.addAll(studyHomeUnPayBean.productsAll)
         ui?.rv?.adapter = adapter
         if (ScreenUtil.isPad(context)) {
             ui?.rv?.layoutManager = GridLayoutManager(context, 2)
@@ -52,14 +55,15 @@ class UnPayViewHolder(view: View) : BaseViewHolder(view) {
         }
     }
 
-    class ItemViewHolder(view:View):BaseViewHolder(view){
+    class ItemViewHolder(view: View) : BaseViewHolder(view) {
         private var ui: UI? = null
         override fun bindData(d: Any, position: Int) {
             if (ui == null) {
                 ui = UI.create(itemView)
             }
             val context = itemView.context
-
+            val productsAllBean = d as Main2CBean.ProductsAllBean
+            Glide.with(context,productsAllBean.avatar,ui?.ivCourse)
             //图片高度自适应
             val present = 155f / 347f
             val layoutParams = ui?.ivCourse?.layoutParams
@@ -67,13 +71,14 @@ class UnPayViewHolder(view: View) : BaseViewHolder(view) {
             ui?.ivCourse?.layoutParams = layoutParams
             itemView.setOnClickListener {
                 ToastUtil.show("未订购")
+                IntoTargetUtil.target(context, productsAllBean.link_type, productsAllBean.link_value)
             }
         }
 
         private class UI private constructor(val ivCourse: ImageView) {
             companion object {
 
-                fun create(rootView:View): UI {
+                fun create(rootView: View): UI {
                     val ivCourse = rootView.findViewById<View>(R.id.iv_course) as ImageView
                     return UI(ivCourse)
                 }

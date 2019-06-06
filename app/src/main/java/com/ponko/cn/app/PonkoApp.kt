@@ -11,6 +11,7 @@ import android.support.multidex.MultiDexApplication
 import com.ponko.cn.MainActivity
 import com.ponko.cn.R
 import com.ponko.cn.api.*
+import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constants.BASE_API
@@ -40,6 +41,7 @@ class PonkoApp : MultiDexApplication() {
         @Deprecated("还是接口代替，不缓存在内存中了")
         var signInfo: StoreTaskBean? = null
         var mainCBean: MainCBean? = null
+        var main2CBean: Main2CBean? = null
 
         //接口
         var retrofitClient: RetrofitClient? = null
@@ -132,7 +134,7 @@ class PonkoApp : MultiDexApplication() {
         //ps 请求头的顺序要一致哟
         val heads = LinkedHashMap<String, String>()
         heads["x-tradestudy-access-key-id"] = "c"
-        heads["x-tradestudy-client-version"] = "3.4.6"
+        heads["x-tradestudy-client-version"] = getLocalVersion2(this)
         heads["x-tradestudy-client-device"] = "android_phone"
         heads["x-tradestudy-access-token"] = CacheUtil.getToken()!!
         retrofitClient = RetrofitClient.intance

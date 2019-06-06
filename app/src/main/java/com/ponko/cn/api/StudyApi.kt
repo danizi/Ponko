@@ -7,10 +7,16 @@ import retrofit2.http.*
 
 interface StudyApi {
     /**
-     * 学习首页
+     * 学习首页450之前版本
      */
     @GET("main")
     fun main(): Call<MainCBean>
+
+    /**
+     * 学习首页450版本
+     */
+    @GET("main")
+    fun main2(): Call<Main2CBean>
 
     /**
      * 课程专题所有课程

@@ -7,8 +7,10 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import android.widget.ImageView
 import com.ponko.cn.R
+import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.StudyHomeBannerSubBean
 import com.ponko.cn.utils.Glide
+import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
@@ -31,7 +33,7 @@ class BannerSubViewHolder(view: View) : BaseViewHolder(view) {
         }
         val context = itemView.context
         val studyHomeBannerSubBean = d as StudyHomeBannerSubBean
-        val banner = studyHomeBannerSubBean.images
+        val banner = studyHomeBannerSubBean.subBanner
         if (banner.isEmpty()) {
             ui?.banner?.visibility = View.GONE
         } else {
@@ -42,7 +44,7 @@ class BannerSubViewHolder(view: View) : BaseViewHolder(view) {
             ui?.banner?.setIndicatorGravity(BannerConfig.CENTER)
             ui?.banner?.setImageLoader(object : ImageLoader() {
                 override fun displayImage(context: Context?, path: Any?, imageView: ImageView?) {
-                    Glide.with(context,path as String, imageView)
+                    Glide.with(context, (path as Main2CBean.BannerMiniBean).avatar, imageView)
                 }
             })
             ui?.banner?.setImages(banner)
@@ -83,7 +85,7 @@ class BannerSubViewHolder(view: View) : BaseViewHolder(view) {
             })
 
             ui?.banner?.setOnBannerListener {
-                ToastUtil.show("点击推荐 $it")
+                IntoTargetUtil.target(context, banner[it].link_type, banner[it].link_value)
             }
             //横幅自适应高度，避免图片拉伸 91f / 375f
             val layoutParams = ui?.banner?.layoutParams

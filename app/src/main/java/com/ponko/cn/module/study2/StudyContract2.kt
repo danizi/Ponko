@@ -3,6 +3,7 @@ package com.ponko.cn.module.study2
 import android.content.Context
 import com.google.gson.Gson
 import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.utils.CacheUtil
@@ -17,7 +18,7 @@ class StudyContract2 {
      * 视图层
      */
     interface V {
-        fun requestStudyApiSuccess(body: MainCBean?)
+        fun requestStudyApiSuccess(body: Main2CBean?)
     }
 
     /**
@@ -27,8 +28,8 @@ class StudyContract2 {
         /**
          * 请求学习界面首页接口
          */
-        fun requestStudyApi(callback: HttpCallBack<MainCBean>) {
-            PonkoApp.studyApi?.main()?.enqueue(callback)
+        fun requestStudyApi(callback: HttpCallBack<Main2CBean>) {
+            PonkoApp.studyApi?.main2()?.enqueue(callback)
         }
     }
 
@@ -42,10 +43,10 @@ class StudyContract2 {
          * 请求新版学习首页接口
          */
         fun requestStudyApi() {
-            m.requestStudyApi(object : HttpCallBack<MainCBean>() {
-                override fun onSuccess(call: Call<MainCBean>?, response: Response<MainCBean>?) {
-                    PonkoApp.mainCBean = response?.body()
-                    CacheUtil.putPolyvConfig(Gson().toJson(PonkoApp.mainCBean?.polyv))
+            m.requestStudyApi(object : HttpCallBack<Main2CBean>() {
+                override fun onSuccess(call: Call<Main2CBean>?, response: Response<Main2CBean>?) {
+                    PonkoApp.main2CBean = response?.body()
+                    CacheUtil.putPolyvConfig(Gson().toJson(PonkoApp.main2CBean?.polyv))
                     view?.requestStudyApiSuccess(response?.body())
                 }
             })

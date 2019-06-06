@@ -9,8 +9,8 @@ buildscript {
         applicationId ='com.xm.lib.test'
         minSdkVersion = 15
         targetSdkVersion = 28
-        versionCode = 346
-        versionName = "3.4.6"
+        versionCode = 350
+        versionName = "3.5.0"
         minifyEnabled = false
     }
 

@@ -16,6 +16,7 @@ import com.ponko.cn.module.interflow.frg.InterflowFrg
 import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.my.MyFrg
 import com.ponko.cn.module.study.StudyFrg
+import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.module.study2.StudyFrg2
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.CacheUtil.getStudyUI
@@ -75,6 +76,7 @@ class MainActivity : BaseActivity() {
                 StudyFrg2()
             }
         }
+
         bottomMenu.select(bottomPos)
                 .setContainer(R.id.container)
                 .setTitleColor(R.color.grey, R.color.red)

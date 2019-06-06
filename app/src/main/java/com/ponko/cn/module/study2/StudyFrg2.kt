@@ -9,12 +9,9 @@ import com.ponko.cn.module.my.option.HistoryActivity
 import com.ponko.cn.module.my.option.ProblemAct
 import com.ponko.cn.module.study.SearchActivity
 import com.ponko.cn.module.study.adapter.StudyAdapter
-import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.module.study.holder.AdViewHolder
-import com.ponko.cn.module.study.holder.BannerViewHolder
-import com.ponko.cn.module.study.holder.CaseViewHolder
-import com.ponko.cn.module.study.holder.CourseTypeViewHolder
 import com.ponko.cn.module.study2.holder.BannerSubViewHolder
+import com.ponko.cn.module.study2.holder.BannerV2ViewHolder
 import com.ponko.cn.module.study2.holder.PayViewHolder
 import com.ponko.cn.module.study2.holder.UnPayViewHolder
 import com.ponko.cn.utils.ActivityUtil
@@ -24,7 +21,7 @@ import com.xm.lib.common.log.BKLog
 /**
  * 新版学习页面
  */
-class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, MainCBean>(), StudyContract2.V {
+class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, Main2CBean>(), StudyContract2.V {
 
     override fun initDisplay() {
         super.initDisplay()
@@ -54,14 +51,14 @@ class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, MainCBean>(), StudyCont
                         3,
                         4),
                 arrayOf(
-                        BannerViewHolder::class.java,
+                        BannerV2ViewHolder::class.java,
                         BannerSubViewHolder::class.java,
                         AdViewHolder::class.java,
                         PayViewHolder::class.java,
                         UnPayViewHolder::class.java),
 
                 arrayOf(
-                        BannerBean::class.java,
+                        BannerV2Bean::class.java,
                         StudyHomeBannerSubBean::class.java,
                         AdBean2::class.java,
                         StudyHomePayBean::class.java,
@@ -86,33 +83,45 @@ class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, MainCBean>(), StudyCont
         return StudyAdapter()
     }
 
-    override fun requestStudyApiSuccess(body: MainCBean?) {
+    override fun requestStudyApiSuccess(body: Main2CBean?) {
         requestRefreshSuccess(body)
     }
 
-    override fun multiTypeData(body: MainCBean?): List<Any> {
+    override fun multiTypeData(body: Main2CBean?): List<Any> {
         val multiData = ArrayList<Any>()
-        if (body?.tabbar != null) {
-            //横幅 PS:横幅有可能为null
-            body.tabbar.clear()
-            multiData.add(BannerBean(body.scrolls, body.tabbar))
+
+        //顶部横幅
+        if (!body?.banner_top?.isEmpty()!!) {
+            multiData.add(BannerV2Bean(body.banner_top!!))
         }
 
-        //横幅
-        multiData.add(StudyHomeBannerSubBean())
+        //子横幅
+        if (!body.banner_mini.isEmpty()) {
+            multiData.add(StudyHomeBannerSubBean(body.banner_mini))
+        }
 
-        if (body?.ad != null && body.ad.isNotEmpty()) {
-            //广告
-            for (ad in body.ad) {
-                multiData.add(AdBean2(ad))
+        //广告
+        if (!body.banner_middle.isEmpty()) {
+            for (ad in body.banner_middle) {
+                val adBean = AdBean()
+                adBean.image = ad.avatar
+                adBean.title = ad.title
+                adBean.id = ad.id
+                adBean.type = ad.link_type
+                adBean.link = ad.link_value
+                multiData.add(AdBean2(adBean))
             }
         }
 
         //已订购课程
-        multiData.add(StudyHomePayBean())
+        if (!body.products_purchased.isEmpty()) {
+            multiData.add(StudyHomePayBean(body.products_purchased))
+        }
 
         //未订购课程
-        multiData.add(StudyHomeUnPayBean())
+        if (!body.products_all.isEmpty()) {
+            multiData.add(StudyHomeUnPayBean(body.products_all))
+        }
 
         return multiData
     }
