@@ -19,6 +19,7 @@ class StudyContract2 {
      */
     interface V {
         fun requestStudyApiSuccess(body: Main2CBean?)
+        fun requestStudyApiFailure()
     }
 
     /**
@@ -48,6 +49,11 @@ class StudyContract2 {
                     PonkoApp.main2CBean = response?.body()
                     CacheUtil.putPolyvConfig(Gson().toJson(PonkoApp.main2CBean?.polyv))
                     view?.requestStudyApiSuccess(response?.body())
+                }
+
+                override fun onFailure(call: Call<Main2CBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    view?.requestStudyApiFailure()
                 }
             })
         }

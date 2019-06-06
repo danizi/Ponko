@@ -10,7 +10,7 @@ interface StudyApi {
      * 学习首页450之前版本
      */
     @GET("main")
-    fun main(): Call<MainCBean>
+    fun main(@Query("old") old: String? = "1"): Call<MainCBean>
 
     /**
      * 学习首页450版本

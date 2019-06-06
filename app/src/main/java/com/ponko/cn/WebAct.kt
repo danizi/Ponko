@@ -289,6 +289,7 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
         /**
          * 设置数据
          */
+        @SuppressLint("AddJavascriptInterface")
         fun iniData(act: Activity? = null, exchangeViewHolder: WebContract.V.ExchangeViewHolder?, payViewHolder: WebContract.V.PayViewHolder?, shareViewHolder: WebContract.V.ShareViewHolder?) {
             if (act != null) {
                 this.act = act
@@ -358,6 +359,12 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                         }
                     }
                 }), javascriptInterfaceName)
+                //注入支付对象
+                web.addJavascriptInterface(WebContract.M.AndroidPayObj(act, web), "androidPay")
+                //注入分享对象
+                web.addJavascriptInterface(WebContract.M.AndroidShareObj(act, web), "androidShare")
+                //注入跳转对象
+                web.addJavascriptInterface(WebContract.M.AndroidGotoObj(act, web), "androidGoto")
             }
         }
 
@@ -754,7 +761,7 @@ class WebContract {
         /**
          * 支付
          */
-        class AndroidPayObj(private val act: Activity?) {
+        class AndroidPayObj(private val act: Activity?, private val webView: WebView?) {
             private var aliPay: AbsPay? = null
             private var wxPay: AbsPay? = null
 
@@ -766,15 +773,76 @@ class WebContract {
                 }
             }
 
+            /**
+             * 支付
+             * @param type      weiXin / alipay
+             * @param productId 产品id
+             */
             @JavascriptInterface
-            fun pay(type: String) {
+            fun pay(payWay: String, productId: String) {
+                if (CacheUtil.isUserTypeLogin()) {
+                    AlertDialog.Builder(act!!).setItems(arrayOf("微信", "支付宝")) { dialog, which ->
+
+                        var absPay: AbsPay? = null
+                        var payWay = payWay
+                        when (payWay) {
+                            "weiXin" -> {
+                                payWay = "weiXin"
+                                absPay = WxPay(act)
+                                absPay.init(PayConfig.Builder().appid(APP_ID).build())
+                                BKLog.d("点击了微信支付")
+                            }
+                            "alipay" -> {
+                                payWay = "alipay"
+                                absPay = AliPay(act)
+                                BKLog.d("点击了支付宝")
+                            }
+                        }
+                        PonkoApp.payApi?.createProductOrder(payWay, productId)?.enqueue(object : HttpCallBack<OrderCBean>() {
+                            override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
+                                val orderCBean = response?.body()
+                                orderCBean?.wechat
+
+                                var order = ""
+                                when (payWay) {
+                                    "weiXin" -> {
+                                        order = Gson().toJson(orderCBean?.wechat)
+                                    }
+                                    "alipay" -> {
+                                        order = orderCBean?.alipay!!
+                                    }
+                                }
+
+                                absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
+                                    override fun onSuccess() {
+                                        BKLog.d("支付成功")
+                                        webView?.loadUrl("javascript:callback_pay_success()")
+                                    }
+
+                                    override fun onFailure() {
+                                        webView?.loadUrl("javascript:callback_pay_failed()")
+                                        BKLog.d("支付失败")
+                                    }
+
+                                    override fun onCancel() {
+                                        webView?.loadUrl("javascript:callback_pay_canceled()")
+                                        BKLog.d("支付取消")
+                                    }
+                                })
+                                dialog.dismiss()
+                            }
+                        })
+                    }.show()
+                } else {
+                    ToastUtil.show("亲，请先登录账号....")
+                }
             }
         }
 
         /**
          * 分享
          */
-        class AndroidShareObj(private val act: Activity?) {
+        class AndroidShareObj(private val act: Activity?, web: WebView) {
 
             private var share: AbsShare? = null
 
@@ -783,16 +851,44 @@ class WebContract {
                 share?.init(ShareConfig.Builder().build())
             }
 
+            /**
+             * 分享
+             * @param type friendCircle朋友圈,friend朋友
+             * @param shareTitle
+             * @param shareDescription
+             * @param shareUrl
+             */
             @JavascriptInterface
-            fun share() {
-
+            fun share(type: String, shareTitle: String, shareDescription: String, shareUrl: String) {
+                var shareType = SendMessageToWX.Req.WXSceneSession
+                when (type) {
+                    "friendCircle" -> {
+                        shareType = SendMessageToWX.Req.WXSceneTimeline
+                    }
+                    "friend" -> {
+                        shareType = SendMessageToWX.Req.WXSceneSession
+                    }
+                }
+                if (act != null) {
+                    val wxShare = WxShare(act)
+                    wxShare.init(ShareConfig.Builder().appid(PonkoApp.APP_ID).build())
+                    wxShare.shareWebPage(
+                            R.mipmap.ic_launcher,
+                            shareUrl,
+                            shareTitle,
+                            shareDescription,
+                            shareType)
+                }
             }
         }
 
         /**
          * 跳转
          */
-        class AndroidGotoObj(val context: Context?) {
+        class AndroidGotoObj(val context: Context?, web: WebView) {
+            /**
+             * 跳转
+             */
             @JavascriptInterface
             fun goto(link_type: String?, link_value: String?) {
                 IntoTargetUtil.target(context, link_type, link_value)

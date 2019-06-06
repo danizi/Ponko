@@ -402,7 +402,7 @@ class FreeDetailsConstract {
                     m.detailTopBean?.share_url!!,
                     m.detailTopBean?.share_title!!,
                     m.detailTopBean?.share_description!!,
-                    SendMessageToWX.Req.WXSceneSession)
+                    SendMessageToWX.Req.WXSceneTimeline)
         }
 
         /**

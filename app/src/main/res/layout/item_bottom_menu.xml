@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="?android:selectableItemBackgroundBorderless"
     android:gravity="center"
     android:orientation="vertical"
-    tools:ignore="RtlHardcoded,HardcodedText,SmallSp,UseCompoundDrawables,ContentDescription">
+    android:theme="@style/suibowen"
+    tools:ignore="ContentDescription,HardcodedText,NewApi,RtlHardcoded,SmallSp,UseCompoundDrawables">
 
     <ImageView
         android:id="@+id/tab_img"

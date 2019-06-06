@@ -23,6 +23,7 @@ import com.xm.lib.common.log.BKLog
  */
 class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, Main2CBean>(), StudyContract2.V {
 
+
     override fun initDisplay() {
         super.initDisplay()
         disableLoad = true
@@ -79,12 +80,17 @@ class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, Main2CBean>(), StudyCon
         p?.requestStudyApi()
     }
 
+
     override fun adapter(): BaseRvAdapter? {
         return StudyAdapter()
     }
 
     override fun requestStudyApiSuccess(body: Main2CBean?) {
         requestRefreshSuccess(body)
+    }
+
+    override fun requestStudyApiFailure() {
+        requestRefreshFailure()
     }
 
     override fun multiTypeData(body: Main2CBean?): List<Any> {
