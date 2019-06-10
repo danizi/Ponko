@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
@@ -23,6 +24,7 @@ import com.ponko.cn.db.dao.CourseDao
 import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
 import com.ponko.cn.utils.CacheUtil
+import com.tencent.bugly.beta.Beta
 import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import com.xm.lib.common.log.BKLog
@@ -154,35 +156,37 @@ class PonkoApp : MultiDexApplication() {
     }
 
     private fun initActivityManager() {
-        registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
-            override fun onActivityPaused(activity: Activity?) {
-                activityManager.onActivityPaused(activity)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+                override fun onActivityPaused(activity: Activity?) {
+                    activityManager.onActivityPaused(activity)
+                }
 
-            override fun onActivityResumed(activity: Activity?) {
-                activityManager.onActivityResumed(activity)
-            }
+                override fun onActivityResumed(activity: Activity?) {
+                    activityManager.onActivityResumed(activity)
+                }
 
-            override fun onActivityStarted(activity: Activity?) {
-                activityManager.onActivityStarted(activity)
-            }
+                override fun onActivityStarted(activity: Activity?) {
+                    activityManager.onActivityStarted(activity)
+                }
 
-            override fun onActivityDestroyed(activity: Activity?) {
-                activityManager.onActivityDestroyed(activity)
-            }
+                override fun onActivityDestroyed(activity: Activity?) {
+                    activityManager.onActivityDestroyed(activity)
+                }
 
-            override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
-                activityManager.onActivitySaveInstanceState(activity, outState)
-            }
+                override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
+                    activityManager.onActivitySaveInstanceState(activity, outState)
+                }
 
-            override fun onActivityStopped(activity: Activity?) {
-                activityManager.onActivityStopped(activity)
-            }
+                override fun onActivityStopped(activity: Activity?) {
+                    activityManager.onActivityStopped(activity)
+                }
 
-            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-                activityManager.onActivityCreated(activity, savedInstanceState)
-            }
-        })
+                override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
+                    activityManager.onActivityCreated(activity, savedInstanceState)
+                }
+            })
+        }
     }
 
     private fun initDb() {
@@ -196,5 +200,7 @@ class PonkoApp : MultiDexApplication() {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         MultiDex.install(this)
+        // 安装tinker
+        Beta.installTinker()
     }
 }

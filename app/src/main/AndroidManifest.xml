@@ -112,7 +112,7 @@
             android:launchMode="singleTop" />
         <activity
             android:name=".module.my.option.CacheListAct"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTask" />
         <activity
             android:name=".module.my.option.acount.AddressActivity"
             android:launchMode="singleTop" />
@@ -161,7 +161,7 @@
         <activity
             android:name=".module.study.StudyCourseDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTask" />
 
         <!-- ============================================微信支付 start -->
         <activity

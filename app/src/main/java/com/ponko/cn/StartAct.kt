@@ -162,11 +162,20 @@ class StartAct : BaseActivity() {
     /**
      * 进入主界面
      */
-    private fun joinMainActivity(s: Long? = 0) {
-        Thread.sleep(s!!)
-        finish()
+    private fun joinMainActivity(s: Long? = 0L) {
+        //Thread.sleep(s!!)
         timerHelper.stop()
-        ActivityUtil.startActivity(this, Intent(this, MainActivity::class.java))
+        if (s != 0L) {
+            TimerHelper().start(object : TimerHelper.OnDelayTimerListener {
+                override fun onDelayTimerFinish() {
+                    ActivityUtil.startActivity(this@StartAct, Intent(this@StartAct, MainActivity::class.java))
+                    finish()
+                }
+            }, s?.toLong()!!)
+        } else {
+            ActivityUtil.startActivity(this, Intent(this, MainActivity::class.java))
+            finish()
+        }
     }
 
     /**
@@ -177,6 +186,5 @@ class StartAct : BaseActivity() {
         joinMainActivity(0)
         timerHelper.stop()
         IntoTargetUtil.target(this, adCBean?.type, adCBean?.target)
-
     }
 }

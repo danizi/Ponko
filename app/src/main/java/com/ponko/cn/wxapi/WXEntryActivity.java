@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ponko.cn.R;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
@@ -147,7 +148,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 break;
         }
 
-        //Toast.makeText(this, getString(result) + ", type=" + resp.getType(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, getString(result) + ", type=" + resp.getType(), Toast.LENGTH_SHORT).show();
 
 
         if (resp.getType() == ConstantsAPI.COMMAND_SUBSCRIBE_MESSAGE) {

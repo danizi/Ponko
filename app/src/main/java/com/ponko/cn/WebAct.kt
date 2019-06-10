@@ -26,6 +26,7 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
 import com.ponko.cn.bean.AddressBean
 import com.ponko.cn.bean.GeneralBean
+import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.OrderCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
@@ -35,6 +36,7 @@ import com.ponko.cn.utils.CacheUtil.getToken
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
+import com.xm.lib.component.OnEnterListener
 import com.xm.lib.component.XmPopWindow
 import com.xm.lib.component.XmStateView
 import com.xm.lib.pay.AbsPay
@@ -96,10 +98,22 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
         }
     }
 
-    private var viewHolder: ViewHolder? = null
-    private var exchangeViewHolder: WebContract.V.ExchangeViewHolder? = null
-    private var payViewHolder: WebContract.V.PayViewHolder? = null
-    private var shareViewHolder: WebContract.V.ShareViewHolder? = null
+    /**
+     * 窗口UI
+     */
+    private var mainUI: ViewHolder? = null
+    /**
+     * 积分兑换UI处理
+     */
+    private var exchangeUI: WebContract.V.ExchangeViewHolder? = null
+    /**
+     * 支付UI处理
+     */
+    private var payUI: WebContract.V.PayViewHolder? = null
+    /**
+     * 分享UI处理
+     */
+    private var shareUI: WebContract.V.ShareViewHolder? = null
 
     override fun presenter(): WebContract.Present {
         return WebContract.Present(context = this, v = this)
@@ -111,65 +125,65 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
 
     override fun findViews() {
         super.findViews()
-        if (viewHolder == null) {
-            viewHolder = ViewHolder.create(this)
+        if (mainUI == null) {
+            mainUI = ViewHolder.create(this)
 
             //底部兑换积分
             val exchangeView = ViewUtil.viewById(this, R.layout.web_bottom_exchange)
-            exchangeViewHolder = WebContract.V.ExchangeViewHolder.create(this, exchangeView!!)
+            exchangeUI = WebContract.V.ExchangeViewHolder.create(this, exchangeView!!)
 
             //底部支付按钮，其中根据获取页面值，判断是否添加“老师介绍”、“老师课程”按钮
             val payView = ViewUtil.viewById(this, R.layout.web_bottom_pay)
-            payViewHolder = WebContract.V.PayViewHolder.create(this, payView!!)
+            payUI = WebContract.V.PayViewHolder.create(this, payView!!)
 
             //分享底部弹出框
             val shareView = ViewUtil.viewById(this, R.layout.view_share)
-            shareViewHolder = WebContract.V.ShareViewHolder.create(shareView!!, this)
+            shareUI = WebContract.V.ShareViewHolder.create(shareView!!, this)
         }
     }
 
     override fun initDisplay() {
         super.initDisplay()
-        viewHolder?.addBar(this, View.OnClickListener {
+        mainUI?.addBar(this, View.OnClickListener {
             BKLog.d("点击分享")
-            shareViewHolder?.share()
+            shareUI?.share()
         })
-        viewHolder?.initWebView()
+        mainUI?.initWebView()
     }
 
     override fun iniEvent() {
         super.iniEvent()
-        viewHolder?.initEvent()
-        exchangeViewHolder?.initEvent() //监听兑换按钮
-        payViewHolder?.initEvent()      //监听支付按钮
-        shareViewHolder?.initEvent()    //监听分享按钮 PS：在顶部栏右边触发
+        mainUI?.initEvent()
+        exchangeUI?.initEvent() //监听兑换按钮
+        payUI?.initEvent()      //监听支付按钮
+        shareUI?.initEvent()    //监听分享按钮 PS：在顶部栏右边触发
     }
 
     override fun iniData() {
         super.iniData()
-        viewHolder?.iniData(this, exchangeViewHolder, payViewHolder, shareViewHolder)
-        viewHolder?.linkType = intent?.getStringExtra("link_type")!!
-        viewHolder?.linkValue = intent?.getStringExtra("link_value")!!
-        when (viewHolder?.linkType) {
+        mainUI?.iniData(this, exchangeUI, payUI, shareUI)
+        mainUI?.linkType = intent?.getStringExtra("link_type")!!
+        mainUI?.linkValue = intent?.getStringExtra("link_value")!!
+        when (mainUI?.linkType) {
             "exchange" -> {
-                exchangeViewHolder?.totalScores = intent.getStringExtra("aggregate_score")
-                exchangeViewHolder?.total = intent.getIntExtra("total", 0)
-                exchangeViewHolder?.needScores = intent.getStringExtra("need_score")
-                exchangeViewHolder?.exchangeProductId = intent.getStringExtra("exchange_product_id")
+                exchangeUI?.totalScores = intent.getStringExtra("aggregate_score")
+                exchangeUI?.total = intent.getIntExtra("total", 0)
+                exchangeUI?.needScores = intent.getStringExtra("need_score")
+                exchangeUI?.exchangeProductId = intent.getStringExtra("exchange_product_id")
             }
             "pay" -> {
                 try {
-                    payViewHolder?.payProductId = intent.getStringExtra("pay_product_id")
+                    payUI?.payProductId = intent.getStringExtra("pay_product_id")
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
             "url" -> {
-                viewHolder?.flBottomBtn?.visibility = View.GONE
+                mainUI?.flBottomBtn?.visibility = View.GONE
             }
         }
-        //payViewHolder?.iniData(this)
-        //shareViewHolder?.iniData(this)
+        //payUI?.iniData(this)
+        //shareUI?.iniData(this)
     }
 
     /**
@@ -337,11 +351,11 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                                     payViewHolder?.btnPay?.visibility = View.VISIBLE
                                 }
                                 "1" -> {
-//                                    exchangeViewHolder.guideATitle = guideATitle
-//                                    exchangeViewHolder.guideAUrl = guideAUrl
-//                                    exchangeViewHolder.guideBTitle = guideBTitle
-//                                    exchangeViewHolder.guideBUrl = guideBUrl
-//                                    exchangeViewHolder.guideCTitle = guideBUrl
+//                                    exchangeUI.guideATitle = guideATitle
+//                                    exchangeUI.guideAUrl = guideAUrl
+//                                    exchangeUI.guideBTitle = guideBTitle
+//                                    exchangeUI.guideBUrl = guideBUrl
+//                                    exchangeUI.guideCTitle = guideBUrl
                                     //显示课程信息课程介绍
                                     payViewHolder?.btnCourse?.visibility = View.VISIBLE
                                     payViewHolder?.btnIntroduce?.visibility = View.VISIBLE
@@ -816,6 +830,13 @@ class WebContract {
                                 absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
                                     override fun onSuccess() {
                                         BKLog.d("支付成功")
+                                        if (CacheUtil.getStudyUI() == "2"/*新版本*/) {
+                                            DialogUtil.show(act, "提示", PonkoApp.main2CBean?.tips?.pay_success!!, false, object : OnEnterListener {
+                                                override fun onEnter(dlg: AlertDialog) {
+                                                    dlg.dismiss()
+                                                }
+                                            }, null)
+                                        }
                                         webView?.loadUrl("javascript:callback_pay_success()")
                                     }
 

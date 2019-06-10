@@ -2,7 +2,20 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+// 依赖插件脚本
+apply from: 'tinker-support.gradle'
+
 android {
+
+    signingConfigs {
+        release {
+            keyAlias 'ponko'
+            keyPassword 'pk2017'
+            storeFile file('C:/Users/BKSDFLKJS/Desktop/工作记录/打包文件/pk.jks')
+            storePassword 'pk2017'
+        }
+    }
+
     compileSdkVersion rootProject.compileSdkVersion
     defaultConfig {
         applicationId "com.ponko.cn"
@@ -21,12 +34,19 @@ android {
     }
     buildTypes {
         release {
+            signingConfig  signingConfigs.release
             //开启混淆
             minifyEnabled rootProject.minifyEnabled
             //混淆文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //去除无用资源
             //shrinkResources true
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
         }
     }
 }

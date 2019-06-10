@@ -155,6 +155,7 @@
 #不混淆反射类
 -keep class com.xm.lib.common.base.rv.** { *; }
 -keep class com.ponko.cn.module.study2.holder.** { *; }
+ -keep class android.support.**{*;}
 
 # # # # # # # # # # # # # # # #
 #           第三方            #
@@ -225,6 +226,9 @@ public static java.lang.String TABLENAME;
 -keep public class com.tencent.bugly.**{*;}
 -keep class android.support.**{*;}
 -keep class com.example.** { *; }
+# tinker混淆规则
+-dontwarn com.tencent.tinker.**
+-keep class com.tencent.tinker.** { *; }
 
 #微信支付混淆
 -keep class com.tencent.mm.sdk.** {
