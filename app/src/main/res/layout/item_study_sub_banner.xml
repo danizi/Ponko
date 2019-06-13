@@ -12,6 +12,7 @@
         android:background="?android:attr/selectableItemBackground"
         app:indicator_drawable_selected="@drawable/shape_indicator_select"
         app:indicator_drawable_unselected="@drawable/shape_indicator_un_select"
+        app:indicator_height="2dp"
         app:indicator_width="5dp" />
 
 </android.support.constraint.ConstraintLayout>

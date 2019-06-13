@@ -28,8 +28,12 @@ interface StudyApi {
     /**
      * 获取专题下的所有课程
      */
+    @Deprecated("")
     @GET("course/all")
-    fun getSpecialAllCourse(@Query("typeId") typeId: String): Call<ArrayList<OutInternalCourse>>
+    fun getSpecialAllCourse2(@Query("typeId") typeId: String): Call<ArrayList<OutInternalCourse>>
+
+    @GET("course/all")
+    fun getSpecialAllCourse(@Query("typeId") typeId: String): Call<CourseAllCBean>
 
     /**
      * 课程详情

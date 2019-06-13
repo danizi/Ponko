@@ -23,6 +23,15 @@ public class Main2CBean {
     private List<BannerTopBean> banner_top;
     private List<BannerMiniBean> banner_mini;
     private List<ProductsAllBean> products_all;
+    private int msg_count=0;
+
+    public int getMsg_count() {
+        return msg_count;
+    }
+
+    public void setMsg_count(int msg_count) {
+        this.msg_count = msg_count;
+    }
 
     public PolyvBean getPolyv() {
         return polyv;

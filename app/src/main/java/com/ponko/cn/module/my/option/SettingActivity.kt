@@ -1,6 +1,7 @@
 package com.ponko.cn.module.my.option
 
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp.Companion.UI_DEBUG
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.my.constract.SettingContract
@@ -34,9 +35,11 @@ class SettingActivity : RefreshLoadAct<SettingContract.Present, List<String>>() 
     override fun requestRefreshApi() {
         val data = ArrayList<String>()
         data.add("视频分辨率")
-        data.add("日志开关")
         data.add("学习页面新旧版开关")
+//        if (UI_DEBUG) {
+        data.add("日志开关")
         data.add("跳转测试开关")
+//        }
         requestRefreshSuccess(data)
     }
 

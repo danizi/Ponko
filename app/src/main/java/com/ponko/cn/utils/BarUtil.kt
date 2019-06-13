@@ -66,9 +66,12 @@ object BarUtil {
      * 常规的顶部栏
      */
     fun addBar1(context: Context?, toolbar: Toolbar?, title: String, right: String? = "", listener: View.OnClickListener? = null) {
+        if(toolbar?.childCount!!>0){
+            toolbar.removeAllViews()
+        }
         val barView = ViewUtil.viewById(context, R.layout.bar_1, null)
-        toolbar?.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-        toolbar?.visibility = View.VISIBLE
+        toolbar.addView(barView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        toolbar.visibility = View.VISIBLE
         val flBack: FrameLayout? = barView?.findViewById(R.id.fl_back) as FrameLayout
         val tvTitle: TextView? = barView.findViewById(R.id.tv_title) as TextView
         val tvRight: TextView? = barView.findViewById(R.id.tv_right) as TextView

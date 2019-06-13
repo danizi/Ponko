@@ -215,9 +215,12 @@ class FreeDetailsAct : PonkoBaseAct<FreeDetailsConstract.Present>(), FreeDetails
         val attachmentPre = ui?.video?.getChildAt(0) as AttachmentPre
         val vid = detailCBean?.chapters!![0].sections[0].vid
         val preUrl = detailCBean.chapters!![0].sections[0]?.avatar
-        val isB2BVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
-        val isB2CVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
-        val isPay = detailCBean.chapters!![0].sections[0].isFree || isB2BVip || isB2CVip
+//        val isB2BVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
+//        val isB2CVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+//        val isPay = detailCBean.chapters!![0].sections[0].isFree || isB2BVip || isB2CVip
+        val isB2BVip = PonkoApp.isB2bVip()
+        val isB2CVip = PonkoApp.isB2CVip()
+        val isPay= detailCBean.chapters!![0].sections[0].isFree || isB2BVip || isB2CVip
         attachmentPre.load(
                 vid = vid,
                 preUrl = preUrl,

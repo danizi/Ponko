@@ -39,7 +39,7 @@ class BannerSubViewHolder(view: View) : BaseViewHolder(view) {
         } else {
             ui?.banner?.visibility = android.view.View.VISIBLE
             ui?.banner?.isAutoPlay(true)
-            ui?.banner?.setDelayTime(5000)
+            ui?.banner?.setDelayTime(3000)
             //ui?.banner?.setBannerAnimation(Transformer.DepthPage)
             ui?.banner?.setIndicatorGravity(BannerConfig.CENTER)
             ui?.banner?.setImageLoader(object : ImageLoader() {

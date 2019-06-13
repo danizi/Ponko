@@ -36,7 +36,7 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
     protected var addItemDecoration = true
 
     override fun setContentViewBefore() {
-
+        super.setContentViewBefore()
     }
 
     override fun getLayoutId(): Int {

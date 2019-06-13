@@ -70,7 +70,6 @@ class PayViewHolder(view: View) : BaseViewHolder(view) {
             val layoutParams = ui?.ivCourse?.layoutParams
             layoutParams?.height = ((ScreenUtil.getNormalWH(context as Activity)[0] - ScreenUtil.dip2px(context, 30)) * present).toInt()
             ui?.ivCourse?.layoutParams = layoutParams
-
             itemView.setOnClickListener {
                 IntoTargetUtil.target(context, productsPurchasedBean.link_type, productsPurchasedBean.link_value)
             }

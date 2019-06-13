@@ -1,7 +1,9 @@
 package com.ponko.cn.module.study2
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
+import com.ponko.cn.MainActivity.Companion.bottomMenu
 import com.ponko.cn.R
 import com.ponko.cn.bean.*
 import com.ponko.cn.module.common.RefreshLoadFrg
@@ -17,12 +19,46 @@ import com.ponko.cn.module.study2.holder.UnPayViewHolder
 import com.ponko.cn.utils.ActivityUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
+import q.rorbin.badgeview.QBadgeView
 
 /**
  * 新版学习页面
  */
 class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, Main2CBean>(), StudyContract2.V {
 
+    private var qbadgeView: QBadgeView? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        p?.registerTipReceiver()
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onDestroy() {
+        p?.unRegisterTipReceiver()
+        super.onDestroy()
+    }
+
+    override fun showMsgTip(i: Int) {
+        val count = i
+        val view = bottomMenu.getTabAt(3)?.customView
+        if (count > 0) {
+            if (qbadgeView == null) {
+                qbadgeView = QBadgeView(context)
+            }
+            qbadgeView?.visibility = View.VISIBLE
+            qbadgeView?.bindTarget(view)?.badgeNumber = count
+            qbadgeView?.setGravityOffset(6f, 0f, true)
+            return
+        }
+
+        qbadgeView?.visibility = View.GONE
+        BKLog.d("我的消息数量:$count")
+    }
+
+    override fun hideMsgTip() {
+        //去掉消息提醒
+        qbadgeView?.bindTarget(view)?.badgeNumber = -1
+    }
 
     override fun initDisplay() {
         super.initDisplay()
@@ -79,7 +115,6 @@ class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, Main2CBean>(), StudyCon
     override fun requestRefreshApi() {
         p?.requestStudyApi()
     }
-
 
     override fun adapter(): BaseRvAdapter? {
         return StudyAdapter()

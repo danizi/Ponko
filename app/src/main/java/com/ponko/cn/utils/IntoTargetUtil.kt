@@ -12,6 +12,7 @@ import com.ponko.cn.module.my.option.RemindAct
 import com.ponko.cn.module.my.option.acount.AccountAct
 import com.ponko.cn.module.my.option.acount.PersonalActivity
 import com.ponko.cn.module.my.option.store.*
+import com.ponko.cn.module.study.CourseTypeLinearActivity
 import com.ponko.cn.module.study.StudyCourseDetailActivity
 import com.xm.lib.common.log.BKLog
 
@@ -132,7 +133,7 @@ object IntoTargetUtil {
 
     private fun storeProductDetail(linkValue: String?) {
         BKLog.d(TAG, "积分产品详情页 linkValue:$linkValue")
-        WebAct.startExChange(context, "", linkValue, "", linkValue, "", "", 0)
+        WebAct.startExChange(context, "exchange", linkValue, "兑换课程", linkValue, "0", "1", 1) //ps:
     }
 
     private fun storeScoreRanking(linkValue: String?) {
@@ -167,6 +168,7 @@ object IntoTargetUtil {
 
     private fun courseType(linkValue: String?) {
         BKLog.d(TAG, "课程分类 linkValue:$linkValue")
+        CourseTypeLinearActivity.start(context,"课程",linkValue)
     }
 
     private fun pay(context: Context?, linkValue: String?) {

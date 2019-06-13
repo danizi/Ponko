@@ -59,7 +59,7 @@ class MyTaskSignViewHolder(view: View) : BaseViewHolder(view) {
             showSignBtn()
         }
         //显示签到天数
-        ui?.view7daySign?.setSelect(myTaskSignBean?.days!!)
+        ui?.view7daySign?.setSelect(myTaskSignBean?.days!!, false)
     }
 
     /**
@@ -120,7 +120,7 @@ class MyTaskSignViewHolder(view: View) : BaseViewHolder(view) {
                 //设置积分
                 ui?.tvNumber?.setText(body?.scores.toString(), true)
                 //签到控件进度
-                ui?.view7daySign?.setSelect(body?.days!!)
+                ui?.view7daySign?.setSelect(body?.days!!, body.isCompleted)
             }
         })
     }

@@ -3,9 +3,9 @@ package com.ponko.cn.module.my.holder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,12 +16,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.MyBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.*
 import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.ponko.cn.module.my.option.store.StoreAct
+import com.ponko.cn.module.study2.StudyContract2
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.AnimUtil
 import com.ponko.cn.utils.CacheUtil
@@ -36,7 +38,6 @@ import com.xm.lib.component.CommonUtil
 import com.xm.lib.component.XmPopWindow
 import retrofit2.Call
 import retrofit2.Response
-import java.util.logging.Handler
 
 
 class MyViewHolder2(view: View) : BaseViewHolder(view) {
@@ -66,10 +67,8 @@ class MyViewHolder2(view: View) : BaseViewHolder(view) {
         viewHolder?.rv?.adapter = adapter
         viewHolder?.rv?.layoutManager = GridLayoutManager(context, 4)
         viewHolder?.rv?.isFocusableInTouchMode = false
-        viewHolder?.rv?.requestFocus()
+        //viewHolder?.rv?.requestFocus()
     }
-
-
 }
 
 class Adapter : BaseRvAdapter()
@@ -99,7 +98,9 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
         viewHolder?.iv?.setImageResource(myListBean.icon)
         viewHolder?.tv?.text = myListBean.des
 
-        isStoreIconShake(myListBean.des)
+        //是否晃动提醒
+        isStoreIconShake(myListBean.des,context)
+
         itemView.setOnClickListener {
             when (myListBean.des) {
                 "积分商城" -> {
@@ -145,11 +146,13 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                                             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + PonkoApp.mainCBean?.public_phone))
                                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                             context.startActivity(intent)
+                                            popWindow.dismiss()
                                         }
                                         tvWx?.setOnClickListener {
                                             //复制微信账号成功
                                             CommonUtil.copyToClipboard(context, PonkoApp.main2CBean?.service?.wechat!!)
                                             ToastUtil.show("复制成功")
+                                            popWindow.dismiss()
                                         }
                                         tvCancel?.setOnClickListener {
                                             popWindow.dismiss()
@@ -184,7 +187,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
     /**
      * 未签到，积分晃动提醒
      */
-    private fun isStoreIconShake(des: String) {
+    private fun isStoreIconShake(des: String, context: Context) {
         if (des == "积分商城") {
             PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
                 override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
@@ -192,8 +195,19 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                     PonkoApp.signInfo = storeTaskBean
                     if (storeTaskBean?.isCompleted != true) {
                         //未签到状态
-                        BKLog.d("未签到状态,商城图片晃动")
+                        BKLog.d("未签到状态,商城图标晃动")
                         AnimUtil.shakeAnim(viewHolder?.iv)
+                    }
+                }
+            })
+        } else if (des == "提醒") {
+            StudyContract2.M().requestStudyApi(object : HttpCallBack<Main2CBean>() {
+                override fun onSuccess(call: Call<Main2CBean>?, response: Response<Main2CBean>?) {
+                    if (response?.body()?.msg_count!! > 0) {
+                        BKLog.d("有提醒消息，提醒图标晃动")
+                        AnimUtil.shakeAnim(viewHolder?.iv)
+                    }else{
+                        context.sendBroadcast(Intent(""))
                     }
                 }
             })

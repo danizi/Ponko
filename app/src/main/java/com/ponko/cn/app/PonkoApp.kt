@@ -72,7 +72,7 @@ class PonkoApp : MultiDexApplication() {
 
         fun getLocalVersion(ctx: Context): Int {
             var localVersion = 0
-            var localVersionName=""
+            var localVersionName = ""
             try {
                 val packageInfo = ctx.applicationContext
                         .packageManager
@@ -87,7 +87,7 @@ class PonkoApp : MultiDexApplication() {
 
         fun getLocalVersion2(ctx: Context): String {
             var localVersion = 0
-            var localVersionName=""
+            var localVersionName = ""
             try {
                 val packageInfo = ctx.applicationContext
                         .packageManager
@@ -98,6 +98,22 @@ class PonkoApp : MultiDexApplication() {
                 e.printStackTrace()
             }
             return localVersionName
+        }
+
+        fun isB2bVip(): Boolean {
+            return if (CacheUtil.getStudyUI() == "2") {
+                false
+            } else {
+                (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
+            }
+        }
+
+        fun isB2CVip(): Boolean {
+            return if (CacheUtil.getStudyUI() == "2") {
+                false
+            } else {
+                (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+            }
         }
     }
 

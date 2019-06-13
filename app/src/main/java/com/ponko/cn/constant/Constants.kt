@@ -4,11 +4,11 @@ object Constants {
     /**
      * 接口BaseApi
      */
-//    const val BASE_API = "https://api.tradestudy.cn/v3/"
+    const val BASE_API = "https://api.tradestudy.cn/v3/"
     /**
      * 测试服务器
      */
-    const val BASE_API = "http://192.168.253.160:8092/v3/"
+//    const val BASE_API = "http://192.168.253.160:8092/v3/"
     /**
      * 微信id
      */
@@ -24,7 +24,7 @@ object Constants {
     /**
      * 码兑换成功免费页面刷新广播
      */
-    const val ACTION_FREE_REFRESH= "action_free_refresh"
+    const val ACTION_FREE_REFRESH = "action_free_refresh"
     /**
      * 点击免费视频详情页面Item广播
      */
@@ -53,6 +53,15 @@ object Constants {
      * 点击了item 队列- >运行处理广播
      */
     const val ACTION_DOWN_CLICK_READY = "broadcast.action.ready"
+    /**
+     * 底部菜单隐藏提示
+     */
+    const val ACTION_HIDE_MSG_TIP = "action_hide_msg_tip"
+    /**
+     * 底部菜单显示提示
+     */
+    const val ACTION_SHOW_MSG_TIP = "action_show_msg_tip"
+
     /**
      * 图片延迟加载时间设定
      */

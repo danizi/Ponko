@@ -6,12 +6,14 @@ import android.content.Intent
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
+import com.ponko.cn.bean.CourseAllCBean
 import com.ponko.cn.bean.InternalCourse
 import com.ponko.cn.bean.OutInternalCourse
 import com.ponko.cn.http.HttpCallBack
@@ -31,7 +33,7 @@ import retrofit2.Response
 /**
  * 专题下的课程列表
  */
-class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse>>() {
+class CourseTypeLinearActivity : RefreshLoadAct<Any, CourseAllCBean>() {
     companion object {
         fun start(context: Context?, title: String?, typeId: String?) {
             val intent = Intent(context, CourseTypeLinearActivity::class.java)
@@ -49,11 +51,20 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
         typeId = intent.getStringExtra("typeId")
         addItemDecoration = false
         disableLoad = true
-        BarUtil.addBar1(this, viewHolder?.toolbar, title!!, "搜索", View.OnClickListener {
+        bar()
+        super.initDisplay()
+    }
+
+    private fun bar(t: String? = "") {
+        val tempTitle: String = if (TextUtils.isEmpty(t)) {
+            title!!
+        } else {
+            t!!
+        }
+        BarUtil.addBar1(this, viewHolder?.toolbar, tempTitle, "搜索", View.OnClickListener {
             BKLog.d("点击搜索")
             ActivityUtil.startActivity(this, Intent(this, SearchActivity::class.java))
         })
-        super.initDisplay()
     }
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
@@ -68,20 +79,21 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
     override fun requestMoreApi() {}
 
     override fun requestRefreshApi() {
-        PonkoApp.studyApi?.getSpecialAllCourse(typeId!!)?.enqueue(object : HttpCallBack<ArrayList<OutInternalCourse>>() {
-            override fun onSuccess(call: Call<ArrayList<OutInternalCourse>>?, response: Response<ArrayList<OutInternalCourse>>?) {
+        PonkoApp.studyApi?.getSpecialAllCourse(typeId!!)?.enqueue(object : HttpCallBack<CourseAllCBean>() {
+            override fun onSuccess(call: Call<CourseAllCBean>?, response: Response<CourseAllCBean>?) {
+                bar(response?.body()?.title)
                 requestRefreshSuccess(response?.body())
             }
 
-            override fun onFailure(call: Call<ArrayList<OutInternalCourse>>?, msg: String?) {
+            override fun onFailure(call: Call<CourseAllCBean>?, msg: String?) {
                 super.onFailure(call, msg)
                 requestRefreshFailure()
             }
         })
     }
 
-    override fun multiTypeData(body: ArrayList<OutInternalCourse>?): List<Any> {
-        return body!!
+    override fun multiTypeData(body: CourseAllCBean?): List<Any> {
+        return body?.types!!
     }
 
     override fun adapter(): BaseRvAdapter? {
@@ -110,15 +122,16 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
             if (viewHolder == null) {
                 viewHolder = ViewHolder.create(itemView)
             }
-            val outLinearCourse = d as OutInternalCourse
+            val typesBean = d as CourseAllCBean.TypesBean
             val context = itemView.context
-            viewHolder?.tvTitle?.text = outLinearCourse.title
+            viewHolder?.tvTitle?.text = typesBean.title
             val adapter = object : BaseRvAdapter() {}
-            adapter.data?.addAll(outLinearCourse.courses!!)
+            adapter.data?.addAll(typesBean.courses)
             adapter.addItemViewDelegate(0, CourseViewHolder::class.java, InternalCourse::class.java, R.layout.item_course_introduction)
             viewHolder?.rv?.adapter = adapter
             viewHolder?.rv?.layoutManager = LinearLayoutManager(context)
             viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))  //https://www.jianshu.com/p/86aaaa49ed3e
+            viewHolder?.rv?.isFocusableInTouchMode = false
         }
     }
 
@@ -145,23 +158,23 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, ArrayList<OutInternalCourse
             if (viewHolder == null) {
                 viewHolder = ViewHolder.create(itemView)
             }
-            val internalCourse = d as InternalCourse
+            val coursesBean = d as CourseAllCBean.TypesBean.CoursesBean
             val context = itemView.context
-            Glide.with(context, internalCourse.image, viewHolder?.ivCover)
-            viewHolder?.tvCourseTitle?.text = internalCourse.title.toString()
+            Glide.with(context, coursesBean.image, viewHolder?.ivCover)
+            viewHolder?.tvCourseTitle?.text = coursesBean.title.toString()
 
             var teachers = ""
-            for (i in 0..(internalCourse.teachers.size - 1)) {
+            for (i in 0..(coursesBean.teachers.size - 1)) {
                 teachers += if (i == 0) {
-                    internalCourse.teachers[i]
+                    coursesBean.teachers[i]
                 } else {
-                    " | " + internalCourse.teachers[i]
+                    " | " + coursesBean.teachers[i]
                 }
             }
             viewHolder?.tvTeacher?.text = "${teachers}老师"
-            viewHolder?.courseNumber?.text = "共${internalCourse.num}集 | ${NumUtil.getDecimalPoint(internalCourse.duration?.toFloat()!! / 60f / 60f)}小时"
+            viewHolder?.courseNumber?.text = "共${coursesBean.num}集 | ${NumUtil.getDecimalPoint(coursesBean.duration.toFloat() / 60f / 60f)}小时"
             itemView.setOnClickListener {
-                StudyCourseDetailActivity.start(context, internalCourse.id, teachers, internalCourse.num, internalCourse.duration!!)
+                StudyCourseDetailActivity.start(context, coursesBean.id, teachers, coursesBean.num.toLong(), coursesBean.duration.toLong())
             }
         }
     }

@@ -134,8 +134,10 @@ class FreeDetailsConstract {
                 return v
             }
 
+            private var prePos = 0
+
             /**
-             * 跟新第几个
+             * 更新第几个
              */
             fun notifyItem(position: Int) {
                 val bean = adapter?.data!![position]
@@ -143,6 +145,11 @@ class FreeDetailsConstract {
                     (adapter?.data!![position] as DetailCBean.ChaptersBean.SectionsBean).isSelect = true
                     adapter?.notifyItemChanged(position)
                 }
+
+                //恢复上一个item的样式
+                (adapter?.data!![position] as DetailCBean.ChaptersBean.SectionsBean).isSelect = false
+                adapter?.notifyItemChanged(position)
+                prePos = position
             }
         }
 
@@ -194,8 +201,10 @@ class FreeDetailsConstract {
 
             private fun initEvent(sectionsBean: DetailCBean.ChaptersBean.SectionsBean, position: Int, context: Context) {
                 itemView.setOnClickListener {
-                    val isB2BVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
-                    val isB2CVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+//                    val isB2BVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
+//                    val isB2CVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+                    val isB2BVip = PonkoApp.isB2bVip()
+                    val isB2CVip = PonkoApp.isB2CVip()
                     if (sectionsBean.isFree || isB2BVip || isB2CVip) {
                         BKLog.d("点击播放${sectionsBean.sectionName}")
                         val intent = Intent(Constants.ACTION_CLICK_FREE_PLAY_ITEM)
@@ -211,8 +220,10 @@ class FreeDetailsConstract {
             }
 
             private fun isShowLock(sectionsBean: DetailCBean.ChaptersBean.SectionsBean) {
-                val isB2BVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
-                val isB2CVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+//                val isB2BVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)
+//                val isB2CVip = (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+                val isB2BVip = PonkoApp.isB2bVip()
+                val isB2CVip = PonkoApp.isB2CVip()
                 if (sectionsBean.isFree || isB2BVip || isB2CVip) {
                     ui?.ivLock?.visibility = View.GONE
                 } else {

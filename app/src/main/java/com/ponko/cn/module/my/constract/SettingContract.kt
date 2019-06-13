@@ -13,6 +13,7 @@ import com.ponko.cn.utils.CacheUtil.getStudyUI
 import com.ponko.cn.utils.CacheUtil.putLog
 import com.ponko.cn.utils.CacheUtil.putMediaType
 import com.ponko.cn.utils.CacheUtil.putStudyUI
+import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import kotlin.math.log
@@ -196,10 +197,52 @@ class SettingContract {
                         //ToastUtil.show("pos:$position")
                         when (position) {
                             0 -> {
-                                //关闭
                             }
                             1 -> {
-
+                                IntoTargetUtil.target(context, "wechat_bind", "")
+                            }
+                            2 -> {
+                                IntoTargetUtil.target(context, "case"/*"交流页面"*/, "2")
+                            }
+                            3 -> {
+                                IntoTargetUtil.target(context, "free"/*"免费页面"*/, "1")
+                            }
+                            4 -> {
+                                IntoTargetUtil.target(context, "store_product_detail"/*"积分产品详情页面"*/, "/store/exchange_detail?id=fc4b7d755cdf11e88b440242ac130003")
+                            }
+                            5 -> {
+                                IntoTargetUtil.target(context, "store_score_ranking"/*"积分排行榜"*/, "")
+                            }
+                            6 -> {
+                                IntoTargetUtil.target(context, "store_score_exchange_list"/*"积分阅换记录"*/, "")
+                            }
+                            7 -> {
+                                IntoTargetUtil.target(context, "store_score_list"/*"积分获取记录"*/, "")
+                            }
+                            8 -> {
+                                //一般不会使用
+                                IntoTargetUtil.target(context, "store_score_task"/*"积分任务"*/, "xxxx")
+                            }
+                            9 -> {
+                                IntoTargetUtil.target(context, "store"/*"积分商城"*/, "")
+                            }
+                            10 -> {
+                                IntoTargetUtil.target(context, "course_detail"/*"课程详情"*/, "f54bcf82547211e69a5500163e000c35")
+                            }
+                            11 -> {
+                                IntoTargetUtil.target(context, "payment"/*"支付网页"*/, "/product/detail?productId=bfd7f85c6f0a11e8a93a67b75eb469f2")
+                            }
+                            12 -> {
+                                IntoTargetUtil.target(context, "url"/*"普通网页"*/, "analysis/detail?id=" + "2674ebd90b3a11e9b5c00242ac130004")
+                            }
+                            13 -> {
+                                IntoTargetUtil.target(context, "msg"/*"提醒"*/, "")
+                            }
+                            14 -> {
+                                IntoTargetUtil.target(context, "invite"/*"邀请"*/, "")
+                            }
+                            15 -> {
+                                IntoTargetUtil.target(context, "profile_edit"/*"个人信息编辑页面"*/, "")
                             }
                         }
                     }
