@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:text="有效期至2018-10-12"
+                android:text="有效期至0000-00-00"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_vip"
                 app:layout_constraintStart_toEndOf="@+id/iv_vip"
                 app:layout_constraintTop_toTopOf="@+id/iv_vip" />

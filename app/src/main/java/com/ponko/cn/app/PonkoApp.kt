@@ -141,7 +141,7 @@ class PonkoApp : MultiDexApplication() {
     }
 
     private fun iniLog() {
-        BKLog.LEVEL = BKLog.D
+        BKLog.LEVEL = BKLog.W
     }
 
     private fun initDownManager() {

@@ -88,12 +88,16 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
                 }
 
                 override fun onPageSelected(p0: Int) {
-                    //设置选中指示器的宽度
-                    val indicators = getFieldValueByFieldName("indicatorImages", v?.banner!!)
-                    for (img in indicators!!) {
-                        img.layoutParams?.width = ScreenUtil.dip2px(context, 5)
+                    try {
+                        //设置选中指示器的宽度
+                        val indicators = getFieldValueByFieldName("indicatorImages", v?.banner!!)
+                        for (img in indicators!!) {
+                            img.layoutParams?.width = ScreenUtil.dip2px(context, 5)
+                        }
+                        indicators[p0].layoutParams?.width = ScreenUtil.dip2px(context, 10)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                    indicators[p0].layoutParams?.width = ScreenUtil.dip2px(context, 10)
                 }
 
                 private fun getFieldValueByFieldName(fieldName: String, `object`: Any): ArrayList<ImageView>? {
@@ -134,14 +138,14 @@ class BannerViewHolder(view: View) : BaseViewHolder(view) {
         v?.tvB2b?.text = b2b?.icon_text
         v?.tvB2c?.text = b2c?.icon_text
         v?.llB2b?.setOnClickListener {
-            if ((!PonkoApp.mainCBean?.types?.isEmpty()!!&&PonkoApp.mainCBean?.types!![0].isIs_vip)) {
+            if ((!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![0].isIs_vip)) {
                 CourseTypeGridActivity.start(context, PonkoApp.mainCBean?.types!![0].title, PonkoApp.mainCBean?.types!![0].type_id)
             } else {
                 IntoTargetUtil.target(context, b2b?.link_type, b2b?.link_value)
             }
         }
         v?.llB2c?.setOnClickListener {
-            if ((!PonkoApp.mainCBean?.types?.isEmpty()!!&&PonkoApp.mainCBean?.types!![1].isIs_vip)) {
+            if ((!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)) {
                 CourseTypeGridActivity.start(context, PonkoApp.mainCBean?.types!![1].title, PonkoApp.mainCBean?.types!![1].type_id)
             } else {
                 IntoTargetUtil.target(context, b2c?.link_type, b2c?.link_value)

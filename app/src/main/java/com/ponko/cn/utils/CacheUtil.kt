@@ -151,6 +151,7 @@ object CacheUtil {
     }
 
     fun getStudyUI(): String {
+        putStudyUI("2")
         return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "studyUI", "2") as String
     }
 

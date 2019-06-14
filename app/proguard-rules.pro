@@ -155,7 +155,7 @@
 #不混淆反射类
 -keep class com.xm.lib.common.base.rv.** { *; }
 -keep class com.ponko.cn.module.study2.holder.** { *; }
- -keep class android.support.**{*;}
+
 
 # # # # # # # # # # # # # # # #
 #           第三方            #

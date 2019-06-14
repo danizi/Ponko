@@ -20,6 +20,7 @@ import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.module.study2.StudyFrg2
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.CacheUtil.getStudyUI
+import com.ponko.cn.utils.CacheUtil.putStudyUI
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
