@@ -17,7 +17,7 @@ class RemindCBean() : Parcelable {
      */
 
     var createTime: Long = 0
-    var isUnread: Boolean = false
+    var unread: Boolean = false
     var title: String? = null
     var description: String? = null
     var id: String? = null
@@ -26,7 +26,7 @@ class RemindCBean() : Parcelable {
 
     constructor(parcel: Parcel) : this() {
         createTime = parcel.readLong()
-        isUnread = parcel.readByte() != 0.toByte()
+        unread = parcel.readByte() != 0.toByte()
         title = parcel.readString()
         description = parcel.readString()
         id = parcel.readString()
@@ -36,7 +36,7 @@ class RemindCBean() : Parcelable {
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeLong(createTime)
-        parcel.writeByte(if (isUnread) 1 else 0)
+        parcel.writeByte(if (unread) 1 else 0)
         parcel.writeString(title)
         parcel.writeString(description)
         parcel.writeString(id)

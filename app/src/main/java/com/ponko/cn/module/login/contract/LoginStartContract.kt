@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.text.TextUtils
 import com.ponko.cn.MainActivity
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
@@ -20,10 +19,8 @@ import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.UDIDUtil
 import com.xm.lib.media.broadcast.BroadcastManager
-import com.xm.lib.share.AbsShare
 import com.xm.lib.share.ShareConfig
 import com.xm.lib.share.wx.WxShare
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 

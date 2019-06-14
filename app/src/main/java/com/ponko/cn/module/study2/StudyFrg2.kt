@@ -2,7 +2,9 @@ package com.ponko.cn.module.study2
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import com.ponko.cn.MainActivity.Companion.bottomMenu
 import com.ponko.cn.R
 import com.ponko.cn.bean.*
@@ -28,14 +30,14 @@ class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, Main2CBean>(), StudyCon
 
     private var qbadgeView: QBadgeView? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun iniData() {
+        super.iniData()
         p?.registerTipReceiver()
-        super.onCreate(savedInstanceState)
     }
 
     override fun onDestroy() {
-        p?.unRegisterTipReceiver()
         super.onDestroy()
+        p?.unRegisterTipReceiver()
     }
 
     override fun showMsgTip(i: Int) {
@@ -57,6 +59,7 @@ class StudyFrg2 : RefreshLoadFrg<StudyContract2.Present, Main2CBean>(), StudyCon
 
     override fun hideMsgTip() {
         //去掉消息提醒
+        qbadgeView?.visibility=View.GONE
         qbadgeView?.bindTarget(view)?.badgeNumber = -1
     }
 

@@ -1,22 +1,69 @@
 package com.ponko.cn.module.my.option
 
+import android.content.Intent
+import android.view.View
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
+import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.bean.RemindCBean
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.common.RefreshLoadFrg
+import com.ponko.cn.module.my.constract.RemindContract
 import com.ponko.cn.module.my.holder.MyRemindHolder
+import com.ponko.cn.utils.BarUtil.addBar2
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 
-class RemindAct : RefreshLoadAct<Any, ArrayList<RemindCBean>>() {
+class RemindAct : RefreshLoadAct<RemindContract.Present, ArrayList<RemindCBean>>(), RemindContract.V {
+
+
+    override fun presenter(): RemindContract.Present {
+        return RemindContract.Present(context = this, v = this)
+    }
 
     override fun initDisplay() {
-        addBar1("消息提醒")
+//        addBar2("消息提醒", "删除所有", View.OnClickListener {
+//            p?.clearAll()
+//        })
         super.initDisplay()
+    }
+
+    override fun requestCleanRemindApiSuccess() {
+        ToastUtil.show("删除成功")
+        sendBroadcast(Intent(Constants.ACTION_HIDE_MSG_TIP))
+        requestRefreshApi()
+    }
+
+    override fun requestCleanRemindApiFailure() {
+        ToastUtil.show("删除失败")
+    }
+
+    override fun remindListApiSuccess(body: ArrayList<RemindCBean>?) {
+        if(body?.isEmpty()!!){
+            addBar2("消息提醒", "", View.OnClickListener {})
+        }else{
+            addBar2("消息提醒", "删除所有", View.OnClickListener {
+                p?.clearAll()
+            })
+        }
+        requestRefreshSuccess(body)
+    }
+
+    override fun remindListApiFailure() {
+        requestRefreshFailure()
+    }
+
+    override fun remindListMoreApiSuccess(body: ArrayList<RemindCBean>?) {
+        requestMoreSuccess(body)
+    }
+
+    override fun remindListMoreApiFailure() {
+        requestMoreFailure()
     }
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
@@ -29,29 +76,31 @@ class RemindAct : RefreshLoadAct<Any, ArrayList<RemindCBean>>() {
     }
 
     override fun requestMoreApi() {
-        PonkoApp.myApi?.getRemindList(++page)?.enqueue(object : HttpCallBack<ArrayList<RemindCBean>>() {
-            override fun onSuccess(call: Call<ArrayList<RemindCBean>>?, response: Response<ArrayList<RemindCBean>>?) {
-                requestMoreSuccess(response?.body())
-            }
-
-            override fun onFailure(call: Call<ArrayList<RemindCBean>>?, msg: String?) {
-                super.onFailure(call, msg)
-                requestMoreFailure()
-            }
-        })
+//        PonkoApp.myApi?.getRemindList(++page)?.enqueue(object : HttpCallBack<ArrayList<RemindCBean>>() {
+//            override fun onSuccess(call: Call<ArrayList<RemindCBean>>?, response: Response<ArrayList<RemindCBean>>?) {
+//                requestMoreSuccess(response?.body())
+//            }
+//
+//            override fun onFailure(call: Call<ArrayList<RemindCBean>>?, msg: String?) {
+//                super.onFailure(call, msg)
+//                requestMoreFailure()
+//            }
+//        })
+        p?.remindListMoreApi()
     }
 
     override fun requestRefreshApi() {
-        PonkoApp.myApi?.getRemindList()?.enqueue(object : HttpCallBack<ArrayList<RemindCBean>>() {
-            override fun onSuccess(call: Call<ArrayList<RemindCBean>>?, response: Response<ArrayList<RemindCBean>>?) {
-                requestRefreshSuccess(response?.body())
-            }
-
-            override fun onFailure(call: Call<ArrayList<RemindCBean>>?, msg: String?) {
-                super.onFailure(call, msg)
-                requestRefreshFailure()
-            }
-        })
+        p?.remindListApi()
+//        PonkoApp.myApi?.getRemindList()?.enqueue(object : HttpCallBack<ArrayList<RemindCBean>>() {
+//            override fun onSuccess(call: Call<ArrayList<RemindCBean>>?, response: Response<ArrayList<RemindCBean>>?) {
+//                requestRefreshSuccess(response?.body())
+//            }
+//
+//            override fun onFailure(call: Call<ArrayList<RemindCBean>>?, msg: String?) {
+//                super.onFailure(call, msg)
+//                requestRefreshFailure()
+//            }
+//        })
     }
 
     override fun multiTypeData(body: ArrayList<RemindCBean>?): List<Any> {
@@ -62,9 +111,6 @@ class RemindAct : RefreshLoadAct<Any, ArrayList<RemindCBean>>() {
         return object : BaseRvAdapter() {}
     }
 
-    override fun presenter(): Any {
-        return Any()
-    }
 
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)

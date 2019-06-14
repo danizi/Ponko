@@ -1,23 +1,18 @@
 package com.ponko.cn.module.my
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.*
-import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.my.adapter.MyAdapter
 import com.ponko.cn.module.my.constract.MyConstract
 import com.ponko.cn.module.my.holder.MyViewHolder
 import com.ponko.cn.module.my.holder.MyViewHolder2
-import com.ponko.cn.module.study2.StudyContract2
-import com.ponko.cn.utils.AnimUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response
 
@@ -45,20 +40,6 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
             override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
                 val storeTaskBean = response?.body()
                 PonkoApp.signInfo = storeTaskBean
-            }
-        })
-        //再次请求一下接口
-        StudyContract2.M().requestStudyApi(object : HttpCallBack<Main2CBean>() {
-            override fun onSuccess(call: Call<Main2CBean>?, response: Response<Main2CBean>?) {
-                val msg = response?.body()?.msg_count!!
-                if (msg > 0) {
-                    BKLog.d("有提醒消息，提醒图标晃动")
-                    val intent = Intent(Constants.ACTION_SHOW_MSG_TIP)
-                    intent.putExtra("msg", msg)
-                    context?.sendBroadcast(Intent(Constants.ACTION_SHOW_MSG_TIP))
-                } else {
-                    context?.sendBroadcast(Intent(Constants.ACTION_HIDE_MSG_TIP))
-                }
             }
         })
     }

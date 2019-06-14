@@ -70,7 +70,7 @@ interface MyApi {
      * 积分 '兑换' 记录
      */
     @GET("scores/histories/exchanged")
-    fun integralObtainExchanged(@Query("pn") page: Int?=1): Call<ArrayList<ExchangedHistoriesCBean>>
+    fun integralObtainExchanged(@Query("pn") page: Int? = 1): Call<ArrayList<ExchangedHistoriesCBean>>
 
     /**
      * 积分排行榜
@@ -96,7 +96,7 @@ interface MyApi {
      * 积分任务
      */
     @GET("scores/tasks")
-    fun tasks(@Query("pn") page: Int?=1): Call<StoreTaskBean>
+    fun tasks(@Query("pn") page: Int? = 1): Call<StoreTaskBean>
 
     /**
      * 签到
@@ -153,11 +153,18 @@ interface MyApi {
     ///        消息提醒               //
     ////////////////////////////////////
     @GET("message")
-    fun getRemindList(@Query("np") query: Int? = 1): Call<ArrayList<RemindCBean>>
+    fun getRemindList(@Query("pn") query: Int? = 1): Call<ArrayList<RemindCBean>>
 
     @POST("message/read")
     @FormUrlEncoded
     fun readRemind(@Field("id") id: String): Call<GeneralBean>
+
+
+    /**
+     * @param ids 为空则删除所有消息，xxx,xxxx删除指定id消息
+     */
+    @DELETE("message/clean")
+    fun cleanRemind(@Query("ids") ids: String? = ""): Call<GeneralBean>
 
 
     ////////////////////////////////////
@@ -179,7 +186,7 @@ interface MyApi {
      */
     @FormUrlEncoded
     @POST("store/exchange")
-    fun exchangeProduct( @Field("id") id:String): Call<GeneralBean>
+    fun exchangeProduct(@Field("id") id: String): Call<GeneralBean>
 
     @Deprecated("")
     @GET("exchange/courses")

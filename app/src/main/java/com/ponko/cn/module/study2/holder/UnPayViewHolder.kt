@@ -63,14 +63,13 @@ class UnPayViewHolder(view: View) : BaseViewHolder(view) {
             }
             val context = itemView.context
             val productsAllBean = d as Main2CBean.ProductsAllBean
-            Glide.with(context,productsAllBean.avatar,ui?.ivCourse)
+            Glide.with(context, productsAllBean.avatar, ui?.ivCourse)
             //图片高度自适应
             val present = 155f / 347f
             val layoutParams = ui?.ivCourse?.layoutParams
             layoutParams?.height = ((ScreenUtil.getNormalWH(context as Activity)[0] - ScreenUtil.dip2px(context, 30)) * present).toInt()
             ui?.ivCourse?.layoutParams = layoutParams
             itemView.setOnClickListener {
-                ToastUtil.show("未订购")
                 IntoTargetUtil.target(context, productsAllBean.link_type, productsAllBean.link_value)
             }
         }
