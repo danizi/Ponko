@@ -30,6 +30,8 @@
             android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
+            android:ellipsize="end"
+            android:lines="1"
             android:text="0"
             app:layout_constraintBottom_toBottomOf="@+id/iv_head"
             app:layout_constraintStart_toStartOf="parent"

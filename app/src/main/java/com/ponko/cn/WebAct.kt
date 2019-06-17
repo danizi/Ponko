@@ -24,10 +24,8 @@ import com.ponko.cn.WebContract.V.PayViewHolder.Companion.javascriptPayProductid
 import com.ponko.cn.WebContract.V.ShareViewHolder.Companion.javascriptShare
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
-import com.ponko.cn.bean.AddressBean
-import com.ponko.cn.bean.GeneralBean
-import com.ponko.cn.bean.Main2CBean
-import com.ponko.cn.bean.OrderCBean
+import com.ponko.cn.bean.*
+import com.ponko.cn.constant.Constants.BASE_API
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.my.option.acount.AddressActivity
@@ -284,6 +282,8 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                     view.loadUrl(javascriptShare)
                     view.loadUrl(javascriptPayProductid)
                     view.loadUrl(javascriptPayGuide)
+
+
                     super.onPageFinished(view, finishUrl)
                     progressBar?.visibility = View.GONE
                 }
@@ -321,64 +321,71 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                 //加载网页
                 web.loadUrl(loadUrl(linkValue), heads())
                 //注入java对象
-                web.addJavascriptInterface(WebContract.M.InJavaScriptLocalObj(object : WebContract.M.InJavaScriptLocalObj.OnInJavaScriptLocalObjListener {
-                    override fun onShare(t: String, des: String, l: String) {
-                        act.runOnUiThread {
-                            BKLog.d(TAG, "t:$t des:$des l:$l")
-                            tvBarRight?.visibility = View.VISIBLE
-                            shareViewHolder?.shareTitle = t
-                            shareViewHolder?.shareDescription = des
-                            shareViewHolder?.shareUrl = l
+                if (PonkoApp.getLocalVersion(act) < 345) {
+                    web.addJavascriptInterface(WebContract.M.InJavaScriptLocalObj(object : WebContract.M.InJavaScriptLocalObj.OnInJavaScriptLocalObjListener {
+                        override fun onShare(t: String, des: String, l: String) {
+                            act.runOnUiThread {
+                                BKLog.d(TAG, "t:$t des:$des l:$l")
+                                tvBarRight?.visibility = View.VISIBLE
+                                shareViewHolder?.shareTitle = t
+                                shareViewHolder?.shareDescription = des
+                                shareViewHolder?.shareUrl = l
+                            }
                         }
-                    }
 
-                    override fun onProductId(value: String) {
-                        act.runOnUiThread {
-                            BKLog.d(TAG, "productId:$value")
-                            payViewHolder?.payProductId = value
-                            tvBarRight?.visibility = View.GONE
-                            payViewHolder?.btnPay?.visibility = View.VISIBLE
+                        override fun onProductId(value: String) {
+                            act.runOnUiThread {
+                                BKLog.d(TAG, "productId:$value")
+                                payViewHolder?.payProductId = value
+                                tvBarRight?.visibility = View.GONE
+                                payViewHolder?.btnPay?.visibility = View.VISIBLE
+                            }
                         }
-                    }
 
-                    override fun onPayGuide(have: String?, guideATitle: String?/*课程表*/, guideAUrl: String, guideBTitle: String/*老师介绍*/, guideBUrl: String, guideCTitle: String/*支付按钮显示*/) {
-                        act.runOnUiThread {
-                            BKLog.d(TAG, "have:$have guideATitle:$guideATitle guideAUrl:$guideAUrl guideBTitle:$guideBTitle guideBUrl:$guideBUrl guideCTitle:$guideCTitle")
-                            tvBarRight?.visibility = View.GONE
-                            when (have) {
-                                "0" -> {
-                                    //只显示支付按钮
-                                    payViewHolder?.btnPay?.visibility = View.VISIBLE
-                                }
-                                "1" -> {
-//                                    exchangeUI.guideATitle = guideATitle
-//                                    exchangeUI.guideAUrl = guideAUrl
-//                                    exchangeUI.guideBTitle = guideBTitle
-//                                    exchangeUI.guideBUrl = guideBUrl
-//                                    exchangeUI.guideCTitle = guideBUrl
-                                    //显示课程信息课程介绍
-                                    payViewHolder?.btnCourse?.visibility = View.VISIBLE
-                                    payViewHolder?.btnIntroduce?.visibility = View.VISIBLE
-                                    payViewHolder?.btnPay?.visibility = View.VISIBLE
-                                    payViewHolder?.btnPay?.text = guideCTitle
-                                    payViewHolder?.btnCourse?.setOnClickListener {
-                                        start(act, "url", guideAUrl, guideATitle, Intent.FLAG_ACTIVITY_NEW_TASK)
+                        override fun onPayGuide(have: String?, guideATitle: String?/*课程表*/, guideAUrl: String, guideBTitle: String/*老师介绍*/, guideBUrl: String, guideCTitle: String/*支付按钮显示*/) {
+                            act.runOnUiThread {
+                                BKLog.d(TAG, "have:$have guideATitle:$guideATitle guideAUrl:$guideAUrl guideBTitle:$guideBTitle guideBUrl:$guideBUrl guideCTitle:$guideCTitle")
+                                tvBarRight?.visibility = View.GONE
+                                when (have) {
+                                    "0" -> {
+                                        //只显示支付按钮
+                                        payViewHolder?.btnPay?.visibility = View.GONE
                                     }
-                                    payViewHolder?.btnIntroduce?.setOnClickListener {
-                                        start(act, "url", guideBUrl, guideBTitle, Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    "1" -> {
+                                        //显示课程信息课程介绍
+                                        payViewHolder?.btnCourse?.visibility = View.VISIBLE
+                                        payViewHolder?.btnIntroduce?.visibility = View.VISIBLE
+                                        payViewHolder?.btnPay?.visibility = View.GONE
+                                        payViewHolder?.btnPay?.text = guideCTitle
+                                        payViewHolder?.btnCourse?.setOnClickListener {
+                                            start(act, "url", guideAUrl, guideATitle, Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        }
+                                        payViewHolder?.btnIntroduce?.setOnClickListener {
+                                            start(act, "url", guideBUrl, guideBTitle, Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        }
+                                        payViewHolder?.btnPay?.text = guideCTitle
                                     }
-                                    payViewHolder?.btnPay?.text = guideCTitle
                                 }
                             }
                         }
-                    }
-                }), javascriptInterfaceName)
-                //注入支付对象
-                web.addJavascriptInterface(WebContract.M.AndroidPayObj(act, web), "androidPay")
-                //注入分享对象
-                web.addJavascriptInterface(WebContract.M.AndroidShareObj(act, web), "androidShare")
-                //注入跳转对象
-                web.addJavascriptInterface(WebContract.M.AndroidGotoObj(act, web), "androidGoto")
+                    }), javascriptInterfaceName)
+                } else {
+                    web.addJavascriptInterface(WebContract.M.AndroidObj(act, web, null, object : WebContract.M.AndroidObj.JSCallback {
+                        override fun onIsShowPayBtn(show: Boolean) {
+                            if (show) {
+                                payViewHolder?.btnPay?.visibility = View.GONE
+                            } else {
+                                payViewHolder?.btnPay?.visibility = View.VISIBLE
+                            }
+                        }
+                    }), WebContract.M.AndroidObj.javascriptInterfaceName)
+                }
+//                //注入支付对象
+//                web.addJavascriptInterface(WebContract.M.AndroidPayObj(act, web), "androidPay")
+//                //注入分享对象
+//                web.addJavascriptInterface(WebContract.M.AndroidShareObj(act, web), "androidShare")
+//                //注入跳转对象
+//                web.addJavascriptInterface(WebContract.M.AndroidGotoObj(act, web), "androidGoto")
             }
         }
 
@@ -400,7 +407,7 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
 
         private fun heads(): Map<String, String> {
             val heads = HashMap<String, String>()
-            heads["x-tradestudy-client-version"] = "3.4.6"
+            heads["x-tradestudy-client-version"] = PonkoApp.getLocalVersion2(act!!)
             heads["x-tradestudy-client-device"] = "android_phone"
             heads["x-tradestudy-access-key-id"] = "c"
             heads["x-tradestudy-access-token"] = getToken()!!
@@ -411,7 +418,7 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
             return if (linkValue.startsWith("http", true) || linkValue.startsWith("https", true)) {
                 linkValue
             } else {
-                "https://api.tradestudy.cn/v3$linkValue"
+                "$BASE_API$linkValue"
             }
         }
 
@@ -639,8 +646,10 @@ class WebContract {
                                 BKLog.d("点击了支付宝")
                             }
                         }
+                        DialogUtil.showProcess(act!!)
                         PonkoApp.payApi?.createProductOrder(payWay, payProductId)?.enqueue(object : HttpCallBack<OrderCBean>() {
                             override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
+
                                 val orderCBean = response?.body()
                                 orderCBean?.wechat
 
@@ -659,18 +668,28 @@ class WebContract {
                                         BKLog.d("支付成功")
                                         if (CacheUtil.getStudyUI() == "2"/*1 旧版 2 新版学习Fragment*/) {
                                             DialogUtil.show(act!!, "提示", PonkoApp.main2CBean?.tips?.pay_success!!, true, null, null)
+                                            DialogUtil.hideProcess()
                                         }
                                     }
 
                                     override fun onFailure() {
                                         BKLog.d("支付失败")
+                                        ToastUtil.show("支付失败，请重新支付。")
+                                        DialogUtil.hideProcess()
                                     }
 
                                     override fun onCancel() {
                                         BKLog.d("支付取消")
+                                        DialogUtil.hideProcess()
                                     }
                                 })
                                 dialog.dismiss()
+                            }
+
+                            override fun onFailure(call: Call<OrderCBean>?, msg: String?) {
+                                super.onFailure(call, msg)
+                                DialogUtil.hideProcess()
+                                ToastUtil.show("请求支付订单失败，请重新支付。")
                             }
                         })
                     }.show()
@@ -736,7 +755,7 @@ class WebContract {
         /**
          * 注入到网页中的对象
          */
-        class InJavaScriptLocalObj(val listener: OnInJavaScriptLocalObjListener?) {
+        open class InJavaScriptLocalObj(private val listener: OnInJavaScriptLocalObjListener?) {
 
             interface OnInJavaScriptLocalObjListener {
                 fun onShare(t: String, des: String, l: String)
@@ -751,7 +770,6 @@ class WebContract {
              */
             @JavascriptInterface
             fun getShare(t: String, des: String, l: String) {
-
                 listener?.onShare(t, des, l)
             }
 
@@ -773,8 +791,188 @@ class WebContract {
         }
 
         /**
-         * 支付
+         * 一个总的类进行处理
          */
+        class AndroidObj(private val act: Activity?, private val webView: WebView?, private val listener: OnInJavaScriptLocalObjListener?, private val jsCallback: JSCallback?) : InJavaScriptLocalObj(listener) {
+
+            companion object {
+                private const val TAG = "AndroidObj"
+                const val javascriptInterfaceName = "android"
+            }
+
+            /**
+             * 支付
+             */
+            private var payObj: AndroidPayObj? = null
+            /**
+             * 分享
+             */
+            private var shareObj: AndroidShareObj? = null
+            /**
+             * 跳转
+             */
+            private var gotoObj: AndroidGotoObj? = null
+
+            init {
+                payObj = AndroidPayObj(act, webView)
+                shareObj = AndroidShareObj(act, webView)
+                gotoObj = AndroidGotoObj(act, webView)
+            }
+
+            @JavascriptInterface
+            fun action(json: String?) {
+                val linkBean = Gson().fromJson(json, LinkBean::class.java)
+                val link_type = linkBean.type
+                val link_value = linkBean.link.toString()
+                when (link_type) {
+                    "JS_PAY" -> {
+                        pay(link_type, link_value)
+                    }
+                    "JS_SHARE" -> {
+                        share(link_type, linkBean.link as Map<String, String>)
+                    }
+                    "JS_EXCHANGE" -> {
+                        excahnge(link_type, link_value)
+                    }
+                    else -> {
+                        goto(link_type, link_value)
+                    }
+                }
+            }
+
+            private fun pay(link_type: String?, link_value: String?) {
+                if (!TextUtils.isEmpty(link_value)) {
+                    payObj?.pay(link_type!!, link_value!!)
+                } else {
+                    BKLog.e(TAG, "pay link_value is null")
+                }
+            }
+
+            private fun share(link_type: String?, link_value: String?) {
+                if (!TextUtils.isEmpty(link_value)) {
+                    val shareBean = Gson().fromJson(link_value, ShareBean::class.java)
+                    shareObj?.share(link_type!!, shareBean.title, shareBean.desc, shareBean.url)
+                } else {
+                    BKLog.e(TAG, "share link_value is null")
+                }
+            }
+
+            private fun share(link_type: String?, link_value: Map<String, String>?) {
+                if (link_value?.isEmpty()!!) {
+                    BKLog.e(TAG, "share link_value is null")
+                } else {
+                    shareObj?.share(link_type!!, link_value.get("title")!!, link_value.get("desc")!!, link_value.get("url")!!)
+                }
+            }
+
+            private fun goto(link_type: String?, link_value: String?) {
+                if (!TextUtils.isEmpty(link_value)) {
+                    gotoObj?.goto(link_type, link_value!!)
+                } else {
+                    BKLog.e(TAG, "link_value is null")
+                }
+            }
+
+            private fun excahnge(link_type: String?, link_value: String?) {
+                BKLog.d("点击积分兑换")
+                val exchangeProductId: String? = link_value
+//                //1 判断积分是否足够
+//                if (totalScores.toInt() > needScores.toInt()) {
+                //2 判断地址是否填写
+                PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
+                    override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
+                        var isCanExchange = true
+                        val error = when {
+                            TextUtils.isEmpty(response?.body()?.tel) -> {
+//                                    btnExchange.isEnabled = false
+                                isCanExchange = false
+                                "电话号码为空"
+                            }
+                            TextUtils.isEmpty(response?.body()?.recipient) -> {
+                                isCanExchange = false
+                                "收货人为空"
+                            }
+                            TextUtils.isEmpty(response?.body()?.address) -> {
+                                isCanExchange = false
+                                "收货地址为空"
+                            }
+                            else -> {
+                                ""
+                            }
+                        }
+
+                        //兑换
+                        if (isCanExchange) {
+                            DialogUtil.showProcess(act!!)
+//                                btnExchange.isEnabled = true
+                            BKLog.d("exchangeProductId: $exchangeProductId")
+                            //请求接口地址
+                            PonkoApp.myApi?.getAddress()?.enqueue(object : HttpCallBack<AddressBean>() {
+                                override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
+                                    val d = response?.body()
+                                    val sb = StringBuilder()
+                                            .append("收件人地址 ：${d?.address}\n")
+                                            .append("收件人电话 ：${d?.tel}\n")
+                                            .append("收件人姓名 ：${d?.recipient}\n")
+                                            .append("亲爱的用户，是否兑换？")
+                                    DialogUtil.hideProcess()
+                                    AlertDialog.Builder(act)
+                                            .setTitle("提示")
+                                            .setMessage(sb.toString())
+                                            .setPositiveButton("确定") { dialog, which ->
+                                                PonkoApp.myApi?.exchangeProduct(exchangeProductId!!)?.enqueue(object : HttpCallBack<GeneralBean>() {
+                                                    override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                                                        //ToastUtil.show("兑换成功")
+                                                        DialogUtil.show(act, "", "兑换成功", true, null, null)
+                                                    }
+
+                                                    override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                                                        super.onFailure(call, msg)
+                                                        //ToastUtil.show("兑换失败")
+                                                        DialogUtil.show(act, "", "兑换失败", true, null, null)
+                                                    }
+                                                })
+                                            }
+                                            .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
+                                            .create()
+                                            .show()
+                                }
+                            })
+
+                        } else {
+                            //btnExchange.isEnabled = false
+                            //btnExchange.text = error
+                            AlertDialog.Builder(act!!)
+                                    .setTitle("提示")
+                                    .setMessage("亲爱的用户，您$error，请完善您的个人信息。")
+                                    .setPositiveButton("确定") { dialog, which ->
+                                        BKLog.d("跳转到个人信息页面")
+                                        //act.finish()
+                                        ActivityUtil.startActivity(act, Intent(act, AddressActivity::class.java))
+                                    }
+                                    .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
+                                    .create()
+                                    .show()
+                            BKLog.d("兑换失败:$error")
+                        }
+                    }
+                })
+//                }
+            }
+
+            fun showAndroidPayButton(show: Boolean) {
+                jsCallback?.onIsShowPayBtn(show)
+            }
+
+            /*===============================*
+             * 回调监听
+             *===============================*/
+            interface JSCallback {
+                fun onIsShowPayBtn(show: Boolean)
+            }
+        }
+
+        @Deprecated("统一使用AndroidObj")
         class AndroidPayObj(private val act: Activity?, private val webView: WebView?) {
             private var aliPay: AbsPay? = null
             private var wxPay: AbsPay? = null
@@ -789,24 +987,24 @@ class WebContract {
 
             /**
              * 支付
-             * @param type      weiXin / alipay
+             * @param type      weiXin / alipay 过时了
              * @param productId 产品id
              */
             @JavascriptInterface
             fun pay(payWay: String, productId: String) {
-                if (CacheUtil.isUserTypeLogin()) {
+                if (CacheUtil.isUserTypeLogin() || true) {
                     AlertDialog.Builder(act!!).setItems(arrayOf("微信", "支付宝")) { dialog, which ->
 
                         var absPay: AbsPay? = null
                         var payWay = payWay
-                        when (payWay) {
-                            "weiXin" -> {
+                        when (which) {
+                            0 -> {
                                 payWay = "weiXin"
                                 absPay = WxPay(act)
                                 absPay.init(PayConfig.Builder().appid(APP_ID).build())
                                 BKLog.d("点击了微信支付")
                             }
-                            "alipay" -> {
+                            1 -> {
                                 payWay = "alipay"
                                 absPay = AliPay(act)
                                 BKLog.d("点击了支付宝")
@@ -837,16 +1035,22 @@ class WebContract {
                                                 }
                                             }, null)
                                         }
-                                        webView?.loadUrl("javascript:callback_pay_success()")
+                                        act.runOnUiThread {
+                                            webView?.loadUrl("javascript:callback_pay_success()")
+                                        }
                                     }
 
                                     override fun onFailure() {
-                                        webView?.loadUrl("javascript:callback_pay_failed()")
+                                        act.runOnUiThread {
+                                            webView?.loadUrl("javascript:callback_pay_failed()")
+                                        }
                                         BKLog.d("支付失败")
                                     }
 
                                     override fun onCancel() {
-                                        webView?.loadUrl("javascript:callback_pay_canceled()")
+                                        act.runOnUiThread {
+                                            webView?.loadUrl("javascript:callback_pay_canceled()")
+                                        }
                                         BKLog.d("支付取消")
                                     }
                                 })
@@ -860,10 +1064,8 @@ class WebContract {
             }
         }
 
-        /**
-         * 分享
-         */
-        class AndroidShareObj(private val act: Activity?, web: WebView) {
+        @Deprecated("统一使用AndroidObj")
+        class AndroidShareObj(private val act: Activity?, web: WebView?) {
 
             private var share: AbsShare? = null
 
@@ -881,32 +1083,12 @@ class WebContract {
              */
             @JavascriptInterface
             fun share(type: String, shareTitle: String, shareDescription: String, shareUrl: String) {
-                var shareType = SendMessageToWX.Req.WXSceneSession
-                when (type) {
-                    "friendCircle" -> {
-                        shareType = SendMessageToWX.Req.WXSceneTimeline
-                    }
-                    "friend" -> {
-                        shareType = SendMessageToWX.Req.WXSceneSession
-                    }
-                }
-                if (act != null) {
-                    val wxShare = WxShare(act)
-                    wxShare.init(ShareConfig.Builder().appid(PonkoApp.APP_ID).build())
-                    wxShare.shareWebPage(
-                            R.mipmap.ic_launcher,
-                            shareUrl,
-                            shareTitle,
-                            shareDescription,
-                            shareType)
-                }
+                DialogUtil.showShare(act, shareUrl, shareTitle, shareDescription)
             }
         }
 
-        /**
-         * 跳转
-         */
-        class AndroidGotoObj(val context: Context?, web: WebView) {
+        @Deprecated("统一使用AndroidObj")
+        class AndroidGotoObj(val context: Context?, web: WebView?) {
             /**
              * 跳转
              */

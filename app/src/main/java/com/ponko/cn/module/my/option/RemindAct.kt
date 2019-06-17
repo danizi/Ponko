@@ -76,31 +76,11 @@ class RemindAct : RefreshLoadAct<RemindContract.Present, ArrayList<RemindCBean>>
     }
 
     override fun requestMoreApi() {
-//        PonkoApp.myApi?.getRemindList(++page)?.enqueue(object : HttpCallBack<ArrayList<RemindCBean>>() {
-//            override fun onSuccess(call: Call<ArrayList<RemindCBean>>?, response: Response<ArrayList<RemindCBean>>?) {
-//                requestMoreSuccess(response?.body())
-//            }
-//
-//            override fun onFailure(call: Call<ArrayList<RemindCBean>>?, msg: String?) {
-//                super.onFailure(call, msg)
-//                requestMoreFailure()
-//            }
-//        })
         p?.remindListMoreApi()
     }
 
     override fun requestRefreshApi() {
         p?.remindListApi()
-//        PonkoApp.myApi?.getRemindList()?.enqueue(object : HttpCallBack<ArrayList<RemindCBean>>() {
-//            override fun onSuccess(call: Call<ArrayList<RemindCBean>>?, response: Response<ArrayList<RemindCBean>>?) {
-//                requestRefreshSuccess(response?.body())
-//            }
-//
-//            override fun onFailure(call: Call<ArrayList<RemindCBean>>?, msg: String?) {
-//                super.onFailure(call, msg)
-//                requestRefreshFailure()
-//            }
-//        })
     }
 
     override fun multiTypeData(body: ArrayList<RemindCBean>?): List<Any> {
@@ -110,10 +90,4 @@ class RemindAct : RefreshLoadAct<RemindContract.Present, ArrayList<RemindCBean>>
     override fun adapter(): BaseRvAdapter? {
         return object : BaseRvAdapter() {}
     }
-
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_remind)
-//    }
 }

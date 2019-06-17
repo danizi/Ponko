@@ -6,21 +6,25 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AlertDialog
+import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.store.IntegralExchangedAct
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
-import com.xm.lib.component.OnCancelListener
-import com.xm.lib.component.OnEnterListener
-import com.xm.lib.component.Type
-import com.xm.lib.component.XmIOSDialog
+import com.xm.lib.common.util.ViewUtil
+import com.xm.lib.component.*
+import com.xm.lib.share.wx.WxShare
 import retrofit2.Call
 import retrofit2.Response
 
@@ -95,6 +99,48 @@ object DialogUtil {
                         }
                     })
                 }.show()
+    }
+
+    /**
+     * 显示分享弹框
+     */
+    fun showShare(context: Context?, shareUrl: String?, shareTitle: String?, shareDescription: String?) {
+        if (TextUtils.isEmpty(shareUrl)) {
+            ToastUtil.show("分享地址为空。")
+            return
+        }
+
+        if (TextUtils.isEmpty(shareTitle)) {
+            ToastUtil.show("分享标题为空。")
+            return
+        }
+
+        if (TextUtils.isEmpty(shareDescription)) {
+            ToastUtil.show("分享描述为空。")
+            return
+        }
+
+        var wxShare: WxShare? = WxShare(context as Activity)
+        val popWindow = XmPopWindow(context)
+        val shareView = ViewUtil.viewById(context, R.layout.view_share)
+        val flFriend = shareView?.findViewById<View>(R.id.fl_friend) as FrameLayout
+        val flFriendMoment = shareView.findViewById<View>(R.id.fl_friend_moment) as FrameLayout
+        val tvCancel = shareView.findViewById<View>(R.id.tv_cancel) as TextView
+        tvCancel.setOnClickListener {
+            popWindow.dismiss()
+        }
+        flFriend.setOnClickListener {
+            wxShare?.shareWebPage(R.mipmap.ic_launcher, shareUrl!!, shareTitle!!, shareDescription!!, SendMessageToWX.Req.WXSceneSession)
+            popWindow.dismiss()
+        }
+        flFriendMoment.setOnClickListener {
+            wxShare?.shareWebPage(R.mipmap.ic_launcher, shareUrl!!, shareTitle!!, shareDescription!!, SendMessageToWX.Req.WXSceneTimeline)
+            popWindow.dismiss()
+        }
+        popWindow.ini(shareView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        (context as Activity).runOnUiThread {
+            popWindow.showAtLocation(XmPopWindow.Location.BOTTOM, com.xm.lib.media.R.style.AnimationBottomFade, (context as Activity).window.decorView, 0, 0)
+        }
     }
 
     /**

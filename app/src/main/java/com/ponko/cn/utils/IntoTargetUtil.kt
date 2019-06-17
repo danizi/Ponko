@@ -173,7 +173,7 @@ object IntoTargetUtil {
 
     private fun pay(context: Context?, linkValue: String?) {
         BKLog.d(TAG, "支付网页 linkValue:$linkValue")
-        WebAct.start(context, "pay", linkValue)
+        WebAct.start(context, "pay", linkValue, "",Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
     private fun url(context: Context?, linkValue: String?) {

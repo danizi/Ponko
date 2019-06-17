@@ -80,13 +80,13 @@ class MyRemindHolder(view: View) : BaseViewHolder(view) {
                 StudyContract2.M().requestStudyApi(object : HttpCallBack<Main2CBean>() {
                     override fun onSuccess(call: Call<Main2CBean>?, response: Response<Main2CBean>?) {
                         val msg = response?.body()?.msg_count!!
+                        val intent = Intent(Constants.ACTION_SHOW_MSG_TIP)
                         if (msg > 0) {
                             BKLog.d("有提醒消息，提醒图标晃动")
-                            val intent = Intent(Constants.ACTION_SHOW_MSG_TIP)
                             intent.putExtra("msg", msg)
                             context.sendBroadcast(intent)
                         } else {
-                            context.sendBroadcast(Intent(Constants.ACTION_HIDE_MSG_TIP))
+                            context.sendBroadcast(intent)
                         }
                     }
                 })
