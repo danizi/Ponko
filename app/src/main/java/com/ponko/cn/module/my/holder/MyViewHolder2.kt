@@ -19,6 +19,7 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.MyBean
 import com.ponko.cn.bean.StoreTaskBean
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.*
 import com.ponko.cn.module.my.option.store.IntegralExchangedAct
@@ -99,7 +100,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
         viewHolder?.tv?.text = myListBean.des
 
         //是否晃动提醒
-        isStoreIconShake(myListBean.des,context)
+        isStoreIconShake(myListBean.des, context)
 
         itemView.setOnClickListener {
             when (myListBean.des) {
@@ -118,6 +119,8 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                 }
                 "提醒" -> {
                     ActivityUtil.startActivity(context, Intent(context, RemindAct::class.java))
+                    //更新底部菜单消息数量
+                    context.sendBroadcast(Intent(Constants.ACTION_SHOW_MSG_TIP))
                 }
                 "学习排行" -> {
                     ActivityUtil.startActivity(context, Intent(context, LearnRankingAct::class.java))
@@ -206,7 +209,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                     if (response?.body()?.msg_count!! > 0) {
                         BKLog.d("有提醒消息，提醒图标晃动")
                         AnimUtil.shakeAnim(viewHolder?.iv)
-                    }else{
+                    } else {
                         context.sendBroadcast(Intent(""))
                     }
                 }

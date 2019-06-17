@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.http.SslError
 import android.os.Build
@@ -35,6 +36,7 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.OnEnterListener
+import com.xm.lib.component.XmIOSDialog.ViewHolder.tvTitle
 import com.xm.lib.component.XmPopWindow
 import com.xm.lib.component.XmStateView
 import com.xm.lib.pay.AbsPay
@@ -321,19 +323,20 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                 //加载网页
                 web.loadUrl(loadUrl(linkValue), heads())
                 //注入java对象
-                if (PonkoApp.getLocalVersion(act) < 345) {
-                    web.addJavascriptInterface(WebContract.M.InJavaScriptLocalObj(object : WebContract.M.InJavaScriptLocalObj.OnInJavaScriptLocalObjListener {
-                        override fun onShare(t: String, des: String, l: String) {
-                            act.runOnUiThread {
-                                BKLog.d(TAG, "t:$t des:$des l:$l")
-                                tvBarRight?.visibility = View.VISIBLE
-                                shareViewHolder?.shareTitle = t
-                                shareViewHolder?.shareDescription = des
-                                shareViewHolder?.shareUrl = l
-                            }
+//                if (PonkoApp.getLocalVersion(act) < 345) {
+                web.addJavascriptInterface(WebContract.M.InJavaScriptLocalObj(object : WebContract.M.InJavaScriptLocalObj.OnInJavaScriptLocalObjListener {
+                    override fun onShare(t: String, des: String, l: String) {
+                        act.runOnUiThread {
+                            BKLog.d(TAG, "t:$t des:$des l:$l")
+                            tvBarRight?.visibility = View.VISIBLE
+                            shareViewHolder?.shareTitle = t
+                            shareViewHolder?.shareDescription = des
+                            shareViewHolder?.shareUrl = l
                         }
+                    }
 
-                        override fun onProductId(value: String) {
+                    override fun onProductId(value: String) {
+                        if (PonkoApp.getLocalVersion(act) < 345) {
                             act.runOnUiThread {
                                 BKLog.d(TAG, "productId:$value")
                                 payViewHolder?.payProductId = value
@@ -341,8 +344,10 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                                 payViewHolder?.btnPay?.visibility = View.VISIBLE
                             }
                         }
+                    }
 
-                        override fun onPayGuide(have: String?, guideATitle: String?/*课程表*/, guideAUrl: String, guideBTitle: String/*老师介绍*/, guideBUrl: String, guideCTitle: String/*支付按钮显示*/) {
+                    override fun onPayGuide(have: String?, guideATitle: String?/*课程表*/, guideAUrl: String, guideBTitle: String/*老师介绍*/, guideBUrl: String, guideCTitle: String/*支付按钮显示*/) {
+                        if (PonkoApp.getLocalVersion(act) < 345) {
                             act.runOnUiThread {
                                 BKLog.d(TAG, "have:$have guideATitle:$guideATitle guideAUrl:$guideAUrl guideBTitle:$guideBTitle guideBUrl:$guideBUrl guideCTitle:$guideCTitle")
                                 tvBarRight?.visibility = View.GONE
@@ -368,24 +373,19 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                                 }
                             }
                         }
-                    }), javascriptInterfaceName)
-                } else {
-                    web.addJavascriptInterface(WebContract.M.AndroidObj(act, web, null, object : WebContract.M.AndroidObj.JSCallback {
-                        override fun onIsShowPayBtn(show: Boolean) {
-                            if (show) {
-                                payViewHolder?.btnPay?.visibility = View.GONE
-                            } else {
-                                payViewHolder?.btnPay?.visibility = View.VISIBLE
-                            }
+                    }
+                }), javascriptInterfaceName)
+//                } else {
+                web.addJavascriptInterface(WebContract.M.AndroidObj(act, web, null, object : WebContract.M.AndroidObj.JSCallback {
+                    override fun onIsShowPayBtn(show: Boolean) {
+                        if (show) {
+                            payViewHolder?.btnPay?.visibility = View.GONE
+                        } else {
+                            payViewHolder?.btnPay?.visibility = View.VISIBLE
                         }
-                    }), WebContract.M.AndroidObj.javascriptInterfaceName)
-                }
-//                //注入支付对象
-//                web.addJavascriptInterface(WebContract.M.AndroidPayObj(act, web), "androidPay")
-//                //注入分享对象
-//                web.addJavascriptInterface(WebContract.M.AndroidShareObj(act, web), "androidShare")
-//                //注入跳转对象
-//                web.addJavascriptInterface(WebContract.M.AndroidGotoObj(act, web), "androidGoto")
+                    }
+                }), WebContract.M.AndroidObj.javascriptInterfaceName)
+//                }
             }
         }
 
@@ -557,6 +557,9 @@ class WebContract {
                                                     })
                                                 }
                                                 .setNegativeButton("取消") { dialog, which -> dialog?.dismiss() }
+                                                .setNeutralButton("修改地址") { dialog, which ->
+                                                    ActivityUtil.startActivity(act, Intent(act, AddressActivity::class.java))
+                                                }
                                                 .create()
                                                 .show()
                                     }
