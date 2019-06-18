@@ -42,11 +42,12 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
     }
 
     private fun showErrorDlg(msg: String) {
+        val isCancelable = !(msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"])
         DialogUtil.show(
                 PonkoApp.activityManager.getTopActivity()!!,
                 "提示"
                 , msg
-                , true,
+                , isCancelable,
                 object : OnEnterListener {
                     override fun onEnter(dlg: AlertDialog) {
 

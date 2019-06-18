@@ -685,7 +685,7 @@ class StudyCourseDetailContract {
          * 上传播放进度
          */
         fun uploadVideoProgress(video: XmVideoView?) {
-            val period = 1000 * 60L * 5
+            val period = 1000 * 60L
             var watchDuration = period
             timerHelper.start(object : TimerHelper.OnPeriodListener {
                 override fun onPeriod() {

@@ -249,8 +249,9 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
     override fun setVideoPre(coursesDetailCBean: CoursesDetailCBean?) {
         val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
-        val vid = coursesDetailCBean?.chapters!![0].sections[0].vid  //PS 游客模式vid获取不到
-        attachmentPre.load(vid = vid, preUrl = coursesDetailCBean.image, isPay = coursesDetailCBean.isPossess)      //todo 窗口有销毁的可能
+        val avatar = coursesDetailCBean?.chapters!![0].sections[0].avatar
+        val vid = coursesDetailCBean.chapters!![0].sections[0].vid  //PS 游客模式vid获取不到
+        attachmentPre.load(vid = vid, preUrl = avatar!!, isPay = coursesDetailCBean.isPossess)      //todo 窗口有销毁的可能
     }
 
     override fun displayVideoExtendableList(myExtendableListAdp: StudyCourseDetailContract.V.MyExtendableListViewAdapter?) {

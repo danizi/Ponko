@@ -24,6 +24,7 @@ import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.*
+import com.xm.lib.share.ShareConfig
 import com.xm.lib.share.wx.WxShare
 import retrofit2.Call
 import retrofit2.Response
@@ -121,6 +122,7 @@ object DialogUtil {
         }
 
         var wxShare: WxShare? = WxShare(context as Activity)
+        wxShare?.init(ShareConfig.Builder().appid(PonkoApp.APP_ID).build())
         val popWindow = XmPopWindow(context)
         val shareView = ViewUtil.viewById(context, R.layout.view_share)
         val flFriend = shareView?.findViewById<View>(R.id.fl_friend) as FrameLayout
