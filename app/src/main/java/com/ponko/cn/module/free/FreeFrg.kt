@@ -15,7 +15,7 @@ import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 
 /**
- * 我的页面
+ * 免费页面
  */
 class FreeFrg : RefreshLoadFrg<FreeConstract.Present, CoursesCBean>(), FreeConstract.View {
 

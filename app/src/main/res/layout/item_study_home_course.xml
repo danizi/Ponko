@@ -4,20 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+
     android:paddingBottom="20dp"
     tools:ignore="HardcodedText,UnknownIdInLayout">
 
-    <ImageView
-        android:id="@+id/iv_course"
-        android:layout_width="match_parent"
-        android:layout_height="155dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginRight="15dp"
-        android:scaleType="fitXY"
-        android:src="@mipmap/load_img_default"
+    <android.support.v7.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_course"
+            android:layout_width="match_parent"
+            android:layout_height="155dp"
+            android:scaleType="fitXY" />
+    </android.support.v7.widget.CardView>
+    <!--<ImageView-->
+    <!--android:id="@+id/iv_course"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="155dp"-->
+    <!--android:layout_marginStart="15dp"-->
+    <!--android:layout_marginLeft="15dp"-->
+    <!--android:layout_marginEnd="15dp"-->
+    <!--android:layout_marginRight="15dp"-->
+    <!--android:scaleType="fitXY"-->
+    <!--android:src="@mipmap/load_img_default"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent" />-->
 </android.support.constraint.ConstraintLayout>

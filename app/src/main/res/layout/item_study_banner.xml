@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:clickable="true"
+    android:focusable="true">
     <!--轮播图 todo 高度需要根据图片动态计算-->
     <com.youth.banner.Banner
         android:id="@+id/banner"
         android:layout_width="wrap_content"
         android:layout_height="129dp"
-        android:background="?android:attr/selectableItemBackground"
         app:indicator_drawable_selected="@drawable/shape_indicator_select"
         app:indicator_drawable_unselected="@drawable/shape_indicator_un_select"
         app:indicator_width="5dp" />

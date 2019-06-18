@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.http.SslError
 import android.os.Build
@@ -36,7 +35,6 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.OnEnterListener
-import com.xm.lib.component.XmIOSDialog.ViewHolder.tvTitle
 import com.xm.lib.component.XmPopWindow
 import com.xm.lib.component.XmStateView
 import com.xm.lib.pay.AbsPay
@@ -316,14 +314,11 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                 }
                 linkType = act.intent?.getStringExtra("link_type")!!
                 linkValue = act.intent?.getStringExtra("link_value")!!   //todo 有为null的分享
-
                 //根据linkType底部展示不同的按钮
                 webViewBottomDisplay(exchangeViewHolder, payViewHolder, shareViewHolder)
-
                 //加载网页
-                web.loadUrl(loadUrl(linkValue), heads())
+                web.loadUrl(loadUrl(linkValue), heads(linkValue))
                 //注入java对象
-//                if (PonkoApp.getLocalVersion(act) < 345) {
                 web.addJavascriptInterface(WebContract.M.InJavaScriptLocalObj(object : WebContract.M.InJavaScriptLocalObj.OnInJavaScriptLocalObjListener {
                     override fun onShare(t: String, des: String, l: String) {
                         act.runOnUiThread {
@@ -375,7 +370,6 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                         }
                     }
                 }), javascriptInterfaceName)
-//                } else {
                 web.addJavascriptInterface(WebContract.M.AndroidObj(act, web, null, object : WebContract.M.AndroidObj.JSCallback {
                     override fun onIsShowPayBtn(show: Boolean) {
                         if (show) {
@@ -385,7 +379,6 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                         }
                     }
                 }), WebContract.M.AndroidObj.javascriptInterfaceName)
-//                }
             }
         }
 
@@ -405,20 +398,24 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
             }
         }
 
-        private fun heads(): Map<String, String> {
+        private fun heads(linkValue: String): Map<String, String> {
             val heads = HashMap<String, String>()
-            heads["x-tradestudy-client-version"] = PonkoApp.getLocalVersion2(act!!)
-            heads["x-tradestudy-client-device"] = "android_phone"
-            heads["x-tradestudy-access-key-id"] = "c"
-            heads["x-tradestudy-access-token"] = getToken()!!
+            if (loadUrl(linkValue).startsWith(BASE_API, true)) {
+                heads["x-tradestudy-client-version"] = PonkoApp.getLocalVersion2(act!!)
+                heads["x-tradestudy-client-device"] = "android_phone"
+                heads["x-tradestudy-access-key-id"] = "c"
+                heads["x-tradestudy-access-token"] = getToken()!!
+            } else {
+                BKLog.e(TAG, "非法地址$linkValue")
+            }
             return heads
         }
 
         private fun loadUrl(linkValue: String): String {
-            return if (linkValue.startsWith("http", true) || linkValue.startsWith("https", true)) {
-                linkValue
-            } else {
-                "$BASE_API$linkValue"
+            return when {
+                linkValue.startsWith(BASE_API, true) -> linkValue
+                linkValue.startsWith("/") -> "$BASE_API$linkValue"
+                else -> linkValue
             }
         }
 

@@ -5,22 +5,19 @@ import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import com.ponko.cn.R
-import com.xm.lib.common.base.mvp.MvpActivity
-import com.xm.lib.component.XmStateView
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.view.ViewTreeObserver
-import com.scwang.smartrefresh.layout.SmartRefreshLayout
-import android.widget.FrameLayout
+import com.ponko.cn.R
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.ToastUtil
+import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
-import com.xm.lib.common.base.rv.decoration.MyItemDecoration
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.component.XmStateView
 
 
 /**
