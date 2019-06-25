@@ -22,6 +22,7 @@ class MyConstract {
     interface View {
         fun requestMyInfoApiSuccess(body: ProfileCBean?)
         fun requestMyInfoApiFailure()
+        fun refreshTop(body: ProfileCBean?)
     }
 
     /**
@@ -84,6 +85,21 @@ class MyConstract {
          */
         fun unRegisterRefreshBroadcast() {
             broadcastManager?.unRegisterReceiver(refreshBroadcastReceiver)
+        }
+
+        /**
+         * 刷新顶部内容
+         */
+        fun refreshTop() {
+            model.requestMyInfoApi(object : HttpCallBack<ProfileCBean>() {
+                override fun onSuccess(call: Call<ProfileCBean>?, response: Response<ProfileCBean>?) {
+                    view?.refreshTop(response?.body())
+                }
+
+                override fun onFailure(call: Call<ProfileCBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                }
+            })
         }
     }
 }

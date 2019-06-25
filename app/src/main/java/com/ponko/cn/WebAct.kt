@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewParent
 import android.webkit.*
 import android.widget.FrameLayout
 import android.widget.ProgressBar
@@ -94,6 +95,28 @@ class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
             intent.putExtra("total", total)
             context?.startActivity(intent)
         }
+    }
+
+    override fun onDestroy() {
+        if (mainUI?.web != null) {
+            val parent = mainUI?.web?.parent
+            if (parent != null) {
+                (parent as ViewGroup).removeView(mainUI?.web)
+            }
+
+            mainUI?.web?.stopLoading()
+            // 退出时调用此方法，移除绑定的服务，否则某些特定系统会报错
+            mainUI?.web?.settings?.javaScriptEnabled = false;
+            mainUI?.web?.clearHistory()
+            mainUI?.web?.clearView()
+            mainUI?.web?.removeAllViews()
+            mainUI?.web?.destroy()
+        }
+        mainUI = null
+        exchangeUI = null
+        payUI = null
+        shareUI = null
+        super.onDestroy()
     }
 
     /**

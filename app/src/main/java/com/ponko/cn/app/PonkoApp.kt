@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
+import com.ponko.cn.BuildConfig
 import com.ponko.cn.MainActivity
 import com.ponko.cn.R
 import com.ponko.cn.api.*
@@ -24,12 +25,15 @@ import com.ponko.cn.db.dao.CourseDao
 import com.ponko.cn.db.dao.CourseSpecialDao
 import com.ponko.cn.module.m3u8downer.core.M3u8DownManager
 import com.ponko.cn.utils.CacheUtil
+import com.squareup.leakcanary.LeakCanary
+import com.tencent.bugly.Bugly
 import com.tencent.bugly.beta.Beta
 import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.statistics.Statistics
 import java.io.File
+import java.util.*
 
 
 class PonkoApp : MultiDexApplication() {
@@ -39,13 +43,17 @@ class PonkoApp : MultiDexApplication() {
         var UI_DEBUG = false
         var UI_AD_DEBUG = false
 
-        //临时变量
+        /**
+         * 临时变量
+         */
         @Deprecated("还是接口代替，不缓存在内存中了")
         var signInfo: StoreTaskBean? = null
         var mainCBean: MainCBean? = null
         var main2CBean: Main2CBean? = null
 
-        //接口
+        /**
+         * 接口
+         */
         var retrofitClient: RetrofitClient? = null
         var loginApi: LoginApi? = null
         var studyApi: StudyApi? = null
@@ -56,17 +64,23 @@ class PonkoApp : MultiDexApplication() {
         var payApi: PayApi? = null
         var searchApi: SearchApi? = null
 
-        //数据库
+        /**
+         * 数据库
+         */
         var dbHelp: PonkoDBHelp? = null
         var courseSpecialDao: CourseSpecialDao? = null
         var courseDao: CourseDao? = null
         var collectSectionDao: CourseCollectSectionDao? = null
         var collectSpecialDao: CourseCollectSpecialDao? = null
 
-        //窗口管理
+        /**
+         * 窗口管理
+         */
         var activityManager = ActManager()
 
-        //下载管理
+        /**
+         * 下载管理
+         */
         @SuppressLint("StaticFieldLeak")
         var m3u8DownManager: M3u8DownManager? = null
 
@@ -132,16 +146,35 @@ class PonkoApp : MultiDexApplication() {
         initDownManager()
         //初始化bugly
         initBugly()
+        //内存检查
+        if (BuildConfig.IS_DEBUG) {
+            if (LeakCanary.isInAnalyzerProcess(this)) {
+                // This process is dedicated to LeakCanary for heap analysis.
+                // You should not init your app in this process.
+                return
+            }
+            LeakCanary.install(this)
+
+
+        }
     }
 
     private fun initBugly() {
         //Statistics.initCrashReport(applicationContext, BUG_APP_ID)   //ps:把这个配置打开会导致无法弹出升级框
         Statistics.initBugly(applicationContext, BUG_APP_ID)
         Statistics.initUpgradeCheck(R.mipmap.ic_launcher, MainActivity::class.java)
+        if (BuildConfig.IS_DEBUG) {
+            //热更新是否是开发设备
+            Bugly.setIsDevelopmentDevice(applicationContext, true)
+        }
     }
 
     private fun iniLog() {
-        BKLog.LEVEL = BKLog.W
+        if (BuildConfig.IS_DEBUG) {
+            BKLog.LEVEL = BKLog.D
+        } else {
+            BKLog.LEVEL = BKLog.W
+        }
     }
 
     private fun initDownManager() {

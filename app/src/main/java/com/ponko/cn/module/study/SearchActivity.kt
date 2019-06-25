@@ -1,5 +1,6 @@
 package com.ponko.cn.module.study
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -12,10 +13,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp.Companion.searchApi
 import com.ponko.cn.bean.BindItemViewHolderBean
@@ -127,10 +125,14 @@ class SearchActivity : RefreshLoadAct<SearchContract.Present, SearchRecordCBean>
         toolbar?.visibility = View.VISIBLE
         tvSearch = barView?.findViewById(R.id.tv_search) as EditText
         val tvCancel = barView.findViewById(R.id.tv_cancel) as TextView
+        val ivBack = barView.findViewById(R.id.iv_back) as ImageView
         tvCancel.text = right
         tvCancel.setOnClickListener(rightListener)
         tvSearch?.addTextChangedListener(watcher)
         tvSearch?.setOnEditorActionListener(editorActionListener)
+        ivBack.setOnClickListener {
+            (context as Activity).finish()
+        }
     }
 
     override fun notifySearchPage() {

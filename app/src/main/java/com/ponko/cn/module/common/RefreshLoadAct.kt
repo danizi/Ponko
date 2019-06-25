@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import com.ponko.cn.R
 import com.ponko.cn.bean.BindItemViewHolderBean
+import com.ponko.cn.utils.AnimUtil
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.ToastUtil
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
@@ -18,6 +19,7 @@ import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.XmStateView
+import java.lang.ref.WeakReference
 
 
 /**
@@ -42,7 +44,9 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
 
     override fun findViews() {
         if (viewHolder == null) {
-            viewHolder = ViewHolder.create(this)
+            val weakReference = WeakReference(this)
+            val activity = weakReference.get()!!
+            viewHolder = ViewHolder.create(activity)
         }
     }
 
@@ -215,4 +219,11 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
         }
     }
 
+    /**
+     * 销毁回收资源
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+        viewHolder = null
+    }
 }

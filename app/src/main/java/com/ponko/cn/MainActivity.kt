@@ -2,39 +2,43 @@ package com.ponko.cn
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import android.support.annotation.RequiresApi
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.adApi
 import com.ponko.cn.bean.AdCBean
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.free.FreeFrg
 import com.ponko.cn.module.interflow.frg.InterflowFrg
 import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.my.MyFrg
 import com.ponko.cn.module.study.StudyFrg
-import com.ponko.cn.module.study.constract.StudyContract
 import com.ponko.cn.module.study2.StudyFrg2
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.CacheUtil.getStudyUI
-import com.ponko.cn.utils.CacheUtil.putStudyUI
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
-import com.tencent.bugly.beta.Beta
 import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.http.NetworkUtil
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.common.util.BrightnessUtil
 import com.xm.lib.component.BottomMenu
 import com.xm.lib.component.OnItemClickListener
 import com.xm.lib.component.XmAdView
+import com.xm.lib.media.broadcast.BroadcastManager
+import q.rorbin.badgeview.QBadgeView
 import retrofit2.Call
 import retrofit2.Response
+import java.lang.ref.WeakReference
 
 /**
  * 首页窗口
@@ -43,16 +47,75 @@ class MainActivity : BaseActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
-        lateinit var bottomMenu: BottomMenu
+//        @Deprecated("")
+//        lateinit var bottomMenu: BottomMenu
+    }
+
+    private var qbadgeView: QBadgeView? = null
+    private var view: View? = null
+    private var broadcastManager: BroadcastManager? = null
+    private var bottomMenuReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when {
+                intent?.action == Constants.ACTION_BOTTOM_MENU -> {
+                    bottomPos = intent.getIntExtra("index", 0)
+                    bar.select(bottomPos)
+                }
+                intent?.action == Constants.ACTION_BOTTOM_TIP_SHOW -> {
+                    showMsgTip(intent.getIntExtra("count", 0))
+                }
+                intent?.action == Constants.ACTION_BOTTOM_TIP_HIDE -> {
+                    hideMsgTip()
+                }
+            }
+        }
+    }
+
+    private fun showMsgTip(count: Int) {
+        view = bar.getTabAt(3)?.customView
+        if (count > 0) {
+            if (qbadgeView == null) {
+                qbadgeView = QBadgeView(this)
+            }
+            qbadgeView?.visibility = View.VISIBLE
+            qbadgeView?.bindTarget(view)?.badgeNumber = count
+            qbadgeView?.setGravityOffset(6f, 0f, true)
+            return
+        }
+        qbadgeView?.visibility = View.GONE
+        BKLog.d("我的消息数量:$count")
+    }
+
+    private fun hideMsgTip() {
+        view = bar.getTabAt(3)?.customView
+        //去掉消息提醒
+        qbadgeView?.visibility = View.GONE
+        qbadgeView?.bindTarget(view)?.badgeNumber = -1
     }
 
     /**
      * 当前底部菜单所在位置
      */
     private var bottomPos = 0
+    lateinit var bar: BottomMenu
 
     override fun setContentViewBefore() {
 
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (broadcastManager == null) {
+            broadcastManager = BroadcastManager.create(this)
+        }
+        broadcastManager?.registerReceiver(Constants.ACTION_BOTTOM_MENU, bottomMenuReceiver)
+        broadcastManager?.registerReceiver(Constants.ACTION_BOTTOM_TIP_SHOW, bottomMenuReceiver)
+        broadcastManager?.registerReceiver(Constants.ACTION_BOTTOM_TIP_HIDE, bottomMenuReceiver)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        broadcastManager?.unRegisterReceiver(bottomMenuReceiver)
     }
 
     override fun getLayoutId(): Int {
@@ -60,7 +123,8 @@ class MainActivity : BaseActivity() {
     }
 
     override fun findViews() {
-        bottomMenu = findViewById(R.id.bottom_menu)
+        bar = findViewById(R.id.bottom_menu)
+//        bar = bottomMenu
     }
 
     override fun initDisplay() {
@@ -78,7 +142,7 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        bottomMenu.select(bottomPos)
+        bar.select(bottomPos)
                 .setContainer(R.id.container)
                 .setTitleColor(R.color.grey, R.color.red)
                 .setItemLayoutId(R.layout.item_bottom_menu)
@@ -102,11 +166,14 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     @SuppressLint("CheckResult")
     override fun iniData() {
         PonkoApp.retrofitClient?.headers?.put("x-tradestudy-access-token", CacheUtil.getToken()!!)
         requestAdApi()
-        RxPermissions(this).request(
+        val weakReference = WeakReference(this)
+        val activity = weakReference.get()!!
+        RxPermissions(activity).request(
                 Manifest.permission.WRITE_SECURE_SETTINGS,
                 Manifest.permission.WRITE_SETTINGS,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -223,7 +290,7 @@ class MainActivity : BaseActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         bottomPos = savedInstanceState?.getInt("pos")!!
         BKLog.d("应用重启拿到的保存的数据 -> $bottomPos")
-        bottomMenu.select(bottomPos)
+        bar.select(bottomPos)
     }
 
 }

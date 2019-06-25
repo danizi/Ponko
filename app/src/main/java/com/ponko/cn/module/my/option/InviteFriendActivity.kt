@@ -14,11 +14,17 @@ import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response
 import android.widget.TextView
+import java.lang.ref.WeakReference
 
 
 class InviteFriendActivity : RefreshLoadAct<Any, InviteFriendsBean>() {
 
     private var inviteFriendViewHolder: InviteFriendViewHolder? = null
+
+    override fun onDestroy() {
+        super.onDestroy()
+        inviteFriendViewHolder = null
+    }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_invite_friend
@@ -36,7 +42,9 @@ class InviteFriendActivity : RefreshLoadAct<Any, InviteFriendsBean>() {
     override fun findViews() {
         super.findViews()
         if (inviteFriendViewHolder == null) {
-            inviteFriendViewHolder = InviteFriendViewHolder.create(this)
+            val weakReference = WeakReference(this)
+            val activity = weakReference.get()!!
+            inviteFriendViewHolder = InviteFriendViewHolder.create(activity)
         }
     }
 

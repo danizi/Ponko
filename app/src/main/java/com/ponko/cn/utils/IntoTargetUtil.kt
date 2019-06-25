@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.ponko.cn.MainActivity
 import com.ponko.cn.WebAct
-import com.ponko.cn.module.login.LoginAccountAct
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.module.my.option.InviteFriendActivity
 import com.ponko.cn.module.my.option.RemindAct
@@ -29,7 +29,7 @@ object IntoTargetUtil {
      * @param linkValue 跳转携带的值
      */
     fun target(context: Context?, linkType: String?, linkValue: String?) {
-        this.context = context
+        this.context = context?.applicationContext
         when {
             linkType.equals("profile_edit", true) -> {
                 profileEdit(linkValue)
@@ -118,17 +118,26 @@ object IntoTargetUtil {
 
     private fun case(linkValue: String?) {
         BKLog.d(TAG, "交流页面 linkValue:$linkValue")
-        MainActivity.bottomMenu.select(2)
+        //MainActivity.bottomMenu.select(2)
+        val intent = Intent(Constants.ACTION_BOTTOM_MENU)
+        intent.putExtra("index",2)
+        context?.sendBroadcast(intent)
     }
 
-    private fun free(linkValue: String?){
+    private fun free(linkValue: String?) {
         BKLog.d(TAG, "免费页面 linkValue:$linkValue")
-        MainActivity.bottomMenu.select(1)
+        //MainActivity.bottomMenu.select(1)
+        val intent = Intent(Constants.ACTION_BOTTOM_MENU)
+        intent.putExtra("index",1)
+        context?.sendBroadcast(intent)
     }
 
     private fun trial(linkValue: String?) {
         BKLog.d(TAG, "试听页面即免费页面 linkValue:$linkValue")
-        MainActivity.bottomMenu.select(1)
+        //MainActivity.bottomMenu.select(1)
+        val intent = Intent(Constants.ACTION_BOTTOM_MENU)
+        intent.putExtra("index",1)
+        context?.sendBroadcast(intent)
     }
 
     private fun storeProductDetail(linkValue: String?) {
@@ -168,12 +177,12 @@ object IntoTargetUtil {
 
     private fun courseType(linkValue: String?) {
         BKLog.d(TAG, "课程分类 linkValue:$linkValue")
-        CourseTypeLinearActivity.start(context,"课程",linkValue)
+        CourseTypeLinearActivity.start(context, "课程", linkValue)
     }
 
     private fun pay(context: Context?, linkValue: String?) {
         BKLog.d(TAG, "支付网页 linkValue:$linkValue")
-        WebAct.start(context, "pay", linkValue, "",Intent.FLAG_ACTIVITY_NEW_TASK)
+        WebAct.start(context, "pay", linkValue, "", Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
     private fun url(context: Context?, linkValue: String?) {

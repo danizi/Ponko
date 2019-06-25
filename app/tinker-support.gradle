@@ -6,7 +6,7 @@ def bakPath = file("${buildDir}/bakApk/")
 /**
  * 此处填写每次构建生成的基准包目录
  */
-def baseApkDir = "app-0618-17-46-05"
+def baseApkDir = "app-0619-13-56-58"
 
 /**
  * 对于插件各参数的详细解析请参考
@@ -36,14 +36,14 @@ tinkerSupport {
 
     // 构建基准包和补丁包都要指定不同的tinkerId，并且必须保证唯一性
 //    tinkerId = "base-3.4.5"
-    tinkerId = "patch-3.4.5.1"
-//    tinkerId = "patch-3.4.5.2"
+//    tinkerId = "patch-3.4.5.3"
+    tinkerId = "patch-3.4.5.4"
 
     // 构建多渠道补丁时使用
     // buildAllFlavorsDir = "${bakPath}/${baseApkDir}"
 
     // 是否启用加固模式，默认为false.(tinker-spport 1.0.7起支持）
-    // isProtectedApp = true
+     isProtectedApp = true
 
     // 是否开启反射Application模式
     enableProxyApplication = true

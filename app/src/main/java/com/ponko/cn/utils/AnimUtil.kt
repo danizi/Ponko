@@ -87,4 +87,11 @@ object AnimUtil {
             view?.animate()?.rotation(0f)?.setDuration(100)?.start() //复原状态
         }
     }
+
+    fun cancelAll() {
+        for (view in animators) {
+            cancel(view.key)
+        }
+        animators.clear()
+    }
 }

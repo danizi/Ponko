@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.text.TextUtils
 import com.ponko.cn.MainActivity
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
@@ -16,6 +17,7 @@ import com.ponko.cn.module.login.LoginWxAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.UDIDUtil
 import com.xm.lib.media.broadcast.BroadcastManager
@@ -68,6 +70,10 @@ class LoginStartContract {
                 if (intent?.action == "COMMAND_SENDAUTH") {
                     //微信授权码
                     val code = intent.getStringExtra("code")
+                    if (TextUtils.isEmpty(code)) {
+                        ToastUtil.show("授权失败，请重新授权。")
+                        return
+                    }
                     BKLog.d("微信授权码:$code")
                     PonkoApp.loginApi?.weChatOauth("wechat", code)?.enqueue(object : HttpCallBack<OauthBean>() {
                         override fun onSuccess(call: Call<OauthBean>?, response: Response<OauthBean>?) {

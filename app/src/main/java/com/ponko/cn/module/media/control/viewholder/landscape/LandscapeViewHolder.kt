@@ -307,7 +307,8 @@ class LandscapeViewHolder private constructor(private val view: View, private va
     }
 
     override fun showProgress() {
-        pbLoading?.visibility = View.VISIBLE
+        //pbLoading?.visibility = View.VISIBLE
+        clSeek?.visibility = View.VISIBLE
     }
 
     override fun showLoading() {
@@ -337,6 +338,7 @@ class LandscapeViewHolder private constructor(private val view: View, private va
 
     override fun hideProgress() {
         pbLoading?.visibility = View.GONE
+        clSeek?.visibility = View.GONE
     }
 
     @SuppressLint("SetTextI18n")

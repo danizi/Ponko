@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.ponko.cn.R
+import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.util.ViewUtil
 
 object BarUtil {

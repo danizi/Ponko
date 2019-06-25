@@ -142,7 +142,13 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
                     vipDes = "未入学"
                     viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
                 }
-                name = profileCBean.account.realName
+                if (!TextUtils.isEmpty(profileCBean.account.nickname)) {
+                    name = profileCBean.account.nickname
+                } else {
+                    if (!TextUtils.isEmpty(profileCBean.account.realName)) {
+                        name = profileCBean.account.realName
+                    }
+                }
             }
             USERTYPE_TOURIST -> {
                 // 游客模式

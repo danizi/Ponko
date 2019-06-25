@@ -56,11 +56,23 @@ object Constants {
     /**
      * 底部菜单隐藏提示
      */
+    @Deprecated("最终到达ACTION_BOTTOM_TIP_HIDE")
     const val ACTION_HIDE_MSG_TIP = "action_hide_msg_tip"
     /**
      * 底部菜单显示提示
      */
+    @Deprecated("最终到达ACTION_BOTTOM_TIP_SHOW")
     const val ACTION_SHOW_MSG_TIP = "action_show_msg_tip"
+
+    /**
+     * 触发底部菜单index
+     */
+    const val ACTION_BOTTOM_MENU = "action_bottom_menu"
+    /**
+     * 消息提醒
+     */
+    const val ACTION_BOTTOM_TIP_SHOW = "action_bottom_tip_show"
+    const val ACTION_BOTTOM_TIP_HIDE = "action_bottom_tip_hide"
 
     /**
      * 图片延迟加载时间设定

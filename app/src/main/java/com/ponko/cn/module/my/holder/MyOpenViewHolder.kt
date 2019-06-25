@@ -73,6 +73,10 @@ class MyOpenViewHolder(view: View) : BaseViewHolder(view) {
             viewHolder?.tvExpireIn?.text = "您尚未开通"
             viewHolder?.btnPay?.text="订购"
         }
+        viewHolder?.btnPay?.setOnClickListener {
+            BKLog.d("点击了${openCBean.title}")
+            IntoTargetUtil.target(context, "pay", openCBean.url)
+        }
         itemView.setOnClickListener {
             BKLog.d("点击了${openCBean.title}")
             IntoTargetUtil.target(context, "pay", openCBean.url)

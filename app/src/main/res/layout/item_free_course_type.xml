@@ -57,12 +57,12 @@
                 android:layout_marginRight="8dp"
                 android:scaleType="fitXY"
                 android:src="@mipmap/free_class" />
-
+           <!-- 9大系列 丨320门课程丨1650小节丨458.6小时-->
             <TextView
                 android:id="@+id/tv_book"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="9大系列 丨320门课程丨1650小节丨458.6小时"
+                android:text=""
                 android:textColor="@color/black" />
         </LinearLayout>
 
@@ -82,11 +82,12 @@
                 android:scaleType="fitXY"
                 android:src="@mipmap/free_lisen" />
 
+            <!--9大系列 丨320门课程丨1650小节丨458.6小时-->
             <TextView
                 android:id="@+id/tv_listen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="9大系列 丨320门课程丨1650小节丨458.6小时"
+                android:text=""
                 android:textColor="@color/black" />
         </LinearLayout>
     </LinearLayout>

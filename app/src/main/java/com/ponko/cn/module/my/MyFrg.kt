@@ -21,6 +21,7 @@ import retrofit2.Response
  */
 class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.View {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         p?.registerRefreshBroadcast()
@@ -33,8 +34,9 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
 
     override fun onResume() {
         super.onResume()
-        //重新请求页面
-        requestRefreshApi()
+        //重新请求页面  PS:这里会频繁的创建对象，请求接口生成页面过程中会不断的创建对象，导致内存不断上涨。改用只更新0位置的内容，即更新积分数量。
+        //requestRefreshApi()
+        p?.refreshTop()
         //重新请求积分任务接口
         PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
             override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
@@ -42,6 +44,11 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
                 PonkoApp.signInfo = storeTaskBean
             }
         })
+    }
+
+    override fun refreshTop(body: ProfileCBean?) {
+        adapter?.data!![0] = body!!
+        adapter?.notifyItemChanged(0)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

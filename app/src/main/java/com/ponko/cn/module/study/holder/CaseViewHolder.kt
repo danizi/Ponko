@@ -1,6 +1,7 @@
 package com.ponko.cn.module.study.holder
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,6 +13,7 @@ import com.ponko.cn.MainActivity
 import com.ponko.cn.R
 import com.ponko.cn.bean.CaseBean
 import com.ponko.cn.bean.MainCBean
+import com.ponko.cn.constant.Constants
 import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
@@ -45,7 +47,10 @@ class CaseViewHolder(view: View) : BaseViewHolder(view) {
         v?.tvAdTitle?.text = "外贸案例"
         v?.tvMore?.setOnClickListener {
             BKLog.d("跳转到交流页面")
-            MainActivity.bottomMenu.select(2)
+            val intent = Intent(Constants.ACTION_BOTTOM_MENU)
+            intent.putExtra("index",2)
+            context.sendBroadcast(intent)
+            //MainActivity.bottomMenu.select(2)
         }
         val linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL

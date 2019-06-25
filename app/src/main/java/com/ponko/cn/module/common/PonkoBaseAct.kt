@@ -2,6 +2,7 @@ package com.ponko.cn.module.common
 
 import android.os.Bundle
 import android.view.View
+import com.ponko.cn.utils.AnimUtil
 import com.xm.lib.common.base.mvp.MvpActivity
 import me.imid.swipebacklayout.lib.SwipeBackLayout
 import me.imid.swipebacklayout.lib.Utils
@@ -50,5 +51,11 @@ abstract class PonkoBaseAct<P> : MvpActivity<P>(), SwipeBackActivityBase {
     override fun scrollToFinishActivity() {
         Utils.convertActivityToTranslucent(this)
         swipeBackLayout.scrollToFinishActivity()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mHelper = null
+        AnimUtil.cancelAll()
     }
 }
