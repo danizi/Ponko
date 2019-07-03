@@ -185,6 +185,28 @@ public class CoursesDetailCBean {
         }
 
         public static class SectionsBean {
+            @Override
+            public String toString() {
+                return "SectionsBean{" +
+                        "avatar='" + avatar + '\'' +
+                        ", collection=" + collection +
+                        ", vid='" + vid + '\'' +
+                        ", duration='" + duration + '\'' +
+                        ", progress_duration=" + progress_duration +
+                        ", sequence=" + sequence +
+                        ", completed_status=" + completed_status +
+                        ", hls1='" + hls1 + '\'' +
+                        ", hls2='" + hls2 + '\'' +
+                        ", filesize1=" + filesize1 +
+                        ", hls3='" + hls3 + '\'' +
+                        ", filesize2=" + filesize2 +
+                        ", filesize3=" + filesize3 +
+                        ", name='" + name + '\'' +
+                        ", id='" + id + '\'' +
+                        ", free=" + free +
+                        '}';
+            }
+
             /**
              * avatar : http://img.videocc.net/uimage/2/26de49f8c2/6/26de49f8c22abafd8adc1b49246262c6_3_b.jpg
              * collection : false
@@ -203,6 +225,8 @@ public class CoursesDetailCBean {
              * id : 1fc6e2ae845511e5a95900163e000c35
              * free : false
              */
+
+
 
             private String avatar;
             private boolean collection;

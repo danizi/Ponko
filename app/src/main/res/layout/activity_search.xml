@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".module.study.SearchActivity"
+    tools:context=".module.study.v1.SearchActivity"
     tools:ignore="UnusedAttribute">
 
     <!--标题栏-->

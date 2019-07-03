@@ -44,7 +44,7 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
         this.url = vid
         this.preUrl = preUrl
         this.isPay = isPay
-        Glide.with(context).load(preUrl).error(R.mipmap.ic_launcher).into(ui?.ivPre)//加载图片  //TODO You cannot start a load for a destroyed activity
+        Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ui?.ivPre)//加载图片  //TODO You cannot start a load for a destroyed activity
     }
 
     override fun layoutId(): Int {

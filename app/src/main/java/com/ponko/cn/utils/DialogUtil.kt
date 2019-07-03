@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -100,6 +101,38 @@ object DialogUtil {
                         }
                     })
                 }.show()
+    }
+
+    /**
+     * 显示分享弹框
+     */
+    fun showShareImg(context: Context?,bmp:Bitmap) {
+        if (bmp==null) {
+            ToastUtil.show("分享图片为空。")
+            return
+        }
+        var wxShare: WxShare? = WxShare(context as Activity)
+        wxShare?.init(ShareConfig.Builder().appid(PonkoApp.APP_ID).build())
+        val popWindow = XmPopWindow(context)
+        val shareView = ViewUtil.viewById(context, R.layout.view_share)
+        val flFriend = shareView?.findViewById<View>(R.id.fl_friend) as FrameLayout
+        val flFriendMoment = shareView.findViewById<View>(R.id.fl_friend_moment) as FrameLayout
+        val tvCancel = shareView.findViewById<View>(R.id.tv_cancel) as TextView
+        tvCancel.setOnClickListener {
+            popWindow.dismiss()
+        }
+        flFriend.setOnClickListener {
+            wxShare?.shareImage(bmp,SendMessageToWX.Req.WXSceneSession)
+            popWindow.dismiss()
+        }
+        flFriendMoment.setOnClickListener {
+            wxShare?.shareImage(bmp,SendMessageToWX.Req.WXSceneTimeline)
+            popWindow.dismiss()
+        }
+        popWindow.ini(shareView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        (context as Activity).runOnUiThread {
+            popWindow.showAtLocation(XmPopWindow.Location.BOTTOM, com.xm.lib.media.R.style.AnimationBottomFade, (context as Activity).window.decorView, 0, 0)
+        }
     }
 
     /**

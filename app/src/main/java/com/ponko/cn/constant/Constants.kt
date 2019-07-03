@@ -5,6 +5,10 @@ object Constants {
      * 接口BaseApi
      */
     const val BASE_API = "https://api.tradestudy.cn/v3/"
+    const val URL_INVITE = BASE_API + "web/invite"
+    const val URL_OPEN_ROLL = BASE_API + "web/pay"
+    const val URL_FREE = BASE_API + "web/trial"
+
     /**
      * 测试服务器
      */
@@ -79,5 +83,13 @@ object Constants {
      */
     @Deprecated("")
     const val LOAD_IMAGE_DELAY = 3000L
+
+
+    /**
+     * v1 ：3.5.0 版本之前
+     * v2 ：3.5.0 版本及以后的
+     */
+    const val UI_VERSION_1 = "version1"
+    const val UI_VERSION_2 = "version2"
 
 }

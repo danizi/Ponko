@@ -18,6 +18,8 @@ import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constants.BASE_API
 import com.ponko.cn.constant.Constants.BUG_APP_ID
+import com.ponko.cn.constant.Constants.UI_VERSION_1
+import com.ponko.cn.constant.Constants.UI_VERSION_2
 import com.ponko.cn.db.PonkoDBHelp
 import com.ponko.cn.db.dao.CourseCollectSectionDao
 import com.ponko.cn.db.dao.CourseCollectSpecialDao
@@ -127,6 +129,18 @@ class PonkoApp : MultiDexApplication() {
                 false
             } else {
                 (!PonkoApp.mainCBean?.types?.isEmpty()!! && PonkoApp.mainCBean?.types!![1].isIs_vip)
+            }
+        }
+
+        /**
+         * v1 ：3.5.0 版本之前
+         * v2 ：3.5.0 版本及以后的
+         */
+        fun getAppUIVersion(context: Context): String {
+            return if (getLocalVersion(context) < 350) {
+                UI_VERSION_1
+            } else {
+                UI_VERSION_2
             }
         }
     }

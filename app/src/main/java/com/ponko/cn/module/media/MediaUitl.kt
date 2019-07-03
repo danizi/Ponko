@@ -138,7 +138,7 @@ object MediaUitl {
                 .url("$url?format=$format&ptime=$ptime&vid=$vid&sign=$sign")
                 .post(RequestBody.create(null, "")) //传递一个nullrequestBody
                 .build()
-        client.newCall(request)
+        //client.newCall(request)
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
@@ -154,6 +154,7 @@ object MediaUitl {
                     listener?.onSuccess(Gson().fromJson(tempResponse, VideoInfoCBean::class.java))
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    listener?.onFailure()
                 }
             }
         })
@@ -176,6 +177,7 @@ object MediaUitl {
             override fun onSuccess(videoInfo: VideoInfoCBean) {
                 val m3u8 = hls(videoInfo.data)
                 val total = fileSize(videoInfo.data)
+                //Thread.sleep(15000)
                 handler.post {
                     listener?.onSuccess(m3u8, total)
                 }

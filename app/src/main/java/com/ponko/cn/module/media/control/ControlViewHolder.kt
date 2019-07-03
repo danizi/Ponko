@@ -101,6 +101,7 @@ abstract class ControlViewHolder : IDisplay, IControlViewHolder {
         hideBottom()
         hideProgress()
         hidePlayList()
+        hidePlayListAni()
         isControlViewShow = false
     }
 

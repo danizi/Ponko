@@ -3,12 +3,10 @@ package com.ponko.cn.http
 import android.content.Intent
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
-import com.ponko.cn.StartAct
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.DialogUtil
-import com.xm.lib.common.base.ActManager
 import com.xm.lib.common.http.RetrofitClient
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.OnEnterListener

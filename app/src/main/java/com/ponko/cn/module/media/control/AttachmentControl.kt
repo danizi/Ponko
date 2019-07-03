@@ -163,7 +163,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
 
             override fun onVertical(type: String, present: Int) {
                 super.onVertical(type, present)
-                if (ui?.isControlViewShow!!) {
+                if (ui?.isControlViewShow!! || true) {
                     if (present > 0) {
                         ui?.hidePlayListAni()
                     } else {
@@ -358,7 +358,9 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
     }
 
     override fun updateListItem(index: Int) {
-        (ui as LandscapeViewHolder).selectPlayList(index)
+        if (ui is LandscapeViewHolder) {
+            (ui as LandscapeViewHolder).selectPlayList(index)
+        }
     }
 
     override fun setOnPlayListItemClickListener(listener: OnPlayListItemClickListener) {

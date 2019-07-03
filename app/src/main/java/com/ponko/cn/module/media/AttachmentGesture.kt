@@ -54,10 +54,11 @@ class AttachmentGesture(context: Context?) : BaseAttachmentView(context) {
 
                 //显示控制页面上下滑动可以调节音量和亮度，否则只能弹出列表
                 if (ScreenUtil.isLandscape(context!!)) {
-                    if ((xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).isShowControlView()) {
-                        BKLog.e("控制页面处于显示状态,不可调节音量和亮度")
-                        return
-                    }
+                    return
+//                    if ((xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).isShowControlView()) {
+//                        BKLog.e("控制页面处于显示状态,不可调节音量和亮度")
+//                        return
+//                    }
                 }
 
                 val damp = 0.7f

@@ -26,7 +26,7 @@ import com.xm.lib.media.view.XmPopWindow
 /**
  * 横屏界面
  */
-class LandscapeViewHolder private constructor(private val view: View, private val clLandscapeTop: ConstraintLayout?, private val ivBack: ImageView?, private val tvTitle: TextView?, private val ivShare: ImageView?, private val ivMore: ImageView?, private val clLandscapeBottom: ConstraintLayout?, private val seekBar: SeekBar?, private val ivAction: ImageView?, private val tvTime: TextView?, private val tvRatio: TextView?, private val clSeek: ConstraintLayout?, private val tvTime2: TextView?, private val pbLoading: ProgressBar?, private val rv: RecyclerView?,private val ivNext:ImageView) : ControlViewHolder() {
+class LandscapeViewHolder private constructor(private val view: View, private val clLandscapeTop: ConstraintLayout?, private val ivBack: ImageView?, private val tvTitle: TextView?, private val ivShare: ImageView?, private val ivMore: ImageView?, private val clLandscapeBottom: ConstraintLayout?, private val seekBar: SeekBar?, private val ivAction: ImageView?, private val tvTime: TextView?, private val tvRatio: TextView?, private val clSeek: ConstraintLayout?, private val tvTime2: TextView?, private val pbLoading: ProgressBar?, private val rv: RecyclerView?, private val ivNext: ImageView) : ControlViewHolder() {
 
 
     companion object {
@@ -46,7 +46,8 @@ class LandscapeViewHolder private constructor(private val view: View, private va
             val pbLoading = rootView.findViewById<View>(R.id.pb) as ProgressBar
             val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
             val ivNext = rootView.findViewById<View>(R.id.iv_next) as ImageView
-            return LandscapeViewHolder(rootView, clLandscapeTop, ivBack, tvTitle, ivShare, ivMore, clLandscapeBottom, seekBar, ivAction, tvTime, tvRatio, clSeek, tvTime2, pbLoading, rv,ivNext)
+
+            return LandscapeViewHolder(rootView, clLandscapeTop, ivBack, tvTitle, ivShare, ivMore, clLandscapeBottom, seekBar, ivAction, tvTime, tvRatio, clSeek, tvTime2, pbLoading, rv, ivNext)
         }
     }
 
@@ -206,8 +207,8 @@ class LandscapeViewHolder private constructor(private val view: View, private va
         xmPopWindow.showAtLocation(XmPopWindow.Location.RIGHT, R.style.AnimationRightFade, activity?.window?.decorView!!, 0, 0)
     }
 
-    private fun clickNext(){
-        ( xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).next()
+    private fun clickNext() {
+        (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).next()
     }
 
     @SuppressLint("ClickableViewAccessibility", "ObjectAnimatorBinding")
@@ -255,6 +256,12 @@ class LandscapeViewHolder private constructor(private val view: View, private va
         tvRatio?.setOnClickListener { it ->
             clickRatio()
         }
+
+//        rv?.setOnTouchListener { v, event ->
+//            BKLog.d("触控了播放列表")
+//            showPlayListAni()
+//            false
+//        }
     }
 
     override fun setMediaInfo(info: MediaBean) {
@@ -278,7 +285,7 @@ class LandscapeViewHolder private constructor(private val view: View, private va
     @SuppressLint("ObjectAnimatorBinding")
     override fun showPlayListAni() {
         //super.showPlayListAni()
-        ObjectAnimator.ofFloat(rv, "translationY", rv?.translationY!!.toFloat(), (-rv?.height!!).toFloat()).setDuration(500).start()
+        ObjectAnimator.ofFloat(rv, "translationY", rv?.translationY!!.toFloat(), (-rv.height).toFloat()).setDuration(500).start()
     }
 
     @SuppressLint("ObjectAnimatorBinding")

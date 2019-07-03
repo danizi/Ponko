@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.m3u8DownManager
@@ -23,8 +22,7 @@ import com.ponko.cn.module.m3u8downer.core.M3u8DownTask
 import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.module.m3u8downer.core.OnDownListener
 import com.ponko.cn.module.media.MediaUitl
-import com.ponko.cn.module.my.option.CacheListAct
-import com.ponko.cn.module.study.StudyCourseDetailActivity
+import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder

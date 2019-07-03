@@ -233,6 +233,8 @@ class CourseDao(private var db: SQLiteDatabase?) {
                 courseDbBean.column_vid = cursor.getString(13)
                 data.add(courseDbBean)
             }
+             // todo 容易崩溃 Cursor window allocation of 2048 kb failed. # Open Cursors=62 (# cursors opened by this proc=62)
+            cursor.close()
         } else {
             BKLog.e("数据库中未查询到")
         }

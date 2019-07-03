@@ -8,11 +8,12 @@ project(':LIB_Component').projectDir = new File('../XMLIb/LIB_Component')
 
 include ':LIB_Media'
 project(':LIB_Media').projectDir = new File('../XMLIb/LIB_Media')
+include ':LIB_IJKPlayer_Sdk'
+project(':LIB_IJKPlayer_Sdk').projectDir = new File('../XMLIb/LIB_IJKPlayer_Sdk')
 
 include ':LIB_Pay'
 project(':LIB_Pay').projectDir = new File('../XMLIb/LIB_Pay')
-include ':LIB_IJKPlayer_Sdk'
-project(':LIB_IJKPlayer_Sdk').projectDir = new File('../XMLIb/LIB_IJKPlayer_Sdk')
+
 
 include ':LIB_Share'
 project(':LIB_Share').projectDir = new File('../XMLIb/LIB_Share')

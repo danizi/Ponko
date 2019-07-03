@@ -47,16 +47,18 @@
 
 
         <!-- ============================================主界面 start -->
-        <activity android:name=".GuideAct">
+        <activity android:name=".module.guide.GuideAct">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StartAct" />
+        <activity android:name=".module.launch.StartAct" />
         <activity
             android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:hardwareAccelerated="true"
             android:launchMode="singleTask" />
         <!-- ============================================主界面 end -->
 
@@ -151,15 +153,18 @@
         <!-- ============================================登录 end -->
 
         <activity
-            android:name=".module.free.FreeDetailsAct"
+            android:name=".module.free.v1.FreeDetailsAct"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
             android:launchMode="singleTop" />
-        <activity android:name=".WebAct" />
+        <activity android:name=".module.web.WebAct" />
         <activity
-            android:name=".module.study.CourseTypeLinearActivity"
+            android:name=".module.study.v1.CourseTypeLinearActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".module.study.StudyCourseDetailActivity"
+            android:name=".module.study.v2.CourseTypeLinearActivityV2"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".module.study.v1.StudyCourseDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
             android:launchMode="singleTask" />
 
@@ -194,20 +199,20 @@
 
         <!-- ============================================学习 start -->
         <activity
-            android:name=".module.study.StudyCacheActivity"
+            android:name=".module.study.v1.StudyCacheActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".module.study.CourseTypeGridActivity"
+            android:name=".module.study.v1.CourseTypeGridActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".module.study.SearchActivity"
+            android:name=".module.study.v1.SearchActivity"
             android:launchMode="singleTop" />
         <!-- ============================================学习 end -->
 
 
         <!-- ============================================免费 start -->
         <activity
-            android:name=".module.free.FreeMoreAct"
+            android:name=".module.free.v1.FreeMoreAct"
             android:launchMode="singleTop" />
         <!-- ============================================免费 end -->
 
@@ -233,7 +238,9 @@
         <activity
             android:name=".module.my.option.collect.CollectListActivity"
             android:launchMode="singleTop" />
-        <activity android:name=".module.my.option.SettingActivity"></activity>
+        <activity android:name=".module.my.option.SettingActivity" />
+        <activity android:name="com.ponko.cn.module.my.v2.OpenRollV2Activity" />
+        <activity android:name="com.ponko.cn.module.my.v2.InviteFriendV2Activity"></activity>
     </application>
 
 </manifest>

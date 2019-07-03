@@ -118,7 +118,7 @@ object CacheUtil {
     }
 
     fun getMediaType(): String {
-        return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "MediaType", "3") as String
+        return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "MediaType", "1") as String
     }
 
     /**

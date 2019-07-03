@@ -55,7 +55,6 @@ class M3u8DownRunnable(private val m3u8DownTasker: M3u8DownTasker) : Runnable, I
             }
 
             override fun onSuccess(url: String, size: Int?) {
-
                 m3u8DownTasker.downTask?.m3u8 = url
                 //m3u8 = url
                 analysisM3u8(url)

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
+import android.support.v4.app.Fragment
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
@@ -15,15 +16,17 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.adApi
 import com.ponko.cn.bean.AdCBean
 import com.ponko.cn.constant.Constants
+import com.ponko.cn.constant.Constants.UI_VERSION_1
+import com.ponko.cn.constant.Constants.UI_VERSION_2
 import com.ponko.cn.http.HttpCallBack
-import com.ponko.cn.module.free.FreeFrg
+import com.ponko.cn.module.free.v1.FreeFrg
+import com.ponko.cn.module.free.v2.FreeFrgV2
 import com.ponko.cn.module.interflow.frg.InterflowFrg
 import com.ponko.cn.module.media.AttachmentGesture
-import com.ponko.cn.module.my.MyFrg
-import com.ponko.cn.module.study.StudyFrg
-import com.ponko.cn.module.study2.StudyFrg2
+import com.ponko.cn.module.my.v1.MyFrg
+import com.ponko.cn.module.study.v1.StudyFrg
+import com.ponko.cn.module.study.v2.StudyFrg2
 import com.ponko.cn.utils.CacheUtil
-import com.ponko.cn.utils.CacheUtil.getStudyUI
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
@@ -127,27 +130,57 @@ class MainActivity : BaseActivity() {
 //        bar = bottomMenu
     }
 
-    override fun initDisplay() {
-        BKLog.d("应用销毁保存数据接受的数据：")
-        //根据标志位选择使用哪个学习页面Fragment
-        val studyFragment = when (getStudyUI()) {
-            "1" -> {
+    private fun getStudyFragment(): Fragment {
+//        val uiVersion = PonkoApp.getAppUIVersion(this)
+//        return when (uiVersion) {
+//            "1" -> {
+//                StudyFrg()
+//            }
+//            "2" -> {
+//                StudyFrg2()
+//            }
+//            else -> {
+//                StudyFrg2()
+//            }
+//        }
+        val type = PonkoApp.getAppUIVersion(this)
+        return when (type) {
+            UI_VERSION_1 -> {
                 StudyFrg()
             }
-            "2" -> {
+            UI_VERSION_2 -> {
                 StudyFrg2()
             }
             else -> {
                 StudyFrg2()
             }
         }
+    }
 
+    private fun getFreeFragment(): Fragment {
+        val type = PonkoApp.getAppUIVersion(this)
+        return when (type) {
+            UI_VERSION_1 -> {
+                FreeFrg()
+            }
+            UI_VERSION_2 -> {
+                FreeFrgV2()
+            }
+            else -> {
+                FreeFrgV2()
+            }
+        }
+    }
+
+    override fun initDisplay() {
+        BKLog.d("应用销毁保存数据接受的数据：")
+        //根据标志位选择使用哪个学习页面Fragment
         bar.select(bottomPos)
                 .setContainer(R.id.container)
                 .setTitleColor(R.color.grey, R.color.red)
                 .setItemLayoutId(R.layout.item_bottom_menu)
-                .addItem(studyFragment, "学习", R.mipmap.bottom_icon_study_n, R.mipmap.bottom_icon_study_h)
-                .addItem(FreeFrg(), "免费", R.mipmap.bottom_tab_icon_free_n, R.mipmap.bottom_tab_icon_free_h)
+                .addItem(getStudyFragment(), "学习", R.mipmap.bottom_icon_study_n, R.mipmap.bottom_icon_study_h)
+                .addItem(getFreeFragment(), "免费", R.mipmap.bottom_tab_icon_free_n, R.mipmap.bottom_tab_icon_free_h)
                 .addItem(InterflowFrg(), "交流", R.mipmap.bottom_tab_icon_exchange_n, R.mipmap.bottom_tab_icon_exchange_h)
                 .addItem(MyFrg(), "我的", R.mipmap.bottom_tab_icon_my_n, R.mipmap.bottom_tab_icon_my_h)
                 .setOnItemClickListener(object : OnItemClickListener {
@@ -271,6 +304,15 @@ class MainActivity : BaseActivity() {
      * 点击两次退出应用
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        for (fragment in this.supportFragmentManager.fragments) {
+            if (fragment is FreeFrgV2 && fragment.isVisible && keyCode == KeyEvent.KEYCODE_BACK) {
+                val freeFrgV2 = (fragment as FreeFrgV2)
+                if (freeFrgV2.isLandscepe()) {
+                    freeFrgV2.keyBack()
+                    return false
+                }
+            }
+        }
         return back(keyCode, event)
     }
 

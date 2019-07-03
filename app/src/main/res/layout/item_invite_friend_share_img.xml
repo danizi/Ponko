@@ -9,7 +9,6 @@
         android:id="@+id/iv_bk"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"
         android:src="@mipmap/load_img_default" />
 
     <android.support.constraint.ConstraintLayout

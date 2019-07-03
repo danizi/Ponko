@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".WebAct">
+    tools:context=".module.web.WebAct">
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_exchange"

@@ -3,17 +3,19 @@ package com.ponko.cn.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import com.ponko.cn.MainActivity
-import com.ponko.cn.WebAct
+import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.module.web.WebAct
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.module.my.option.InviteFriendActivity
+import com.ponko.cn.module.my.option.InviteFriendShareActivity
 import com.ponko.cn.module.my.option.RemindAct
 import com.ponko.cn.module.my.option.acount.AccountAct
 import com.ponko.cn.module.my.option.acount.PersonalActivity
 import com.ponko.cn.module.my.option.store.*
-import com.ponko.cn.module.study.CourseTypeLinearActivity
-import com.ponko.cn.module.study.StudyCourseDetailActivity
+import com.ponko.cn.module.study.v1.CourseTypeLinearActivity
+import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
+import com.ponko.cn.module.study.v2.CourseTypeLinearActivityV2
 import com.xm.lib.common.log.BKLog
 
 @SuppressLint("StaticFieldLeak")
@@ -177,7 +179,14 @@ object IntoTargetUtil {
 
     private fun courseType(linkValue: String?) {
         BKLog.d(TAG, "课程分类 linkValue:$linkValue")
-        CourseTypeLinearActivity.start(context, "课程", linkValue)
+        when(PonkoApp.getAppUIVersion(context!!)){
+            Constants.UI_VERSION_1->{
+                CourseTypeLinearActivity.start(context, "课程", linkValue)
+            }
+            Constants.UI_VERSION_2->{
+                CourseTypeLinearActivityV2.start(context, "课程", linkValue)
+            }
+        }
     }
 
     private fun pay(context: Context?, linkValue: String?) {
@@ -197,7 +206,9 @@ object IntoTargetUtil {
 
     private fun invite(linkValue: String?) {
         BKLog.d(TAG, "邀请 linkValue:$linkValue")
-        ActivityUtil.startActivity(context, Intent(context, InviteFriendActivity::class.java))
+        //ActivityUtil.startActivity(context, Intent(context, InviteFriendActivity::class.java))
+        InviteFriendShareActivity.start(context!!,linkValue)
+
     }
 
     private fun profileEdit(linkValue: String?) {
