@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import com.ponko.cn.R
 import com.ponko.cn.utils.ActivityUtil
 import android.support.constraint.ConstraintLayout
@@ -31,7 +30,7 @@ import retrofit2.Response
 /**
  * 短信窗口
  */
-class LogSmsAct : PonkoBaseAct<Any>() {
+class LoginSmsAct : PonkoBaseAct<Any>() {
 
     companion object {
         private const val TYPE = "type"
@@ -42,14 +41,14 @@ class LogSmsAct : PonkoBaseAct<Any>() {
         private const val PWD = "pwd"
 
         fun startFromFindPwd(context: Context, phone: String?) {
-            val intent = Intent(context, LogSmsAct::class.java)
+            val intent = Intent(context, LoginSmsAct::class.java)
             intent.putExtra(TYPE, VALUE_FINDPWD)
             intent.putExtra(PHONE, phone)
             ActivityUtil.startActivity(context, intent)
         }
 
         fun startFromRegister(context: Context, phone: String?, pwd: String?) {
-            val intent = Intent(context, LogSmsAct::class.java)
+            val intent = Intent(context, LoginSmsAct::class.java)
             intent.putExtra(TYPE, VALUE_REGISTER)
             intent.putExtra(PHONE, phone)
             intent.putExtra(PWD, pwd)
@@ -57,7 +56,7 @@ class LogSmsAct : PonkoBaseAct<Any>() {
         }
 
         fun startFromResetPhone(context: Context) {
-            val intent = Intent(context, LogSmsAct::class.java)
+            val intent = Intent(context, LoginSmsAct::class.java)
             intent.putExtra(TYPE, VALUE_RESETPHONE)
             ActivityUtil.startActivity(context, intent)
         }
@@ -90,7 +89,7 @@ class LogSmsAct : PonkoBaseAct<Any>() {
             override fun onDelayTimer(ms: Long) {
                 val s = ms
                 BKLog.d("倒计时$s")
-                this@LogSmsAct.runOnUiThread {
+                this@LoginSmsAct.runOnUiThread {
                     viewHolder?.tvTimer?.text = "重新发送（${s}S）"
                 }
             }
@@ -164,7 +163,7 @@ class LogSmsAct : PonkoBaseAct<Any>() {
             DialogUtil.showProcess(this)
             PonkoApp.loginApi?.checkResetPhoneCode(code)?.enqueue(object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                    LoginUpdateAct.startFromResetPhone(this@LogSmsAct, code)
+                    LoginUpdateAct.startFromResetPhone(this@LoginSmsAct, code)
                     DialogUtil.hideProcess()
                 }
 
@@ -195,7 +194,7 @@ class LogSmsAct : PonkoBaseAct<Any>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     BKLog.d("找回密码验证码合法")
                     //请求登录接口进行登录
-                    LoginAccountContract.Present(this@LogSmsAct, null).clickEnter(phone, pwd)
+                    LoginAccountContract.Present(this@LoginSmsAct, null).clickEnter(phone, pwd)
                     DialogUtil.hideProcess()
                 }
 
@@ -222,7 +221,7 @@ class LogSmsAct : PonkoBaseAct<Any>() {
             PonkoApp.loginApi?.checkForgetCode(phone, code)?.enqueue(object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     //PonkoApp.retrofitClient?.headers?.put("x-tradestudy-access-token", response?.body()?.token!!)
-                    LoginUpdateAct.startFromFindPwd(this@LogSmsAct, code, response?.body()?.token!!)
+                    LoginUpdateAct.startFromFindPwd(this@LoginSmsAct, code, response?.body()?.token!!)
                 }
             })
         }

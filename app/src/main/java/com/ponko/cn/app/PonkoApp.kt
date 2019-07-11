@@ -15,6 +15,7 @@ import com.ponko.cn.R
 import com.ponko.cn.api.*
 import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.MainCBean
+import com.ponko.cn.bean.StoreProfileBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constants.BASE_API
 import com.ponko.cn.constant.Constants.BUG_APP_ID
@@ -52,6 +53,7 @@ class PonkoApp : MultiDexApplication() {
         var signInfo: StoreTaskBean? = null
         var mainCBean: MainCBean? = null
         var main2CBean: Main2CBean? = null
+        var storeProfileBean: StoreProfileBean? = null
 
         /**
          * 接口
@@ -85,6 +87,7 @@ class PonkoApp : MultiDexApplication() {
          */
         @SuppressLint("StaticFieldLeak")
         var m3u8DownManager: M3u8DownManager? = null
+
 
         fun getLocalVersion(ctx: Context): Int {
             var localVersion = 0
@@ -177,7 +180,7 @@ class PonkoApp : MultiDexApplication() {
         //Statistics.initCrashReport(applicationContext, BUG_APP_ID)   //ps:把这个配置打开会导致无法弹出升级框
         Statistics.initBugly(applicationContext, BUG_APP_ID)
         Statistics.initUpgradeCheck(R.mipmap.ic_launcher, MainActivity::class.java)
-        if (BuildConfig.IS_DEBUG) {
+        if (BuildConfig.IS_TINKER_DEVELOPMENT) {
             //热更新是否是开发设备
             Bugly.setIsDevelopmentDevice(applicationContext, true)
         }

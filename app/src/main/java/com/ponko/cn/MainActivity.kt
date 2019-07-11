@@ -191,9 +191,9 @@ class MainActivity : BaseActivity() {
                 })
                 .build()
 
-        if (NetworkUtil.is3GNet(this)) {
-            DialogUtil.show(this, "提示", "当前使用是手机流量", true, null, null)
-        }
+//        if (NetworkUtil.is3GNet(this)) {
+//            DialogUtil.show(this, "提示", "当前使用是手机流量", true, null, null)
+//        }
         if (!NetworkUtil.isNetworkConnected(this)) {
             ToastUtil.show("当前处于断网状态...")
         }
@@ -253,9 +253,9 @@ class MainActivity : BaseActivity() {
                         .context(this@MainActivity)
                         .activity(this@MainActivity)
                         .build()
-                xmAdView?.setAdRate(1.57f, 20)
+                xmAdView?.setAdRate(1.57f, 24)
                 xmAdView?.setCover(adUrl)
-                xmAdView?.show()
+                //xmAdView?.show()
                 xmAdView?.setOnAdListener(View.OnClickListener {
                     requestAdFeedbackApi(adId, 1)
                     IntoTargetUtil.target(this@MainActivity, linkType, linkValue)

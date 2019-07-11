@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.NestedScrollView
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
 import android.view.View
@@ -32,6 +33,8 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.my.holder.MyBookViewHolder
 import com.ponko.cn.module.my.holder.MyCourseViewHolder
+import com.ponko.cn.module.my.v1.adapter.Adapter
+import com.ponko.cn.module.my.v1.option.store.ExchangeFrg
 import com.ponko.cn.utils.*
 import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
@@ -141,30 +144,38 @@ class StoreAct : PonkoBaseAct<Any>() {
             @SuppressLint("SetTextI18n")
             override fun onSuccess(call: Call<StoreProfileBean>?, response: Response<StoreProfileBean>?) {
                 storeProfileBean = response?.body()
+                PonkoApp.storeProfileBean = storeProfileBean
                 Glide.with(this@StoreAct, storeProfileBean?.avatar, viewHolder?.ivHead, Constants.LOAD_IMAGE_DELAY)
                 viewHolder?.tvNick?.text = storeProfileBean?.name
                 viewHolder?.tvPayType?.text = storeProfileBean?.paid
                 viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"
-
+                frgs.clear()
+                var currentItem = 0
+                if (viewHolder?.vp?.currentItem!! > 0) {
+                    currentItem = viewHolder?.vp?.currentItem!!
+                }
                 if (frgs.isEmpty()) {
-                    //frgs.clear()
                     val titls = ArrayList<String>()
                     var count = 1
                     for (list in storeProfileBean?.list?.iterator()!!) {
                         viewHolder?.tb?.addTab(viewHolder?.tb?.newTab()?.setText(list.name)!!)
-                        frgs.add(ExchangeFrg.create(count++, list.name/*, viewHolder?.vp, viewHolder?.sv*/))
+                        frgs.add(ExchangeFrg.create(list.id, list.name/*, viewHolder?.vp, viewHolder?.sv*/))
                         titls.add(list.name)
+                        count++
                     }
 
-                    if (count < 6) {
+                    if (count < 4) {
                         viewHolder?.tb?.layoutParams?.width = ScreenUtil.dip2px(this@StoreAct, 80) * (count - 1)
                     } else {
                         viewHolder?.tb?.tabMode = TabLayout.MODE_SCROLLABLE
                     }
                     viewHolder?.vp?.adapter = Adapter(supportFragmentManager, frgs, titls)
+                    viewHolder?.vp?.offscreenPageLimit = count
                     viewHolder?.tb?.setupWithViewPager(viewHolder?.vp)
+                    viewHolder?.vp?.currentItem = currentItem
                 }
                 DialogUtil.hideProcess()
+                viewHolder?.srl?.isRefreshing = false
             }
 
             override fun onFailure(call: Call<StoreProfileBean>?, msg: String?) {
@@ -178,9 +189,15 @@ class StoreAct : PonkoBaseAct<Any>() {
     var frgs = ArrayList<Fragment>()
     var indexPage = 0
     override fun iniEvent() {
+        viewHolder?.srl?.setOnRefreshListener {
+            iniData()
+        }
         viewHolder?.vp?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {
-
+                if (p0 == 2) {
+                    //在刷新一次页面
+                    viewHolder?.vp?.requestLayout()
+                }
             }
 
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
@@ -189,9 +206,6 @@ class StoreAct : PonkoBaseAct<Any>() {
 
             override fun onPageSelected(p0: Int) {
                 indexPage = p0
-                //在刷新一次页面
-                viewHolder?.vp?.requestLayout()
-
             }
         })
         viewHolder?.sv?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { p0, p1, p2, p3, p4 ->
@@ -232,7 +246,7 @@ class StoreAct : PonkoBaseAct<Any>() {
     /**
      * 积分商城UI
      */
-    private class ViewHolder private constructor(val sv: NestedScrollView, val toolbar: Toolbar, val clInfo: ConstraintLayout, val container: ConstraintLayout, val ivHead: CircleImageView, val tvNick: TextView, val tvPayType: TextView, val tvIntegralNum: TextView, val llObtainLog: LinearLayout, val llRecord: LinearLayout, val clAction: ConstraintLayout, val llIntegral: LinearLayout, val ivIntegral: AppCompatImageView, val tvIntegral: TextView, val ivSign: ImageView, val llExchange: LinearLayout, val ivExchange: AppCompatImageView, val tvExchange: TextView, val llRank: LinearLayout, val ivRank: AppCompatImageView, val tvRank: TextView, val tb: TabLayout, val vp: ViewPager, val viewState: XmStateView) {
+    private class ViewHolder private constructor(val srl: SwipeRefreshLayout, val sv: NestedScrollView, val toolbar: Toolbar, val clInfo: ConstraintLayout, val container: ConstraintLayout, val ivHead: CircleImageView, val tvNick: TextView, val tvPayType: TextView, val tvIntegralNum: TextView, val llObtainLog: LinearLayout, val llRecord: LinearLayout, val clAction: ConstraintLayout, val llIntegral: LinearLayout, val ivIntegral: AppCompatImageView, val tvIntegral: TextView, val ivSign: ImageView, val llExchange: LinearLayout, val ivExchange: AppCompatImageView, val tvExchange: TextView, val llRank: LinearLayout, val ivRank: AppCompatImageView, val tvRank: TextView, val tb: TabLayout, val vp: ViewPager, val viewState: XmStateView) {
         companion object {
 
             fun create(act: AppCompatActivity): ViewHolder {
@@ -260,219 +274,221 @@ class StoreAct : PonkoBaseAct<Any>() {
                 val tb = act.findViewById<View>(R.id.tb) as TabLayout
                 val vp = act.findViewById<View>(R.id.vp) as ViewPager
                 val viewState = act.findViewById<View>(R.id.view_state) as XmStateView
-                return ViewHolder(sv, toolbar, clInfo, container, ivHead, tvNick, tvPayType, tvIntegralNum, llObtainLog, llRecord, clAction, llIntegral, ivIntegral, tvIntegral, ivSign, llExchange, ivExchange, tvExchange, llRank, ivRank, tvRank, tb, vp, viewState)
+                val srl = act.findViewById<View>(R.id.srl) as SwipeRefreshLayout
+
+                return ViewHolder(srl, sv, toolbar, clInfo, container, ivHead, tvNick, tvPayType, tvIntegralNum, llObtainLog, llRecord, clAction, llIntegral, ivIntegral, tvIntegral, ivSign, llExchange, ivExchange, tvExchange, llRank, ivRank, tvRank, tb, vp, viewState)
             }
         }
     }
 
-    /**
-     * ViewPager Fragment契约类页面
-     */
-    class ExchangeContract {
-        interface V {
-            fun reqeustExchangeRefreshApiSuccess(body: ArrayList<StoreProfileCMoreBean>?)
-            fun reqeustExchangeMoreApiSuccess(body: ArrayList<StoreProfileCMoreBean>?)
-        }
+//    /**
+//     * ViewPager Fragment契约类页面
+//     */
+//    class ExchangeContract {
+//        interface V {
+//            fun reqeustExchangeRefreshApiSuccess(body: ArrayList<StoreProfileCMoreBean>?)
+//            fun reqeustExchangeMoreApiSuccess(body: ArrayList<StoreProfileCMoreBean>?)
+//        }
+//
+//        class M {
+//            /**
+//             * 请求积分兑换数据
+//             */
+//            fun reqeustExchangeRefreshApi(cid: String, callback: HttpCallBack<ArrayList<StoreProfileCMoreBean>>) {
+//                reqeustExchangeMoreApi(cid, 1, callback)
+//
+//            }
+//
+//            /**
+//             * 请求积分兑换更多数据
+//             */
+//            fun reqeustExchangeMoreApi(cid: String, page: Int, callback: HttpCallBack<ArrayList<StoreProfileCMoreBean>>) {
+//                PonkoApp.myApi?.homeMore(cid, page)?.enqueue(callback)
+//            }
+//        }
+//
+//        class Present(private val v: V?) {
+//            /**
+//             * 上拉加载开关
+//             */
+//            private val isDebug = PonkoApp.UI_DEBUG
+//            private val m = M()
+//
+//            fun reqeustExchangeRefreshApi(cid: String) {
+//                m.reqeustExchangeRefreshApi(cid, object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
+//                    override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
+//                        v?.reqeustExchangeRefreshApiSuccess(response?.body())
+//                    }
+//                })
+//            }
+//
+//            fun reqeustExchangeMoreApi(cid: String, page: Int) {
+//                if (isDebug) {
+//                    val body = ArrayList<StoreProfileCMoreBean>()
+//                    val testBean = StoreProfileCMoreBean()
+//                    testBean.id = 2
+//                    testBean.name = "测试-课程"
+//                    testBean.layout = "bar"
+//                    testBean.sort = 2
+//                    testBean.stores = ArrayList<StoreProfileCMoreBean.StoresBean>()
+//                    for (i in 0..9) {
+//                        val storesBean = StoreProfileCMoreBean.StoresBean()
+//                        storesBean.id = "47975b0c6f4e11e9b5c00242ac130004"
+//                        storesBean.name = "测试-帮课大学特训营第7期-$i"
+//                        storesBean.type = "COMMODITY"
+//                        storesBean.scores = 400
+//                        storesBean.picture = "http://cdn.tradestudy.cn/upload/product/20190506/a78e5a61aec6a4beca0c30387a759b2c.jpg"
+//                        testBean.stores.add(storesBean)
+//                    }
+//                    body.add(testBean)
+//                    v?.reqeustExchangeMoreApiSuccess(body)
+//                } else {
+//                    m.reqeustExchangeMoreApi(cid, page, object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
+//                        override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
+//                            val data = response?.body()
+//                            if (data != null && !data.isEmpty()) {
+//                                v?.reqeustExchangeMoreApiSuccess(response.body())
+//
+//                            }
+//                        }
+//                    })
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * ViewPager Fragment页面
+//     */
+//    @SuppressLint("ValidFragment")
+//    open class ExchangeFrg : MvpFragment<ExchangeContract.Present>(), ExchangeContract.V {
+//
+//        companion object {
+//            /**
+//             * @param cid   课程id、 一般是1 2 3....
+//             * @param type  列表的类型 一种线性一种网格
+//             * @param vp    viewpager
+//             * @param sv
+//             */
+//            fun create(cid: Int, type: String/*, vp: ViewPager?, sv: NestedScrollView?*/): ExchangeFrg {
+//                val fragment = ExchangeFrg()
+//                val bundle = Bundle()
+//                bundle.putString("cid", cid.toString())
+//                bundle.putString("type", type) //暂时提供两种类型列表 书籍和课程
+//                fragment.arguments = bundle
+//                return fragment
+//            }
+//        }
+//
+//        private var page: Int = 1
+//        private var rv: RecyclerView? = null
+//        private var type: String = "书籍"
+//        private var cid: String = ""
+//        private var adapter = object : BaseRvAdapter() {
+//
+//            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+//                BKLog.d("StoreAct", "onCreateViewHolder viewType:$viewType")
+//                return super.onCreateViewHolder(parent, viewType)
+//            }
+//
+//            override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+//                super.onBindViewHolder(holder, position)
+//                BKLog.d("StoreAct", "onBindViewHolder holder:$holder position:$position")
+//            }
+//
+//        }
+//
+//        override fun getLayoutId(): Int {
+//            return R.layout.frg_rv
+//        }
+//
+//        override fun initDisplay() {
+//
+//        }
+//
+//        override fun findViews(view: View) {
+//            rv = view.findViewById(R.id.rv)
+//        }
+//
+//        override fun iniEvent() {
+//            //RecycerView加载更多加这些配置，viewpager第二个页面就会刷不出数据
+//            rv?.isFocusableInTouchMode = false
+////            rv?.isNestedScrollingEnabled = false
+////            rv?.requestFocus()
+//            rv?.setHasFixedSize(true)
+//        }
+//
+//        override fun iniData() {
+//            cid = arguments?.getString("cid")!!
+//            type = arguments?.getString("type")!!
+//            p?.reqeustExchangeRefreshApi(cid)
+//        }
+//
+//        private var vp: ViewPager? = null
+//        fun reqeustExchangeRefreshApi(vp: ViewPager?) {
+//            p?.reqeustExchangeRefreshApi(cid)
+//            this.vp = vp
+//        }
+//
+//        fun reqeustExchangeMoreApi(vp: ViewPager?) {
+//            p?.reqeustExchangeMoreApi(cid, ++page)
+//            this.vp = vp
+//        }
+//
+//        override fun reqeustExchangeRefreshApiSuccess(body: ArrayList<StoreProfileCMoreBean>?) {
+//            adapter.data?.clear()
+//            adapter.data?.addAll(body!![0].stores!!)
+//            when (body!![0].layout) {
+//                "bar" -> {
+//                    adapter.addItemViewDelegate(0, MyCourseViewHolder::class.java, Any::class.java, R.layout.item_my_store_course)
+//                    val linearLayoutManager = LinearLayoutManager(context)
+//                    linearLayoutManager.isSmoothScrollbarEnabled = true
+//                    linearLayoutManager.isAutoMeasureEnabled = true
+//                    rv?.layoutManager = linearLayoutManager
+//
+//                }
+//                else -> {
+//                    adapter.addItemViewDelegate(0, MyBookViewHolder::class.java, Any::class.java, R.layout.item_my_store_book)
+//                    val gridLayoutManager = GridLayoutManager(context, 2)
+//                    gridLayoutManager.isSmoothScrollbarEnabled = true
+//                    gridLayoutManager.isAutoMeasureEnabled = true
+//                    rv?.layoutManager = gridLayoutManager
+//                }
+//            }
+//            rv?.adapter = adapter
+//            this.vp?.requestLayout()
+//        }
+//
+//        override fun reqeustExchangeMoreApiSuccess(body: ArrayList<StoreProfileCMoreBean>?) {
+//            val positionStart = adapter.data?.size
+//            val itemCount = body!![0].stores!!.size
+//            adapter.data?.addAll(body[0].stores!!)
+//            adapter.notifyItemRangeInserted(positionStart!!, itemCount)
+//            adapter.notifyItemChanged(positionStart, itemCount)
+////            adapter.notifyDataSetChanged()
+//            this.vp?.requestLayout()
+//        }
+//
+//        override fun presenter(): ExchangeContract.Present {
+//            return ExchangeContract.Present(this)
+//        }
+//    }
 
-        class M {
-            /**
-             * 请求积分兑换数据
-             */
-            fun reqeustExchangeRefreshApi(cid: String, callback: HttpCallBack<ArrayList<StoreProfileCMoreBean>>) {
-                reqeustExchangeMoreApi(cid, 1, callback)
-
-            }
-
-            /**
-             * 请求积分兑换更多数据
-             */
-            fun reqeustExchangeMoreApi(cid: String, page: Int, callback: HttpCallBack<ArrayList<StoreProfileCMoreBean>>) {
-                PonkoApp.myApi?.homeMore(cid, page)?.enqueue(callback)
-            }
-        }
-
-        class Present(private val v: V?) {
-            /**
-             * 上拉加载开关
-             */
-            private val isDebug = PonkoApp.UI_DEBUG
-            private val m = M()
-
-            fun reqeustExchangeRefreshApi(cid: String) {
-                m.reqeustExchangeRefreshApi(cid, object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
-                    override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
-                        v?.reqeustExchangeRefreshApiSuccess(response?.body())
-                    }
-                })
-            }
-
-            fun reqeustExchangeMoreApi(cid: String, page: Int) {
-                if (isDebug) {
-                    val body = ArrayList<StoreProfileCMoreBean>()
-                    val testBean = StoreProfileCMoreBean()
-                    testBean.id = 2
-                    testBean.name = "测试-课程"
-                    testBean.layout = "bar"
-                    testBean.sort = 2
-                    testBean.stores = ArrayList<StoreProfileCMoreBean.StoresBean>()
-                    for (i in 0..9) {
-                        val storesBean = StoreProfileCMoreBean.StoresBean()
-                        storesBean.id = "47975b0c6f4e11e9b5c00242ac130004"
-                        storesBean.name = "测试-帮课大学特训营第7期-$i"
-                        storesBean.type = "COMMODITY"
-                        storesBean.scores = 400
-                        storesBean.picture = "http://cdn.tradestudy.cn/upload/product/20190506/a78e5a61aec6a4beca0c30387a759b2c.jpg"
-                        testBean.stores.add(storesBean)
-                    }
-                    body.add(testBean)
-                    v?.reqeustExchangeMoreApiSuccess(body)
-                } else {
-                    m.reqeustExchangeMoreApi(cid, page, object : HttpCallBack<ArrayList<StoreProfileCMoreBean>>() {
-                        override fun onSuccess(call: Call<ArrayList<StoreProfileCMoreBean>>?, response: Response<ArrayList<StoreProfileCMoreBean>>?) {
-                            val data = response?.body()
-                            if (data != null && !data.isEmpty()) {
-                                v?.reqeustExchangeMoreApiSuccess(response.body())
-
-                            }
-                        }
-                    })
-                }
-            }
-        }
-    }
-
-    /**
-     * ViewPager Fragment页面
-     */
-    @SuppressLint("ValidFragment")
-    open class ExchangeFrg : MvpFragment<ExchangeContract.Present>(), ExchangeContract.V {
-
-        companion object {
-            /**
-             * @param cid   课程id、 一般是1 2 3....
-             * @param type  列表的类型 一种线性一种网格
-             * @param vp    viewpager
-             * @param sv
-             */
-            fun create(cid: Int, type: String/*, vp: ViewPager?, sv: NestedScrollView?*/): ExchangeFrg {
-                val fragment = ExchangeFrg()
-                val bundle = Bundle()
-                bundle.putString("cid", cid.toString())
-                bundle.putString("type", type) //暂时提供两种类型列表 书籍和课程
-                fragment.arguments = bundle
-                return fragment
-            }
-        }
-
-        private var page: Int = 1
-        private var rv: RecyclerView? = null
-        private var type: String = "书籍"
-        private var cid: String = ""
-        private var adapter = object : BaseRvAdapter() {
-
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-                BKLog.d("StoreAct", "onCreateViewHolder viewType:$viewType")
-                return super.onCreateViewHolder(parent, viewType)
-            }
-
-            override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-                super.onBindViewHolder(holder, position)
-                BKLog.d("StoreAct", "onBindViewHolder holder:$holder position:$position")
-            }
-
-        }
-
-        override fun getLayoutId(): Int {
-            return R.layout.frg_rv
-        }
-
-        override fun initDisplay() {
-
-        }
-
-        override fun findViews(view: View) {
-            rv = view.findViewById(R.id.rv)
-        }
-
-        override fun iniEvent() {
-            //RecycerView加载更多加这些配置，viewpager第二个页面就会刷不出数据
-            rv?.isFocusableInTouchMode = false
-//            rv?.isNestedScrollingEnabled = false
-//            rv?.requestFocus()
-            rv?.setHasFixedSize(true)
-        }
-
-        override fun iniData() {
-            cid = arguments?.getString("cid")!!
-            type = arguments?.getString("type")!!
-            p?.reqeustExchangeRefreshApi(cid)
-        }
-
-        private var vp: ViewPager? = null
-        fun reqeustExchangeRefreshApi(vp: ViewPager?) {
-            p?.reqeustExchangeRefreshApi(cid)
-            this.vp = vp
-        }
-
-        fun reqeustExchangeMoreApi(vp: ViewPager?) {
-            p?.reqeustExchangeMoreApi(cid, ++page)
-            this.vp = vp
-        }
-
-        override fun reqeustExchangeRefreshApiSuccess(body: ArrayList<StoreProfileCMoreBean>?) {
-            adapter.data?.clear()
-            adapter.data?.addAll(body!![0].stores!!)
-            when (body!![0].layout) {
-                "bar" -> {
-                    adapter.addItemViewDelegate(0, MyCourseViewHolder::class.java, Any::class.java, R.layout.item_my_store_course)
-                    val linearLayoutManager = LinearLayoutManager(context)
-                    linearLayoutManager.isSmoothScrollbarEnabled = true
-                    linearLayoutManager.isAutoMeasureEnabled = true
-                    rv?.layoutManager = linearLayoutManager
-
-                }
-                else -> {
-                    adapter.addItemViewDelegate(0, MyBookViewHolder::class.java, Any::class.java, R.layout.item_my_store_book)
-                    val gridLayoutManager = GridLayoutManager(context, 2)
-                    gridLayoutManager.isSmoothScrollbarEnabled = true
-                    gridLayoutManager.isAutoMeasureEnabled = true
-                    rv?.layoutManager = gridLayoutManager
-                }
-            }
-            rv?.adapter = adapter
-            this.vp?.requestLayout()
-        }
-
-        override fun reqeustExchangeMoreApiSuccess(body: ArrayList<StoreProfileCMoreBean>?) {
-            val positionStart = adapter.data?.size
-            val itemCount = body!![0].stores!!.size
-            adapter.data?.addAll(body[0].stores!!)
-            adapter.notifyItemRangeInserted(positionStart!!, itemCount)
-            adapter.notifyItemChanged(positionStart, itemCount)
-//            adapter.notifyDataSetChanged()
-            this.vp?.requestLayout()
-        }
-
-        override fun presenter(): ExchangeContract.Present {
-            return ExchangeContract.Present(this)
-        }
-    }
-
-    /**
-     * ViewPager适配器
-     */
-    open class Adapter(fm: FragmentManager, val frgs: ArrayList<Fragment>, val title: ArrayList<String>) : FragmentPagerAdapter(fm) {
-
-        override fun getItem(p0: Int): Fragment {
-            return frgs[p0]
-        }
-
-        override fun getCount(): Int {
-            return frgs.size
-        }
-
-        override fun getPageTitle(position: Int): CharSequence? {
-            return title[position]
-        }
-    }
+//    /**
+//     * ViewPager适配器
+//     */
+//    open class Adapter(fm: FragmentManager, val frgs: ArrayList<Fragment>, val title: ArrayList<String>) : FragmentPagerAdapter(fm) {
+//
+//        override fun getItem(p0: Int): Fragment {
+//            return frgs[p0]
+//        }
+//
+//        override fun getCount(): Int {
+//            return frgs.size
+//        }
+//
+//        override fun getPageTitle(position: Int): CharSequence? {
+//            return title[position]
+//        }
+//    }
 }

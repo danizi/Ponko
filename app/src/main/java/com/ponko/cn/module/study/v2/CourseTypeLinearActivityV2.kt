@@ -14,7 +14,7 @@ import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.CourseAllCBean
-import com.ponko.cn.bean.CourseAllCBeanV2
+import com.ponko.cn.bean.CourseAllCBeanV1
 import com.ponko.cn.bean.InternalCourse
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
@@ -164,7 +164,7 @@ class CourseTypeLinearActivityV2 : RefreshLoadAct<Any, CourseAllCBean>() {
 
             when(PonkoApp.getAppUIVersion(itemView.context)){
                 Constants.UI_VERSION_1->{
-                    val coursesBean = d as CourseAllCBeanV2.CoursesBean
+                    val coursesBean = d as CourseAllCBeanV1.CoursesBean
                     val context = itemView.context
                     Glide.with(context, coursesBean.image, viewHolder?.ivCover)
                     viewHolder?.tvCourseTitle?.text = coursesBean.title.toString()

@@ -1,30 +1,23 @@
-package com.ponko.cn.module.my.option
+package com.ponko.cn.module.my.v2
 
 import android.content.Intent
 import android.view.View
 import com.ponko.cn.R
-import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
-import com.ponko.cn.bean.GeneralBean
-import com.ponko.cn.bean.RemindCBean
+import com.ponko.cn.bean.RemindCBeanV2
 import com.ponko.cn.constant.Constants
-import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
-import com.ponko.cn.module.common.RefreshLoadFrg
-import com.ponko.cn.module.my.constract.RemindContract
 import com.ponko.cn.module.my.holder.MyRemindHolder
-import com.ponko.cn.utils.BarUtil.addBar2
+import com.ponko.cn.module.my.v2.constract.RemindContractV2
+import com.ponko.cn.module.my.v2.holder.MyRemindHolderV2
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
-import retrofit2.Call
-import retrofit2.Response
 
-@Deprecated("使用RemindActV2")
-class RemindAct : RefreshLoadAct<RemindContract.Present, ArrayList<RemindCBean>>(), RemindContract.V {
+class RemindActV2  : RefreshLoadAct<RemindContractV2.Present, RemindCBeanV2>(), RemindContractV2.V {
 
 
-    override fun presenter(): RemindContract.Present {
-        return RemindContract.Present(context = this, v = this)
+    override fun presenter(): RemindContractV2.Present {
+        return RemindContractV2.Present(context = this, v = this)
     }
 
     override fun initDisplay() {
@@ -44,8 +37,8 @@ class RemindAct : RefreshLoadAct<RemindContract.Present, ArrayList<RemindCBean>>
         ToastUtil.show("删除失败")
     }
 
-    override fun remindListApiSuccess(body: ArrayList<RemindCBean>?) {
-        if(body?.isEmpty()!!){
+    override fun remindListApiSuccess(body: RemindCBeanV2?) {
+        if(body?.messages?.isEmpty()!!){
             addBar2("消息提醒", "", View.OnClickListener {})
         }else{
             addBar2("消息提醒", "删除所有", View.OnClickListener {
@@ -59,7 +52,7 @@ class RemindAct : RefreshLoadAct<RemindContract.Present, ArrayList<RemindCBean>>
         requestRefreshFailure()
     }
 
-    override fun remindListMoreApiSuccess(body: ArrayList<RemindCBean>?) {
+    override fun remindListMoreApiSuccess(body: RemindCBeanV2?) {
         requestMoreSuccess(body)
     }
 
@@ -70,7 +63,7 @@ class RemindAct : RefreshLoadAct<RemindContract.Present, ArrayList<RemindCBean>>
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
         return BindItemViewHolderBean.create(
                 arrayOf(0),
-                arrayOf(MyRemindHolder::class.java),
+                arrayOf(MyRemindHolderV2::class.java),
                 arrayOf(Any::class.java),
                 arrayOf(R.layout.item_my_msg_remind)
         )
@@ -84,8 +77,8 @@ class RemindAct : RefreshLoadAct<RemindContract.Present, ArrayList<RemindCBean>>
         p?.remindListApi()
     }
 
-    override fun multiTypeData(body: ArrayList<RemindCBean>?): List<Any> {
-        return body!!
+    override fun multiTypeData(body: RemindCBeanV2?): List<Any> {
+        return body?.messages!!
     }
 
     override fun adapter(): BaseRvAdapter? {

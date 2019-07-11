@@ -9,9 +9,9 @@ buildscript {
         applicationId = 'com.xm.lib.test'
         minSdkVersion = 15
         targetSdkVersion = 28
-        versionCode = 350
-        versionName = "3.5.0"
-        minifyEnabled = false
+        versionCode = 353
+        versionName = "3.5.3"
+        minifyEnabled = true
     }
 
     repositories {
@@ -36,6 +36,9 @@ allprojects {
         jcenter()
         maven { url 'https://jitpack.io' }
         maven { url ' https://bintray.com/wechat-sdk-team/maven' }
+        //威视
+        //maven {url 'http://maven.aliyun.com/nexus/content/repositories/releases/'}
+        //maven {url 'https://dl.bintray.com/polyv/android'}
     }
 }
 

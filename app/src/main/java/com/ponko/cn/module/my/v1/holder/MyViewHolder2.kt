@@ -24,6 +24,7 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.*
 import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.ponko.cn.module.my.option.store.StoreAct
+import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v2.StudyContract2
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.AnimUtil
@@ -118,7 +119,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                     ActivityUtil.startActivity(context, Intent(context, HistoryActivity::class.java))
                 }
                 "提醒" -> {
-                    ActivityUtil.startActivity(context, Intent(context, RemindAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, RemindActV2::class.java))
                     //更新底部菜单消息数量
                     context.sendBroadcast(Intent(Constants.ACTION_SHOW_MSG_TIP))
                 }

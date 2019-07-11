@@ -28,6 +28,7 @@ import retrofit2.Response
 import android.opengl.ETC1.getHeight
 import android.opengl.ETC1.getWidth
 import android.graphics.Bitmap
+import android.os.Bundle
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils
 import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
@@ -44,6 +45,25 @@ class InviteFriendShareActivity : MvpActivity<Any>() {
             //context.startActivity(Intent(context, InviteFriendShareActivity::class.java))
         }
     }
+
+    /**
+     * 窗口销毁之前保存状态
+     */
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putString("productId", productId)
+        BKLog.d("应用销毁保存的数据 -> $productId")
+    }
+
+    /**
+     * 应用重启取保存数据恢复状态
+     */
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        productId = savedInstanceState?.getString("productId")!!
+        BKLog.d("应用重启拿到的保存的数据 -> $productId")
+    }
+
 
     private var ui: ViewHolder? = null
 
@@ -74,7 +94,7 @@ class InviteFriendShareActivity : MvpActivity<Any>() {
         myApi?.shareInvites(productId)?.enqueue(object : HttpCallBack<Invite>() {
             override fun onSuccess(call: Call<Invite>?, response: Response<Invite>?) {
                 val invite = response?.body()
-                ui?.vp?.pageMargin = 80
+                //ui?.vp?.pageMargin = 80
                 for (template in invite?.template!!) {
                     template.nickname = invite.nickname
                     template.qr_url = invite.qr_url
@@ -120,7 +140,7 @@ class InviteFriendShareActivity : MvpActivity<Any>() {
             val wxShare = WxShare(this)
             wxShare.init(ShareConfig.Builder().appid(APP_ID).build())
             if (ui?.vp?.childCount!! > index) {
-                DialogUtil.showShareImg(this,getViewBitmap2(ui?.vp?.getChildAt(index)!!))
+                DialogUtil.showShareImg(this, getViewBitmap2(ui?.vp?.getChildAt(index)!!))
             } else {
                 ToastUtil.show("内容还未加载完成，请稍等。")
             }

@@ -46,7 +46,7 @@ class MyBookViewHolder(view: View) : BaseViewHolder(view) {
         itemView.setOnClickListener {
             PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
                 override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
-                    WebAct.startExChange(context, "exchange", storesBean.url, storesBean.name, storesBean.id, needScore = storesBean.scores.toString(),aggregateScore=response?.body()?.scores.toString(),total = storesBean.total)
+                    WebAct.startExChange(context, "exchange", storesBean.url, storesBean.name, storesBean.id, needScore = storesBean.scores.toString(),aggregateScore=response?.body()?.scores.toString(),total = storesBean.total, isVirtualProduct = false)
                 }
             })
         }

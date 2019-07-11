@@ -30,8 +30,21 @@
         <!--内容-->
         <include layout="@layout/srl_rv" />
 
+
     </LinearLayout>
 
+    <TextView
+        android:background="@color/white"
+        android:textColor="#999"
+        android:textSize="10sp"
+        android:id="@+id/tv_space"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="xxxxxxxxxxxxxxxxxx"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
     <!--底部按钮-->
     <LinearLayout
         android:id="@+id/ll_bottom"

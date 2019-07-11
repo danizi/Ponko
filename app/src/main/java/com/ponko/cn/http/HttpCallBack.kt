@@ -6,6 +6,7 @@ import android.text.TextUtils
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.http.RetrofitClient
 import com.xm.lib.common.log.BKLog
@@ -26,12 +27,13 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
             val a = PonkoApp.activityManager.getTopActivity()!!
             val className = a::class.java.simpleName
             BKLog.d("className->$className")
+
             if (!TextUtils.isEmpty(className) && className.contains("Login")) {
-                showErrorDlg(msg!!)
+                showErrorDlg(className, msg!!)
             } else {
                 for (error in errorCodeMaps) {
                     if (msg == error.value) {
-                        showErrorDlg(msg)
+                        showErrorDlg(className, msg)
                         break
                     }
                 }
@@ -39,8 +41,10 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
         }
     }
 
-    private fun showErrorDlg(msg: String) {
-        val isCancelable = !(msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"])
+    private fun showErrorDlg(className: String, msg: String) {
+        val isCancelable = !(msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"] || msg == errorCodeMaps["InvalidPhoneCode"])
+        if(msg == errorCodeMaps["RepeatOnline"] && !CacheUtil.isUserTypeLogin()) return
+
         DialogUtil.show(
                 PonkoApp.activityManager.getTopActivity()!!,
                 "提示"
@@ -49,7 +53,16 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
                 object : OnEnterListener {
                     override fun onEnter(dlg: AlertDialog) {
 
-                        if (msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"] /*|| (ActManager.instance?.getTopActivity()!!::class.java.simpleName == "MainActivity" && msg == errorCodeMaps["TokenPasswordDoesNotMatch"])*/) {
+                        //用户进入主页，然后再其他终端修改密码时，弹出提示回到登录页面
+                        if (!className.contains("Login") && msg == errorCodeMaps["TokenPasswordDoesNotMatch"]) {
+                            val act = PonkoApp.activityManager.getTopActivity()
+                            val intent = Intent(act, LoginStartAct::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            ActivityUtil.startActivity(act, intent)
+                        }
+
+                        //用户多端同时登录
+                        if ((msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"]) && CacheUtil.isUserTypeLogin()) {
                             val act = PonkoApp.activityManager.getTopActivity()
                             val intent = Intent(act, LoginStartAct::class.java)
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

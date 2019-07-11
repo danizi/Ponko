@@ -2,12 +2,18 @@ package com.ponko.cn.module.media
 
 import android.app.Activity
 import android.content.Context
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatImageButton
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.bumptech.glide.Glide
+import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
+import com.xm.lib.common.http.NetworkUtil
+import com.xm.lib.component.OnCancelListener
+import com.xm.lib.component.OnEnterListener
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
 import com.xm.lib.media.base.IXmMediaPlayer
@@ -60,9 +66,25 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
     override fun initEvent() {
         ui?.ivStart?.setOnClickListener {
             if (isPay == true) {
-                clickIvStart()
+                if (NetworkUtil.is3GNet(context)) {
+                    DialogUtil.show(context, "提示", "当前使用是手机流量,是否继续播放？", true, object : OnEnterListener {
+                        override fun onEnter(dlg: AlertDialog) {
+                            clickIvStart()
+                        }
+                    }, object : OnCancelListener {
+                        override fun onCancel(dlg: AlertDialog) {
+                            dlg.dismiss()
+                        }
+                    })
+                } else {
+                    clickIvStart()
+                }
             } else {
-                ToastUtil.show("您尚未订购")
+                if (TextUtils.isEmpty(url)) {
+                    ToastUtil.show("暂未获取课程信息")
+                } else {
+                    ToastUtil.show("您尚未订购")
+                }
             }
         }
         ui?.ivBack?.setOnClickListener {
@@ -82,7 +104,7 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
                 }
 
                 override fun onFailure() {
-                    ToastUtil.show("获取播放地址失败 - ")
+                    //ToastUtil.show("获取播放地址失败 - ")
                 }
             })
 

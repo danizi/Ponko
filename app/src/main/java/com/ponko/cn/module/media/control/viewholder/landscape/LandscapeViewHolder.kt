@@ -183,17 +183,19 @@ class LandscapeViewHolder private constructor(private val view: View, private va
         val tvRatio720p: TextView = ratioView.findViewById(R.id.tv_ratio_720p)
         val tvRatio1080p: TextView = ratioView.findViewById(R.id.tv_ratio_1080p)
         tvRatio360p.setOnClickListener {
+            tvRatio?.text="流畅"
             Toast.makeText(activity, "360p", Toast.LENGTH_SHORT).show()
-
             (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(1)
             xmPopWindow.dismiss()
         }
         tvRatio480p.setOnClickListener {
+            tvRatio?.text="标清"
             Toast.makeText(activity, "480p", Toast.LENGTH_SHORT).show()
             (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(2)
             xmPopWindow.dismiss()
         }
         tvRatio720p.setOnClickListener {
+            tvRatio?.text="高清"
             Toast.makeText(activity, "720p", Toast.LENGTH_SHORT).show()
             (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(3)
             xmPopWindow.dismiss()

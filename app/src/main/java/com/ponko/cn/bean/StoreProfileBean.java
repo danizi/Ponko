@@ -25,7 +25,15 @@ public class StoreProfileBean {
     private String avatar;
     private String score_rule;
     private List<ListBean> list;
+    private boolean sign_completed;
 
+    public boolean isSign_completed() {
+        return sign_completed;
+    }
+
+    public void setSign_completed(boolean sign_completed) {
+        this.sign_completed = sign_completed;
+    }
     public int getScore() {
         return score;
     }

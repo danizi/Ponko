@@ -10,6 +10,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
@@ -22,6 +23,7 @@ import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.OnEnterListener
+import com.xm.lib.downloader.utils.FileUtil
 import java.io.File
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -127,6 +129,7 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun initDisplay() {
         disableLoad = true
         disableRefresh = true
@@ -143,6 +146,7 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
             }
             adapter?.notifyDataSetChanged()
         })
+        ui?.tvSpace?.text = "手机总空间${FileUtil.getSizeUnit(FileUtil.getTotalSpace())}/剩余空间${FileUtil.getSizeUnit(FileUtil.getUsableSpace())}"
     }
 
     override fun iniEvent() {
@@ -297,7 +301,7 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
     /**
      * 窗口ui
      */
-    private class ViewHolder private constructor(val toolbar: android.support.v7.widget.Toolbar, val llBottom: LinearLayout, val btnAllSelect: Button, val btnDelete: Button) {
+    private class ViewHolder private constructor(val toolbar: android.support.v7.widget.Toolbar, val llBottom: LinearLayout, val btnAllSelect: Button, val btnDelete: Button, val tvSpace: TextView) {
         companion object {
 
             @SuppressLint("NewApi")
@@ -306,7 +310,8 @@ class CacheListAct : RefreshLoadAct<CacheListContract.Present, ArrayList<CourseD
                 val llBottom = rootView.findViewById<View>(R.id.ll_bottom) as LinearLayout
                 val btnAllSelect = rootView.findViewById<View>(R.id.btn_all_select) as Button
                 val btnDelete = rootView.findViewById<View>(R.id.btn_delete) as Button
-                return ViewHolder(toolbar, llBottom, btnAllSelect, btnDelete)
+                val tvSpace = rootView.findViewById<View>(R.id.tv_space) as TextView
+                return ViewHolder(toolbar, llBottom, btnAllSelect, btnDelete, tvSpace)
             }
         }
     }

@@ -62,7 +62,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_wx_success">
 
         <EditText
-            android:digits="1234567890."
             android:id="@+id/et_account"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

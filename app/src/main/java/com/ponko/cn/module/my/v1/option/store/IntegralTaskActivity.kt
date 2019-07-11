@@ -6,6 +6,7 @@ import android.support.annotation.RequiresApi
 import android.view.View
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.app.PonkoApp.Companion.storeProfileBean
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.MyTaskBean
 import com.ponko.cn.bean.MyTaskSignBean
@@ -30,7 +31,7 @@ class IntegralTaskActivity : RefreshLoadAct<Any, StoreTaskBean>() {
         super.initDisplay()
         addBar2("赚积分", "规则", View.OnClickListener {
             BKLog.d("点击规则")
-            //IntoTargetUtil.target(this,"url",PonkoApp.signInfo.)
+            IntoTargetUtil.target(this, "url", storeProfileBean?.score_rule)
         })
         viewHolder?.toolbar?.setBackgroundColor(Color.parseColor("#EFF7FE"))
         viewHolder?.toolbar?.elevation = 0f

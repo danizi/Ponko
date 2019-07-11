@@ -2,7 +2,6 @@ package com.ponko.cn.module.login
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
@@ -19,8 +18,6 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.PolyvKeyBoardUtils
-import com.xm.lib.common.base.BaseActivity
-import kotlinx.android.synthetic.main.item_account_my_edit.*
 import retrofit2.Call
 import retrofit2.Response
 
@@ -110,7 +107,7 @@ class LoginFindPwdAct : PonkoBaseAct<Any>() {
             PonkoApp.loginApi?.forgetPasswordSms(viewHolder?.etAccount?.text.toString())?.enqueue(object : HttpCallBack<GeneralBean>() {
                 override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                     //下一步，請求發送短信接口成功，跳轉到短信頁面
-                    LogSmsAct.startFromFindPwd(this@LoginFindPwdAct, viewHolder?.etAccount?.text.toString())
+                    LoginSmsAct.startFromFindPwd(this@LoginFindPwdAct, viewHolder?.etAccount?.text.toString())
                     DialogUtil.hideProcess()
                 }
 
@@ -147,7 +144,7 @@ class LoginFindPwdAct : PonkoBaseAct<Any>() {
 //            PonkoApp.loginApi?.forgetPasswordSms(viewHolder?.etAccount?.text.toString())?.enqueue(object : HttpCallBack<GeneralBean>() {
 //                override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
 //                    //下一步，請求發送短信接口成功，跳轉到短信頁面
-//                    LogSmsAct.startFromFindPwd(this@LoginFindPwdAct, viewHolder?.etAccount?.text.toString())
+//                    LoginSmsAct.startFromFindPwd(this@LoginFindPwdAct, viewHolder?.etAccount?.text.toString())
 //                }
 //            })
 //        }

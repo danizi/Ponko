@@ -6,6 +6,7 @@ import android.content.Intent
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.util.Half.toFloat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -112,6 +113,11 @@ class StudyCourseDetailContract {
          * 隐藏状态页面
          */
         fun hideStateView()
+
+        /**
+         * 课程未找到
+         */
+        fun classNotFound()
 
         /**
          * 二级列表的适配器
@@ -241,7 +247,7 @@ class StudyCourseDetailContract {
                         childViewHolder.tvTime.isEnabled = false
                         childViewHolder.tvProcess.isEnabled = false
                     }
-                } else if(!isPay || !isFree){
+                } else if (!isPay || !isFree) {
                     childViewHolder.tvPos.setBackgroundResource(R.mipmap.free_lock)
                     childViewHolder.tvPos.width = 20
                     childViewHolder.tvPos.height = 20
@@ -388,9 +394,14 @@ class StudyCourseDetailContract {
     class Present(val context: Context, val v: V) {
         private val model = M()
         /**
-         * 定时器帮助类
+         * 定时器帮助类 11s发送一次
          */
         private val timerHelper = TimerHelper()
+        /**
+         * 1s 发送一次
+         */
+        private val oneSecondTimerHelper = TimerHelper()
+        private var watchDuration = 0L
 
         /**
          * 点击了收藏
@@ -644,7 +655,12 @@ class StudyCourseDetailContract {
 
                 override fun onFailure(call: Call<CoursesDetailCBean>?, msg: String?) {
                     super.onFailure(call, msg)
-                    v.requestCourseDetailApiFailure()
+                    if (msg?.equals("{\"code\":\"ResourceNotFound\"}", true)!!) {
+                        v.classNotFound()
+                    } else {
+                        v.requestCourseDetailApiFailure()
+                    }
+
                     DialogUtil.hideProcess()
                 }
             })
@@ -690,28 +706,31 @@ class StudyCourseDetailContract {
          * 上传播放进度
          */
         fun uploadVideoProgress(video: XmVideoView?) {
-            val period = 1000 * 60L
-            var watchDuration = period
+            val period = 1000 * 10L
+            //var watchDuration = period
+            watchDuration = 0L
             timerHelper.start(object : TimerHelper.OnPeriodListener {
                 override fun onPeriod() {
                     val mediaPlayer = video?.mediaPlayer
                     val isPlaying = mediaPlayer?.isPlaying()
-                    val isComplete = video?.isComplete
+                    //val isComplete = video?.isComplete
                     if (isPlaying == true) {
-                        watchDuration += period
+                        val isComplete = ((mediaPlayer.getCurrentPosition().toFloat() / mediaPlayer.getDuration().toFloat() > 0.8) && watchDuration.toFloat() >= 10)
                         val sectionId = model.coursesDetailCBean?.chapters!![model.clickItemGroupPos].sections[model.clickItemChildPos].id
                         val courseId = model.typeId
                         val pos = mediaPlayer.getCurrentPosition()
+                        val currentDuration = watchDuration
                         val params = HashMap<String, String>()
                         params["completed"] = isComplete.toString()
-                        params["duration"] = (watchDuration / 1000).toString()   //当前观看时间 秒
+                        params["duration"] = currentDuration.toString()   //当前观看时间秒
                         params["position"] = (pos / 1000).toString()
                         params["courseId"] = courseId
                         params["sectionId"] = sectionId
-                        BKLog.d("上传内容 completed${isComplete.toString()} duration${(pos / 1000)} position:$pos courseId$courseId sectionId$sectionId")
                         PonkoApp.studyApi?.updateVideoInfo(params)?.enqueue(object : HttpCallBack<NetBean>() {
                             override fun onSuccess(call: Call<NetBean>?, response: Response<NetBean>?) {
                                 BKLog.d("上传视频进度成功")
+                                BKLog.e("上传内容 completed:${isComplete.toString()} duration:${(watchDuration)}   position:${pos / 1000}   courseId$courseId   sectionId$sectionId")
+                                watchDuration = Math.max(0, watchDuration - currentDuration)
                             }
 
                             override fun onFailure(call: Call<NetBean>?, msg: String?) {
@@ -722,6 +741,19 @@ class StudyCourseDetailContract {
                     }
                 }
             }, period)
+            oneSecondTimerHelper.start(object : TimerHelper.OnPeriodListener {
+                override fun onPeriod() {
+                    try {
+                        if (video?.mediaPlayer?.isPlaying()!!) {
+                            if (watchDuration != null) {
+                                watchDuration++
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }, 1000)
         }
 
         /**
@@ -729,6 +761,8 @@ class StudyCourseDetailContract {
          */
         fun closeUploadVideoProgress() {
             timerHelper.stop()
+            oneSecondTimerHelper.stop()
+            watchDuration = 0
         }
     }
 }

@@ -1,19 +1,35 @@
 package com.ponko.cn.module.media
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
+import android.widget.Toast
 import com.google.gson.Gson
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.*
+import com.ponko.cn.module.media.MediaUitl.fileSize
+import com.ponko.cn.module.media.MediaUitl.hls
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.CacheUtil.getPolycConfig
+import com.ponko.cn.utils.DialogUtil
+import com.ponko.cn.utils.ToastUtil
+import com.xm.lib.common.http.NetworkUtil
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.component.OnEnterListener
 import com.xm.lib.media.base.XmVideoView
 import okhttp3.*
 import java.io.IOException
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLConnection
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 object MediaUitl {
@@ -111,6 +127,25 @@ object MediaUitl {
         }
     }
 
+    private fun getPtime(con: URLConnection): String {
+        val serviceData = con.date
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        sdf.timeZone = TimeZone.getTimeZone("GMT+08")
+        val ee = sdf.format(Date())
+
+        val millionSeconds = sdf.parse(ee).time
+        BKLog.e(TAG, "本地毫秒:$millionSeconds")
+        BKLog.e(TAG, "外部毫秒:$serviceData")
+        val date = Date(millionSeconds)
+        BKLog.e(TAG, "本地日期:${sdf.format(date)}")
+        BKLog.e(TAG, "服务器日期:${sdf.format(Date(serviceData))}")
+        if (millionSeconds > serviceData) {
+            return serviceData.toString()
+        }
+        return millionSeconds.toString()
+
+    }
+
     /**
      * 通过vid获取视频信息
      * @param vid        视频唯一标识         26de49f8c22abafd8adc1b49246262c6_2
@@ -119,54 +154,84 @@ object MediaUitl {
      */
     @Deprecated("最好是使用下面的")
     fun getUrlByVid(vid: String?, userid: String, secretKey: String, listener: OnVideoInfoListener?) {
-        var id = userid
-        var key = secretKey
-        val polyvBean = Gson().fromJson(getPolycConfig(), MainCBean.PolyvBean::class.java)
-        if (TextUtils.isEmpty(userid)) {
-            id = polyvBean.user_id
-        }
-        if (TextUtils.isEmpty(secretKey)) {
-            key = polyvBean.secret_key
-        }
+//        if (!NetworkUtil.isNetworkConnected(PonkoApp.activityManager.getTopActivity())) {
+//            listener?.onFailure()
+//            ToastUtil.show("获取播放数据失败,当前无网络...")
+//        }
+        Thread(Runnable {
+            try {
+                val timeUrl = URL("https://www.baidu.com")
+                val con = timeUrl.openConnection() as HttpURLConnection
+                con.readTimeout = 10000
+                con.connectTimeout = 10000
+                con.connect()
+//            if (con.responseCode == 200) {
+                var id = userid
+                var key = secretKey
+                val polyvBean = Gson().fromJson(getPolycConfig(), MainCBean.PolyvBean::class.java)
+                if (TextUtils.isEmpty(userid)) {
+                    id = polyvBean.user_id
+                }
+                if (TextUtils.isEmpty(secretKey)) {
+                    key = polyvBean.secret_key
+                }
 
-        val url = "https://api.polyv.net/v2/video/$id/get-video-msg"
-        val format = "json"
-        val ptime = java.lang.Long.toString(System.currentTimeMillis())
-        val sign = SHA1Util.hexString(SHA1Util.eccryptSHA1("format=$format&ptime=$ptime&vid=$vid$key")).toUpperCase()
-        val client = OkHttpClient.Builder().build()
-        val request = Request.Builder()
-                .url("$url?format=$format&ptime=$ptime&vid=$vid&sign=$sign")
-                .post(RequestBody.create(null, "")) //传递一个nullrequestBody
-                .build()
-        //client.newCall(request)
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
+                val url = "https://api.polyv.net/v2/video/$id/get-video-msg"
+                val format = "json"
+                //val ptime: String = System.currentTimeMillis().toString()
+                val ptime: String = getPtime(con)
+                val sign = SHA1Util.hexString(SHA1Util.eccryptSHA1("format=$format&ptime=$ptime&vid=$vid$key")).toUpperCase()
+                val client = OkHttpClient.Builder().build()
+                val request = Request.Builder()
+                        .url("$url?format=$format&ptime=$ptime&vid=$vid&sign=$sign")
+                        .post(RequestBody.create(null, "")) //传递一个nullrequestBody
+                        .build()
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        e.printStackTrace()
+                        listener?.onFailure()
+                        ToastUtil.show("获取播放数据失败...")
+                    }
+
+                    @Throws(IOException::class)
+                    override fun onResponse(call: Call, response: Response) {
+                        //BKLog.d(TAG, "保利威视视频详细信息:" + response.body()!!.string())
+                        val tempResponse = response.body()?.string()
+                        val jsonObj = JSONObject(tempResponse)
+                        if (200 == jsonObj["code"]) {
+                            listener?.onSuccess(Gson().fromJson(tempResponse, VideoInfoCBean::class.java))
+                        } else {
+                            Looper.prepare()
+                            DialogUtil.show(PonkoApp.activityManager.getTopActivity()!!, "请求参数", "" +
+                                    "获取播放信息失败，请联系技术人员处理。\n" +
+                                    "请求参数:$url?format=$format&ptime=$ptime&vid=$vid&sign=$sign\n" +
+                                    "错误信息:$tempResponse" +
+                                    "", false, object : OnEnterListener {
+                                override fun onEnter(dlg: AlertDialog) {
+                                    dlg.dismiss()
+                                }
+                            }, null)
+                            Looper.loop()
+                            listener?.onFailure()
+                        }
+                    }
+                })
+            } catch (e: Exception) {
+                listener?.onFailure()
+                Looper.prepare()
+                ToastUtil.show("获取视频信息失败，请检查您的网络。")
                 listener?.onFailure()
             }
-
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: Response) {
-                //BKLog.d(TAG, "保利威视视频详细信息:" + response.body()!!.string())
-                val tempResponse = response.body()?.string()
-                //println("保利威视视频详细信息:$tempResponse")
-                try {
-                    listener?.onSuccess(Gson().fromJson(tempResponse, VideoInfoCBean::class.java))
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    listener?.onFailure()
-                }
-            }
-        })
+        }).start()
     }
 
     /**
      * 通过vid获取视频信息
      */
-    fun getUrlByVid(vid: String?, listener: OnPlayUrlListener?) {
+    fun getUrlByVid(vid: String?, listener: MediaUitl.OnPlayUrlListener?) {
         //获取保利威视的视频配置信息 ps:在请求首页接口时就保存了
         val polyvBean = Gson().fromJson(getPolycConfig(), MainCBean.PolyvBean::class.java)
-        getUrlByVid(vid, polyvBean.user_id, polyvBean.secret_key, object : OnVideoInfoListener {
+        getUrlByVid(vid, polyvBean.user_id, polyvBean.secret_key, object : MediaUitl.OnVideoInfoListener {
             override fun onFailure() {
                 handler.post {
                     listener?.onFailure()
@@ -177,6 +242,11 @@ object MediaUitl {
             override fun onSuccess(videoInfo: VideoInfoCBean) {
                 val m3u8 = hls(videoInfo.data)
                 val total = fileSize(videoInfo.data)
+                if (m3u8.startsWith("https")) {
+                    ToastUtil.show("当前播放器不支持https播放地址,请联系相关技术人员。")
+                } else {
+                    BKLog.e("获取当前播放地址成功:$m3u8")
+                }
                 //Thread.sleep(15000)
                 handler.post {
                     listener?.onSuccess(m3u8, total)
@@ -193,7 +263,7 @@ object MediaUitl {
      * @param vid      视频唯一标识
      * @param listener 播放地址获取监听
      */
-    fun getM3u8Url(vid: String?, listener: OnPlayUrlListener?) {
+    fun getM3u8Url(vid: String?, listener: MediaUitl.OnPlayUrlListener?) {
         //从数据库中查询 指定vid的课程信息
         val courses = PonkoApp.courseDao?.select(vid)
         if (courses?.size!! > 0) {
@@ -289,10 +359,20 @@ object MediaUitl {
 
 
     /**
+     * 复制到剪切板上
+     */
+    private fun clip(clipStr: String, context: Context) {
+        val myClipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val myClip: ClipData = ClipData.newPlainText("text", clipStr)
+        myClipboard.primaryClip = myClip
+        Toast.makeText(context, "已复制:$clipStr", Toast.LENGTH_SHORT).show()
+    }
+
+    /**
      * 测试
      */
     @JvmStatic
     fun main(args: Array<String>) {
-        getUrlByVid("26de49f8c22abafd8adc1b49246262c6_2", "26de49f8c2", "ETd98zg5Ka", null)
+        //getUrlByVid("26de49f8c22abafd8adc1b49246262c6_2", "26de49f8c2", "ETd98zg5Ka", null)
     }
 }

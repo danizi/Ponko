@@ -83,7 +83,7 @@ class LoginRegisterAct : AppCompatActivity() {
                 DialogUtil.showProcess(this)
                 PonkoApp.loginApi?.registerSms(phone)?.enqueue(object : HttpCallBack<GeneralBean>() {
                     override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
-                        LogSmsAct.startFromRegister(this@LoginRegisterAct, phone, pwd)
+                        LoginSmsAct.startFromRegister(this@LoginRegisterAct, phone, pwd)
                         DialogUtil.hideProcess()
                     }
 

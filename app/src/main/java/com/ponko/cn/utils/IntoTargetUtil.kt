@@ -3,6 +3,7 @@ package com.ponko.cn.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.text.TextUtils
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.module.web.WebAct
 import com.ponko.cn.constant.Constants
@@ -13,6 +14,7 @@ import com.ponko.cn.module.my.option.RemindAct
 import com.ponko.cn.module.my.option.acount.AccountAct
 import com.ponko.cn.module.my.option.acount.PersonalActivity
 import com.ponko.cn.module.my.option.store.*
+import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v1.CourseTypeLinearActivity
 import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
 import com.ponko.cn.module.study.v2.CourseTypeLinearActivityV2
@@ -31,6 +33,15 @@ object IntoTargetUtil {
      * @param linkValue 跳转携带的值
      */
     fun target(context: Context?, linkType: String?, linkValue: String?) {
+        if(context==null){
+            ToastUtil.show("上下文为null，跳转失败。")
+            return
+        }
+        if(TextUtils.isEmpty(linkType)){
+            ToastUtil.show("linkType为null，跳转失败。")
+            return
+        }
+
         this.context = context?.applicationContext
         when {
             linkType.equals("profile_edit", true) -> {
@@ -201,7 +212,7 @@ object IntoTargetUtil {
 
     private fun msg(linkValue: String?) {
         BKLog.d(TAG, "提醒 linkValue:$linkValue")
-        ActivityUtil.startActivity(context, Intent(context, RemindAct::class.java))
+        ActivityUtil.startActivity(context, Intent(context, RemindActV2::class.java))
     }
 
     private fun invite(linkValue: String?) {

@@ -21,6 +21,7 @@ public class ExchangedHistoriesCBean {
      * type : 1
      * mobile : null
      * storeId : 47975b0c6f4e11e9b5c00242ac130004
+     * status:false
      */
 
     private String id;
@@ -40,6 +41,15 @@ public class ExchangedHistoriesCBean {
     private int type;
     private Object mobile;
     private String storeId;
+    private boolean status;
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
     public String getId() {
         return id;

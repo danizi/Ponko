@@ -25,6 +25,7 @@ import com.xm.lib.media.broadcast.BroadcastManager
  */
 class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present>(), StudyCourseDetailContract.V {
 
+
     companion object {
         const val TAG = "StudyCourseDetailActivity"
         const val TYPE_FROM_GENERAL = "from_general"
@@ -219,6 +220,10 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         })
     }
 
+    override fun classNotFound() {
+        viewHolder?.xmStateView?.showNoData("课程不存在...")
+    }
+
     override fun hideStateView() {
         viewHolder?.xmStateView?.hide()
     }
@@ -257,7 +262,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         for (chapters in coursesDetailCBean?.chapters!!) {
             if (flag) break
             for (section in chapters.sections) {
-                if (section.isFree||coursesDetailCBean.isPossess) {
+                if (section.isFree || coursesDetailCBean.isPossess) {
                     avatar = section.avatar
                     vid = section.vid
                     flag = true

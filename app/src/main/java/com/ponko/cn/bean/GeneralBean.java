@@ -9,6 +9,15 @@ public class GeneralBean {
     private String token = "";
     private String url = "";
     private String id = "";
+    private String message="";
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     public String getToken() {
         return token;

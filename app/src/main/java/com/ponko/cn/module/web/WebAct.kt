@@ -36,6 +36,7 @@ import com.ponko.cn.utils.CacheUtil.getToken
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
+import com.xm.lib.component.OnCancelListener
 import com.xm.lib.component.OnEnterListener
 import com.xm.lib.component.XmPopWindow
 import com.xm.lib.component.XmStateView
@@ -94,7 +95,7 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
          * @param needScore   需要的积分
          * @param needScore   用户总积分
          */
-        fun startExChange(context: Context?, link_type: String?, link_value: String?, title: String?, id: String?, needScore: String, aggregateScore: String, total: Int?) {
+        fun startExChange(context: Context?, link_type: String?, link_value: String?, title: String?, id: String?, needScore: String, aggregateScore: String, total: Int?, isVirtualProduct: Boolean? = true) {
             val intent = Intent(context, WebAct::class.java)
             intent.putExtra("title", title)
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -104,6 +105,7 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
             intent.putExtra("exchange_product_id", id)
             intent.putExtra("aggregate_score", aggregateScore)
             intent.putExtra("total", total)
+            intent.putExtra("isVirtualProduct", isVirtualProduct)
             context?.startActivity(intent)
         }
     }
@@ -198,10 +200,12 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
         mainUI?.linkValue = intent?.getStringExtra("link_value")!!
         when (mainUI?.linkType) {
             "exchange" -> {
+                exchangeUI?.title = intent.getStringExtra("title")
                 exchangeUI?.totalScores = intent.getStringExtra("aggregate_score")
                 exchangeUI?.total = intent.getIntExtra("total", 0)
                 exchangeUI?.needScores = intent.getStringExtra("need_score")
                 exchangeUI?.exchangeProductId = intent.getStringExtra("exchange_product_id")
+                exchangeUI?.isVirtualProduct = intent.getBooleanExtra("isVirtualProduct", false)
             }
             "pay" -> {
                 try {
@@ -519,10 +523,12 @@ class WebContract {
                 }
             }
 
+            var title = ""
             var total = 0
             var totalScores = ""
             var needScores = ""
             var exchangeProductId = ""
+            var isVirtualProduct: Boolean = true
 
             fun initEvent() {
                 if (!TextUtils.isEmpty(totalScores) && !TextUtils.isEmpty(needScores)) {
@@ -536,7 +542,13 @@ class WebContract {
                     btnExchange.text = "商品不足"
                 }
                 btnExchange.setOnClickListener {
-                    enterExchange()
+                    if (isVirtualProduct) {
+                        //虚拟商品兑换
+                        virtualProductExchange()
+                    } else {
+                        //实物商品兑换
+                        enterExchange()
+                    }
                 }
             }
 
@@ -552,6 +564,39 @@ class WebContract {
 //                }
 //            }
 //        }
+
+            private fun virtualProductExchange() {
+                if (totalScores.toInt() > needScores.toInt()) {
+                    DialogUtil.show(act, "提示", "当前《${title}》课程，所需${needScores}积分，是否兑换？", false, object : OnEnterListener {
+                        override fun onEnter(dlg: AlertDialog) {
+                            PonkoApp.myApi?.exchangeProduct(exchangeProductId)?.enqueue(object : HttpCallBack<GeneralBean>() {
+                                override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
+                                    //ToastUtil.show("兑换成功")
+                                    val message = response?.body()?.message
+                                    if (TextUtils.isEmpty(message)) {
+                                        DialogUtil.show(act, "", "兑换成功", true, null, null)
+                                    } else {
+                                        DialogUtil.show(act, "", message!!, true, null, null)
+                                    }
+                                    dlg.dismiss()
+                                }
+
+                                override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
+                                    super.onFailure(call, msg)
+                                    //ToastUtil.show("兑换失败")
+                                    DialogUtil.show(act, "", "兑换失败", true, null, null)
+                                    dlg.dismiss()
+                                }
+                            })
+                        }
+                    }, object : OnCancelListener {
+                        override fun onCancel(dlg: AlertDialog) {
+                            dlg.dismiss()
+                        }
+
+                    })
+                }
+            }
 
             private fun enterExchange() {
                 BKLog.d("点击积分兑换")
@@ -602,7 +647,12 @@ class WebContract {
                                                     PonkoApp.myApi?.exchangeProduct(exchangeProductId)?.enqueue(object : HttpCallBack<GeneralBean>() {
                                                         override fun onSuccess(call: Call<GeneralBean>?, response: Response<GeneralBean>?) {
                                                             //ToastUtil.show("兑换成功")
-                                                            DialogUtil.show(act, "", "兑换成功", true, null, null)
+                                                            val message = response?.body()?.message
+                                                            if (TextUtils.isEmpty(message)) {
+                                                                DialogUtil.show(act, "", "兑换成功", true, null, null)
+                                                            } else {
+                                                                DialogUtil.show(act, "", message!!, true, null, null)
+                                                            }
                                                         }
 
                                                         override fun onFailure(call: Call<GeneralBean>?, msg: String?) {

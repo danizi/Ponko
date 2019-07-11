@@ -33,7 +33,7 @@ interface StudyApi {
     fun getSpecialAllCourse2(@Query("typeId") typeId: String): Call<ArrayList<OutInternalCourse>>
 
     @GET("course/all")
-    fun getSpecialAllCourse(@Query("typeId") typeId: String): Call<ArrayList<CourseAllCBeanV2>>
+    fun getSpecialAllCourse(@Query("typeId") typeId: String): Call<ArrayList<CourseAllCBeanV1>>
 
     @GET("course/all")
     fun getSpecialAllCourseV2(@Query("typeId") typeId: String): Call<CourseAllCBean>

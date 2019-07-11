@@ -2,17 +2,21 @@ package com.ponko.cn.utils
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.view.ViewGroup
 import android.widget.ImageView
-
 import com.bumptech.glide.request.target.ImageViewTarget
 
 internal class TransformationUtil(private val target: ImageView) : ImageViewTarget<Bitmap>(target) {
 
     override fun setResource(resource: Bitmap) {
-        s(resource)
+        try {
+            s(resource)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
-    private fun s(resource: Bitmap){
+    private fun s(resource: Bitmap) {
         view.setImageBitmap(resource)
 
         //获取原图的宽高
@@ -30,9 +34,13 @@ internal class TransformationUtil(private val target: ImageView) : ImageViewTarg
         val params = target.layoutParams
         params.height = imageViewHeight
         target.layoutParams = params
+
+        //
+        val parent = target.parent.parent.parent as ViewGroup
+        parent.layoutParams.height = imageViewHeight
     }
 
-    fun sy(resource: Bitmap):Float{
+    fun sy(resource: Bitmap): Float {
         val width = resource.width
         val height = resource.height
         val imageViewWidth = target.width

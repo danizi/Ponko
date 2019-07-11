@@ -3,8 +3,10 @@ package com.ponko.cn.module.media.control
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
+import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.media.MediaUitl
@@ -13,8 +15,11 @@ import com.ponko.cn.module.media.control.viewholder.landscape.LandscapeViewHolde
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
+import com.xm.lib.common.http.NetworkUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
+import com.xm.lib.component.OnCancelListener
+import com.xm.lib.component.OnEnterListener
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
@@ -167,6 +172,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
                     if (present > 0) {
                         ui?.hidePlayListAni()
                     } else {
+                        ui?.showControlView()
                         ui?.showPlayListAni()
                     }
                 }
@@ -216,10 +222,29 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
         MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
             override fun onFailure() {
                 BKLog.e("获取视频失败")
-                DialogUtil.show(context!!, "提示", "播放失败，当前没有网络...", true, null, null)
+                if (!NetworkUtil.isNetworkConnected(PonkoApp.app)) {
+                    DialogUtil.show(context!!, "提示", "播放失败，当前没有网络...", true, null, null)
+                }
             }
 
             override fun onSuccess(url: String, size: Int?) {
+                if (NetworkUtil.is3GNet(context)) {
+                    DialogUtil.show(context, "提示", "当前使用是手机流量,是否继续播放？", true, object : OnEnterListener {
+                        override fun onEnter(dlg: AlertDialog) {
+                            play(url)
+                            dlg.dismiss()
+                        }
+                    }, object : OnCancelListener {
+                        override fun onCancel(dlg: AlertDialog) {
+                            dlg.dismiss()
+                        }
+                    })
+                } else {
+                    play(url)
+                }
+            }
+
+            private fun play(url: String) {
                 xmVideoView?.start(url, true, progress)
                 this@AttachmentControl.index = index
             }

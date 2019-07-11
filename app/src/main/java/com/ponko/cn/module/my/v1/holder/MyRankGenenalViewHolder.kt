@@ -13,6 +13,7 @@ import android.support.constraint.ConstraintLayout
 import com.ponko.cn.bean.RankingV2
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.utils.Glide
+import com.ponko.cn.utils.TransformationUtil
 
 
 class MyRankGenenalViewHolder(view: View) : BaseViewHolder(view) {
@@ -68,6 +69,7 @@ class MyRankGenenalViewHolder(view: View) : BaseViewHolder(view) {
             val allBean = d as RankingV2.AllBean
             val context = itemView.context
             Glide.with(context, allBean.headPicture, viewHolder?.ivHead, Constants.LOAD_IMAGE_DELAY)
+
             viewHolder?.tvIntegral?.text = allBean.scores.toString()
             viewHolder?.tvMe?.text = allBean.nickname
             viewHolder?.tvPayType?.text = allBean.productName

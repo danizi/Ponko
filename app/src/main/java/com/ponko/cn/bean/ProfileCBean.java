@@ -24,6 +24,15 @@ public class ProfileCBean {
     private String joinImageAd;
     private List<TaskBean> task;
     private List<ProductsBean> products;
+    private boolean sign_completed;
+
+    public boolean isSign_completed() {
+        return sign_completed;
+    }
+
+    public void setSign_completed(boolean sign_completed) {
+        this.sign_completed = sign_completed;
+    }
 
     public String getExchange_rule_url() {
         return exchange_rule_url;

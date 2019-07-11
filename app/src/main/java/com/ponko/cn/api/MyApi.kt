@@ -1,6 +1,5 @@
 package com.ponko.cn.api
 
-import android.provider.SyncStateContract
 import com.ponko.cn.bean.*
 import com.xm.lib.common.http.NetBean
 import okhttp3.MultipartBody
@@ -159,6 +158,15 @@ interface MyApi {
     @FormUrlEncoded
     fun readRemind(@Field("id") id: String): Call<GeneralBean>
 
+    /**
+     * 353版本及以后调用的接口
+     */
+    @GET("message")
+    fun getRemindListV2(@Query("pn") query: Int? = 1): Call<RemindCBeanV2>
+
+    @POST("message/read")
+    @FormUrlEncoded
+    fun readRemindV2(@Field("id") id: String): Call<ReadMsg>
 
     /**
      * @param ids 为空则删除所有消息，xxx,xxxx删除指定id消息

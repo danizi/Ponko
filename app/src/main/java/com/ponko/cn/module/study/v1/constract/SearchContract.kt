@@ -23,6 +23,7 @@ import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.Glide
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
@@ -422,6 +423,11 @@ class SearchContract {
             PonkoApp.searchApi?.search(record!!)?.enqueue(object : HttpCallBack<SearchCBean>() {
                 override fun onSuccess(call: Call<SearchCBean>?, response: Response<SearchCBean>?) {
                     v.displaySearchResult(response?.body())
+                }
+
+                override fun onFailure(call: Call<SearchCBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    ToastUtil.show("搜索失败:$msg")
                 }
             })
         }

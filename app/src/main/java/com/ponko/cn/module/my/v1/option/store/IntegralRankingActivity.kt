@@ -60,7 +60,7 @@ class IntegralRankingActivity : RefreshLoadAct<Any, RankingV2>() {
         //中间名次
         if (!body.all?.isEmpty()!! && body.all.size > 3) {
             val integralRankGenenalBean = IntegralRankGenenalBean()
-            for (i in 2..(body.all.size - 1)) {
+            for (i in 3..(body.all.size - 1)) {
                 integralRankGenenalBean.ranking.add(body.all!![i])
             }
             data.add(integralRankGenenalBean)

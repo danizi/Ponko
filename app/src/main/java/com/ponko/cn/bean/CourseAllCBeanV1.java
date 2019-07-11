@@ -2,7 +2,7 @@ package com.ponko.cn.bean;
 
 import java.util.List;
 
-public class CourseAllCBeanV2 {
+public class CourseAllCBeanV1 {
 
     /**
      * id : ccaff182ea2e11e7936c305a3a522e0b

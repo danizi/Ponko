@@ -8,6 +8,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import com.ponko.cn.BuildConfig
 import com.ponko.cn.MainActivity
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
@@ -61,7 +62,11 @@ class StartAct : BaseActivity() {
         flAdOver?.isClickable = false
         ivAd?.isClickable = false
         clAd?.isClickable = false
-        tvVersion?.text = "版本号:${PonkoApp.getLocalVersion2(this)}"
+        if (BuildConfig.IS_TINKER_DEVELOPMENT) {
+            tvVersion?.text = "开发者基准包版本号:${PonkoApp.getLocalVersion2(this)}"
+        } else {
+            tvVersion?.text = "版本号:${PonkoApp.getLocalVersion2(this)}"
+        }
     }
 
     override fun iniData() {

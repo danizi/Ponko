@@ -20,12 +20,6 @@ object Glide {
      * 针对一些第一次不显示图片使用
      */
     fun with(context: Context?, path: String?, imageView: ImageView?, delay: Long) {
-//        timerHelper.start(object : TimerHelper.OnDelayTimerListener {
-//            override fun onDelayTimerFinish() {
-//                with(context, path, imageView)
-//                timerHelper.stop()
-//            }
-//        }, delay)
         // ps:如果使用该方法容易出现UI卡顿，但是能解决第一次不显示问题
         Glide.with(context?.applicationContext).load(path)
                 .fitCenter()
@@ -56,15 +50,5 @@ object Glide {
                 .placeholder(R.mipmap.load_img_default)
                 .crossFade(300)
                 .into(imageView)
-//                .listener(object : RequestListener<String, GlideDrawable> {
-//                    override fun onException(e: Exception?, model: String?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
-//                        //ToastUtil.showToast(e?.message)
-//                        return false
-//                    }
-//
-//                    override fun onResourceReady(resource: GlideDrawable?, model: String?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-//                        return false
-//                    }
-//                })
     }
 }

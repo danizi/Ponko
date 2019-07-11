@@ -7,6 +7,7 @@ import android.content.Context
 import android.graphics.Color
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.AppCompatImageView
+import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -45,54 +46,67 @@ class MyExchangedViewHolder(view: View) : BaseViewHolder(view) {
         }
         val context = itemView.context
         val exchangedHistoriesCBean = d as ExchangedHistoriesCBean
-        Glide.with(context, exchangedHistoriesCBean.image, viewHolder?.ivCover)
-        /*分为三个状态
-         * 待发货
-         * 已发货
-         * 兑换成功
-         */
-        var state = ""
-        var stateColor = ""
-        var expressNumber = ""
-        when (exchangedHistoriesCBean.type) {
-            1 -> {
-                state = if (!exchangedHistoriesCBean.isSend) {
-                    viewHolder?.tvExpressNumber?.visibility = View.GONE
-                    stateColor = "#FF85C072"
-                    "待发货"
-                } else {
-                    viewHolder?.tvExpressNumber?.visibility = View.VISIBLE
-                    expressNumber = "快递单号:${exchangedHistoriesCBean.express}${exchangedHistoriesCBean.postid}【点击复制】"
-                    stateColor = "#FFFF3542"
-                    viewHolder?.tvExpressNumber?.setOnClickListener {
-                        val myClipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val myClip: ClipData
-                        val text = exchangedHistoriesCBean.postid
-                        myClip = ClipData.newPlainText("text", text)
-                        myClipboard.primaryClip = myClip
-                        Toast.makeText(context, "已复制:$text", Toast.LENGTH_SHORT).show()
-                    }
-                    "已发货"
-                }
-            }
-            else -> {
-                state = "兑换成功"
-                viewHolder?.tvExpressNumber?.setOnClickListener {
-                    val myClipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val myClip: ClipData
-                    val text = exchangedHistoriesCBean.tel
-                    myClip = ClipData.newPlainText("text", text)
-                    myClipboard.primaryClip = myClip
-                    Toast.makeText(context, "已复制:$text", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-        viewHolder?.tvExpressNumber?.text = expressNumber
-        viewHolder?.tvStateValue?.text = state
-        viewHolder?.tvStateValue?.setTextColor(Color.parseColor(stateColor))
+        setExpressTipAndClick(context, exchangedHistoriesCBean)
+        setStatusTipAndColor(exchangedHistoriesCBean)
         Glide.with(context, exchangedHistoriesCBean.image, viewHolder?.ivCover)
         viewHolder?.tv1?.text = exchangedHistoriesCBean.name
         viewHolder?.tv2?.text = exchangedHistoriesCBean.scores.toString() + "积分"
-        viewHolder?.tvDate?.text = "兑换时间:${TimeUtil.unixStr("yyyy-MM-dd HH:mm", exchangedHistoriesCBean.createTime)}"
+        viewHolder?.tvDate?.text = "兑换时间:${TimeUtil.unixStr("yyyy-MM-dd HH : mm", exchangedHistoriesCBean.createTime)}"
     }
+
+    /**
+     * 当前商品订单
+     */
+    private fun setExpressTipAndClick(context: Context, exchangedHistoriesCBean: ExchangedHistoriesCBean) {
+        var state = ""
+        if (!TextUtils.isEmpty(exchangedHistoriesCBean.express)) {
+            state = "快递单号:${exchangedHistoriesCBean.express}${exchangedHistoriesCBean.postid}【点击复制】"
+            viewHolder?.tvExpressNumber?.visibility = View.VISIBLE
+            viewHolder?.tvExpressNumber?.text = state
+            viewHolder?.tvExpressNumber?.setOnClickListener {
+                clip(exchangedHistoriesCBean.express, context)
+            }
+        } else if (!TextUtils.isEmpty(exchangedHistoriesCBean.postid)) {
+            state = "兑换号码:${exchangedHistoriesCBean.postid}【点击复制】"
+            viewHolder?.tvExpressNumber?.visibility = View.VISIBLE
+            viewHolder?.tvExpressNumber?.text = state
+            viewHolder?.tvExpressNumber?.setOnClickListener {
+                clip(exchangedHistoriesCBean.postid, context)
+            }
+        } else {
+            viewHolder?.tvExpressNumber?.visibility = View.GONE
+        }
+    }
+
+    /**
+     * 设置发货状态文字颜色 1 兑换实物物品 2 兑换虚拟物品
+     */
+    private fun setStatusTipAndColor(exchangedHistoriesCBean: ExchangedHistoriesCBean) {
+        var state = ""
+        var stateColor = ""
+        if (exchangedHistoriesCBean.isSend) {
+            state = if (exchangedHistoriesCBean.type == 1) {
+                "已发货"
+            } else {
+                "兑换成功"
+            }
+            stateColor = "#FF85C072"
+        } else {
+            state = "未发货"
+            stateColor = "#FFFF3542"
+        }
+        viewHolder?.tvStateValue?.text = state
+        viewHolder?.tvStateValue?.setTextColor(Color.parseColor(stateColor))
+    }
+
+    /**
+     * 复制到剪切板上
+     */
+    private fun clip(clipStr: String, context: Context) {
+        val myClipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val myClip: ClipData = ClipData.newPlainText("text", clipStr)
+        myClipboard.primaryClip = myClip
+        Toast.makeText(context, "已复制:$clipStr", Toast.LENGTH_SHORT).show()
+    }
+
 }

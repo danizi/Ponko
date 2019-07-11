@@ -58,7 +58,6 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:hardwareAccelerated="true"
             android:launchMode="singleTask" />
         <!-- ============================================主界面 end -->
 
@@ -139,7 +138,7 @@
             android:name=".module.login.LoginWxAct"
             android:launchMode="singleTop" />
         <activity
-            android:name=".module.login.LogSmsAct"
+            android:name=".module.login.LoginSmsAct"
             android:launchMode="singleTop" />
         <activity
             android:name=".module.login.LoginFindPwdAct"
@@ -239,8 +238,9 @@
             android:name=".module.my.option.collect.CollectListActivity"
             android:launchMode="singleTop" />
         <activity android:name=".module.my.option.SettingActivity" />
-        <activity android:name="com.ponko.cn.module.my.v2.OpenRollV2Activity" />
-        <activity android:name="com.ponko.cn.module.my.v2.InviteFriendV2Activity"></activity>
+        <activity android:name=".module.my.v2.OpenRollV2Activity" />
+        <activity android:name=".module.my.v2.InviteFriendV2Activity" />
+        <activity android:name=".module.my.v2.RemindActV2"></activity>
     </application>
 
 </manifest>

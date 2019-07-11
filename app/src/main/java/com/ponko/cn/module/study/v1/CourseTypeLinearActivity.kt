@@ -13,8 +13,7 @@ import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
-import com.ponko.cn.bean.CourseAllCBean
-import com.ponko.cn.bean.CourseAllCBeanV2
+import com.ponko.cn.bean.CourseAllCBeanV1
 import com.ponko.cn.bean.InternalCourse
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
@@ -33,7 +32,7 @@ import retrofit2.Response
 /**
  * 专题下的课程列表
  */
-class CourseTypeLinearActivity : RefreshLoadAct<Any, List<CourseAllCBeanV2>>() {
+class CourseTypeLinearActivity : RefreshLoadAct<Any, List<CourseAllCBeanV1>>() {
     companion object {
         fun start(context: Context?, title: String?, typeId: String?) {
             val intent = Intent(context, CourseTypeLinearActivity::class.java)
@@ -79,20 +78,20 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, List<CourseAllCBeanV2>>() {
     override fun requestMoreApi() {}
 
     override fun requestRefreshApi() {
-        PonkoApp.studyApi?.getSpecialAllCourse(typeId!!)?.enqueue(object : HttpCallBack<ArrayList<CourseAllCBeanV2>>() {
-            override fun onSuccess(call: Call<ArrayList<CourseAllCBeanV2>>?, response: Response<ArrayList<CourseAllCBeanV2>>?) {
+        PonkoApp.studyApi?.getSpecialAllCourse(typeId!!)?.enqueue(object : HttpCallBack<ArrayList<CourseAllCBeanV1>>() {
+            override fun onSuccess(call: Call<ArrayList<CourseAllCBeanV1>>?, response: Response<ArrayList<CourseAllCBeanV1>>?) {
                 //bar(response?.body()?.title)
                 requestRefreshSuccess(response?.body())
             }
 
-            override fun onFailure(call: Call<ArrayList<CourseAllCBeanV2>>?, msg: String?) {
+            override fun onFailure(call: Call<ArrayList<CourseAllCBeanV1>>?, msg: String?) {
                 super.onFailure(call, msg)
                 requestRefreshFailure()
             }
         })
     }
 
-    override fun multiTypeData(body: List<CourseAllCBeanV2>?): List<Any> {
+    override fun multiTypeData(body: List<CourseAllCBeanV1>?): List<Any> {
         return body!!
         //return body?.types!!
     }
@@ -134,7 +133,7 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, List<CourseAllCBeanV2>>() {
 //            viewHolder?.rv?.addItemDecoration(MyItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))  //https://www.jianshu.com/p/86aaaa49ed3e
 //            viewHolder?.rv?.isFocusableInTouchMode = false
 
-            val typesBean = d as CourseAllCBeanV2
+            val typesBean = d as CourseAllCBeanV1
             val context = itemView.context
             viewHolder?.tvTitle?.text = typesBean.title
             val adapter = object : BaseRvAdapter() {}
@@ -170,7 +169,7 @@ class CourseTypeLinearActivity : RefreshLoadAct<Any, List<CourseAllCBeanV2>>() {
             if (viewHolder == null) {
                 viewHolder = ViewHolder.create(itemView)
             }
-            val coursesBean = d as CourseAllCBeanV2.CoursesBean
+            val coursesBean = d as CourseAllCBeanV1.CoursesBean
             val context = itemView.context
             Glide.with(context, coursesBean.image, viewHolder?.ivCover)
             viewHolder?.tvCourseTitle?.text = coursesBean.title.toString()

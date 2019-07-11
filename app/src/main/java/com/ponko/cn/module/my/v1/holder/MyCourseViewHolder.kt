@@ -19,15 +19,16 @@ import retrofit2.Response
 class MyCourseViewHolder(view: View) : BaseViewHolder(view) {
 
 
-    private class ViewHolder private constructor(val ivCourse: ImageView, val tvCourseName: TextView, val tvIntegralNum: TextView, val tvExchanged: TextView) {
+    private class ViewHolder private constructor(val ivCourse: ImageView, val ivShade: ImageView, val tvCourseName: TextView, val tvIntegralNum: TextView, val tvExchanged: TextView) {
         companion object {
 
             fun create(rootView: View): ViewHolder {
                 val ivCourse = rootView.findViewById<View>(R.id.iv_course) as ImageView
+                val ivShade = rootView.findViewById<View>(R.id.iv_shade) as ImageView
                 val tvCourseName = rootView.findViewById<View>(R.id.tv_course_name) as TextView
                 val tvIntegralNum = rootView.findViewById<View>(R.id.tv_integral_num) as TextView
                 val tvExchanged = rootView.findViewById<View>(R.id.tv_exchanged) as TextView
-                return ViewHolder(ivCourse, tvCourseName, tvIntegralNum, tvExchanged)
+                return ViewHolder(ivCourse, ivShade, tvCourseName, tvIntegralNum, tvExchanged)
             }
         }
     }
@@ -41,7 +42,12 @@ class MyCourseViewHolder(view: View) : BaseViewHolder(view) {
         }
         val storesBean = d as StoreProfileCMoreBean.StoresBean
         val context = itemView.context
+        if (storesBean.total == 0) {
+            viewHolder?.ivShade?.setImageResource(R.mipmap.store_has_change)
+            viewHolder?.ivShade?.alpha = 0.8f
+        }
         Glide.with(context, storesBean.picture, viewHolder?.ivCourse, 1)
+
         viewHolder?.tvCourseName?.text = storesBean.name
         viewHolder?.tvIntegralNum?.text = storesBean.scores.toString() + "积分"
         viewHolder?.tvExchanged?.text = "已兑课程" + storesBean.expend.toString() + "件"
