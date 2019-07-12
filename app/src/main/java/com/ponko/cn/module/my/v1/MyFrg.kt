@@ -47,6 +47,8 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
     }
 
     override fun refreshTop(body: ProfileCBean?) {
+        if (adapter?.data?.isEmpty()!!)
+            return
         adapter?.data!![0] = body!!
         adapter?.notifyItemChanged(0)
     }

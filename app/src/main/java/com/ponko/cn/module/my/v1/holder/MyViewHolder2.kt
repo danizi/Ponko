@@ -24,6 +24,7 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.*
 import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.ponko.cn.module.my.option.store.StoreAct
+import com.ponko.cn.module.my.v1.option.store.IntegralExchangedClassAct
 import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v2.StudyContract2
 import com.ponko.cn.utils.ActivityUtil
@@ -130,7 +131,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                     ActivityUtil.startActivity(context, Intent(context, ExchangeAct::class.java))
                 }
                 "已兑课程" -> {
-                    ActivityUtil.startActivity(context, Intent(context, IntegralExchangedAct::class.java))
+                    ActivityUtil.startActivity(context, Intent(context, IntegralExchangedClassAct::class.java))
                 }
                 "咨询" -> {
                     RxPermissions(context as AppCompatActivity)

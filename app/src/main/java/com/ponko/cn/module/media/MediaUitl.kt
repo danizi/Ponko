@@ -118,11 +118,11 @@ object MediaUitl {
         }
         QUALITY = CacheUtil.getMediaType().toInt()
         return when (QUALITY) {
-            1 -> section.filesize1
-            2 -> section.filesize2
-            3 -> section.filesize3
+            1 -> section.filesize1.toInt()
+            2 -> section.filesize2.toInt()
+            3 -> section.filesize3.toInt()
             else -> {
-                section.filesize3
+                section.filesize3.toInt()
             }
         }
     }

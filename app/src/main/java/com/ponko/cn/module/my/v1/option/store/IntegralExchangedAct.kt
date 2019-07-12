@@ -11,12 +11,15 @@ import com.xm.lib.common.base.rv.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 
+/**
+ * 已兑记录
+ */
 class IntegralExchangedAct : RefreshLoadAct<Any, ArrayList<ExchangedHistoriesCBean>>() {
 
     override fun initDisplay() {
-        addItemDecoration=false
+        addItemDecoration = false
         super.initDisplay()
-        addBar1("已兑课程")
+        addBar1("已兑记录")
     }
 
     override fun bindItemViewHolderData(): BindItemViewHolderBean {

@@ -81,6 +81,8 @@ public class StoreProfileCMoreBean {
          * images : null
          * url : /store/exchange_detail?id=47975b0c6f4e11e9b5c00242ac130004
          * categoryId : 0
+         * mask:false  //true添加遮罩
+         * maskPicture: "http://cdn.tradestudy.cn/upload/product/20190712/44f45d29430b7ff37228d4d5efc74c33.png"  //遮罩
          */
 
         private String id;
@@ -103,6 +105,24 @@ public class StoreProfileCMoreBean {
         private Object images;
         private String url;
         private int categoryId;
+        private boolean mask;
+        private String maskPicture;
+
+        public boolean getMask() {
+            return mask;
+        }
+
+        public void setMask(boolean mask) {
+            this.mask = mask;
+        }
+
+        public String getMaskPicture() {
+            return maskPicture;
+        }
+
+        public void setMaskPicture(String maskPicture) {
+            this.maskPicture = maskPicture;
+        }
 
         public String getId() {
             return id;

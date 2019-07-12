@@ -8,6 +8,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.ponko.cn.BuildConfig
 import com.ponko.cn.MainActivity
 import com.ponko.cn.R
@@ -63,9 +64,9 @@ class StartAct : BaseActivity() {
         ivAd?.isClickable = false
         clAd?.isClickable = false
         if (BuildConfig.IS_TINKER_DEVELOPMENT) {
-            tvVersion?.text = "开发者基准包版本号:${PonkoApp.getLocalVersion2(this)}"
+            tvVersion?.text = "开发者基准包版本号:${PonkoApp.getLocalVersion2(this)}.1"
         } else {
-            tvVersion?.text = "版本号:${PonkoApp.getLocalVersion2(this)}"
+            tvVersion?.text = "版本号:${PonkoApp.getLocalVersion2(this)}.1"
         }
     }
 
@@ -132,7 +133,11 @@ class StartAct : BaseActivity() {
 
         flAdOver?.isClickable = true
         ivAd?.isClickable = true
-        Glide.with(this, body?.picture, ivAd) //加载图片
+        com.bumptech.glide.Glide.with(this).load(body?.picture)//加载图片
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade(300)
+                .into(ivAd)
 
         //加载一个计时器
         tvAdOver?.text = "${body?.countdown} | 跳过"

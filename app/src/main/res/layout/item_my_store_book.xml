@@ -5,6 +5,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
+        android:scaleType="centerCrop"
         android:id="@+id/iv_book"
         android:layout_width="match_parent"
         android:layout_height="165dp"
@@ -13,12 +14,23 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:scaleType="fitXY"
-        android:background="#41434E"
         android:src="@mipmap/load_img_default"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:visibility="gone"
+        android:alpha="0.7"
+        android:background="@color/black"
+        android:scaleType="centerCrop"
+        android:id="@+id/iv_shade"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_book"
+        app:layout_constraintEnd_toEndOf="@+id/iv_book"
+        app:layout_constraintStart_toStartOf="@+id/iv_book"
+        app:layout_constraintTop_toTopOf="@+id/iv_book" />
 
     <TextView
         android:maxLines="1"

@@ -255,7 +255,7 @@ class MainActivity : BaseActivity() {
                         .build()
                 xmAdView?.setAdRate(1.57f, 24)
                 xmAdView?.setCover(adUrl)
-                //xmAdView?.show()
+                xmAdView?.show()
                 xmAdView?.setOnAdListener(View.OnClickListener {
                     requestAdFeedbackApi(adId, 1)
                     IntoTargetUtil.target(this@MainActivity, linkType, linkValue)

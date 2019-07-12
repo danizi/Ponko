@@ -42,9 +42,9 @@ class MyCourseViewHolder(view: View) : BaseViewHolder(view) {
         }
         val storesBean = d as StoreProfileCMoreBean.StoresBean
         val context = itemView.context
-        if (storesBean.total == 0) {
-            viewHolder?.ivShade?.setImageResource(R.mipmap.store_has_change)
-            viewHolder?.ivShade?.alpha = 0.8f
+        if (storesBean.mask) {
+            Glide.with(context, storesBean.maskPicture, viewHolder?.ivShade, 1)
+            viewHolder?.ivShade?.visibility=View.VISIBLE
         }
         Glide.with(context, storesBean.picture, viewHolder?.ivCourse, 1)
 

@@ -222,12 +222,6 @@ class StudyCourseDetailContract {
                 childViewHolder.tvTime.text = TimeUtil.hhmmss(duration.toLong() * 1000) + " | "
                 childViewHolder.tvProcess.text = (progress * 100 / duration).toInt().toString() + "%"
 
-                //课程是否本地缓存，缓存显示提示
-                if (PonkoApp.courseDao?.isComplete(vid) == true) {
-                    childViewHolder.tvLocal.visibility = View.VISIBLE
-                } else {
-                    childViewHolder.tvLocal.visibility = View.GONE
-                }
 
                 //非选中状态
                 //课程是否免费
@@ -257,6 +251,20 @@ class StudyCourseDetailContract {
                     childViewHolder.tvTime.isEnabled = false
                     childViewHolder.tvProcess.isEnabled = false
                 }
+
+                //课程是否本地缓存，缓存显示提示
+                if (PonkoApp.courseDao?.isComplete(vid) == true) {
+                    childViewHolder.tvLocal.visibility = View.VISIBLE
+                } else {
+                    //免费课程游客模式显示提示
+                    if (isFree) {
+                        childViewHolder.tvLocal.visibility = View.VISIBLE
+                        childViewHolder.tvLocal.text = "试看"
+                    } else {
+                        childViewHolder.tvLocal.visibility = View.INVISIBLE
+                    }
+                }
+
                 BKLog.d("getChildView clickItemChildPos->$clickItemChildPos clickItemGroupPos->$clickItemGroupPos")
                 BKLog.d("getChildView clickItemChildPos->$groupPosition clickItemGroupPos->$childPosition")
                 return view

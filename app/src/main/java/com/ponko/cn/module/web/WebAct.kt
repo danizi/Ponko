@@ -635,6 +635,7 @@ class WebContract {
                                     override fun onSuccess(call: Call<AddressBean>?, response: Response<AddressBean>?) {
                                         val d = response?.body()
                                         val sb = StringBuilder()
+                                                .append("当前《${title}》课程，所需${needScores}积分。\n")
                                                 .append("收件人地址 ：${d?.address}\n")
                                                 .append("收件人电话 ：${d?.tel}\n")
                                                 .append("收件人姓名 ：${d?.recipient}\n")

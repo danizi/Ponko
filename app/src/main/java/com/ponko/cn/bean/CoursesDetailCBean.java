@@ -237,10 +237,10 @@ public class CoursesDetailCBean {
             private int completed_status;
             private String hls1;
             private String hls2;
-            private int filesize1;
+            private double filesize1;
             private String hls3;
-            private int filesize2;
-            private int filesize3;
+            private double filesize2;
+            private double filesize3;
             private String name;
             private String id;
             private boolean free;
@@ -317,7 +317,7 @@ public class CoursesDetailCBean {
                 this.hls2 = hls2;
             }
 
-            public int getFilesize1() {
+            public double getFilesize1() {
                 return filesize1;
             }
 
@@ -333,7 +333,7 @@ public class CoursesDetailCBean {
                 this.hls3 = hls3;
             }
 
-            public int getFilesize2() {
+            public double getFilesize2() {
                 return filesize2;
             }
 
@@ -341,7 +341,7 @@ public class CoursesDetailCBean {
                 this.filesize2 = filesize2;
             }
 
-            public int getFilesize3() {
+            public double getFilesize3() {
                 return filesize3;
             }
 

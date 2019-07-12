@@ -17,15 +17,16 @@ import retrofit2.Response
 
 class MyBookViewHolder(view: View) : BaseViewHolder(view) {
 
-    private class ViewHolder private constructor(val ivBook: ImageView, val tvCourseName: TextView, val tvIntegralNum: TextView, val tvExchanged: TextView) {
+    private class ViewHolder private constructor(val ivShade: ImageView, val ivBook: ImageView, val tvCourseName: TextView, val tvIntegralNum: TextView, val tvExchanged: TextView) {
         companion object {
 
             fun create(rootView: View): ViewHolder {
+                val ivShade = rootView.findViewById<View>(R.id.iv_shade) as ImageView
                 val ivBook = rootView.findViewById<View>(R.id.iv_book) as ImageView
                 val tvCourseName = rootView.findViewById<View>(R.id.tv_course_name) as TextView
                 val tvIntegralNum = rootView.findViewById<View>(R.id.tv_integral_num) as TextView
                 val tvExchanged = rootView.findViewById<View>(R.id.tv_exchanged) as TextView
-                return ViewHolder(ivBook, tvCourseName, tvIntegralNum, tvExchanged)
+                return ViewHolder(ivShade, ivBook, tvCourseName, tvIntegralNum, tvExchanged)
             }
         }
     }
@@ -39,14 +40,19 @@ class MyBookViewHolder(view: View) : BaseViewHolder(view) {
         }
         val storesBean = d as StoreProfileCMoreBean.StoresBean
         val context = itemView.context
-        Glide.with(context, storesBean.picture, viewHolder?.ivBook)
+        if (storesBean.mask) {
+            //viewHolder?.ivShade?.setImageResource(R.mipmap.store_has_change)
+            Glide.with(context, storesBean.maskPicture, viewHolder?.ivShade, 1)
+            viewHolder?.ivShade?.visibility=View.VISIBLE
+        }
+        Glide.with(context, storesBean.picture, viewHolder?.ivBook, 1)
         viewHolder?.tvCourseName?.text = storesBean.name
         viewHolder?.tvIntegralNum?.text = storesBean.scores.toString() + "积分"
-        viewHolder?.tvExchanged?.text = "已兑课程" + storesBean.expend.toString()+"件"
+        viewHolder?.tvExchanged?.text = "已兑课程" + storesBean.expend.toString() + "件"
         itemView.setOnClickListener {
             PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
                 override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
-                    WebAct.startExChange(context, "exchange", storesBean.url, storesBean.name, storesBean.id, needScore = storesBean.scores.toString(),aggregateScore=response?.body()?.scores.toString(),total = storesBean.total, isVirtualProduct = false)
+                    WebAct.startExChange(context, "exchange", storesBean.url, storesBean.name, storesBean.id, needScore = storesBean.scores.toString(), aggregateScore = response?.body()?.scores.toString(), total = storesBean.total, isVirtualProduct = false)
                 }
             })
         }
