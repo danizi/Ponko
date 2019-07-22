@@ -200,7 +200,6 @@ object DialogUtil {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
     /**

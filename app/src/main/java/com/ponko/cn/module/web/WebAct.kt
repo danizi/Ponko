@@ -584,7 +584,13 @@ class WebContract {
                                 override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
                                     super.onFailure(call, msg)
                                     //ToastUtil.show("兑换失败")
-                                    DialogUtil.show(act, "", "兑换失败", true, null, null)
+                                    var errorMsg = "兑换失败"
+                                    errorMsg = if (TextUtils.isEmpty(exchangeProductId)) {
+                                        "兑换失败,兑换产品id为空！"
+                                    } else {
+                                        "兑换失败,$msg"
+                                    }
+                                    DialogUtil.show(act, "", errorMsg, true, null, null)
                                     dlg.dismiss()
                                 }
                             })
@@ -659,7 +665,13 @@ class WebContract {
                                                         override fun onFailure(call: Call<GeneralBean>?, msg: String?) {
                                                             super.onFailure(call, msg)
                                                             //ToastUtil.show("兑换失败")
-                                                            DialogUtil.show(act, "", "兑换失败", true, null, null)
+                                                            var errorMsg = "兑换失败"
+                                                            errorMsg = if (TextUtils.isEmpty(exchangeProductId)) {
+                                                                "兑换失败,兑换产品id为空！"
+                                                            } else {
+                                                                "兑换失败,$msg"
+                                                            }
+                                                            DialogUtil.show(act, "", errorMsg, true, null, null)
                                                         }
                                                     })
                                                 }

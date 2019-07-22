@@ -228,7 +228,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
             }
 
             override fun onSuccess(url: String, size: Int?) {
-                if (NetworkUtil.is3GNet(context)) {
+                if (NetworkUtil.is3GNet(context) && (url.startsWith("http", true) || url.startsWith("https", true))) {
                     DialogUtil.show(context, "提示", "当前使用是手机流量,是否继续播放？", true, object : OnEnterListener {
                         override fun onEnter(dlg: AlertDialog) {
                             play(url)

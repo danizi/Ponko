@@ -73,8 +73,11 @@ class ExchangeContract {
                         val data = response?.body()
                         if (data != null && !data.isEmpty()) {
                             v?.reqeustExchangeMoreApiSuccess(response.body())
-
                         }
+                    }
+
+                    override fun onFailure(call: Call<ArrayList<StoreProfileCMoreBean>>?, msg: String?) {
+                        super.onFailure(call, msg)
                     }
                 })
             }

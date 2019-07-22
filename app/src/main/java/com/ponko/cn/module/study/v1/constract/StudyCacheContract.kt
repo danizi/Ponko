@@ -296,6 +296,7 @@ class StudyCacheContract {
                         }
                     }, object : OnCancelListener {
                         override fun onCancel(dlg: AlertDialog) {
+
                             dlg.dismiss()
                         }
                     })
@@ -330,10 +331,10 @@ class StudyCacheContract {
 
             //下载专题下的课程列表 PS:后台有些视频信息大小会有值，有些没有值
             //val courseDao = CourseDao(PonkoApp.dbHelp?.writableDatabase)
-            var count=0
+            var count = 0
             for (section in StudyCacheActivity.SleSections) {
 
-                if (MediaUitl.fileSize(section) == 0&&false) {
+                if (MediaUitl.fileSize(section) == 0 && false) {
                     MediaUitl.getUrlByVid(section.vid, object : MediaUitl.OnPlayUrlListener {
                         override fun onFailure() {
                             BKLog.e(StudyCacheActivity.TAG, "获取视频信息失败")
@@ -357,7 +358,7 @@ class StudyCacheContract {
                             courseDbBean.column_vid = section.vid
                             PonkoApp.courseDao?.insert(courseDbBean)
                             BKLog.d(StudyCacheActivity.TAG, "课程信息插入数据库，接口返回的大小为0，所以请求了视频信息接口" + courseDbBean.toString())
-                            if(count==(StudyCacheActivity.SleSections.size-1)){
+                            if (count == (StudyCacheActivity.SleSections.size - 1)) {
                                 //ToastUtil.show("课程信息插入数据库 1 --------------------" + PonkoApp.courseDao?.selectAll().toString())
                                 intoCachePage()
                             }
@@ -381,7 +382,7 @@ class StudyCacheContract {
                     courseDbBean.column_vid = section.vid
                     PonkoApp.courseDao?.insert(courseDbBean)
                     BKLog.d(StudyCacheActivity.TAG, "课程信息插入数据库:" + courseDbBean.toString())
-                    if(count==(StudyCacheActivity.SleSections.size-1)){
+                    if (count == (StudyCacheActivity.SleSections.size - 1)) {
                         //ToastUtil.show("课程信息插入数据库 2 --------------------" + PonkoApp.courseDao?.selectAll().toString())
                         intoCachePage()
                     }
@@ -415,6 +416,8 @@ class StudyCacheContract {
             StudyCacheActivity.SleSections.clear()
             StudyCacheActivity.isSelectAll = false
             timerHelper?.stop()
+            DialogUtil.hide()
+            DialogUtil.hideProcess()
         }
 
         /**

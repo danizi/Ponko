@@ -56,6 +56,11 @@ class StoreAct : PonkoBaseAct<Any>() {
      */
     private var viewHolder: ViewHolder? = null
     /**
+     * 适配器器
+     */
+    private var fragmentPagerAdapter: Adapter? = null
+
+    /**
      * 积分商城接口信息
      */
     private var storeProfileBean: StoreProfileBean? = null
@@ -89,6 +94,7 @@ class StoreAct : PonkoBaseAct<Any>() {
     override fun onResume() {
         super.onResume()
         iniData()
+//        updateProfile()
     }
 
     override fun presenter(): Any {
@@ -117,6 +123,47 @@ class StoreAct : PonkoBaseAct<Any>() {
         //系统栏颜色
         com.jaeger.library.StatusBarUtil.setColor(this, Color.parseColor("#FF41434E"), 0)
 
+    }
+
+    @Deprecated("")
+    private fun updateProfile() {
+        //请求积分任务接口，查询是否签到成功
+        PonkoApp.myApi?.tasks()?.enqueue(object : HttpCallBack<StoreTaskBean>() {
+            override fun onSuccess(call: Call<StoreTaskBean>?, response: Response<StoreTaskBean>?) {
+                val storeTaskBean = response?.body()
+                PonkoApp.signInfo = storeTaskBean
+
+                //是否在赚积分显示提示图标和动画
+                if (PonkoApp.signInfo?.isCompleted != true) {
+                    viewHolder?.ivSign?.visibility = View.VISIBLE
+                    AnimUtil.shakeAnim(viewHolder?.ivSign)
+                } else {
+                    viewHolder?.ivSign?.visibility = View.GONE
+                    AnimUtil.cancel(viewHolder?.ivSign)
+                }
+            }
+        })
+
+
+        //请求首页接口
+        DialogUtil.showProcess(this)
+        PonkoApp.myApi?.home()?.enqueue(object : HttpCallBack<StoreProfileBean>() {
+            @SuppressLint("SetTextI18n")
+            override fun onSuccess(call: Call<StoreProfileBean>?, response: Response<StoreProfileBean>?) {
+                storeProfileBean = response?.body()
+                PonkoApp.storeProfileBean = storeProfileBean
+                Glide.with(this@StoreAct, storeProfileBean?.avatar, viewHolder?.ivHead, Constants.LOAD_IMAGE_DELAY)
+                viewHolder?.tvNick?.text = storeProfileBean?.name
+                viewHolder?.tvPayType?.text = storeProfileBean?.paid
+                viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"
+            }
+
+            override fun onFailure(call: Call<StoreProfileBean>?, msg: String?) {
+                super.onFailure(call, msg)
+                DialogUtil.hideProcess()
+                viewHolder?.viewState?.showError("请求数据错误，请检查您的网络", View.OnClickListener {})
+            }
+        })
     }
 
     override fun iniData() {
@@ -149,12 +196,11 @@ class StoreAct : PonkoBaseAct<Any>() {
                 viewHolder?.tvNick?.text = storeProfileBean?.name
                 viewHolder?.tvPayType?.text = storeProfileBean?.paid
                 viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"
-                frgs.clear()
-                var currentItem = 0
-                if (viewHolder?.vp?.currentItem!! > 0) {
-                    currentItem = viewHolder?.vp?.currentItem!!
-                }
-                if (frgs.isEmpty()) {
+
+                //底部滑块选项
+                if (fragmentPagerAdapter == null) {
+                    frgs.clear()
+                    val currentItem = getCurrentItem()
                     val titls = ArrayList<String>()
                     var count = 1
                     for (list in storeProfileBean?.list?.iterator()!!) {
@@ -169,19 +215,30 @@ class StoreAct : PonkoBaseAct<Any>() {
                     } else {
                         viewHolder?.tb?.tabMode = TabLayout.MODE_SCROLLABLE
                     }
-                    viewHolder?.vp?.adapter = Adapter(supportFragmentManager, frgs, titls)
+                    fragmentPagerAdapter = Adapter(supportFragmentManager, frgs, titls)
+                    viewHolder?.vp?.adapter = fragmentPagerAdapter
                     viewHolder?.vp?.offscreenPageLimit = count
                     viewHolder?.tb?.setupWithViewPager(viewHolder?.vp)
                     viewHolder?.vp?.currentItem = currentItem
                 }
+                viewHolder?.vp?.adapter?.notifyDataSetChanged()
                 DialogUtil.hideProcess()
                 viewHolder?.srl?.isRefreshing = false
+            }
+
+            fun getCurrentItem(): Int {
+                var currentItem = 0
+                if (viewHolder?.vp?.currentItem!! > 0) {
+                    currentItem = viewHolder?.vp?.currentItem!!
+                }
+                return currentItem
             }
 
             override fun onFailure(call: Call<StoreProfileBean>?, msg: String?) {
                 super.onFailure(call, msg)
                 DialogUtil.hideProcess()
                 viewHolder?.viewState?.showError("请求数据错误，请检查您的网络", View.OnClickListener {})
+                viewHolder?.srl?.isRefreshing = false
             }
         })
     }
@@ -190,13 +247,26 @@ class StoreAct : PonkoBaseAct<Any>() {
     var indexPage = 0
     override fun iniEvent() {
         viewHolder?.srl?.setOnRefreshListener {
-            iniData()
+            //iniData()
+            val frg = fragmentPagerAdapter?.getFragment(viewHolder?.vp?.currentItem!!)
+            if (frg is ExchangeFrg) {
+                (frg as ExchangeFrg).reqeustExchangeRefreshApi(viewHolder?.vp, object : ExchangeFrg.OnRefreshListener {
+                    override fun onSuccess() {
+                        viewHolder?.srl?.isRefreshing = false
+                    }
+
+                    override fun onFailure() {
+                        viewHolder?.srl?.isRefreshing = false
+                    }
+                })
+            }
         }
         viewHolder?.vp?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {
                 if (p0 == 2) {
                     //在刷新一次页面
-                    viewHolder?.vp?.requestLayout()
+                    //viewHolder?.vp?.requestLayout()
+                    //viewHolder?.sv?.requestLayout()
                 }
             }
 
@@ -211,13 +281,34 @@ class StoreAct : PonkoBaseAct<Any>() {
         viewHolder?.sv?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { p0, p1, p2, p3, p4 ->
             // ps:最好做一次滑动停止判断
             //if (isFinishing) {
+            // 检查
+            if (frgs.isEmpty()) {
+                return@OnScrollChangeListener
+            }
+
+            if (indexPage >= frgs.size) {
+                return@OnScrollChangeListener
+            }
+
+            if (viewHolder?.sv == null) {
+                return@OnScrollChangeListener
+            }
+
+            //获取
             val view = viewHolder?.sv?.getChildAt(0)
-            if (view?.height!! <= viewHolder?.sv?.scrollY!! + viewHolder?.sv?.height!!) {
-                BKLog.d("滑动到底部")
-                (frgs[indexPage] as ExchangeFrg).reqeustExchangeMoreApi(viewHolder?.vp)
-            } else if (viewHolder?.sv?.scrollY == 0) {
-                BKLog.d("滑动到顶部")
-                (frgs[indexPage] as ExchangeFrg).reqeustExchangeRefreshApi(viewHolder?.vp)
+            if (view != null) {
+                if (view.height <= viewHolder?.sv?.scrollY!! + viewHolder?.sv?.height!!) {
+                    BKLog.d("滑动到底部")
+                    if (frgs[indexPage] is ExchangeFrg) {
+                        (frgs[indexPage] as ExchangeFrg).reqeustExchangeMoreApi(viewHolder?.vp)
+                    }
+
+                } else if (viewHolder?.sv?.scrollY == 0) {
+//                    BKLog.d("滑动到顶部")
+//                    if (frgs[indexPage] is ExchangeFrg) {
+//                        (frgs[indexPage] as ExchangeFrg).reqeustExchangeRefreshApi(viewHolder?.vp)
+//                    }
+                }
             }
             //}
         })

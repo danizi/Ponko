@@ -66,7 +66,7 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
     override fun initEvent() {
         ui?.ivStart?.setOnClickListener {
             if (isPay == true) {
-                if (NetworkUtil.is3GNet(context)) {
+                if (NetworkUtil.is3GNet(context)&& (url?.startsWith("http", true)!! || url?.startsWith("https", true)!!)) {
                     DialogUtil.show(context, "提示", "当前使用是手机流量,是否继续播放？", true, object : OnEnterListener {
                         override fun onEnter(dlg: AlertDialog) {
                             clickIvStart()
