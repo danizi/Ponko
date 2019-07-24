@@ -22,8 +22,8 @@ import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.login.contract.LoginAccountContract
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
+import com.xm.lib.common.helper.TimerHelper
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.common.util.TimerHelper
 import retrofit2.Call
 import retrofit2.Response
 

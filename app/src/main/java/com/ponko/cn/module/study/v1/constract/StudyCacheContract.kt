@@ -27,10 +27,10 @@ import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.helper.TimerHelper
 import com.xm.lib.common.http.NetworkUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.NumUtil
-import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.component.OnCancelListener
 import com.xm.lib.component.OnEnterListener
 import retrofit2.Call

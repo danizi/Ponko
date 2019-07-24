@@ -5,8 +5,8 @@ import android.app.Activity
 import android.graphics.Rect
 import android.view.View
 import com.ponko.cn.bean.MediaBean
+import com.xm.lib.common.helper.TimerHelper
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
 import com.xm.lib.media.attachment.control.ControlViewHolder
 import com.xm.lib.media.base.XmMediaPlayer

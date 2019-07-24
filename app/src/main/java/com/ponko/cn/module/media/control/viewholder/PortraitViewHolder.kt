@@ -12,7 +12,6 @@ import com.ponko.cn.utils.ShareUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.common.util.TimeUtil
-import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
 

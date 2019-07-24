@@ -17,11 +17,10 @@ import com.ponko.cn.app.PonkoApp.Companion.UI_AD_DEBUG
 import com.ponko.cn.bean.AdCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.utils.ActivityUtil
-import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.BaseActivity
+import com.xm.lib.common.helper.TimerHelper
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.common.util.TimerHelper
 import retrofit2.Call
 import retrofit2.Response
 

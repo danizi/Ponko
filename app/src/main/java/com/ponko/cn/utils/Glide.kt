@@ -10,7 +10,7 @@ import com.bumptech.glide.request.animation.GlideAnimation
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.ponko.cn.R
-import com.xm.lib.common.util.TimerHelper
+import com.xm.lib.common.helper.TimerHelper
 import java.lang.Exception
 
 object Glide {

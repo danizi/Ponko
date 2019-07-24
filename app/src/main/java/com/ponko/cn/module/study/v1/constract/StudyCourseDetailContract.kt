@@ -25,10 +25,10 @@ import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ShareUtil
 import com.ponko.cn.utils.ToastUtil
+import com.xm.lib.common.helper.TimerHelper
 import com.xm.lib.common.http.NetBean
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
-import com.xm.lib.common.util.TimerHelper
 import com.xm.lib.component.XmStateView
 import com.xm.lib.media.base.XmVideoView
 import retrofit2.Call
