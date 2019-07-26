@@ -21,6 +21,9 @@ import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response
 
+/**
+ * 赚积分
+ */
 class IntegralTaskActivity : RefreshLoadAct<Any, StoreTaskBean>() {
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)

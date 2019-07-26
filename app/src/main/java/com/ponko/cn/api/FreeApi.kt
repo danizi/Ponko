@@ -19,7 +19,7 @@ interface FreeApi {
 
     /**
      * 试听列表
-     * courses/trial/ListBean?typeId=上面接口返回的
+     * courses/trial/PointBean?typeId=上面接口返回的
      *
      * @return
      */

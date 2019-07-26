@@ -25,6 +25,15 @@ public class ProfileCBean {
     private List<TaskBean> task;
     private List<ProductsBean> products;
     private boolean sign_completed;
+    /**
+     * study_today : 500
+     * study_alert : {"link_type":"NONE","width":260,"id":"92922967924F417282D23F3497A531CF","picture":"http://cdn.tradestudy.cn/upload/product/20190723/0bbb8e2d8b5a43a6ae82b322ba5de342.png","link_value":"","height":310}
+     * study_all : 5000
+     */
+    private StudyAlertBean study_alert;
+    private double study_today;
+    private double study_all;
+
 
     public boolean isSign_completed() {
         return sign_completed;
@@ -104,6 +113,30 @@ public class ProfileCBean {
 
     public void setProducts(List<ProductsBean> products) {
         this.products = products;
+    }
+
+    public double getStudy_today() {
+        return study_today;
+    }
+
+    public void setStudy_today(int study_today) {
+        this.study_today = study_today;
+    }
+
+    public StudyAlertBean getStudy_alert() {
+        return study_alert;
+    }
+
+    public void setStudy_alert(StudyAlertBean study_alert) {
+        this.study_alert = study_alert;
+    }
+
+    public double getStudy_all() {
+        return study_all;
+    }
+
+    public void setStudy_all(int study_all) {
+        this.study_all = study_all;
     }
 
     public static class PolyvBean {
@@ -491,6 +524,72 @@ public class ProfileCBean {
 
         public void setUrl(String url) {
             this.url = url;
+        }
+    }
+
+    public static class StudyAlertBean {
+        /**
+         * link_type : NONE
+         * width : 260
+         * id : 92922967924F417282D23F3497A531CF
+         * picture : http://cdn.tradestudy.cn/upload/product/20190723/0bbb8e2d8b5a43a6ae82b322ba5de342.png
+         * link_value :
+         * height : 310
+         */
+
+        private String link_type;
+        private int width;
+        private String id;
+        private String picture;
+        private String link_value;
+        private int height;
+
+        public String getLink_type() {
+            return link_type;
+        }
+
+        public void setLink_type(String link_type) {
+            this.link_type = link_type;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getPicture() {
+            return picture;
+        }
+
+        public void setPicture(String picture) {
+            this.picture = picture;
+        }
+
+        public String getLink_value() {
+            return link_value;
+        }
+
+        public void setLink_value(String link_value) {
+            this.link_value = link_value;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
         }
     }
 }

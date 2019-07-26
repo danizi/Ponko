@@ -1,0 +1,15 @@
+package com.ponko.cn.module.my.v1.holder
+
+import android.view.View
+import com.xm.lib.common.base.rv.BaseViewHolder
+
+/**
+ * 学习报告 - 最近 ViewHolder
+ */
+@Deprecated("被ReportCommonVH替代")
+class ReportTotalVH(view: View) : BaseViewHolder(view) {
+
+    override fun bindData(d: Any, position: Int) {
+
+    }
+}

@@ -225,4 +225,13 @@ interface MyApi {
     @FormUrlEncoded
     fun shareSave(@Field("image") url: String, @Field("saying") say: String): Call<GeneralBean>
 
+    ////////////////////////////////////
+    ///        学习报告               //
+    ////////////////////////////////////
+    @GET("study/report")
+    fun studyReport(): Call<StudyReportCBean>
+
+    @GET("study/report/share")
+    fun reportShare():Call<ReportShareCBean>
+
 }

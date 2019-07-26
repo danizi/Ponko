@@ -4,15 +4,15 @@ object Constants {
     /**
      * 接口BaseApi
      */
-    const val BASE_API = "https://api.tradestudy.cn/v3/"
+//    const val BASE_API = "https://api.tradestudy.cn/v3/"
+    /**
+     * 测试服务器
+     */
+    const val BASE_API = "http://192.168.253.160:8092/v3/"
     const val URL_INVITE = BASE_API + "web/invite"
     const val URL_OPEN_ROLL = BASE_API + "web/pay"
     const val URL_FREE = BASE_API + "web/trial"
 
-    /**
-     * 测试服务器
-     */
-//    const val BASE_API = "http://192.168.253.160:8092/v3/"
     /**
      * 微信id
      */

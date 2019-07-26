@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ponko.cn">
 
+    <uses-sdk tools:overrideLibrary="com.pao11.view" />
+
     <uses-feature android:name="android.hardware.camera" />
     <!-- 相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -10,8 +12,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 读取SD卡的权限:打开相册选取图片所必须的权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <uses-sdk tools:overrideLibrary="com.pao11.view"/>
 
     <application
         android:name=".app.PonkoApp"
@@ -243,7 +243,9 @@
         <activity android:name=".module.my.v2.OpenRollV2Activity" />
         <activity android:name=".module.my.v2.InviteFriendV2Activity" />
         <activity android:name=".module.my.v2.RemindActV2" />
-        <activity android:name=".module.my.v1.option.store.IntegralExchangedClassAct"></activity>
+        <activity android:name=".module.my.v1.option.store.IntegralExchangedClassAct" />
+        <activity android:name=".module.my.v1.option.ReportActivity" />
+        <activity android:name=".module.my.v1.option.PosterActivity"></activity>
     </application>
 
 </manifest>

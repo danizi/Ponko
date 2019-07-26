@@ -22,8 +22,8 @@ import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.*
-import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.ponko.cn.module.my.option.store.StoreAct
+import com.ponko.cn.module.my.v1.option.ReportActivity
 import com.ponko.cn.module.my.v1.option.store.IntegralExchangedClassAct
 import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v2.StudyContract2
@@ -185,7 +185,6 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                 }
             }
             BKLog.d("点击${myListBean.des}")
-
         }
     }
 

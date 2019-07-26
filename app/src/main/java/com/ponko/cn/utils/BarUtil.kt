@@ -129,8 +129,8 @@ object BarUtil {
         flBack?.setOnClickListener {
             (context as Activity).finish()
         }
-        tvBarRight?.setOnClickListener(barRightlistener)
         tvTitle?.text = title
+        tvBarRight?.setOnClickListener(barRightlistener)
         tvBarRight?.text = barRight
     }
 

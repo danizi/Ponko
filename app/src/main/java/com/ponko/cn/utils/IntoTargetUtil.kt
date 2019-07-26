@@ -33,11 +33,11 @@ object IntoTargetUtil {
      * @param linkValue 跳转携带的值
      */
     fun target(context: Context?, linkType: String?, linkValue: String?) {
-        if(context==null){
+        if (context == null) {
             ToastUtil.show("上下文为null，跳转失败。")
             return
         }
-        if(TextUtils.isEmpty(linkType)){
+        if (TextUtils.isEmpty(linkType)) {
             ToastUtil.show("linkType为null，跳转失败。")
             return
         }
@@ -98,8 +98,39 @@ object IntoTargetUtil {
             linkType.equals("head", true) -> {
                 headClick()
             }
+            linkType.equals("STUDY_REPORT_MAIN", true) -> {
+                reportMain()
+            }
+            linkType.equals("STUDY_REPORT_SHARE", true) -> {
+                reportShare()
+            }
+            linkType.equals("STUDY_HISTORY_LIST", true) -> {
+                reportHistory()
+            }
         }
     }
+
+    /**
+     * 学习报告 - 学习历史界面
+     */
+    private fun reportHistory() {
+
+    }
+
+    /**
+     * 学习报告 - 分享学习报告
+     */
+    private fun reportShare() {
+
+    }
+
+    /**
+     * 学习报告 - 主界面
+     */
+    private fun reportMain() {
+
+    }
+
 
     /**
      * 点击头像
@@ -133,7 +164,7 @@ object IntoTargetUtil {
         BKLog.d(TAG, "交流页面 linkValue:$linkValue")
         //MainActivity.bottomMenu.select(2)
         val intent = Intent(Constants.ACTION_BOTTOM_MENU)
-        intent.putExtra("index",2)
+        intent.putExtra("index", 2)
         context?.sendBroadcast(intent)
     }
 
@@ -141,7 +172,7 @@ object IntoTargetUtil {
         BKLog.d(TAG, "免费页面 linkValue:$linkValue")
         //MainActivity.bottomMenu.select(1)
         val intent = Intent(Constants.ACTION_BOTTOM_MENU)
-        intent.putExtra("index",1)
+        intent.putExtra("index", 1)
         context?.sendBroadcast(intent)
     }
 
@@ -149,7 +180,7 @@ object IntoTargetUtil {
         BKLog.d(TAG, "试听页面即免费页面 linkValue:$linkValue")
         //MainActivity.bottomMenu.select(1)
         val intent = Intent(Constants.ACTION_BOTTOM_MENU)
-        intent.putExtra("index",1)
+        intent.putExtra("index", 1)
         context?.sendBroadcast(intent)
     }
 
@@ -190,11 +221,11 @@ object IntoTargetUtil {
 
     private fun courseType(linkValue: String?) {
         BKLog.d(TAG, "课程分类 linkValue:$linkValue")
-        when(PonkoApp.getAppUIVersion(context!!)){
-            Constants.UI_VERSION_1->{
+        when (PonkoApp.getAppUIVersion(context!!)) {
+            Constants.UI_VERSION_1 -> {
                 CourseTypeLinearActivity.start(context, "课程", linkValue)
             }
-            Constants.UI_VERSION_2->{
+            Constants.UI_VERSION_2 -> {
                 CourseTypeLinearActivityV2.start(context, "课程", linkValue)
             }
         }
@@ -218,7 +249,7 @@ object IntoTargetUtil {
     private fun invite(linkValue: String?) {
         BKLog.d(TAG, "邀请 linkValue:$linkValue")
         //ActivityUtil.startActivity(context, Intent(context, InviteFriendActivity::class.java))
-        InviteFriendShareActivity.start(context!!,linkValue)
+        InviteFriendShareActivity.start(context!!, linkValue)
 
     }
 

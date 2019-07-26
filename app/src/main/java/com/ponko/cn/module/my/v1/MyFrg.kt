@@ -73,9 +73,9 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
     override fun bindItemViewHolderData(): BindItemViewHolderBean {
         return BindItemViewHolderBean.create(
                 arrayOf(0, 1),
-                arrayOf(MyViewHolder::class.java, MyViewHolder2::class.java),
+                arrayOf(MyViewHolder::class.java/*信息*/, MyViewHolder2::class.java/*跳转网格列表*/),
                 arrayOf(MyTopBean::class.java, MyBean::class.java),
-                arrayOf(R.layout.item_my_top, R.layout.item_my_rv)
+                arrayOf(R.layout.item_my_top2, R.layout.item_my_rv)
         )
     }
 
