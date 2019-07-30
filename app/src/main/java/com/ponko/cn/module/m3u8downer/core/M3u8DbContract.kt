@@ -1,7 +1,10 @@
 package com.ponko.cn.module.m3u8downer.core
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.text.TextUtils
+import com.ponko.cn.db.CacheContract
+import com.ponko.cn.db.bean.CourseDbBean
 import com.xm.lib.common.log.BKLog
 import java.nio.file.Files.exists
 
@@ -133,6 +136,7 @@ class M3u8DbContract {
                 BKLog.e(TAG, "删除${m3u8}对应数据失败，数据库不存在该条记录")
             }
         }
+
         fun delete2(vid: String) {
             if (exists2(vid)) {
                 db?.execSQL(M3u8DbContract.Table.SQL_DELETE_BY_VID, arrayOf(vid))
@@ -140,6 +144,7 @@ class M3u8DbContract {
                 BKLog.e(TAG, "删除${vid}对应数据失败，数据库不存在该条记录")
             }
         }
+
         /**
          * 删除所有
          */
@@ -167,6 +172,7 @@ class M3u8DbContract {
                 BKLog.e(TAG, "更新${bean.toString()}对应数据失败，数据库不存在该条记录")
             }
         }
+
         fun update2(bean: DaoBean) {
             if (exists2(bean.vid)) {
                 db?.execSQL(M3u8DbContract.Table.SQL_UPDATE_BY_VID, arrayOf(
@@ -190,39 +196,55 @@ class M3u8DbContract {
         @Deprecated("")
         fun select(m3u8: String): DaoBean {
             val bean = DaoBean()
-            val cursor = db?.rawQuery(M3u8DbContract.Table.SQL_SELECT_BY_M3U8, arrayOf(m3u8))
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    val id = cursor.getInt(0)
-                    bean.m3u8 = cursor.getString(1)
-                    bean.need_download_ts = cursor.getString(2)
-                    bean.not_download_ts = cursor.getString(3)
-                    bean.progress = cursor.getInt(4)
-                    bean.total = cursor.getInt(5)
-                    bean.complete = cursor.getInt(6)
+            var cursor: Cursor? = null
+            try {
+                cursor = db?.rawQuery(M3u8DbContract.Table.SQL_SELECT_BY_M3U8, arrayOf(m3u8))
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        val id = cursor.getInt(0)
+                        bean.m3u8 = cursor.getString(1)
+                        bean.need_download_ts = cursor.getString(2)
+                        bean.not_download_ts = cursor.getString(3)
+                        bean.progress = cursor.getInt(4)
+                        bean.total = cursor.getInt(5)
+                        bean.complete = cursor.getInt(6)
+                    }
+                } else {
+                    BKLog.e("通过m3u8在数据库中未查询到")
                 }
-            }else{
-                BKLog.e("通过m3u8在数据库中未查询到")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                cursor?.close()
             }
             return bean
         }
+
         fun select2(vid: String): DaoBean {
             val bean = DaoBean()
-            val cursor = db?.rawQuery(M3u8DbContract.Table.SQL_SELECT_BY_VID, arrayOf(vid))
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    val id = cursor.getInt(0)
-                    bean.m3u8 = cursor.getString(1)
-                    bean.need_download_ts = cursor.getString(2)
-                    bean.not_download_ts = cursor.getString(3)
-                    bean.progress = cursor.getInt(4)
-                    bean.total = cursor.getInt(5)
-                    bean.complete = cursor.getInt(6)
-                    bean.vid = cursor.getString(7)
+            var cursor: Cursor? = null
+            try {
+                cursor = db?.rawQuery(M3u8DbContract.Table.SQL_SELECT_BY_VID, arrayOf(vid))
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        val id = cursor.getInt(0)
+                        bean.m3u8 = cursor.getString(1)
+                        bean.need_download_ts = cursor.getString(2)
+                        bean.not_download_ts = cursor.getString(3)
+                        bean.progress = cursor.getInt(4)
+                        bean.total = cursor.getInt(5)
+                        bean.complete = cursor.getInt(6)
+                        bean.vid = cursor.getString(7)
+                    }
+                } else {
+                    BKLog.e("通过vid在数据库中未查询到")
                 }
-            }else{
-                BKLog.e("通过vid在数据库中未查询到")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                cursor?.close()
             }
+
             return bean
         }
 
@@ -231,23 +253,31 @@ class M3u8DbContract {
          */
         fun selectAll(): ArrayList<DaoBean> {
             val data = ArrayList<DaoBean>()
-            val cursor = db?.rawQuery(M3u8DbContract.Table.SQL_SELECT_ALL, null)
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    val bean = DaoBean()
-                    val id = cursor.getInt(0)
-                    bean.m3u8 = cursor.getString(1)
-                    bean.need_download_ts = cursor.getString(2)
-                    bean.not_download_ts = cursor.getString(3)
-                    bean.progress = cursor.getInt(4)
-                    bean.total = cursor.getInt(5)
-                    bean.complete = cursor.getInt(6)
-                    bean.vid = cursor.getString(7)
-                    data.add(bean)
+            var cursor:Cursor? = null
+            try {
+                 cursor = db?.rawQuery(M3u8DbContract.Table.SQL_SELECT_ALL, null)
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        val bean = DaoBean()
+                        val id = cursor.getInt(0)
+                        bean.m3u8 = cursor.getString(1)
+                        bean.need_download_ts = cursor.getString(2)
+                        bean.not_download_ts = cursor.getString(3)
+                        bean.progress = cursor.getInt(4)
+                        bean.total = cursor.getInt(5)
+                        bean.complete = cursor.getInt(6)
+                        bean.vid = cursor.getString(7)
+                        data.add(bean)
+                    }
+                }else{
+                    BKLog.e("数据库中未查询到所有任务")
                 }
-            }else{
-                BKLog.e("数据库中未查询到所有任务")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                cursor?.close()
             }
+
             return data
         }
 

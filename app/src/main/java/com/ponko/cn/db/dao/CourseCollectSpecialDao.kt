@@ -1,5 +1,6 @@
 package com.ponko.cn.db.dao
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.ponko.cn.db.CacheContract
 import com.ponko.cn.db.bean.CourseCollectSpecialDbBean
@@ -65,22 +66,30 @@ class CourseCollectSpecialDao(private var db: SQLiteDatabase?) {
      */
     fun selectByCourseId(courseId: String): ArrayList<CourseCollectSpecialDbBean> {
         val data = ArrayList<CourseCollectSpecialDbBean>()
-        val cursor = db?.rawQuery(CacheContract.CourseCollectSpecialTable.SQL_SELECT_BY_COURSE_ID, arrayOf(courseId))
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                val courseCollectSpecialDbBean = CourseCollectSpecialDbBean()
-                cursor.getString(0) //主键值
-                courseCollectSpecialDbBean.column_uid = cursor.getString(1)
-                courseCollectSpecialDbBean.column_course_id = cursor.getString(2)
-                courseCollectSpecialDbBean.column_teacher = cursor.getString(3)
-                courseCollectSpecialDbBean.column_num = cursor.getString(4)
-                courseCollectSpecialDbBean.column_cover = cursor.getString(5)
-                courseCollectSpecialDbBean.column_title = cursor.getString(6)
-                data.add(courseCollectSpecialDbBean)
+        var cursor: Cursor? = null
+        try {
+             cursor = db?.rawQuery(CacheContract.CourseCollectSpecialTable.SQL_SELECT_BY_COURSE_ID, arrayOf(courseId))
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    val courseCollectSpecialDbBean = CourseCollectSpecialDbBean()
+                    cursor.getString(0) //主键值
+                    courseCollectSpecialDbBean.column_uid = cursor.getString(1)
+                    courseCollectSpecialDbBean.column_course_id = cursor.getString(2)
+                    courseCollectSpecialDbBean.column_teacher = cursor.getString(3)
+                    courseCollectSpecialDbBean.column_num = cursor.getString(4)
+                    courseCollectSpecialDbBean.column_cover = cursor.getString(5)
+                    courseCollectSpecialDbBean.column_title = cursor.getString(6)
+                    data.add(courseCollectSpecialDbBean)
+                }
+            } else {
+                BKLog.e(TAG, "cursor is null")
             }
-        } else {
-            BKLog.e(TAG, "cursor is null")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
+
         return data
     }
 
@@ -89,22 +98,31 @@ class CourseCollectSpecialDao(private var db: SQLiteDatabase?) {
      */
     fun selectAll(): ArrayList<CourseCollectSpecialDbBean> {
         val data = ArrayList<CourseCollectSpecialDbBean>()
-        val cursor = db?.rawQuery(CacheContract.CourseCollectSpecialTable.SQL_SELECT_BY_ALL, arrayOf())
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                val courseCollectSpecialDbBean = CourseCollectSpecialDbBean()
-                cursor.getString(0) //主键值
-                courseCollectSpecialDbBean.column_uid = cursor.getString(1)
-                courseCollectSpecialDbBean.column_course_id = cursor.getString(2)
-                courseCollectSpecialDbBean.column_teacher = cursor.getString(3)
-                courseCollectSpecialDbBean.column_num = cursor.getString(4)
-                courseCollectSpecialDbBean.column_cover = cursor.getString(5)
-                courseCollectSpecialDbBean.column_title = cursor.getString(6)
-                data.add(courseCollectSpecialDbBean)
+        var cursor:Cursor? = null
+
+        try {
+             cursor = db?.rawQuery(CacheContract.CourseCollectSpecialTable.SQL_SELECT_BY_ALL, arrayOf())
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    val courseCollectSpecialDbBean = CourseCollectSpecialDbBean()
+                    cursor.getString(0) //主键值
+                    courseCollectSpecialDbBean.column_uid = cursor.getString(1)
+                    courseCollectSpecialDbBean.column_course_id = cursor.getString(2)
+                    courseCollectSpecialDbBean.column_teacher = cursor.getString(3)
+                    courseCollectSpecialDbBean.column_num = cursor.getString(4)
+                    courseCollectSpecialDbBean.column_cover = cursor.getString(5)
+                    courseCollectSpecialDbBean.column_title = cursor.getString(6)
+                    data.add(courseCollectSpecialDbBean)
+                }
+            } else {
+                BKLog.e(TAG, "cursor is null")
             }
-        } else {
-            BKLog.e(TAG, "cursor is null")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
+
         return data
     }
 

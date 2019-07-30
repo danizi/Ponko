@@ -1,5 +1,6 @@
 package com.ponko.cn.db.dao
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.icu.lang.UCharacter.JoiningGroup.PE
 import com.ponko.cn.db.CacheContract
@@ -82,19 +83,26 @@ class CourseCollectSectionDao(private var db: SQLiteDatabase?) {
      */
     fun selectByCourseId(courseId: String): ArrayList<CourseCollectSectionDbBean> {
         val data = ArrayList<CourseCollectSectionDbBean>()
-        val cursor = db?.rawQuery(CacheContract.CourseCollectSectionTable.SQL_SELECT_BY_COURSE_ID, arrayOf(courseId))
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                val courseCollectSectionDbBean = CourseCollectSectionDbBean()
-                cursor.getColumnName(0) //主键值
-                courseCollectSectionDbBean.column_uid = cursor.getString(1)
-                courseCollectSectionDbBean.column_course_id = cursor.getString(2)
-                courseCollectSectionDbBean.column_section_id = cursor.getString(3)
-                courseCollectSectionDbBean.column_section_name = cursor.getString(4)
-                data.add(courseCollectSectionDbBean)
+        var cursor: Cursor? = null
+        try {
+            cursor = db?.rawQuery(CacheContract.CourseCollectSectionTable.SQL_SELECT_BY_COURSE_ID, arrayOf(courseId))
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    val courseCollectSectionDbBean = CourseCollectSectionDbBean()
+                    cursor.getColumnName(0) //主键值
+                    courseCollectSectionDbBean.column_uid = cursor.getString(1)
+                    courseCollectSectionDbBean.column_course_id = cursor.getString(2)
+                    courseCollectSectionDbBean.column_section_id = cursor.getString(3)
+                    courseCollectSectionDbBean.column_section_name = cursor.getString(4)
+                    data.add(courseCollectSectionDbBean)
+                }
+            } else {
+                BKLog.e(TAG, "cursor is null")
             }
-        } else {
-            BKLog.e(TAG, "cursor is null")
+        }catch (e:Exception){
+            e.printStackTrace()
+        }finally {
+            cursor?.close()
         }
         return data
     }
@@ -104,19 +112,26 @@ class CourseCollectSectionDao(private var db: SQLiteDatabase?) {
      */
     fun selectAll(): ArrayList<CourseCollectSectionDbBean> {
         val data = ArrayList<CourseCollectSectionDbBean>()
-        val cursor = db?.rawQuery(CacheContract.CourseCollectSectionTable.SQL_SELECT_ALL, arrayOf())
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                val courseCollectSectionDbBean = CourseCollectSectionDbBean()
-                cursor.getColumnName(0) //主键值
-                courseCollectSectionDbBean.column_uid = cursor.getString(1)
-                courseCollectSectionDbBean.column_course_id = cursor.getString(2)
-                courseCollectSectionDbBean.column_section_id = cursor.getString(3)
-                courseCollectSectionDbBean.column_section_name = cursor.getString(4)
-                data.add(courseCollectSectionDbBean)
+        var cursor: Cursor? = null
+        try {
+            cursor = db?.rawQuery(CacheContract.CourseCollectSectionTable.SQL_SELECT_ALL, arrayOf())
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    val courseCollectSectionDbBean = CourseCollectSectionDbBean()
+                    cursor.getColumnName(0) //主键值
+                    courseCollectSectionDbBean.column_uid = cursor.getString(1)
+                    courseCollectSectionDbBean.column_course_id = cursor.getString(2)
+                    courseCollectSectionDbBean.column_section_id = cursor.getString(3)
+                    courseCollectSectionDbBean.column_section_name = cursor.getString(4)
+                    data.add(courseCollectSectionDbBean)
+                }
+            } else {
+                BKLog.e(TAG, "cursor is null")
             }
-        } else {
-            BKLog.e(TAG, "cursor is null")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
         return data
     }

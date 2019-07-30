@@ -1,5 +1,6 @@
 package com.ponko.cn.db.dao
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.ponko.cn.db.CacheContract
 import com.ponko.cn.db.bean.CourseSpecialDbBean
@@ -12,7 +13,7 @@ class CourseSpecialDao(private var db: SQLiteDatabase?) {
 
     fun insert(bean: CourseSpecialDbBean) {
         if (db?.isOpen == true) {
-            if(select(bean).isEmpty()){
+            if (select(bean).isEmpty()) {
                 db?.execSQL(CacheContract.CourseSpecialTable.SQL_INSERT, arrayOf(
                         bean.uid,
                         bean.special_id,
@@ -22,7 +23,7 @@ class CourseSpecialDao(private var db: SQLiteDatabase?) {
                         bean.title
                 ))
                 //db?.close()
-            }else{
+            } else {
                 BKLog.d("专题已存在")
             }
         } else {
@@ -65,83 +66,105 @@ class CourseSpecialDao(private var db: SQLiteDatabase?) {
 
     fun select(bean: CourseSpecialDbBean): ArrayList<CourseSpecialDbBean> {
         val queryData = ArrayList<CourseSpecialDbBean>()
-        if (db?.isOpen == true) {
-            val cursor = db?.rawQuery(CacheContract.CourseSpecialTable.SQL_SELECT_BY_ID, arrayOf(bean.special_id))
-            if (cursor == null) {
-                BKLog.e("从数据库中未查找到内容")
+        var cursor: Cursor? = null
+        try {
+            if (db?.isOpen == true) {
+                val cursor = db?.rawQuery(CacheContract.CourseSpecialTable.SQL_SELECT_BY_ID, arrayOf(bean.special_id))
+                if (cursor == null) {
+                    BKLog.e("从数据库中未查找到内容")
+                }
+                while (cursor?.moveToNext()!!) {
+                    val courseSpecialDbBean = CourseSpecialDbBean()
+                    val id = cursor.getString(0)
+                    courseSpecialDbBean.uid = cursor.getString(1)
+                    courseSpecialDbBean.special_id = cursor.getString(2)
+                    courseSpecialDbBean.teacher = cursor.getString(3)
+                    courseSpecialDbBean.num = cursor.getInt(4)
+                    courseSpecialDbBean.cover = cursor.getString(5)
+                    courseSpecialDbBean.title = cursor.getString(6)
+                    queryData.add(courseSpecialDbBean)
+                }
+                //db?.close()
+            } else {
+                BKLog.d("数据库未打开")
             }
-            while (cursor?.moveToNext()!!) {
-                val courseSpecialDbBean = CourseSpecialDbBean()
-                val id = cursor.getString(0)
-                courseSpecialDbBean.uid = cursor.getString(1)
-                courseSpecialDbBean.special_id = cursor.getString(2)
-                courseSpecialDbBean.teacher = cursor.getString(3)
-                courseSpecialDbBean.num = cursor.getInt(4)
-                courseSpecialDbBean.cover = cursor.getString(5)
-                courseSpecialDbBean.title = cursor.getString(6)
-                queryData.add(courseSpecialDbBean)
-            }
-            //db?.close()
-        } else {
-            BKLog.d("数据库未打开")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
         return queryData
     }
 
     fun select(specialId: String): ArrayList<CourseSpecialDbBean> {
         val queryData = ArrayList<CourseSpecialDbBean>()
-        if (db?.isOpen == true) {
-            val cursor = db?.rawQuery(CacheContract.CourseSpecialTable.SQL_SELECT_BY_ID, arrayOf(specialId))
-            if (cursor == null) {
-                BKLog.e("从数据库中未查找到内容")
+        var cursor: Cursor? = null
+        try {
+            if (db?.isOpen == true) {
+                cursor = db?.rawQuery(CacheContract.CourseSpecialTable.SQL_SELECT_BY_ID, arrayOf(specialId))
+                if (cursor == null) {
+                    BKLog.e("从数据库中未查找到内容")
+                }
+                while (cursor?.moveToNext()!!) {
+                    val courseSpecialDbBean = CourseSpecialDbBean()
+                    val id = cursor.getString(0)
+                    courseSpecialDbBean.uid = cursor.getString(1)
+                    courseSpecialDbBean.special_id = cursor.getString(2)
+                    courseSpecialDbBean.teacher = cursor.getString(3)
+                    courseSpecialDbBean.num = cursor.getInt(4)
+                    courseSpecialDbBean.cover = cursor.getString(5)
+                    courseSpecialDbBean.title = cursor.getString(6)
+                    queryData.add(courseSpecialDbBean)
+                }
+                //db?.close()
+            } else {
+                BKLog.d("数据库未打开")
             }
-            while (cursor?.moveToNext()!!) {
-                val courseSpecialDbBean = CourseSpecialDbBean()
-                val id = cursor.getString(0)
-                courseSpecialDbBean.uid = cursor.getString(1)
-                courseSpecialDbBean.special_id = cursor.getString(2)
-                courseSpecialDbBean.teacher = cursor.getString(3)
-                courseSpecialDbBean.num = cursor.getInt(4)
-                courseSpecialDbBean.cover = cursor.getString(5)
-                courseSpecialDbBean.title = cursor.getString(6)
-                queryData.add(courseSpecialDbBean)
-            }
-            //db?.close()
-        } else {
-            BKLog.d("数据库未打开")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
         return queryData
     }
 
     fun selectAll(): ArrayList<CourseSpecialDbBean> {
         val queryAllData = ArrayList<CourseSpecialDbBean>()
-        if (db?.isOpen == true) {
-            val cursor = db?.rawQuery(CacheContract.CourseSpecialTable.SQL_SELECT_ALL, null)
-            if (cursor == null) {
-                BKLog.e("从数据库中未查找到内容")
-                return queryAllData
+        var cursor: Cursor? = null
+        try {
+            if (db?.isOpen == true) {
+                cursor = db?.rawQuery(CacheContract.CourseSpecialTable.SQL_SELECT_ALL, null)
+                if (cursor == null) {
+                    BKLog.e("从数据库中未查找到内容")
+                    return queryAllData
+                }
+                while (cursor.moveToNext()) {
+                    val courseSpecialDbBean = CourseSpecialDbBean()
+                    val id = cursor.getString(0)
+                    courseSpecialDbBean.uid = cursor.getString(1)
+                    courseSpecialDbBean.special_id = cursor.getString(2)
+                    courseSpecialDbBean.teacher = cursor.getString(3)
+                    courseSpecialDbBean.num = cursor.getInt(4)
+                    courseSpecialDbBean.cover = cursor.getString(5)
+                    courseSpecialDbBean.title = cursor.getString(6)
+                    queryAllData.add(courseSpecialDbBean)
+                }
+            } else {
+                BKLog.d("数据库未打开")
             }
-            while (cursor.moveToNext()) {
-                val courseSpecialDbBean = CourseSpecialDbBean()
-                val id = cursor.getString(0)
-                courseSpecialDbBean.uid = cursor.getString(1)
-                courseSpecialDbBean.special_id = cursor.getString(2)
-                courseSpecialDbBean.teacher = cursor.getString(3)
-                courseSpecialDbBean.num = cursor.getInt(4)
-                courseSpecialDbBean.cover = cursor.getString(5)
-                courseSpecialDbBean.title = cursor.getString(6)
-                queryAllData.add(courseSpecialDbBean)
-            }
-        } else {
-            BKLog.d("数据库未打开")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
+
         return queryAllData
     }
 
     /**
      * 判断是否存在
      */
-    fun exist(){
+    fun exist() {
 
     }
 }

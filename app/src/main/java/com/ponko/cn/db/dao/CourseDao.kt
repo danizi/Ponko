@@ -1,5 +1,6 @@
 package com.ponko.cn.db.dao
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.ponko.cn.db.CacheContract
 import com.ponko.cn.db.CacheContract.CourseTable.SQL_SELECT_BY_SPECIAL_ID
@@ -174,36 +175,43 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun select(bean: CourseDbBean): ArrayList<CourseDbBean> {
         val queryData = ArrayList<CourseDbBean>()
-        if (db?.isOpen == true) {
-            val cursor = db?.rawQuery(CacheContract.CourseTable.SQL_SELECT_BY_ID, arrayOf(bean.column_course_id))
-            if (cursor == null) {
-                BKLog.e("从数据库中未查找到内容")
-                return queryData
+        var cursor: Cursor? = null
+        try {
+            if (db?.isOpen == true) {
+                cursor = db?.rawQuery(CacheContract.CourseTable.SQL_SELECT_BY_ID, arrayOf(bean.column_course_id))
+                if (cursor == null) {
+                    BKLog.e("从数据库中未查找到内容")
+                    return queryData
+                }
+                while (cursor.moveToNext()) {
+                    val courseDbBean = CourseDbBean()
+                    val id = cursor.getString(0)
+                    courseDbBean.column_uid = cursor.getString(1)
+                    courseDbBean.column_special_id = cursor.getString(2)
+                    courseDbBean.column_course_id = cursor.getString(3)
+                    courseDbBean.column_cover = cursor.getString(4)
+                    courseDbBean.column_title = cursor.getString(5)
+                    courseDbBean.column_total = cursor.getInt(6)
+                    courseDbBean.column_progress = cursor.getInt(7)
+                    courseDbBean.column_complete = cursor.getInt(8)
+                    courseDbBean.column_m3u8_url = cursor.getString(9)
+                    courseDbBean.column_key_ts_url = cursor.getString(10)
+                    courseDbBean.column_down_path = cursor.getString(11)
+                    courseDbBean.column_state = cursor.getString(12)
+                    courseDbBean.column_vid = cursor.getString(13)
+                    queryData.add(courseDbBean)
+                }
+                //db?.close()
+            } else {
+                BKLog.d("数据库未打开")
             }
-            while (cursor.moveToNext()) {
-                val courseDbBean = CourseDbBean()
-                val id = cursor.getString(0)
-                courseDbBean.column_uid = cursor.getString(1)
-                courseDbBean.column_special_id = cursor.getString(2)
-                courseDbBean.column_course_id = cursor.getString(3)
-                courseDbBean.column_cover = cursor.getString(4)
-                courseDbBean.column_title = cursor.getString(5)
-                courseDbBean.column_total = cursor.getInt(6)
-                courseDbBean.column_progress = cursor.getInt(7)
-                courseDbBean.column_complete = cursor.getInt(8)
-                courseDbBean.column_m3u8_url = cursor.getString(9)
-                courseDbBean.column_key_ts_url = cursor.getString(10)
-                courseDbBean.column_down_path = cursor.getString(11)
-                courseDbBean.column_state = cursor.getString(12)
-                courseDbBean.column_vid = cursor.getString(13)
-                queryData.add(courseDbBean)
+            if (queryData.size >= 2) {
+                throw IllegalArgumentException("通过课程id查询到多个课程，应该有且只有一个。")
             }
-            //db?.close()
-        } else {
-            BKLog.d("数据库未打开")
-        }
-        if (queryData.size >= 2) {
-            throw IllegalArgumentException("通过课程id查询到多个课程，应该有且只有一个。")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
         return queryData
     }
@@ -213,33 +221,39 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun select(vid: String?): ArrayList<CourseDbBean> {
         val data = ArrayList<CourseDbBean>()
-        val cursor = db?.rawQuery(SQL_SELECT_BY_VID, arrayOf(vid))
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                val courseDbBean = CourseDbBean()
-                val id = cursor.getString(0)
-                courseDbBean.column_uid = cursor.getString(1)
-                courseDbBean.column_special_id = cursor.getString(2)
-                courseDbBean.column_course_id = cursor.getString(3)
-                courseDbBean.column_cover = cursor.getString(4)
-                courseDbBean.column_title = cursor.getString(5)
-                courseDbBean.column_total = cursor.getInt(6)
-                courseDbBean.column_progress = cursor.getInt(7)
-                courseDbBean.column_complete = cursor.getInt(8)
-                courseDbBean.column_m3u8_url = cursor.getString(9)
-                courseDbBean.column_key_ts_url = cursor.getString(10)
-                courseDbBean.column_down_path = cursor.getString(11)
-                courseDbBean.column_state = cursor.getString(12)
-                courseDbBean.column_vid = cursor.getString(13)
-                data.add(courseDbBean)
+        var cursor: Cursor? = null
+        try {
+            cursor = db?.rawQuery(SQL_SELECT_BY_VID, arrayOf(vid))
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    val courseDbBean = CourseDbBean()
+                    val id = cursor.getString(0)
+                    courseDbBean.column_uid = cursor.getString(1)
+                    courseDbBean.column_special_id = cursor.getString(2)
+                    courseDbBean.column_course_id = cursor.getString(3)
+                    courseDbBean.column_cover = cursor.getString(4)
+                    courseDbBean.column_title = cursor.getString(5)
+                    courseDbBean.column_total = cursor.getInt(6)
+                    courseDbBean.column_progress = cursor.getInt(7)
+                    courseDbBean.column_complete = cursor.getInt(8)
+                    courseDbBean.column_m3u8_url = cursor.getString(9)
+                    courseDbBean.column_key_ts_url = cursor.getString(10)
+                    courseDbBean.column_down_path = cursor.getString(11)
+                    courseDbBean.column_state = cursor.getString(12)
+                    courseDbBean.column_vid = cursor.getString(13)
+                    data.add(courseDbBean)
+                }
+            } else {
+                BKLog.e("数据库中未查询到")
             }
-             // todo 容易崩溃 Cursor window allocation of 2048 kb failed. # Open Cursors=62 (# cursors opened by this proc=62)
-            cursor.close()
-        } else {
-            BKLog.e("数据库中未查询到")
-        }
-        if (data.size >= 2) {
-            throw IllegalArgumentException("通过课程vid查询到多个课程，应该有且只有一个。")
+            if (data.size >= 2) {
+                throw IllegalArgumentException("通过课程vid查询到多个课程，应该有且只有一个。")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            // todo 容易崩溃 Cursor window allocation of 2048 kb failed. # Open Cursors=62 (# cursors opened by this proc=62)
+            cursor?.close()
         }
         return data
     }
@@ -249,34 +263,42 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun selectBySpecialId(special_id: String): ArrayList<CourseDbBean> {
         val data = ArrayList<CourseDbBean>()
-        val cursor = db?.rawQuery(SQL_SELECT_BY_SPECIAL_ID, arrayOf(special_id))
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                val courseDbBean = CourseDbBean()
-                val id = cursor.getString(0)
-                courseDbBean.column_uid = cursor.getString(1)
-                courseDbBean.column_special_id = cursor.getString(2)
-                courseDbBean.column_course_id = cursor.getString(3)
-                courseDbBean.column_cover = cursor.getString(4)
-                courseDbBean.column_title = cursor.getString(5)
-                courseDbBean.column_total = cursor.getInt(6)
-                courseDbBean.column_progress = cursor.getInt(7)
-                courseDbBean.column_complete = cursor.getInt(8)
-                courseDbBean.column_m3u8_url = cursor.getString(9)
-                courseDbBean.column_key_ts_url = cursor.getString(10)
-                courseDbBean.column_down_path = cursor.getString(11)
-                courseDbBean.column_state = cursor.getString(12)
-                if (courseDbBean.column_complete == 1) {
-                    courseDbBean.column_state = "已完成"
-                } else {
-                    courseDbBean.column_state = "已暂停"
+        var cursor: Cursor? = null
+        try {
+            cursor = db?.rawQuery(SQL_SELECT_BY_SPECIAL_ID, arrayOf(special_id))
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    val courseDbBean = CourseDbBean()
+                    val id = cursor.getString(0)
+                    courseDbBean.column_uid = cursor.getString(1)
+                    courseDbBean.column_special_id = cursor.getString(2)
+                    courseDbBean.column_course_id = cursor.getString(3)
+                    courseDbBean.column_cover = cursor.getString(4)
+                    courseDbBean.column_title = cursor.getString(5)
+                    courseDbBean.column_total = cursor.getInt(6)
+                    courseDbBean.column_progress = cursor.getInt(7)
+                    courseDbBean.column_complete = cursor.getInt(8)
+                    courseDbBean.column_m3u8_url = cursor.getString(9)
+                    courseDbBean.column_key_ts_url = cursor.getString(10)
+                    courseDbBean.column_down_path = cursor.getString(11)
+                    courseDbBean.column_state = cursor.getString(12)
+                    if (courseDbBean.column_complete == 1) {
+                        courseDbBean.column_state = "已完成"
+                    } else {
+                        courseDbBean.column_state = "已暂停"
+                    }
+                    courseDbBean.column_vid = cursor.getString(13)
+                    data.add(courseDbBean)
                 }
-                courseDbBean.column_vid = cursor.getString(13)
-                data.add(courseDbBean)
+            } else {
+                BKLog.e("数据库中未查询到")
             }
-        } else {
-            BKLog.e("数据库中未查询到")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
+
         return data
     }
 
@@ -285,32 +307,40 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun selectAll(): ArrayList<CourseDbBean> {
         val queryAllData = ArrayList<CourseDbBean>()
-        if (db?.isOpen == true) {
-            val cursor = db?.rawQuery(CacheContract.CourseTable.SQL_SELECT_ALL, null)
-            if (cursor == null) {
-                BKLog.e("从数据库中未查找到内容")
+        var cursor:Cursor? = null
+        try {
+            if (db?.isOpen == true) {
+                cursor = db?.rawQuery(CacheContract.CourseTable.SQL_SELECT_ALL, null)
+                if (cursor == null) {
+                    BKLog.e("从数据库中未查找到内容")
+                }
+                while (cursor?.moveToNext()!!) {
+                    val courseDbBean = CourseDbBean()
+                    courseDbBean.column_uid = cursor.getString(1)
+                    courseDbBean.column_special_id = cursor.getString(2)
+                    courseDbBean.column_course_id = cursor.getString(3)
+                    courseDbBean.column_cover = cursor.getString(4)
+                    courseDbBean.column_title = cursor.getString(5)
+                    courseDbBean.column_total = cursor.getInt(6)
+                    courseDbBean.column_progress = cursor.getInt(7)
+                    courseDbBean.column_complete = cursor.getInt(8)
+                    courseDbBean.column_m3u8_url = cursor.getString(9)
+                    courseDbBean.column_key_ts_url = cursor.getString(10)
+                    courseDbBean.column_down_path = cursor.getString(11)
+                    courseDbBean.column_state = cursor.getString(12)
+                    courseDbBean.column_vid = cursor.getString(13)
+                    queryAllData.add(courseDbBean)
+                }
+                //db?.close()
+            } else {
+                BKLog.d("数据库未打开")
             }
-            while (cursor?.moveToNext()!!) {
-                val courseDbBean = CourseDbBean()
-                courseDbBean.column_uid = cursor.getString(1)
-                courseDbBean.column_special_id = cursor.getString(2)
-                courseDbBean.column_course_id = cursor.getString(3)
-                courseDbBean.column_cover = cursor.getString(4)
-                courseDbBean.column_title = cursor.getString(5)
-                courseDbBean.column_total = cursor.getInt(6)
-                courseDbBean.column_progress = cursor.getInt(7)
-                courseDbBean.column_complete = cursor.getInt(8)
-                courseDbBean.column_m3u8_url = cursor.getString(9)
-                courseDbBean.column_key_ts_url = cursor.getString(10)
-                courseDbBean.column_down_path = cursor.getString(11)
-                courseDbBean.column_state = cursor.getString(12)
-                courseDbBean.column_vid = cursor.getString(13)
-                queryAllData.add(courseDbBean)
-            }
-            //db?.close()
-        } else {
-            BKLog.d("数据库未打开")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
         }
+
         return queryAllData
     }
 
