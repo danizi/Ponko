@@ -179,7 +179,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
                 //更新下竖屏列表item
                 val (groupPosition, childPosition) = p?.oneToTwo(postion)!!
                 p?.updateExtendableListItem(groupPosition, childPosition)
-                BKLog.d("选中groupPosition:$groupPosition childPosition:$childPosition")
+                BKLog.d("选中groupPosition:$groupPosition childPosition:$childPosition vid$vid" )
 
                 //设置标题
                 setTitle(coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name)

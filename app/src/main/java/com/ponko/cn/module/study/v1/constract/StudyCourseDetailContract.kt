@@ -543,7 +543,7 @@ class StudyCourseDetailContract {
 
                 //打印日志
                 val name = model.coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name
-                BKLog.d("点击：$groupPosition  $childPosition vid:$name")
+                BKLog.d("点击：$groupPosition  $childPosition name:$name vid:$vid")
 
             } else {
                 ToastUtil.show("请先购买课程！")

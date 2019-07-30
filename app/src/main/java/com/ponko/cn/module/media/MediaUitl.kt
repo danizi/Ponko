@@ -220,6 +220,7 @@ object MediaUitl {
                 listener?.onFailure()
                 Looper.prepare()
                 ToastUtil.show("获取视频信息失败，请检查您的网络。")
+                Looper.loop()
                 listener?.onFailure()
             }
         }).start()

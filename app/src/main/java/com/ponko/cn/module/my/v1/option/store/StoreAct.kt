@@ -152,7 +152,7 @@ class StoreAct : PonkoBaseAct<Any>() {
             override fun onSuccess(call: Call<StoreProfileBean>?, response: Response<StoreProfileBean>?) {
                 storeProfileBean = response?.body()
                 PonkoApp.storeProfileBean = storeProfileBean
-                Glide.with(this@StoreAct, storeProfileBean?.avatar, viewHolder?.ivHead, Constants.LOAD_IMAGE_DELAY)
+                Glide.with(this@StoreAct, storeProfileBean?.avatar, viewHolder?.ivHead as View)
                 viewHolder?.tvNick?.text = storeProfileBean?.name
                 viewHolder?.tvPayType?.text = storeProfileBean?.paid
                 viewHolder?.tvIntegralNum?.text = "${storeProfileBean?.score}积分"

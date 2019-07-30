@@ -402,13 +402,16 @@
 
                                 <!--基本描述-->
                                 <LinearLayout
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="0dp"
-                                    android:layout_marginStart="28dp"
-                                    android:layout_marginLeft="28dp"
+                                    android:layout_marginStart="18dp"
+                                    android:layout_marginLeft="18dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_marginRight="8dp"
                                     android:gravity="center_vertical"
                                     android:orientation="vertical"
                                     app:layout_constraintBottom_toBottomOf="@+id/linearLayout8"
+                                    app:layout_constraintEnd_toStartOf="@+id/linearLayout8"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="@+id/linearLayout8"
                                     app:layout_constraintVertical_bias="0.611">
@@ -417,6 +420,7 @@
                                         android:id="@+id/tv_des_1"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginLeft="7dp"
                                         android:layout_weight="1"
                                         android:gravity="center_vertical"
                                         android:text="送你一门课程"
@@ -427,16 +431,19 @@
                                         android:id="@+id/tv_course_name"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_gravity="left"
                                         android:layout_weight="1"
                                         android:gravity="center_vertical"
-                                        android:text="课程名称"
+                                        android:lines="1"
+                                        android:text="《课程名称》"
                                         android:textColor="#333333"
-                                        android:textSize="18sp" />
+                                        android:textSize="16sp" />
 
                                     <TextView
                                         android:id="@+id/tv_des_2"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginLeft="7dp"
                                         android:layout_weight="1"
                                         android:gravity="center_vertical"
                                         android:text="快来和我一起学习吧～"
@@ -464,6 +471,7 @@
                                         android:id="@+id/iv_qr"
                                         android:layout_width="68dp"
                                         android:layout_height="68dp"
+                                        android:scaleType="fitXY"
                                         android:src="@mipmap/ic_launcher" />
 
                                     <TextView

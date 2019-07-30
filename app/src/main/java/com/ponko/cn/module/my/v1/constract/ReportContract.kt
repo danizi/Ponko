@@ -75,7 +75,9 @@ class ReportContract {
                             if (item.type == "common") {
                                 rvAdapter?.data?.add(ReportCommonBean(item.report, item.title, item.list, item.footer))
                             } else if (item.type == "history") {
-                                rvAdapter?.data?.add(ReportStudyBean(item.title, item.list, item.subtitle))
+                                if (!item.list.isEmpty()) {
+                                    rvAdapter?.data?.add(ReportStudyBean(item.title, item.list, item.subtitle))
+                                }
                             }
                         }
                         v?.refreshSuccess(rvAdapter)
@@ -94,18 +96,14 @@ class ReportContract {
          * 请求学习报告接口
          */
         fun requestReportApi() {
-
             DialogUtil.showProcess(context!!)
             m.requestReportApi(object : HttpCallBack<StudyReportCBean>() {
                 override fun onSuccess(call: Call<StudyReportCBean>?, response: Response<StudyReportCBean>?) {
-
-                    //隐藏加载框
-                    DialogUtil.hideProcess()
-
                     //检查数据
                     val body = response?.body()
                     if (body?.list?.isEmpty()!!) {
                         ToastUtil.show("数据为空!!!")
+                        DialogUtil.hideProcess()
                         return
                     }
 
@@ -113,11 +111,15 @@ class ReportContract {
                     rvAdapter = getAdapter(body)
 
                     if (rvAdapter == null) {
+                        DialogUtil.hideProcess()
                         return
                     }
 
                     //设置数据页面
                     v?.displayReportPage(response.body(), rvAdapter!!)
+
+                    //隐藏加载框
+                    DialogUtil.hideProcess()
                 }
 
                 private fun getAdapter(body: StudyReportCBean): BaseRvAdapter? {

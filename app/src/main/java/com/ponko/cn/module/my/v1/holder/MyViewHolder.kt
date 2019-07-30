@@ -1,8 +1,12 @@
 package com.ponko.cn.module.my.holder
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.Guideline
 import android.support.v7.widget.AppCompatImageButton
@@ -12,6 +16,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.bumptech.glide.request.target.ImageViewTarget
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.ProfileCBean
@@ -36,7 +41,9 @@ import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.ScreenUtil
 import de.hdodenhof.circleimageview.CircleImageView
+import java.lang.Exception
 
 
 class MyViewHolder(view: View) : BaseViewHolder(view) {
@@ -115,17 +122,16 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         return Pair(name, vipDes)
     }
 
-    fun new(d: Any, LOAD_IMAGE_DELAY: Long) {
+    private fun new(d: Any, LOAD_IMAGE_DELAY: Long) {
         if (ui == null) {
             ui = UI.create(itemView)
         }
         val profileCBean = d as ProfileCBean
         val context = itemView.context
-        Glide.with(context, profileCBean.account.avatar, ui?.ivCircleHead, LOAD_IMAGE_DELAY)  //头像
-//        ui?.tvCourseNumber?.text = "" + profileCBean.account.study_count   //学习课程数量
-//        ui?.tvTimeNumber?.text = "" + profileCBean.account.study_duration / 60  //学习时长
-//        ui?.tvIntegralNumber?.text = "" + profileCBean.account.integration //当前积分
 
+
+
+        Glide.with(context, profileCBean.account.avatar, ui?.ivCircleHead, LOAD_IMAGE_DELAY)  //头像
         // 用户是否订购
         val (name, vipDes) = infoPair(profileCBean)
         ui?.tvName?.text = name
@@ -168,26 +174,7 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         ui?.ivScholarship?.setOnClickListener {
             if (profileCBean.study_alert != null) {
                 //弹出一个广告框
-                val context = itemView.context
-                val dia = Dialog(context, R.style.edit_AlertDialog_style)
-                dia.setContentView(R.layout.dig_cus)
-
-                val imageView = dia.findViewById(R.id.iv_cover) as ImageView
-                imageView.setOnClickListener {
-                    if (profileCBean.study_alert.link_type != "NONE") {
-                        IntoTargetUtil.target(context, profileCBean.study_alert.link_type, profileCBean.study_alert.link_value)
-                    }
-                    dia.dismiss()
-                }
-                Glide.with(context, profileCBean.study_alert.picture, imageView)
-                dia.show()
-
-                dia.setCanceledOnTouchOutside(true) // Sets whether this dialog is
-                val w = dia.window
-                val lp = w.attributes
-                lp.x = 0
-                lp.y = 0
-                dia.onWindowAttributesChanged(lp)
+                setCover(profileCBean, context, profileCBean.study_alert.picture)
             } else {
                 BKLog.e("获取积分奖学金弹框信息失败!!!")
             }
@@ -196,21 +183,9 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
             ActivityUtil.startActivity(context, Intent(context, ReportActivity::class.java))
         }
 
-//        ui?.llCourse?.setOnClickListener {
-//            BKLog.d("点击学习课程")
-//            ActivityUtil.startActivity(context, Intent(context, HistoryActivity::class.java))
-//        }
-//        ui?.llTime?.setOnClickListener {
-//            BKLog.d("点击学习记录")
-//            ActivityUtil.startActivity(context, Intent(context, HistoryActivity::class.java))
-//        }
-//        ui?.llIntegral?.setOnClickListener {
-//            BKLog.d("点击获取积分")
-//            ActivityUtil.startActivity(context, Intent(context, IntegralTaskActivity::class.java))
-//        }
     }
 
-    fun old(d: Any, LOAD_IMAGE_DELAY: Long) {
+    private fun old(d: Any, LOAD_IMAGE_DELAY: Long) {
         if (viewHolder == null) {
             viewHolder = ViewHolder.create(itemView)
         }
@@ -268,8 +243,95 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         }
     }
 
+    private fun setCover(profileCBean: ProfileCBean?, context: Context?, picture: String?) {
+        val scale = profileCBean?.study_alert?.width?.toFloat()!! / profileCBean.study_alert?.height!!
+        val context = itemView.context
+        val dia = Dialog(context, R.style.edit_AlertDialog_style)
+        dia.setContentView(R.layout.dig_cus)
+        val imageView = dia.findViewById(R.id.iv_cover) as ImageView
+        imageView.setOnClickListener {
+            if (!profileCBean.study_alert.link_type.equals("NONE", true)) {
+                IntoTargetUtil.target(context, profileCBean.study_alert.link_type, profileCBean.study_alert.link_value)
+            }
+            dia.dismiss()
+        }
+        com.bumptech.glide.Glide.with(context)
+                .load(picture)
+                .asBitmap() // 制Glide返回一个Bitmap对象
+                .into(Transformation(scale, context as Activity, imageView, dia))
+        dia.show()
+    }
+
+    private class Transformation(private val scale: Float, private val activity: Activity, private val target: ImageView?, private val dia: Dialog?) : ImageViewTarget<Bitmap>(target) {
+
+        override fun setResource(resource: Bitmap) {
+            try {
+                //获取原图的宽高
+                val width = resource.width
+                val height = resource.height
+                val maxWidth = Math.min(ScreenUtil.getNormalWH(activity)[0] - (2 * (ScreenUtil.getNormalWH(activity)[0] * 0.2f)).toInt(), width)
+                val maxHeight = (maxWidth / scale).toInt()
+
+                dia?.setCanceledOnTouchOutside(true) // Sets whether this dialog is
+                val w = dia?.window
+                val lp = w?.attributes
+                lp?.width = maxWidth
+                lp?.height = maxHeight
+                lp?.x = 0
+                lp?.y = 0
+                dia?.onWindowAttributesChanged(lp)
+                target?.setImageBitmap(resource)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        private fun s(resource: Bitmap) {
+            view.setImageBitmap(resource)
+
+            //获取原图的宽高
+            val width = resource.width
+            val height = resource.height
+
+            //获取imageView的宽
+            val imageViewWidth = target?.width
+
+            //计算缩放比例
+            val sy = (imageViewWidth!! * 0.1).toFloat() / (width * 0.1).toFloat()
+
+            //计算图片等比例放大后的高
+            val imageViewHeight = (height * sy).toInt()
+            val params = target?.layoutParams
+            params?.height = imageViewHeight
+            target?.layoutParams = params
+
+        }
+
+        fun sy(resource: Bitmap): Float {
+            val width = resource.width
+            val height = resource.height
+            val imageViewWidth = target?.width
+            return (imageViewWidth!! * 0.1).toFloat() / (width * 0.1).toFloat()
+        }
+
+        fun getNewBitmap(bitmap: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
+            // 获得图片的宽高.
+            val width = bitmap.width
+            val height = bitmap.height
+            // 计算缩放比例.
+            val scaleWidth = newWidth.toFloat() / width
+            val scaleHeight = newHeight.toFloat() / height
+            // 取得想要缩放的matrix参数.
+            val matrix = Matrix()
+            matrix.postScale(scaleWidth, scaleHeight)
+            // 得到新的图片.
+            return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
+        }
+
+    }
+
     /**
-     * 旧版
+     * 旧版界面
      */
     class ViewHolder private constructor(val btnWxUnbind: Button, val clUserInfo: ConstraintLayout, val tvName: TextView, val ivVipNoOrYes: ImageView, val tvVipDes: TextView, val ivCircleHead: CircleImageView, val imageView4: ImageView, val clOther: ConstraintLayout, val llCourse: LinearLayout, val tvCourseNumber: TextView, val tvCourseDes: TextView, val llTime: LinearLayout, val tvTimeNumber: TextView, val tvTimeDes: TextView, val llIntegral: LinearLayout, val tvIntegralNumber: TextView, val tvIntegralDes: TextView, val clOpenInvite: ConstraintLayout, val clOpenRoll: ConstraintLayout, val llOpen: LinearLayout, val clInvite: ConstraintLayout, val llInvite: LinearLayout) {
         companion object {
@@ -303,7 +365,7 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
     }
 
     /**
-     * 界面
+     * 新版界面
      */
     private class UI private constructor(val btnWxUnbind: Button, val clUserInfo: ConstraintLayout, val clPoster: ConstraintLayout, val tvName: TextView, val ivVipNoOrYes: ImageView, val tvVipDes: TextView, val ivCircleHead: CircleImageView, val imageView4: ImageView, val llOther: LinearLayout, val divider1: View, val textView: TextView, val ivArrowRight: ImageView, val ivScholarship: AppCompatImageButton, val clStudyToday: ConstraintLayout, val tvStudyTodayH: TextView, val tvStudyTodayM: TextView, val clStudyTotal: ConstraintLayout, val tvStudyTotalH: TextView, val tvStudyTotalM: TextView, val glCenter: Guideline, val divider2: View, val clOpenInvite: ConstraintLayout, val clOpenRoll: ConstraintLayout, val llOpen: LinearLayout, val clInvite: ConstraintLayout, val llInvite: LinearLayout, val divider: View) {
         companion object {

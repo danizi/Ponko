@@ -39,12 +39,6 @@ class ReportCommonVH(view: View) : BaseViewHolder(view) {
         val ctx = itemView.context
         if (d is ReportCommonBean) {
             val reportCommonBean = d as ReportCommonBean
-            // item分为“三”个部分 title 条目 折线图 底部
-            // reportCommonBean.title
-            // reportCommonBean.list
-            // reportCommonBean.report
-            // reportCommonBean.footer
-
             //设置标题
             ui?.tvTitle?.text = reportCommonBean.title
 
