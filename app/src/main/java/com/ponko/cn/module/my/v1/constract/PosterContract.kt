@@ -69,6 +69,8 @@ class PosterContract {
          */
         fun requestReportShareApiFailure(msg: String?)
 
+        fun setTitle(title: String?)
+
     }
 
     class M {
@@ -104,10 +106,12 @@ class PosterContract {
             m.requestReportShare(object : HttpCallBack<ReportShareCBean>() {
                 override fun onSuccess(call: Call<ReportShareCBean>?, response: Response<ReportShareCBean>?) {
                     val body = response?.body()
+                    //设置标题栏
+                    v?.setTitle(body?.title)
                     //海报背景
                     v?.setPosterBk(body?.bg)
                     //鸡汤语
-                    v?.setPosterChickenWord(body?.title)
+                    v?.setPosterChickenWord(body?.subtitle)
                     //设置头像和昵称
                     v?.setPersonInfo(body?.data)
                     //设置二维码信息

@@ -18,6 +18,15 @@ public class StudyReportCBean {
     private String title;
     private String subtitle;
     private ArrayList<ListBeanXX> list;
+    private String btn;
+
+    public String getBtn() {
+        return btn;
+    }
+
+    public void setBtn(String btn) {
+        this.btn = btn;
+    }
 
     public String getRule() {
         return rule;

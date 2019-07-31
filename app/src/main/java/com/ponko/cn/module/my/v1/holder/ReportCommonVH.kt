@@ -130,7 +130,7 @@ class ReportCommonVH(view: View) : BaseViewHolder(view) {
             val dataObjects = arrayOf(0, 0, 0, 0, 0, 0, 0, 0)
 
             for ((count, point) in list.withIndex()) {
-                if (count < list.size - 1) {
+                if (count < list.size) {
                     dataObjects[count] = point.y
                 }
             }
@@ -176,7 +176,7 @@ class ReportCommonVH(view: View) : BaseViewHolder(view) {
             yAxis?.setDrawZeroLine(false) //
             yAxis?.gridColor = Color.parseColor("#DDDDDD")
             //yAxis?.spaceBottom = 12f
-            //yAxis?.spaceTop = 12f
+            yAxis?.spaceTop = 15f
 
             //设置动画
             chart?.animateY(800)

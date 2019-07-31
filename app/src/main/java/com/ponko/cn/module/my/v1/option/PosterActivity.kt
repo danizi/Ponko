@@ -8,6 +8,7 @@ import android.support.v4.widget.NestedScrollView
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.CardView
 import android.support.v7.widget.Toolbar
+import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -25,6 +26,8 @@ import com.xm.lib.component.CircleImageView
  * 学习战报页面
  */
 class PosterActivity : PonkoBaseAct<PosterContract.P>(), PosterContract.V {
+
+
     /**
      * 界面控件
      */
@@ -48,6 +51,12 @@ class PosterActivity : PonkoBaseAct<PosterContract.P>(), PosterContract.V {
     override fun initDisplay() {
         super.initDisplay()
         addBar2(this, ui?.toolbar, "我的学习战报")
+    }
+
+    override fun setTitle(title: String?) {
+        if (!TextUtils.isEmpty(title)){
+            addBar2(this, ui?.toolbar, title!!)
+        }
     }
 
     override fun iniData() {

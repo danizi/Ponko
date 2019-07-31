@@ -118,6 +118,9 @@ class ReportActivity : PonkoBaseAct<ReportContract.P>(), ReportContract.V {
 
         //显示当前日期
         tvDate?.text = body?.subtitle
+
+        //底部按钮
+        btnReport?.text = body?.btn
     }
 
     override fun refreshSuccess(rvAdapter: BaseRvAdapter?) {

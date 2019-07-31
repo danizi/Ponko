@@ -21,6 +21,15 @@ public class ReportShareCBean {
     private String logo;
     private String title;
     private String btn;
+    private String subtitle;
+
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+    }
 
     public QrBean getQr() {
         return qr;
