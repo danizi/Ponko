@@ -127,7 +127,7 @@ class ReportCommonVH(view: View) : BaseViewHolder(view) {
 
         private fun chartTest(ctx: Context, list: MutableList<StudyReportCBean.ListBeanXX.ReportBean.PointBean>) {
             val chart = charUI?.chart
-            val dataObjects = arrayOf(0, 0, 0, 0, 0, 0, 0, 0)
+            val dataObjects = arrayOf(0, 0, 0, 0, 0, 0, 0)
 
             for ((count, point) in list.withIndex()) {
                 if (count < list.size) {
@@ -162,7 +162,7 @@ class ReportCommonVH(view: View) : BaseViewHolder(view) {
             xAxis?.gridColor = Color.parseColor("#DDDDDD")
             xAxis?.textColor = Color.parseColor("#333333")
             xAxis?.textSize = 12f
-            xAxis?.labelCount = 8
+            xAxis?.labelCount = 7
             val labels = ArrayList<String>()
             for (point in list) {
                 labels.add(point.x)

@@ -167,10 +167,10 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
         }
 
         //学习时长
-        ui?.tvStudyTodayH?.text = (profileCBean.study_today.toInt() / 60).toString()
-        ui?.tvStudyTodayM?.text = (profileCBean.study_today.toInt() % 60).toString()
-        ui?.tvStudyTotalH?.text = (profileCBean.study_all.toInt() / 60).toString()
-        ui?.tvStudyTotalM?.text = (profileCBean.study_all.toInt() % 60).toString()
+        ui?.tvStudyTodayH?.text = (profileCBean.study_today.toInt() / 3600).toString()
+        ui?.tvStudyTodayM?.text = (profileCBean.study_today.toInt() / 60 % 60).toString()
+        ui?.tvStudyTotalH?.text = (profileCBean.study_all.toInt() / 3600).toString()
+        ui?.tvStudyTotalM?.text = (profileCBean.study_all.toInt() / 60 % 60).toString()
         ui?.ivScholarship?.setOnClickListener {
             if (profileCBean.study_alert != null) {
                 //弹出一个广告框
