@@ -107,7 +107,7 @@ class PosterActivity : PonkoBaseAct<PosterContract.P>(), PosterContract.V {
 
             ui?.tvContinuousStudy?.text = data.count!![1].key
             ui?.tvContinuousStudyNum?.text = getValue(data.count!![1].value)
-            ui?.tvTodayStudyUnit?.text = data.count!![1].unit
+            ui?.tvContinuousStudyUnit?.text = data.count!![1].unit
 
             ui?.tvTotalStudy?.text = data.count!![2].key
             ui?.tvTotalStudyNum?.text = getValue(data.count!![2].value)

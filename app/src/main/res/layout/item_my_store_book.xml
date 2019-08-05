@@ -5,7 +5,6 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:scaleType="centerCrop"
         android:id="@+id/iv_book"
         android:layout_width="match_parent"
         android:layout_height="165dp"
@@ -14,32 +13,33 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:scaleType="centerCrop"
         android:src="@mipmap/load_img_default"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:visibility="gone"
-        android:alpha="0.7"
-        android:background="@color/black"
-        android:scaleType="centerCrop"
         android:id="@+id/iv_shade"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:alpha="0.7"
+        android:background="@color/black"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/iv_book"
         app:layout_constraintEnd_toEndOf="@+id/iv_book"
         app:layout_constraintStart_toStartOf="@+id/iv_book"
         app:layout_constraintTop_toTopOf="@+id/iv_book" />
 
     <TextView
-        android:maxLines="1"
-        android:ellipsize="end"
         android:id="@+id/tv_course_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="外贸后语知多少第四期"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/app_name"
         android:textColor="#34314C"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/iv_book"
@@ -62,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:text="已兑换566件"
+        android:text="已兑换0件"
         android:textColor="#7E849D"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/iv_book"

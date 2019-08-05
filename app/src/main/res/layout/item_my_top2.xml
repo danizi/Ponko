@@ -248,7 +248,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="今日学习"
+                        android:text="累计学习"
                         android:textColor="#7C7C7C"
                         android:textSize="10sp" />
 
