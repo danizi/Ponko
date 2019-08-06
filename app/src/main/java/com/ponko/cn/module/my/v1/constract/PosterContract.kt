@@ -10,8 +10,10 @@ import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.NumUtil
 import com.xm.lib.common.util.TimeUtil
+import com.xm.lib.common.util.ViewUtil
 import retrofit2.Call
 import retrofit2.Response
+
 
 /**
  * 海报分享契约类
@@ -138,7 +140,7 @@ class PosterContract {
         fun clickShareBtn() {
             val bmp = v?.getShareBmp()
             if (bmp != null) {
-                DialogUtil.showShareImg(ctx, bmp)
+                DialogUtil.showShareImg(ctx, ViewUtil.setBmp(bmp))
             } else {
                 ToastUtil.show("分享海报失败,bitmap is null!!!")
             }

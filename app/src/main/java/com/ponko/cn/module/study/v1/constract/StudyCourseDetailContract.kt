@@ -737,7 +737,7 @@ class StudyCourseDetailContract {
                         PonkoApp.studyApi?.updateVideoInfo(params)?.enqueue(object : HttpCallBack<NetBean>() {
                             override fun onSuccess(call: Call<NetBean>?, response: Response<NetBean>?) {
                                 BKLog.d("上传视频进度成功")
-                                BKLog.e("上传内容 completed:${isComplete.toString()} duration:${(watchDuration)}   position:${pos / 1000}   courseId$courseId   sectionId$sectionId")
+                                BKLog.e("上传内容 completed : ${isComplete.toString()} duration : ${(currentDuration)}   position : ${pos / 1000}   courseId : $courseId   sectionId : $sectionId")
                                 watchDuration = Math.max(0, watchDuration - currentDuration)
                             }
 

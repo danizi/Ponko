@@ -151,7 +151,7 @@ class PosterActivity : PonkoBaseAct<PosterContract.P>(), PosterContract.V {
     }
 
     override fun getShareBmp(): Bitmap {
-        return ViewUtil.getViewBitmap2(ui?.clPoster!!)
+        return ViewUtil.getViewBitmap2(ui?.clPoster!!,375.toFloat()/667)
     }
 
     override fun requestReportShareApiSuccess(body: ReportShareCBean?) {
