@@ -148,7 +148,7 @@ class ReportCommonVH(view: View) : BaseViewHolder(view) {
             dataSet.valueTextColor = Color.parseColor("#676767")//设置文字大小
             dataSet.valueTextSize = 12f  //设置文字大小
             dataSet.setDrawValues(true)
-            dataSet.lineWidth = 2f
+            dataSet.lineWidth = 1f
 
             //十字线设置
             val lineData = LineData(dataSet)
