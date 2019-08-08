@@ -14,6 +14,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.ponko.cn.R
 import com.ponko.cn.bean.ReportCommonBean
 import com.ponko.cn.bean.StudyReportCBean
@@ -146,11 +147,18 @@ class ReportCommonVH(view: View) : BaseViewHolder(view) {
             dataSet.setCircleColor(Color.parseColor("#CFA972"))//设置圆圈颜色
             dataSet.valueTextColor = Color.parseColor("#676767")//设置文字大小
             dataSet.valueTextSize = 12f  //设置文字大小
+            dataSet.setDrawValues(true)
+            dataSet.lineWidth = 2f
 
             //十字线设置
             val lineData = LineData(dataSet)
             lineData.isHighlightEnabled = true  //是否高亮
             chart?.data = lineData
+            lineData.setValueFormatter(object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return value.toInt().toString()
+                }
+            })
 
             //不绘制左边右边刻度线
             chart?.axisRight?.isEnabled = false

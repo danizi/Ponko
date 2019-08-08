@@ -2,6 +2,7 @@ package com.ponko.cn.module.my.v1.constract
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.support.v7.app.AlertDialog
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.ReportShareCBean
 import com.ponko.cn.http.HttpCallBack
@@ -11,6 +12,8 @@ import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.NumUtil
 import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.common.util.ViewUtil
+import com.xm.lib.component.OnEnterListener
+import com.xm.lib.downloader.utils.CommonUtil.saveBmp2Gallery
 import retrofit2.Call
 import retrofit2.Response
 
@@ -151,6 +154,18 @@ class PosterContract {
          */
         fun refresh() {
             requestReportShareApi()
+        }
+
+        /**
+         * 保存海报到本地相册
+         */
+        fun savePoster() {
+            DialogUtil.show(ctx!!, "提示", " 海报是否保存到本地？", true, object : OnEnterListener {
+                override fun onEnter(dlg: AlertDialog) {
+                    saveBmp2Gallery(ctx, v?.getShareBmp()!!, "poster")
+                    dlg.dismiss()
+                }
+            }, null)
         }
     }
 }

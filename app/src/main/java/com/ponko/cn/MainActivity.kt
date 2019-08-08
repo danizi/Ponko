@@ -335,5 +335,8 @@ class MainActivity : BaseActivity() {
         bar.select(bottomPos)
     }
 
+    override fun finish() {
+        super.finish()
+    }
 }
 

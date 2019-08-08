@@ -135,7 +135,7 @@
                 android:layout_marginLeft="14dp"
                 android:layout_marginTop="20dp"
                 android:text="学习报告"
-                android:textColor="#444444"
+                android:textColor="#222222"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -198,7 +198,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="6dp"
                             android:text="0"
-                            android:textColor="#666666"
+                            android:textColor="#555555"
                             android:textSize="27sp" />
 
                         <TextView
@@ -215,7 +215,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="6dp"
                             android:text="0"
-                            android:textColor="#666666"
+                            android:textColor="#555555"
                             android:textSize="27sp" />
 
                         <TextView
@@ -263,7 +263,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="6dp"
                             android:text="0"
-                            android:textColor="#666666"
+                            android:textColor="#555555"
                             android:textSize="27sp" />
 
                         <TextView
@@ -280,7 +280,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="6dp"
                             android:text="0"
-                            android:textColor="#666666"
+                            android:textColor="#555555"
                             android:textSize="27sp" />
 
                         <TextView
@@ -374,12 +374,12 @@
             </LinearLayout>
 
             <TextView
-                android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="11dp"
                 android:text="多门学科，任你选择"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/ll_open"
                 app:layout_constraintStart_toStartOf="@+id/ll_open"
@@ -433,12 +433,12 @@
             </LinearLayout>
 
             <TextView
-                android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="11dp"
                 android:text="邀请即可任性送积分"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/ll_invite"
                 app:layout_constraintStart_toStartOf="@+id/ll_invite"
@@ -455,6 +455,7 @@
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:background="@color/divider"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

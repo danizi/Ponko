@@ -86,7 +86,6 @@ object Glide {
                 })
     }
 
-
     fun with(context: Context?, path: String?, imageView: ImageView?, isDefault: Boolean? = true) {
         val requestManager = Glide.with(context?.applicationContext).load(path)
         requestManager

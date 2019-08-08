@@ -228,6 +228,7 @@
                                             app:layout_constraintTop_toBottomOf="@+id/tv_today_study">
 
                                             <TextView
+                                                android:textColor="#555555"
                                                 android:id="@+id/tv_today_study_num"
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
@@ -275,6 +276,7 @@
                                                 android:layout_height="wrap_content"
                                                 android:layout_marginRight="7dp"
                                                 android:text="0"
+                                                android:textColor="#555555"
                                                 android:textSize="27sp" />
 
                                             <TextView
@@ -312,6 +314,7 @@
                                             app:layout_constraintTop_toBottomOf="@+id/tv_total_study">
 
                                             <TextView
+                                                android:textColor="#555555"
                                                 android:id="@+id/tv_total_study_num"
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
@@ -335,7 +338,7 @@
                                 <View
                                     android:id="@+id/divider"
                                     android:layout_width="0dp"
-                                    android:layout_height="1dp"
+                                    android:layout_height="0.5dp"
                                     android:layout_marginTop="20dp"
                                     android:background="#DDDDDD"
                                     app:layout_constraintEnd_toEndOf="@+id/linearLayout7"

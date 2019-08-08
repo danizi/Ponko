@@ -207,6 +207,7 @@ class StoreAct : PonkoBaseAct<Any>() {
                         viewHolder?.tb?.addTab(viewHolder?.tb?.newTab()?.setText(list.name)!!)
                         frgs.add(ExchangeFrg.create(list.id, list.name/*, viewHolder?.vp, viewHolder?.sv*/))
                         titls.add(list.name)
+                        ids.add(list.id)
                         count++
                     }
 
@@ -215,7 +216,7 @@ class StoreAct : PonkoBaseAct<Any>() {
                     } else {
                         viewHolder?.tb?.tabMode = TabLayout.MODE_SCROLLABLE
                     }
-                    fragmentPagerAdapter = Adapter(supportFragmentManager, frgs, titls)
+                    fragmentPagerAdapter = Adapter(supportFragmentManager, frgs, ids,titls)
                     viewHolder?.vp?.adapter = fragmentPagerAdapter
                     viewHolder?.vp?.offscreenPageLimit = count
                     viewHolder?.tb?.setupWithViewPager(viewHolder?.vp)
@@ -244,6 +245,7 @@ class StoreAct : PonkoBaseAct<Any>() {
     }
 
     var frgs = ArrayList<Fragment>()
+    var ids=ArrayList<Int>()
     var indexPage = 0
     override fun iniEvent() {
         viewHolder?.srl?.setOnRefreshListener {
@@ -265,7 +267,7 @@ class StoreAct : PonkoBaseAct<Any>() {
             override fun onPageScrollStateChanged(p0: Int) {
                 if (p0 == 2) {
                     //在刷新一次页面
-                    //viewHolder?.vp?.requestLayout()
+                    viewHolder?.vp?.requestLayout()
                     //viewHolder?.sv?.requestLayout()
                 }
             }

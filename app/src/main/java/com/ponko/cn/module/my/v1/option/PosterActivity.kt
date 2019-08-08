@@ -75,6 +75,11 @@ class PosterActivity : PonkoBaseAct<PosterContract.P>(), PosterContract.V {
         ui?.btnSharePoster?.setOnClickListener {
             p?.clickShareBtn()
         }
+
+        ui?.clPoster?.setOnLongClickListener {
+            p?.savePoster()
+            false
+        }
     }
 
     override fun onDestroy() {

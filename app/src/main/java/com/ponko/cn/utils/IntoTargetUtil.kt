@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
+import com.ponko.cn.MainActivity
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.module.web.WebAct
 import com.ponko.cn.constant.Constants
@@ -14,6 +15,9 @@ import com.ponko.cn.module.my.option.RemindAct
 import com.ponko.cn.module.my.option.acount.AccountAct
 import com.ponko.cn.module.my.option.acount.PersonalActivity
 import com.ponko.cn.module.my.option.store.*
+import com.ponko.cn.module.my.v1.option.PosterActivity
+import com.ponko.cn.module.my.v1.option.ReportActivity
+import com.ponko.cn.module.my.v1.option.store.IntegralExchangedClassAct
 import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v1.CourseTypeLinearActivity
 import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
@@ -92,6 +96,9 @@ object IntoTargetUtil {
             linkType.equals("free", true) -> {
                 free(linkValue)
             }
+            linkType.equals("home", true) -> {
+                home(linkValue)
+            }
             linkType.equals("wechat_bind", true) -> {
                 wechatBind(linkValue)
             }
@@ -114,21 +121,21 @@ object IntoTargetUtil {
      * 学习报告 - 学习历史界面
      */
     private fun reportHistory() {
-
+        ActivityUtil.startActivity(context, Intent(context, IntegralExchangedClassAct::class.java))
     }
 
     /**
      * 学习报告 - 分享学习报告
      */
     private fun reportShare() {
-
+        ActivityUtil.startActivity(context, Intent(context, PosterActivity::class.java))
     }
 
     /**
      * 学习报告 - 主界面
      */
     private fun reportMain() {
-
+        ActivityUtil.startActivity(context, Intent(context, ReportActivity::class.java))
     }
 
 
@@ -158,6 +165,10 @@ object IntoTargetUtil {
     private fun wechatBind(linkValue: String?) {
         BKLog.d(TAG, "微信绑定操作 linkValue:$linkValue")
         //发送一个绑定广播
+    }
+
+    private fun home(linkValue: String?) {
+        ActivityUtil.startActivity(context, Intent(context, MainActivity::class.java))
     }
 
     private fun case(linkValue: String?) {

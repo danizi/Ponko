@@ -18,6 +18,9 @@ import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.XmStateView
+import android.widget.AdapterView
+
+
 
 /**
  * ViewPager Fragment页面
@@ -44,7 +47,7 @@ open class ExchangeFrg : MvpFragment<ExchangeContract.Present>(), ExchangeContra
 
     private var page: Int = 1
     private var rv: RecyclerView? = null
-    private var viewState: XmStateView? = null
+    //    private var viewState: XmStateView? = null
     private var type: String = "书籍"
     private var cid: String = ""
     private var adapter = object : BaseRvAdapter() {
@@ -66,12 +69,12 @@ open class ExchangeFrg : MvpFragment<ExchangeContract.Present>(), ExchangeContra
     }
 
     override fun initDisplay() {
-        viewState?.showLoading("加载中...")
+//        viewState?.showLoading("加载中...")
     }
 
     override fun findViews(view: View) {
         rv = view.findViewById(R.id.rv)
-        viewState = view.findViewById(R.id.view_state)
+//        viewState = view.findViewById(R.id.view_state)
     }
 
     override fun iniEvent() {
@@ -126,7 +129,7 @@ open class ExchangeFrg : MvpFragment<ExchangeContract.Present>(), ExchangeContra
         //刷新成功
         listener?.onSuccess()
         //隐藏状态页面
-        viewState?.hide()
+//        viewState?.hide()
     }
 
     override fun reqeustExchangeMoreApiSuccess(body: ArrayList<StoreProfileCMoreBean>?) {
@@ -142,6 +145,12 @@ open class ExchangeFrg : MvpFragment<ExchangeContract.Present>(), ExchangeContra
     override fun presenter(): ExchangeContract.Present {
         return ExchangeContract.Present(this)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        clear()
+    }
+
 
     interface OnRefreshListener {
         fun onSuccess()
