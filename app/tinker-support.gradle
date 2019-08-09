@@ -37,10 +37,10 @@ tinkerSupport {
     baseApkResourceMapping = "${bakPath}/${baseApkDir}/app-release-R.txt"
 
     // 构建基准包和补丁包都要指定不同的tinkerId，并且必须保证唯一性
-//    tinkerId = "base-3.5.3.0"
+    tinkerId = "base-3.6.0.0"
 //    tinkerId = "patch-3.5.3.1"
 //    tinkerId = "patch-3.5.3.2"
-    tinkerId = "patch-3.6.0"
+//    tinkerId = "patch-3.6.0"
 
     // 构建多渠道补丁时使用
     // buildAllFlavorsDir = "${bakPath}/${baseApkDir}"

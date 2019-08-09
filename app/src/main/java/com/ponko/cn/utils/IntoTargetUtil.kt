@@ -168,7 +168,12 @@ object IntoTargetUtil {
     }
 
     private fun home(linkValue: String?) {
-        ActivityUtil.startActivity(context, Intent(context, MainActivity::class.java))
+        val intent = Intent(context, MainActivity::class.java)
+        intent.putExtra("index", 0)
+        ActivityUtil.startActivity(context, intent)
+        val intentMune = Intent(Constants.ACTION_BOTTOM_MENU)
+        intent.putExtra("index", 2)
+        context?.sendBroadcast(intentMune)
     }
 
     private fun case(linkValue: String?) {

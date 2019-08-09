@@ -174,6 +174,13 @@ class MainActivity : BaseActivity() {
 
     override fun initDisplay() {
         BKLog.d("应用销毁保存数据接受的数据：")
+        try {
+            if (bottomPos == 0) {
+                bottomPos = intent.getIntExtra("index", 0)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         //根据标志位选择使用哪个学习页面Fragment
         bar.select(bottomPos)
                 .setContainer(R.id.container)

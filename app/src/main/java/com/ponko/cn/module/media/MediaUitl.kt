@@ -218,9 +218,9 @@ object MediaUitl {
                 })
             } catch (e: Exception) {
                 listener?.onFailure()
-                Looper.prepare()
+                //Looper.prepare()
                 ToastUtil.show("获取视频信息失败，请检查您的网络。")
-                Looper.loop()
+                //Looper.loop()
                 listener?.onFailure()
             }
         }).start()

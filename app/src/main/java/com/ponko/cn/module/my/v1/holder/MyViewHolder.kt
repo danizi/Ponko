@@ -48,6 +48,7 @@ import java.lang.Exception
 
 class MyViewHolder(view: View) : BaseViewHolder(view) {
 
+    @Deprecated("")
     private var viewHolder: MyViewHolder.ViewHolder? = null
 
     private var ui: UI? = null
@@ -67,9 +68,12 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
 
         if (profileCBean.account.isIs_bind_wechat) {
             viewHolder?.btnWxUnbind?.visibility = View.GONE
+            ui?.btnWxUnbind?.visibility = View.GONE
 //            viewHolder?.tvName?.text = profileCBean.account.nickname
             userType = "wxBind"
         } else {
+            viewHolder?.btnWxUnbind?.visibility = View.VISIBLE
+            ui?.btnWxUnbind?.visibility = View.VISIBLE
 //            viewHolder?.tvName?.text = profileCBean.account.realName
             userType = "login"
         }
@@ -84,9 +88,11 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
                 if (profileCBean.account.expiredTime > 0) {
                     vipDes = "已加入帮课大学"
                     viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
+                    ui?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
                 } else {
                     vipDes = "未入学"
                     viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
+                    ui?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
                 }
                 if (!TextUtils.isEmpty(profileCBean.account.nickname)) {
                     name = profileCBean.account.nickname
@@ -105,9 +111,11 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
                 if (profileCBean.account.expiredTime > 0) {
                     vipDes = "已加入帮课大学"
                     viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
+                    ui?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_vip)
                 } else {
                     vipDes = "未入学"
                     viewHolder?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
+                    ui?.ivVipNoOrYes?.setImageResource(R.mipmap.my_info_no_vip)
                 }
                 name = profileCBean.account.nickname
                 if (TextUtils.isEmpty(name)) {
@@ -333,7 +341,7 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
     /**
      * 旧版界面
      */
-    class ViewHolder private constructor(val btnWxUnbind: Button, val clUserInfo: ConstraintLayout, val tvName: TextView, val ivVipNoOrYes: ImageView, val tvVipDes: TextView, val ivCircleHead: CircleImageView, val imageView4: ImageView, val clOther: ConstraintLayout, val llCourse: LinearLayout, val tvCourseNumber: TextView, val tvCourseDes: TextView, val llTime: LinearLayout, val tvTimeNumber: TextView, val tvTimeDes: TextView, val llIntegral: LinearLayout, val tvIntegralNumber: TextView, val tvIntegralDes: TextView, val clOpenInvite: ConstraintLayout, val clOpenRoll: ConstraintLayout, val llOpen: LinearLayout, val clInvite: ConstraintLayout, val llInvite: LinearLayout) {
+    class ViewHolder private constructor(val btnWxUnbind: TextView, val clUserInfo: ConstraintLayout, val tvName: TextView, val ivVipNoOrYes: ImageView, val tvVipDes: TextView, val ivCircleHead: CircleImageView, val imageView4: ImageView, val clOther: ConstraintLayout, val llCourse: LinearLayout, val tvCourseNumber: TextView, val tvCourseDes: TextView, val llTime: LinearLayout, val tvTimeNumber: TextView, val tvTimeDes: TextView, val llIntegral: LinearLayout, val tvIntegralNumber: TextView, val tvIntegralDes: TextView, val clOpenInvite: ConstraintLayout, val clOpenRoll: ConstraintLayout, val llOpen: LinearLayout, val clInvite: ConstraintLayout, val llInvite: LinearLayout) {
         companion object {
 
             fun create(rootView: View): ViewHolder {
@@ -367,11 +375,11 @@ class MyViewHolder(view: View) : BaseViewHolder(view) {
     /**
      * 新版界面
      */
-    private class UI private constructor(val btnWxUnbind: Button, val clUserInfo: ConstraintLayout, val clPoster: ConstraintLayout, val tvName: TextView, val ivVipNoOrYes: ImageView, val tvVipDes: TextView, val ivCircleHead: CircleImageView, val imageView4: ImageView, val llOther: LinearLayout, val divider1: View, val textView: TextView, val ivArrowRight: ImageView, val ivScholarship: AppCompatImageButton, val clStudyToday: ConstraintLayout, val tvStudyTodayH: TextView, val tvStudyTodayM: TextView, val clStudyTotal: ConstraintLayout, val tvStudyTotalH: TextView, val tvStudyTotalM: TextView, val glCenter: Guideline, val divider2: View, val clOpenInvite: ConstraintLayout, val clOpenRoll: ConstraintLayout, val llOpen: LinearLayout, val clInvite: ConstraintLayout, val llInvite: LinearLayout, val divider: View) {
+    private class UI private constructor(val btnWxUnbind: TextView, val clUserInfo: ConstraintLayout, val clPoster: ConstraintLayout, val tvName: TextView, val ivVipNoOrYes: ImageView, val tvVipDes: TextView, val ivCircleHead: CircleImageView, val imageView4: ImageView, val llOther: LinearLayout, val divider1: View, val textView: TextView, val ivArrowRight: ImageView, val ivScholarship: AppCompatImageButton, val clStudyToday: ConstraintLayout, val tvStudyTodayH: TextView, val tvStudyTodayM: TextView, val clStudyTotal: ConstraintLayout, val tvStudyTotalH: TextView, val tvStudyTotalM: TextView, val glCenter: Guideline, val divider2: View, val clOpenInvite: ConstraintLayout, val clOpenRoll: ConstraintLayout, val llOpen: LinearLayout, val clInvite: ConstraintLayout, val llInvite: LinearLayout, val divider: View) {
         companion object {
 
             fun create(rootView: View): UI {
-                val btnWxUnbind = rootView.findViewById<View>(R.id.btn_wx_unbind) as Button
+                val btnWxUnbind = rootView.findViewById<View>(R.id.btn_wx_unbind) as TextView
                 val clUserInfo = rootView.findViewById<View>(R.id.cl_user_info) as ConstraintLayout
                 val clPoster = rootView.findViewById<View>(R.id.cl_poster) as ConstraintLayout
                 val tvName = rootView.findViewById<View>(R.id.tv_name) as TextView
