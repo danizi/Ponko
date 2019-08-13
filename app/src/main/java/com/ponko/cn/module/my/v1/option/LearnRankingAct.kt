@@ -18,7 +18,7 @@ class LearnRankingAct : RefreshLoadAct<Any, LearnRankingCBean>() {
 
     override fun initDisplay() {
         disableLoad=true
-        addBar1("学习排行版")
+        addBar1("本周学习排行版")
         super.initDisplay()
     }
 

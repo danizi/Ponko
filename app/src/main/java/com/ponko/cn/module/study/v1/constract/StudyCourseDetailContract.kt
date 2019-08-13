@@ -220,7 +220,11 @@ class StudyCourseDetailContract {
                 childViewHolder.tvPos.text = (childPosition + 1).toString()
                 childViewHolder.tvCourseName.text = name
                 childViewHolder.tvTime.text = TimeUtil.hhmmss(duration.toLong() * 1000) + " | "
-                childViewHolder.tvProcess.text = (progress * 100 / duration).toInt().toString() + "%"
+                if ((progress * 100 / duration).toInt() > 100) {
+                    childViewHolder.tvProcess.text = "100%"
+                } else {
+                    childViewHolder.tvProcess.text = (progress * 100 / duration).toInt().toString() + "%"
+                }
 
 
                 //非选中状态

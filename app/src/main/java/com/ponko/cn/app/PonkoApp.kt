@@ -88,6 +88,10 @@ class PonkoApp : MultiDexApplication() {
         @SuppressLint("StaticFieldLeak")
         var m3u8DownManager: M3u8DownManager? = null
 
+        /**
+         * 是否是3G网络提示标志
+         */
+        var is3GNetTip = false
 
         fun getLocalVersion(ctx: Context): Int {
             var localVersion = 0

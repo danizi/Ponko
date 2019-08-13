@@ -13,6 +13,7 @@ import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.ToastUtil
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
+import com.xm.lib.common.base.RefreshLoadHelp
 import com.xm.lib.common.base.mvp.MvpFragment
 import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
@@ -50,6 +51,7 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
             viewHolder?.rv?.addItemDecoration(MyDividerItemDecoration.divider(context, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder))  //https://www.jianshu.com/p/86aaaa49ed3e
         }
         viewHolder?.viewState?.showLoading("正在加载中...")
+
     }
 
     override fun iniEvent() {
@@ -136,18 +138,22 @@ abstract class RefreshLoadFrg<P, D> : MvpFragment<P>() {
     //////////////////////////
     // 标题栏,PS:可以放到工具类中,以便以后复用
     //////////////////////////
+    @Deprecated("")
     protected fun addSearchBar(searchListener: View.OnClickListener, historyListener: View.OnClickListener, helpListener: View.OnClickListener) {
         BarUtil.addSearchBar(context, viewHolder?.toolbar, searchListener, historyListener, helpListener)
     }
 
+    @Deprecated("")
     protected fun addBar1(title: String) {
         BarUtil.addBar1(context, viewHolder?.toolbar, title)
     }
 
+    @Deprecated("")
     protected fun addBar2(title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
         BarUtil.addBar2(context, viewHolder?.toolbar, title, barRight, barRightlistener)
     }
 
+    @Deprecated("")
     protected fun addBar3(title: String, barRight: String? = "", barRightlistener: View.OnClickListener) {
         BarUtil.addBar3(context, viewHolder?.toolbar, title, barRight, barRightlistener)
     }

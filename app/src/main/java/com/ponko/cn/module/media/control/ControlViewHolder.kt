@@ -34,6 +34,10 @@ abstract class ControlViewHolder : IDisplay, IControlViewHolder {
      */
     var isHorizontalSlide = false
     /**
+     * 是否可以水平滑动
+     */
+    var isLock = false
+    /**
      * 是否处理点击状态
      */
     var isClick = false
@@ -134,7 +138,11 @@ abstract class ControlViewHolder : IDisplay, IControlViewHolder {
     override fun startDelayTimerHideControlView(delay: Int) {
         controlViewHideTimer?.start(object : TimerHelper.OnDelayTimerListener {
             override fun onDelayTimerFinish() {
-                hideControlView()
+                if (isLock) {
+
+                } else {
+                    hideControlView()
+                }
             }
         }, delay.toLong())
     }
@@ -460,7 +468,6 @@ interface IDisplay {
     fun hideLoading()
     fun hideTop()
     fun hideBottom()
-
 
 }
 

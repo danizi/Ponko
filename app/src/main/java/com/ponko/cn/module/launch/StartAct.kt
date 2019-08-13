@@ -63,9 +63,9 @@ class StartAct : BaseActivity() {
         ivAd?.isClickable = false
         clAd?.isClickable = false
         if (BuildConfig.IS_TINKER_DEVELOPMENT) {
-            tvVersion?.text = "开发者基准包版本号:${PonkoApp.getLocalVersion2(this)}.0"
+            tvVersion?.text = "开发者基准包版本号:${PonkoApp.getLocalVersion2(this)}.1"
         } else {
-            tvVersion?.text = "版本号:${PonkoApp.getLocalVersion2(this)}.0"
+            tvVersion?.text = "版本号:${PonkoApp.getLocalVersion2(this)}.1"
         }
     }
 

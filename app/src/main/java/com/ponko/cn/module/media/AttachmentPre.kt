@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.bumptech.glide.Glide
+import com.ponko.cn.app.PonkoApp.Companion.is3GNetTip
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.http.NetworkUtil
@@ -66,10 +67,13 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
     override fun initEvent() {
         ui?.ivStart?.setOnClickListener {
             if (isPay == true) {
-                if (NetworkUtil.is3GNet(context)) {
+                if (!is3GNetTip && NetworkUtil.is3GNet(context)) {
+
                     DialogUtil.show(context, "提示", "当前使用是手机流量,是否继续播放？", true, object : OnEnterListener {
                         override fun onEnter(dlg: AlertDialog) {
+                            is3GNetTip = true
                             clickIvStart()
+                            dlg.dismiss()
                         }
                     }, object : OnCancelListener {
                         override fun onCancel(dlg: AlertDialog) {

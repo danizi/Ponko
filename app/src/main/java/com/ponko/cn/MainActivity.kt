@@ -14,6 +14,7 @@ import android.view.KeyEvent
 import android.view.View
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.adApi
+import com.ponko.cn.app.PonkoApp.Companion.is3GNetTip
 import com.ponko.cn.bean.AdCBean
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.constant.Constants.UI_VERSION_1
@@ -47,6 +48,7 @@ import java.lang.ref.WeakReference
  * 首页窗口
  */
 class MainActivity : BaseActivity() {
+
 
     companion object {
         private const val TAG = "MainActivity"
@@ -344,6 +346,7 @@ class MainActivity : BaseActivity() {
 
     override fun finish() {
         super.finish()
+        is3GNetTip = false
     }
 }
 

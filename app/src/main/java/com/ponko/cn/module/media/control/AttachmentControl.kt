@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import com.ponko.cn.app.PonkoApp
+import com.ponko.cn.app.PonkoApp.Companion.is3GNetTip
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.media.MediaUitl
@@ -132,25 +133,29 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
 
             override fun onClick() {
                 super.onClick()
+//                if (!ui?.isLock!!) {
                 ui?.isClick = true
                 ui?.showOrHideControlView()
+//                }
             }
 
             override fun onDownUp() {
                 super.onDownUp()
-                horizontalSlidePos = -1
-                //手指滑动设置进度释放处理进度
-                if (ui?.isHorizontalSlide!!) {
-                    ui?.isHorizontalSlide = false
-                    ui?.hideControlView()
-                    ui?.horizontalSlideStopSeekTo()
-                    ui?.progressTimerStart(period.toLong())
-                    ui?.horizontalSlideStopSeekTo()
-                }
+                if (!ui?.isLock!!) {
+                    horizontalSlidePos = -1
+                    //手指滑动设置进度释放处理进度
+                    if (ui?.isHorizontalSlide!!) {
+                        ui?.isHorizontalSlide = false
+                        ui?.hideControlView()
+                        ui?.horizontalSlideStopSeekTo()
+                        ui?.progressTimerStart(period.toLong())
+                        ui?.horizontalSlideStopSeekTo()
+                    }
 
-                if (ui?.isClick!!) {
-                    ui?.isClick = false
-                    ui?.startDelayTimerHideControlView(delay)
+                    if (ui?.isClick!!) {
+                        ui?.isClick = false
+                        ui?.startDelayTimerHideControlView(delay)
+                    }
                 }
             }
 
@@ -168,12 +173,14 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
 
             override fun onVertical(type: String, present: Int) {
                 super.onVertical(type, present)
-                if (ui?.isControlViewShow!! || true) {
-                    if (present > 0) {
-                        ui?.hidePlayListAni()
-                    } else {
-                        ui?.showControlView()
-                        ui?.showPlayListAni()
+                if (!ui?.isLock!!) {
+                    if (ui?.isControlViewShow!! || true) {
+                        if (present > 0) {
+                            ui?.hidePlayListAni()
+                        } else {
+                            ui?.showControlView()
+                            ui?.showPlayListAni()
+                        }
                     }
                 }
             }
@@ -181,21 +188,24 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
             @SuppressLint("SetTextI18n")
             override fun onHorizontal(present: Int) {
                 super.onHorizontal(present)
-                //记录手指滑动时播放器的位置 ps:只记录一次
-                if (horizontalSlidePos == -1L) {
-                    horizontalSlidePos = xmVideoView?.mediaPlayer?.getCurrentPosition()!!
+                if (!ui?.isLock!!) {
+                    //记录手指滑动时播放器的位置 ps:只记录一次
+                    if (horizontalSlidePos == -1L) {
+                        horizontalSlidePos = xmVideoView?.mediaPlayer?.getCurrentPosition()!!
+                    }
+                    //手指处于水平滑动中
+                    ui?.isHorizontalSlide = true
+
+                    //停止所有的计时器
+                    ui?.stopDelayTimerHideControlView()
+                    ui?.progressTimerStop()
+
+                    //显示控制器界面
+                    ui?.updateProgress(horizontalSlidePos.toInt() + present * 1000L) // ps: 更新进度条 播放进度文本
+                    ui?.showProgress()
+                    ui?.showControlView()
                 }
-                //手指处于水平滑动中
-                ui?.isHorizontalSlide = true
 
-                //停止所有的计时器
-                ui?.stopDelayTimerHideControlView()
-                ui?.progressTimerStop()
-
-                //显示控制器界面
-                ui?.updateProgress(horizontalSlidePos.toInt() + present * 1000L) // ps: 更新进度条 播放进度文本
-                ui?.showProgress()
-                ui?.showControlView()
             }
         }
         //手机状态回调
@@ -228,9 +238,10 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
             }
 
             override fun onSuccess(url: String, size: Int?) {
-                if (NetworkUtil.is3GNet(context) && (url.startsWith("http", true) || url.startsWith("https", true))) {
+                if (!is3GNetTip && NetworkUtil.is3GNet(context) && (url.startsWith("http", true) || url.startsWith("https", true))) {
                     DialogUtil.show(context, "提示", "当前使用是手机流量,是否继续播放？", true, object : OnEnterListener {
                         override fun onEnter(dlg: AlertDialog) {
+                            is3GNetTip = true
                             play(url)
                             dlg.dismiss()
                         }
@@ -273,7 +284,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
         index++
         if (info?.mediaInfos?.size!! > index) {
             val mediaBean = this.info?.mediaInfos!![index]
-            listener?.item(mediaBean.vid!!, mediaBean.progress_duration, null, index)
+            listener?.item(mediaBean.vid!!, mediaBean.progress_duration!!*1000/*秒转毫秒*/, null, index)
             //start(mediaBean.vid!!, mediaBean.progress_duration, index)
         } else {
             ToastUtil.show("已经是最后一集了...")
@@ -385,6 +396,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
     override fun updateListItem(index: Int) {
         if (ui is LandscapeViewHolder) {
             (ui as LandscapeViewHolder).selectPlayList(index)
+            this.index = index
         }
     }
 

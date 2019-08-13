@@ -163,6 +163,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
             p?.clickShare()
         }
         viewHolder?.expandList?.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
+            attachmentControl?.index = p?.twoToOne(coursesDetailCBean,groupPosition,childPosition)!!
             p?.clickExpandListItem(parent, v, groupPosition, childPosition, id)!!
         }
 

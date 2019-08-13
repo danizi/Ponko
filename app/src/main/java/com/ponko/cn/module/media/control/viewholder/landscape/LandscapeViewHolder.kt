@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.support.constraint.ConstraintLayout
+import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -12,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.*
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.MediaBean
-import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.module.media.control.ControlViewHolder
 import com.ponko.cn.utils.ShareUtil
@@ -26,10 +26,16 @@ import com.xm.lib.media.view.XmPopWindow
 /**
  * 横屏界面
  */
-class LandscapeViewHolder private constructor(private val view: View, private val clLandscapeTop: ConstraintLayout?, private val ivBack: ImageView?, private val tvTitle: TextView?, private val ivShare: ImageView?, private val ivMore: ImageView?, private val clLandscapeBottom: ConstraintLayout?, private val seekBar: SeekBar?, private val ivAction: ImageView?, private val tvTime: TextView?, private val tvRatio: TextView?, private val clSeek: ConstraintLayout?, private val tvTime2: TextView?, private val pbLoading: ProgressBar?, private val rv: RecyclerView?, private val ivNext: ImageView) : ControlViewHolder() {
+class LandscapeViewHolder private constructor(
+        private val view: View,
+        private val clLandscapeTop: ConstraintLayout?,
+        private val ivBack: ImageView?, private val tvTitle: TextView?, private val ivShare: ImageView?, private val ivMore: ImageView?, private val clLandscapeBottom: ConstraintLayout?, private val seekBar: SeekBar?, private val ivAction: ImageView?,
+        private val tvTime: TextView?, private val tvRatio: TextView?, private val clSeek: ConstraintLayout?, private val tvTime2: TextView?, private val pbLoading: ProgressBar?, private val rv: RecyclerView?, private val ivNext: ImageView,
+        private val ivLock: AppCompatImageButton) : ControlViewHolder() {
 
 
     companion object {
+        @SuppressLint("WrongViewCast")
         fun create(rootView: View?): LandscapeViewHolder {
             val clLandscapeTop = rootView?.findViewById<View>(R.id.cl_landscape_top) as ConstraintLayout
             val ivBack = rootView.findViewById<View>(R.id.iv_back) as ImageView
@@ -46,8 +52,9 @@ class LandscapeViewHolder private constructor(private val view: View, private va
             val pbLoading = rootView.findViewById<View>(R.id.pb) as ProgressBar
             val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
             val ivNext = rootView.findViewById<View>(R.id.iv_next) as ImageView
+            val ivLock = rootView.findViewById<View>(R.id.iv_lock) as AppCompatImageButton
 
-            return LandscapeViewHolder(rootView, clLandscapeTop, ivBack, tvTitle, ivShare, ivMore, clLandscapeBottom, seekBar, ivAction, tvTime, tvRatio, clSeek, tvTime2, pbLoading, rv, ivNext)
+            return LandscapeViewHolder(rootView, clLandscapeTop, ivBack, tvTitle, ivShare, ivMore, clLandscapeBottom, seekBar, ivAction, tvTime, tvRatio, clSeek, tvTime2, pbLoading, rv, ivNext, ivLock)
         }
     }
 
@@ -183,19 +190,19 @@ class LandscapeViewHolder private constructor(private val view: View, private va
         val tvRatio720p: TextView = ratioView.findViewById(R.id.tv_ratio_720p)
         val tvRatio1080p: TextView = ratioView.findViewById(R.id.tv_ratio_1080p)
         tvRatio360p.setOnClickListener {
-            tvRatio?.text="流畅"
+            tvRatio?.text = "流畅"
             Toast.makeText(activity, "360p", Toast.LENGTH_SHORT).show()
             (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(1)
             xmPopWindow.dismiss()
         }
         tvRatio480p.setOnClickListener {
-            tvRatio?.text="标清"
+            tvRatio?.text = "标清"
             Toast.makeText(activity, "480p", Toast.LENGTH_SHORT).show()
             (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(2)
             xmPopWindow.dismiss()
         }
         tvRatio720p.setOnClickListener {
-            tvRatio?.text="高清"
+            tvRatio?.text = "高清"
             Toast.makeText(activity, "720p", Toast.LENGTH_SHORT).show()
             (xmVideoView?.attachmentViewMaps!!["AttachmentControl"] as AttachmentControl).ratio(3)
             xmPopWindow.dismiss()
@@ -259,11 +266,30 @@ class LandscapeViewHolder private constructor(private val view: View, private va
             clickRatio()
         }
 
+        ivLock.setOnClickListener {
+            clickLock()
+        }
+
 //        rv?.setOnTouchListener { v, event ->
 //            BKLog.d("触控了播放列表")
 //            showPlayListAni()
 //            false
 //        }
+    }
+
+    private var flag = false
+    private fun clickLock() {
+        if (!flag) {
+            ivLock.setImageResource(R.mipmap.media_control_lock)
+            hideControlView()
+            isLock = true
+            flag = true
+        } else {
+            ivLock.setImageResource(R.mipmap.media_control_un_lock)
+            showControlView()
+            isLock = false
+            flag = false
+        }
     }
 
     override fun setMediaInfo(info: MediaBean) {
@@ -308,10 +334,18 @@ class LandscapeViewHolder private constructor(private val view: View, private va
     }
 
     override fun showOrHideControlView() {
-        if (clLandscapeBottom?.visibility == View.VISIBLE) {
-            hideControlView()
+        if (isLock) {
+            if (ivLock.visibility == View.VISIBLE) {
+                ivLock.visibility = View.GONE
+            } else {
+                ivLock.visibility = View.VISIBLE
+            }
         } else {
-            showControlView()
+            if (clLandscapeBottom?.visibility == View.VISIBLE) {
+                hideControlView()
+            } else {
+                showControlView()
+            }
         }
     }
 
@@ -330,6 +364,7 @@ class LandscapeViewHolder private constructor(private val view: View, private va
 
     override fun showBottom() {
         clLandscapeBottom?.visibility = View.VISIBLE
+        ivLock.visibility = View.VISIBLE
     }
 
     override fun hideLoading() {
@@ -343,6 +378,7 @@ class LandscapeViewHolder private constructor(private val view: View, private va
 
     override fun hideBottom() {
         clLandscapeBottom?.visibility = View.GONE
+        ivLock.visibility = View.GONE
     }
 
     override fun hideProgress() {

@@ -114,7 +114,7 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
         /**
          * 队列运行的最大数量
          */
-        var runqueues = 3
+        var runqueues = 5
         /**
          * 运行的任务队列
          */
@@ -125,7 +125,7 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
         var readyQueue: BlockingQueue<M3u8DownTasker>? = null
 
         init {
-            runqueues = 3
+            runqueues = 5
             pool = ThreadPoolExecutor(runqueues, runqueues, 30, TimeUnit.SECONDS, ArrayBlockingQueue(2000))
             runningQueue = LinkedBlockingQueue<M3u8DownTasker>()
             readyQueue = LinkedBlockingQueue<M3u8DownTasker>()

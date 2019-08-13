@@ -323,8 +323,10 @@ class FreeFrgV2 : MvpFragment<Any>() {
         }
 
         /** 全屏容器界面  */
+        @SuppressLint("InflateParams", "ViewConstructor")
         class FullscreenHolder(ctx: Context, val listener: View.OnClickListener) : FrameLayout(ctx) {
             var back: AppCompatImageButton? = null
+
 
             init {
                 setBackgroundColor(ctx.resources.getColor(android.R.color.black))
