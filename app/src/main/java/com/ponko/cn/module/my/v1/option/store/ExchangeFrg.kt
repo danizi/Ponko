@@ -14,12 +14,9 @@ import com.ponko.cn.module.my.holder.MyBookViewHolder
 import com.ponko.cn.module.my.holder.MyCourseViewHolder
 import com.ponko.cn.module.my.v1.constract.ExchangeContract
 import com.xm.lib.common.base.mvp.MvpFragment
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.component.XmStateView
-import android.widget.AdapterView
-
 
 
 /**

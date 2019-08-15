@@ -15,8 +15,8 @@ import com.ponko.cn.module.study.v1.CourseTypeGridActivity
 import com.ponko.cn.module.study.v1.adapter.CourseSectionAdapter
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.GridItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 

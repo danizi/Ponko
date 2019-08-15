@@ -1,22 +1,19 @@
 package com.ponko.cn.module.my.holder
 
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
-import com.xm.lib.common.base.rv.BaseViewHolder
 import android.support.v7.widget.RecyclerView
-import com.ponko.cn.R
-import com.ponko.cn.bean.LearnRankingGeneralBean
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.decoration.MyItemDecoration
-import android.widget.TextView
-import de.hdodenhof.circleimageview.CircleImageView
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
+import com.ponko.cn.R
 import com.ponko.cn.bean.LearnRankingCBean
+import com.ponko.cn.bean.LearnRankingGeneralBean
 import com.ponko.cn.utils.Glide
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.util.NumUtil
-import com.xm.lib.common.util.TimeUtil
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 class MyLearnRankingGeneralHolder(view: View) : BaseViewHolder(view) {

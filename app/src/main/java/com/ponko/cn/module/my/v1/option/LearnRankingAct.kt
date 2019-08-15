@@ -10,7 +10,7 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.my.holder.MyLearnRankingBottomHolder
 import com.ponko.cn.module.my.holder.MyLearnRankingGeneralHolder
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 

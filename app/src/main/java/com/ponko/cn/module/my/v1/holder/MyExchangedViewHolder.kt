@@ -14,7 +14,7 @@ import android.widget.Toast
 import com.ponko.cn.R
 import com.ponko.cn.bean.ExchangedHistoriesCBean
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.util.TimeUtil
 
 

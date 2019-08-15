@@ -12,7 +12,7 @@ import com.ponko.cn.module.my.adapter.MyAdapter
 import com.ponko.cn.module.my.constract.MyConstract
 import com.ponko.cn.module.my.holder.MyViewHolder
 import com.ponko.cn.module.my.holder.MyViewHolder2
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 

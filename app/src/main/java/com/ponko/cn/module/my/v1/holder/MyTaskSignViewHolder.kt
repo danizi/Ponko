@@ -18,7 +18,7 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.utils.DialogUtil
 import com.robinhood.ticker.TickerUtils
 import com.robinhood.ticker.TickerView
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.http.NetBean
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.Xm7DaySignView

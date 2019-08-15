@@ -8,7 +8,7 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.InviteFriendsBean
 import com.ponko.cn.module.my.option.InviteFriendShareActivity
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 
 

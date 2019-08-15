@@ -11,8 +11,8 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.study.v1.holder.CourseSectionViewHolder
 import com.ponko.cn.utils.ActivityUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.GridItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.util.ScreenUtil
 import retrofit2.Call
 import retrofit2.Response

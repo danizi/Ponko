@@ -1,7 +1,6 @@
 package com.ponko.cn.module.my.holder
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Color
 import android.support.constraint.ConstraintLayout
 import android.view.View
@@ -10,10 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.OpenCBean
-import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
 

@@ -24,8 +24,8 @@ import com.ponko.cn.module.m3u8downer.core.OnDownListener
 import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.downloader.utils.FileUtil
 import java.io.File

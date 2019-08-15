@@ -12,10 +12,13 @@ import com.ponko.cn.app.PonkoApp.Companion.courseSpecialDao
 import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.db.bean.CourseSpecialDbBean
 import com.ponko.cn.module.common.RefreshLoadAct
-import com.ponko.cn.utils.*
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.ponko.cn.utils.BarUtil
+import com.ponko.cn.utils.CacheUtil
+import com.ponko.cn.utils.Glide
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 
 /**

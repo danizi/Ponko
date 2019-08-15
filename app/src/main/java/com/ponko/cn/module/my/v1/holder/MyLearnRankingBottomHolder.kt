@@ -6,9 +6,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.LearnRankingBottomBean
-import com.ponko.cn.bean.LearnRankingCBean
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MyLearnRankingBottomHolder(view: View) : BaseViewHolder(view) {

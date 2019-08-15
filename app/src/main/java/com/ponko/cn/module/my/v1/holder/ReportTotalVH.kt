@@ -1,7 +1,7 @@
 package com.ponko.cn.module.my.v1.holder
 
 import android.view.View
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 
 /**
  * 学习报告 - 最近 ViewHolder

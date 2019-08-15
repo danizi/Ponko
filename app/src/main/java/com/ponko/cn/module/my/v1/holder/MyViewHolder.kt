@@ -39,7 +39,7 @@ import com.ponko.cn.utils.CacheUtil.USERTYPE_WXLOGIN
 import com.ponko.cn.utils.CacheUtil.getUserType
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import de.hdodenhof.circleimageview.CircleImageView

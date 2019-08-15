@@ -13,7 +13,7 @@ import com.ponko.cn.constant.Constants
 import com.ponko.cn.module.study.v1.CourseTypeLinearActivity
 import com.ponko.cn.module.study.v2.CourseTypeLinearActivityV2
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 

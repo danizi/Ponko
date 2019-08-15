@@ -23,7 +23,6 @@ import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.*
 import com.ponko.cn.module.my.option.store.StoreAct
-import com.ponko.cn.module.my.v1.option.ReportActivity
 import com.ponko.cn.module.my.v1.option.store.IntegralExchangedClassAct
 import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v2.StudyContract2
@@ -33,8 +32,8 @@ import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.ToastUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.tencent.bugly.beta.Beta
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.CommonUtil

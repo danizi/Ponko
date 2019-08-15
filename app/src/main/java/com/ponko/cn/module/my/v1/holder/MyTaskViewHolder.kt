@@ -10,8 +10,8 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.MyTaskBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 
 /**
  * 签到任务展示

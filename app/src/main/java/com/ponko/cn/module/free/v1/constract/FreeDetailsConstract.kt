@@ -29,9 +29,9 @@ import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.media.broadcast.BroadcastManager

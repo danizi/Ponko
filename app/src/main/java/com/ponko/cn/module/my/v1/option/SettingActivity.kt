@@ -6,7 +6,7 @@ import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.my.constract.SettingContract
 import com.ponko.cn.utils.BarUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 
 /**
  * 应用相关设置

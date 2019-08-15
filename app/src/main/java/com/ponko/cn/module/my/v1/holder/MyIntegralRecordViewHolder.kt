@@ -2,12 +2,10 @@ package com.ponko.cn.module.my.holder
 
 import android.annotation.SuppressLint
 import android.view.View
-import com.xm.lib.common.base.rv.BaseViewHolder
-import com.ponko.cn.R.id.tv_obtain_integral_type
 import android.widget.TextView
 import com.ponko.cn.R
-import com.ponko.cn.bean.ExchangedHistoriesCBean
 import com.ponko.cn.bean.StoreObtainLogBean
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.util.TimeUtil
 
 

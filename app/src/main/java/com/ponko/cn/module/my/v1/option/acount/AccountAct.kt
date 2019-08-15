@@ -28,8 +28,8 @@ import com.ponko.cn.module.login.LoginStartAct
 import com.ponko.cn.module.my.option.SettingActivity
 import com.ponko.cn.module.study.v1.constract.StudyContract
 import com.ponko.cn.utils.*
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.OnEnterListener
 import com.xm.lib.media.broadcast.BroadcastManager

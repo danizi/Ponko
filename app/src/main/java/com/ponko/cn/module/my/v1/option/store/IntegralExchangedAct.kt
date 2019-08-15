@@ -7,7 +7,7 @@ import com.ponko.cn.bean.ExchangedHistoriesCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.my.holder.MyExchangedViewHolder
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 

@@ -3,9 +3,8 @@ package com.ponko.cn.module.study.v2.holder
 import android.app.Activity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
-import com.xm.lib.common.base.rv.BaseViewHolder
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
@@ -13,7 +12,8 @@ import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.StudyHomePayBean
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.util.ScreenUtil
 
 

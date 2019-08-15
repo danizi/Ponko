@@ -1,30 +1,26 @@
 package com.ponko.cn.module.my.option.acount
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import com.ponko.cn.R
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.text.Editable
 import android.text.SpannableString
 import android.text.TextUtils
-import android.text.TextWatcher
 import android.view.View
-import android.widget.Button
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
 import android.widget.EditText
-import de.hdodenhof.circleimageview.CircleImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.github.gongw.VerifyCodeView
+import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.AddressBean
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.utils.BarUtil
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
+import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Response
 

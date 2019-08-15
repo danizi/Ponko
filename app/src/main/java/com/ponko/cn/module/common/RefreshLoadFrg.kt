@@ -13,11 +13,9 @@ import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.ToastUtil
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
-import com.xm.lib.common.base.RefreshLoadHelp
 import com.xm.lib.common.base.mvp.MvpFragment
-import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
-import com.xm.lib.common.base.rv.decoration.MyItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.XmStateView
 

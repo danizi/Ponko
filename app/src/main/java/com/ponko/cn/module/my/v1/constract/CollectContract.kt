@@ -23,9 +23,9 @@ import com.ponko.cn.module.my.option.collect.CollectListActivity
 import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 
 

@@ -1,19 +1,18 @@
 package com.ponko.cn.module.my.holder
 
+import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.IntegralRankGenenalBean
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
-import android.widget.TextView
-import de.hdodenhof.circleimageview.CircleImageView
-import android.support.constraint.ConstraintLayout
 import com.ponko.cn.bean.RankingV2
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.utils.Glide
-import com.ponko.cn.utils.TransformationUtil
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 class MyRankGenenalViewHolder(view: View) : BaseViewHolder(view) {

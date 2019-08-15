@@ -11,8 +11,8 @@ import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.study.v1.constract.StudyCacheContract
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.BarUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import java.util.*
 import kotlin.collections.ArrayList
 

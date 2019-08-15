@@ -14,7 +14,7 @@ import com.ponko.cn.module.my.v1.option.PosterActivity
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 

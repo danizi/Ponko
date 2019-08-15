@@ -1,12 +1,6 @@
 package com.ponko.cn.module.interflow.adapter
 
-import android.support.v7.widget.RecyclerView
-import android.view.ViewGroup
-import com.ponko.cn.R
-import com.ponko.cn.bean.AnalysisCBean
-import com.ponko.cn.module.interflow.holder.SubCaseViewHolder
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.util.ViewUtil
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 
 //class SubCaseAdapter(val data: ArrayList<AnalysisCBean.ActivitiesBean>) : RecyclerView.Adapter<SubCaseViewHolder>() {
 //    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): SubCaseViewHolder {
@@ -27,4 +21,4 @@ import com.xm.lib.common.util.ViewUtil
 //    }
 //}
 
-class SubCaseAdapter:BaseRvAdapter()
+class SubCaseAdapter: BaseRvAdapter()

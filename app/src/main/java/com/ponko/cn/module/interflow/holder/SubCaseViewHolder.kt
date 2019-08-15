@@ -6,7 +6,7 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.AnalysisCBean
 import com.ponko.cn.constant.Constants.BASE_API
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
 

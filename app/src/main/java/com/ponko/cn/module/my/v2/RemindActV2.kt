@@ -7,11 +7,10 @@ import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.RemindCBeanV2
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.module.common.RefreshLoadAct
-import com.ponko.cn.module.my.holder.MyRemindHolder
 import com.ponko.cn.module.my.v2.constract.RemindContractV2
 import com.ponko.cn.module.my.v2.holder.MyRemindHolderV2
 import com.ponko.cn.utils.ToastUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 
 class RemindActV2  : RefreshLoadAct<RemindContractV2.Present, RemindCBeanV2>(), RemindContractV2.V {
 

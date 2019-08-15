@@ -1,8 +1,8 @@
 package com.ponko.cn.module.study.v2
 
+//import com.ponko.cn.MainActivity.Companion.bottomMenu
 import android.content.Intent
 import android.view.View
-//import com.ponko.cn.MainActivity.Companion.bottomMenu
 import com.ponko.cn.R
 import com.ponko.cn.bean.*
 import com.ponko.cn.constant.Constants
@@ -17,7 +17,7 @@ import com.ponko.cn.module.study.v2.holder.BannerV2ViewHolder
 import com.ponko.cn.module.study.v2.holder.PayViewHolder
 import com.ponko.cn.module.study.v2.holder.UnPayViewHolder
 import com.ponko.cn.utils.ActivityUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 import q.rorbin.badgeview.QBadgeView
 

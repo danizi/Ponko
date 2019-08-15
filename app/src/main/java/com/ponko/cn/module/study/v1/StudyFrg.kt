@@ -14,7 +14,7 @@ import com.ponko.cn.module.study.v1.holder.BannerViewHolder
 import com.ponko.cn.module.study.v1.holder.CaseViewHolder
 import com.ponko.cn.module.study.v1.holder.CourseTypeViewHolder
 import com.ponko.cn.utils.ActivityUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 
 class StudyFrg : RefreshLoadFrg<StudyContract.Present, MainCBean>(), StudyContract.View {

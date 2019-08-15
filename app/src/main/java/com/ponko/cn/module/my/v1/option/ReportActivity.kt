@@ -12,17 +12,15 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.ponko.cn.R
-import com.ponko.cn.app.PonkoApp.Companion.storeProfileBean
 import com.ponko.cn.bean.StudyReportCBean
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.my.v1.constract.ReportContract
 import com.ponko.cn.module.web.WebAct
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.ToastUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
-import com.xm.lib.common.util.TimeUtil
 
 
 /**

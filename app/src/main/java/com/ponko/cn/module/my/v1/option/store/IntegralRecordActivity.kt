@@ -3,6 +3,8 @@ package com.ponko.cn.module.my.option.store
 import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
@@ -10,14 +12,11 @@ import com.ponko.cn.bean.StoreObtainLogBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.my.holder.MyIntegralRecordViewHolder
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import retrofit2.Call
-import retrofit2.Response
-import android.widget.TextView
-import android.widget.LinearLayout
-import com.ponko.cn.utils.ToastUtil
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
+import retrofit2.Call
+import retrofit2.Response
 
 /**
  * 积分获取记录

@@ -14,9 +14,8 @@ import com.ponko.cn.utils.CacheUtil.putLog
 import com.ponko.cn.utils.CacheUtil.putMediaType
 import com.ponko.cn.utils.CacheUtil.putStudyUI
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
-import kotlin.math.log
 
 
 /**

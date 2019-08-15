@@ -3,21 +3,14 @@ package com.ponko.cn.module.my.option
 import android.content.Intent
 import android.view.View
 import com.ponko.cn.R
-import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.BindItemViewHolderBean
-import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.bean.RemindCBean
 import com.ponko.cn.constant.Constants
-import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
-import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.my.constract.RemindContract
 import com.ponko.cn.module.my.holder.MyRemindHolder
-import com.ponko.cn.utils.BarUtil.addBar2
 import com.ponko.cn.utils.ToastUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import retrofit2.Call
-import retrofit2.Response
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 
 @Deprecated("使用RemindActV2")
 class RemindAct : RefreshLoadAct<RemindContract.Present, ArrayList<RemindCBean>>(), RemindContract.V {

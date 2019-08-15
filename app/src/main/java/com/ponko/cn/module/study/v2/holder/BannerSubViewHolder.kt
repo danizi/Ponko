@@ -10,7 +10,7 @@ import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.StudyHomeBannerSubBean
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.youth.banner.Banner

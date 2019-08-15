@@ -24,8 +24,8 @@ import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.ToastUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.NumUtil
 import com.xm.lib.common.util.ViewUtil

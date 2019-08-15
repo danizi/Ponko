@@ -1,15 +1,15 @@
 package com.ponko.cn.module.my.holder
 
-import android.view.View
-import com.xm.lib.common.base.rv.BaseViewHolder
-import android.widget.TextView
-import de.hdodenhof.circleimageview.CircleImageView
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.AppCompatImageView
+import android.view.View
+import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.IntegralRankHeadBean
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.utils.Glide
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 class MyRankHeadViewHolder(view: View) : BaseViewHolder(view) {

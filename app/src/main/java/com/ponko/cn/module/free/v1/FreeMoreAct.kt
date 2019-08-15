@@ -17,8 +17,8 @@ import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import retrofit2.Call
 import retrofit2.Response

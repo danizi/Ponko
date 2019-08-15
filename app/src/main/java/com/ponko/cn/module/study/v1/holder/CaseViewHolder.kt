@@ -14,7 +14,7 @@ import com.ponko.cn.bean.CaseBean
 import com.ponko.cn.bean.MainCBean
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.utils.IntoTargetUtil
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.TimeUtil
 import com.xm.lib.common.util.ViewUtil

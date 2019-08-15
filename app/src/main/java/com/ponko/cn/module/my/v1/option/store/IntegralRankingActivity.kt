@@ -8,7 +8,7 @@ import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.my.holder.MyRankFooterViewHolder
 import com.ponko.cn.module.my.holder.MyRankGenenalViewHolder
 import com.ponko.cn.module.my.holder.MyRankHeadViewHolder
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 

@@ -15,8 +15,8 @@ import com.ponko.cn.utils.AnimUtil
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.ToastUtil
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
-import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.XmStateView
 import java.lang.ref.WeakReference

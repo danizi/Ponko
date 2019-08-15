@@ -11,7 +11,7 @@ import com.ponko.cn.module.free.v1.holder.ExchangedViewHolder
 import com.ponko.cn.module.free.v1.holder.TrialViewHolder
 import com.ponko.cn.module.free.v1.holder.WechatViewHolder
 import com.ponko.cn.utils.DialogUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 
 /**

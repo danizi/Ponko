@@ -11,8 +11,8 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.TrialBean
 import com.ponko.cn.module.free.v1.FreeMoreAct
 import com.ponko.cn.module.free.v1.adapter.CourseAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
 import com.xm.lib.common.base.rv.decoration.MyItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 
 /**

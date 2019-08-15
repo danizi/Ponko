@@ -3,9 +3,9 @@ package com.ponko.cn.module.my.holder
 import android.view.View
 import android.widget.TextView
 import com.ponko.cn.R
-import com.ponko.cn.module.web.WebAct
 import com.ponko.cn.bean.HelpCBean
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.ponko.cn.module.web.WebAct
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 
 class MyProblemViewHolder(view: View) : BaseViewHolder(view) {
 

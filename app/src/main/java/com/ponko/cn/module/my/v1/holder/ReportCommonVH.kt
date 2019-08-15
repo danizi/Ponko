@@ -19,8 +19,8 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.ReportCommonBean
 import com.ponko.cn.bean.StudyReportCBean
 import com.ponko.cn.utils.ToastUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.component.test.CharActivity
 

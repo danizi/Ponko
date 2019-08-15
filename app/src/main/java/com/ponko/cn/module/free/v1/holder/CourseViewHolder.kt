@@ -9,7 +9,7 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.CoursesCBean
 import com.ponko.cn.module.free.v1.FreeDetailsAct
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 
 class CourseViewHolder(view: View?) : BaseViewHolder(view!!) {

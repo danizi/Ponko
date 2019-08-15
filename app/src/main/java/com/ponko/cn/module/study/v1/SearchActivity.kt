@@ -11,7 +11,10 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.*
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp.Companion.searchApi
 import com.ponko.cn.bean.BindItemViewHolderBean
@@ -22,7 +25,7 @@ import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.module.study.v1.constract.SearchContract
 import com.ponko.cn.utils.CacheUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ViewUtil
 import com.xm.lib.component.XmStateView

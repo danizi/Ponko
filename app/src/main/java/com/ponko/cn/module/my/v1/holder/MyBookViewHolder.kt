@@ -4,13 +4,13 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
-import com.ponko.cn.module.web.WebAct
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.StoreProfileCMoreBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.http.HttpCallBack
+import com.ponko.cn.module.web.WebAct
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import retrofit2.Call
 import retrofit2.Response
 

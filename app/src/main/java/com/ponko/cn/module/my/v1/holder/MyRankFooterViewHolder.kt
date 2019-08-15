@@ -7,7 +7,7 @@ import com.ponko.cn.R
 import com.ponko.cn.bean.IntegralRankFooterBean
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MyRankFooterViewHolder(view: View) : BaseViewHolder(view) {

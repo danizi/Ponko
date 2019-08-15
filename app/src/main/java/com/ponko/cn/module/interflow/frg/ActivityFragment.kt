@@ -8,7 +8,7 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.interflow.adapter.SubActivityAdapter
 import com.ponko.cn.module.interflow.holder.SubActivityHolder
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 

@@ -20,7 +20,7 @@ import com.ponko.cn.module.m3u8downer.core.M3u8Utils
 import com.ponko.cn.module.my.constract.CacheListContract
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.DialogUtil
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.OnEnterListener
 import com.xm.lib.downloader.utils.FileUtil

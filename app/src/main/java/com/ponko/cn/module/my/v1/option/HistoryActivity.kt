@@ -6,9 +6,8 @@ import com.ponko.cn.bean.BindItemViewHolderBean
 import com.ponko.cn.bean.RecordCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.RefreshLoadAct
-import com.ponko.cn.module.common.RefreshLoadFrg
 import com.ponko.cn.module.my.holder.MyStudyRecordHolder
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import retrofit2.Call
 import retrofit2.Response
 

@@ -7,8 +7,8 @@ import com.ponko.cn.bean.InternalCourseCBean
 import com.ponko.cn.module.common.RefreshLoadAct
 import com.ponko.cn.module.my.v1.constract.IntegralExchangedClassContract
 import com.ponko.cn.module.my.v1.holder.ExchangedClassVH
-import com.xm.lib.common.base.rv.BaseRvAdapter
 import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 
 /**
  * 已兑课程

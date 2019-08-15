@@ -13,11 +13,10 @@ import com.ponko.cn.bean.ReportStudyBean
 import com.ponko.cn.bean.StudyReportCBean
 import com.ponko.cn.module.my.option.HistoryActivity
 import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
-import com.ponko.cn.module.study.v1.constract.SearchContract
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.Glide
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 
 /**
  * 学习报告 - 最近 ViewHolder

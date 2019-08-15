@@ -2,7 +2,6 @@ package com.ponko.cn.module.my.option.acount
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,7 +11,6 @@ import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.ponko.cn.R
@@ -23,8 +21,8 @@ import com.ponko.cn.bean.ProfileCBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.utils.*
-import com.xm.lib.common.base.rv.BaseRvAdapter
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
 import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call

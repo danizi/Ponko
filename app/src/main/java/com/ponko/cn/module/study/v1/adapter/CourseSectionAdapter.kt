@@ -1,6 +1,6 @@
 package com.ponko.cn.module.study.v1.adapter
 
-import com.xm.lib.common.base.rv.BaseRvAdapter
+import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 
 
 //class CourseSectionAdapter(val data: List<Any>) : RecyclerView.Adapter<CourseSectionViewHolder>() {
@@ -22,4 +22,4 @@ import com.xm.lib.common.base.rv.BaseRvAdapter
 //    }
 //}
 
-class CourseSectionAdapter:BaseRvAdapter()
+class CourseSectionAdapter: BaseRvAdapter()

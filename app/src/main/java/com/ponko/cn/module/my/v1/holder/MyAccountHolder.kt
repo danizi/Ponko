@@ -1,7 +1,7 @@
 package com.ponko.cn.module.my.holder
 
 import android.view.View
-import com.xm.lib.common.base.rv.BaseViewHolder
+import com.xm.lib.common.base.rv.v1.BaseViewHolder
 
 class MyAccountHolder(view: View) : BaseViewHolder(view) {
 
