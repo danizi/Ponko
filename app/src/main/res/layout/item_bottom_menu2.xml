@@ -5,11 +5,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
+    android:background="?android:selectableItemBackgroundBorderless"
     android:orientation="vertical"
     android:theme="@style/suibowen"
     tools:ignore="ContentDescription,HardcodedText,NewApi,RtlHardcoded,SmallSp,UseCompoundDrawables">
-
-    <!--android:background="?android:selectableItemBackgroundBorderless"-->
 
     <ImageView
         android:id="@+id/tab_img"

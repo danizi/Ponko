@@ -18,6 +18,7 @@ import com.ponko.cn.module.my.holder.MyTaskViewHolder
 import com.ponko.cn.utils.IntoTargetUtil
 import com.xm.lib.common.base.rv.v1.BaseRvAdapter
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.SDKVersionUtil.hasL
 import retrofit2.Call
 import retrofit2.Response
 
@@ -37,7 +38,9 @@ class IntegralTaskActivity : RefreshLoadAct<Any, StoreTaskBean>() {
             IntoTargetUtil.target(this, "url", storeProfileBean?.score_rule)
         })
         viewHolder?.toolbar?.setBackgroundColor(Color.parseColor("#EFF7FE"))
-        viewHolder?.toolbar?.elevation = 0f
+        if (hasL()) {
+            viewHolder?.toolbar?.elevation = 0f
+        }
         addItemDecoration = false
         com.jaeger.library.StatusBarUtil.setColor(this, Color.parseColor("#EFF7FE"), 0)
     }

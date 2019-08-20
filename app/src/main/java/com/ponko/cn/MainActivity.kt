@@ -28,13 +28,13 @@ import com.ponko.cn.module.my.v1.MyFrg
 import com.ponko.cn.module.study.v1.StudyFrg
 import com.ponko.cn.module.study.v2.StudyFrg2
 import com.ponko.cn.utils.CacheUtil
-import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
 import com.ponko.cn.utils.ToastUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xm.lib.common.base.BaseActivity
 import com.xm.lib.common.http.NetworkUtil
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.SDKVersionUtil.hasL
 import com.xm.lib.component.BottomMenu
 import com.xm.lib.component.OnItemClickListener
 import com.xm.lib.component.XmAdView
@@ -184,10 +184,15 @@ class MainActivity : BaseActivity() {
             e.printStackTrace()
         }
         //根据标志位选择使用哪个学习页面Fragment
-        bar.select(bottomPos)
+        val menu = bar
+        if (hasL()) {
+            menu.setItemLayoutId(R.layout.item_bottom_menu2)
+        } else {
+            menu.setItemLayoutId(R.layout.item_bottom_menu)
+        }
+        menu.select(bottomPos)
                 .setContainer(R.id.container)
                 .setTitleColor(R.color.grey, R.color.red)
-                .setItemLayoutId(R.layout.item_bottom_menu)
                 .addItem(getStudyFragment(), "学习", R.mipmap.bottom_icon_study_n, R.mipmap.bottom_icon_study_h)
                 .addItem(getFreeFragment(), "免费", R.mipmap.bottom_tab_icon_free_n, R.mipmap.bottom_tab_icon_free_h)
                 .addItem(InterflowFrg(), "交流", R.mipmap.bottom_tab_icon_exchange_n, R.mipmap.bottom_tab_icon_exchange_h)
@@ -198,7 +203,8 @@ class MainActivity : BaseActivity() {
                         BKLog.d(TAG, "pos:$pos")
                     }
                 })
-                .build()
+
+        menu.build()
 
 //        if (NetworkUtil.is3GNet(this)) {
 //            DialogUtil.show(this, "提示", "当前使用是手机流量", true, null, null)
