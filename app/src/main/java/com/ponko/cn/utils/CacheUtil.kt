@@ -1,8 +1,6 @@
 package com.ponko.cn.utils
 
-import android.text.TextUtils
 import com.ponko.cn.app.PonkoApp
-import com.tencent.bugly.proguard.s
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.SPUtil
 
@@ -130,6 +128,14 @@ object CacheUtil {
 
     fun getLog(): String {
         return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "Log", "1") as String
+    }
+
+    fun putRunqueues(runqueues: Int) {
+        SPUtil.put(PonkoApp.app, SP_FILE_NAME, "runqueues", runqueues.toString())
+    }
+
+    fun getRunqueues(): String {
+        return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "runqueues", "3").toString()
     }
 
     /**

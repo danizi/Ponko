@@ -3,10 +3,7 @@ package com.ponko.cn.module.m3u8downer.core
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.text.TextUtils
-import com.ponko.cn.db.CacheContract
-import com.ponko.cn.db.bean.CourseDbBean
 import com.xm.lib.common.log.BKLog
-import java.nio.file.Files.exists
 
 /**
  * 数据库契约类
@@ -149,7 +146,7 @@ class M3u8DbContract {
          * 删除所有
          */
         fun deleteAll() {
-            db?.execSQL(M3u8DbContract.Table.SQL_DELETE_ALL, null)
+            db?.execSQL(M3u8DbContract.Table.SQL_DELETE_ALL, arrayOf())
         }
 
         /**

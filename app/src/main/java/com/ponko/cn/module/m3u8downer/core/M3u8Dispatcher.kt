@@ -114,7 +114,7 @@ class M3u8Dispatcher private constructor(builder: Builder) : IM3u8Dispatcher {
         /**
          * 队列运行的最大数量
          */
-        var runqueues = 5
+        var runqueues = 3
         /**
          * 运行的任务队列
          */

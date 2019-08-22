@@ -1,21 +1,31 @@
 package com.ponko.cn.module.my.constract
 
 import android.content.Context
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatSpinner
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.ponko.cn.R
+import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.utils.CacheUtil.getLog
 import com.ponko.cn.utils.CacheUtil.getMediaType
+import com.ponko.cn.utils.CacheUtil.getRunqueues
 import com.ponko.cn.utils.CacheUtil.getStudyUI
 import com.ponko.cn.utils.CacheUtil.putLog
 import com.ponko.cn.utils.CacheUtil.putMediaType
+import com.ponko.cn.utils.CacheUtil.putRunqueues
 import com.ponko.cn.utils.CacheUtil.putStudyUI
+import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.IntoTargetUtil
+import com.ponko.cn.utils.ToastUtil
 import com.xm.lib.common.base.rv.v1.BaseViewHolder
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.common.util.file.FileUtil
+import com.xm.lib.component.OnCancelListener
+import com.xm.lib.component.OnEnterListener
+import java.io.File
 
 
 /**
@@ -73,7 +83,79 @@ class SettingContract {
                     "跳转测试开关" -> {
                         testJump(context, list)
                     }
+                    "下载任务数量" -> {
+                        list.add("3")
+                        list.add("4")
+                        list.add("5")
+                        //选中第几个
+                        val pos = getRunqueues().toInt()
+                        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, list)
+                        ui?.spinner?.adapter = adapter
+                        adapter.notifyDataSetChanged()
+                        ui?.spinner?.setSelection(pos)
+                        ui?.spinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                            }
+
+                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                //ToastUtil.show("pos:$position")
+                                when (position) {
+                                    0 -> {
+                                        PonkoApp.m3u8DownManager?.dispatcher?.runqueues = 3
+                                    }
+                                    1 -> {
+                                        PonkoApp.m3u8DownManager?.dispatcher?.runqueues = 4
+                                    }
+                                    2 -> {
+                                        PonkoApp.m3u8DownManager?.dispatcher?.runqueues = 5
+                                    }
+                                }
+                                putRunqueues(position)
+                            }
+                        }
+
+                    }
+                    "清除视频缓存" -> {
+                        ui?.spinner?.visibility = View.INVISIBLE
+                        itemView.setOnClickListener {
+                            DialogUtil.show(context, "", "确定删除视频缓存？", false, object : OnEnterListener {
+                                override fun onEnter(dlg: AlertDialog) {
+                                    dlg.dismiss()
+                                    val file = File(PonkoApp.m3u8DownManager?.path + File.separator + PonkoApp.m3u8DownManager?.dir)
+                                    if (file.exists()) {
+                                        if (FileUtil.delAll(file)) {
+                                            ToastUtil.show("删除视频缓存成功")
+                                        }
+                                    } else {
+                                        ToastUtil.show("视频未缓存，缓存目录不存在。")
+                                    }
+                                    PonkoApp.m3u8DownManager?.dao?.deleteAll()
+                                    PonkoApp.courseDao?.deleteAll()
+                                    PonkoApp.courseSpecialDao?.deleteAll()
+
+                                    val file2 = File(PonkoApp.m3u8DownManager?.path + File.separator + "ponkoDownload")
+                                    val file3 = File(PonkoApp.m3u8DownManager?.path + File.separator + "polyvdownload")
+                                    if (file2.exists()) {
+                                        if (FileUtil.delAll(file2)) {
+                                            ToastUtil.show("删除ponkoDownload缓存目录成功")
+                                        }
+                                    }
+                                    if (file3.exists()) {
+                                        if (FileUtil.delAll(file3)) {
+                                            ToastUtil.show("删除[polyvdownload]缓存目录成功")
+                                        }
+                                    }
+                                }
+                            }, object : OnCancelListener {
+                                override fun onCancel(dlg: AlertDialog) {
+                                    dlg.dismiss()
+                                }
+                            })
+                        }
+                    }
                     else -> {
+
                     }
                 }
             }

@@ -163,7 +163,7 @@ class CourseDao(private var db: SQLiteDatabase?) {
      */
     fun deleteAll() {
         if (db?.isOpen == true) {
-            db?.execSQL(CacheContract.CourseTable.SQL_DEL_ALL, null)
+            db?.execSQL(CacheContract.CourseTable.SQL_DEL_ALL, arrayOf())
             //db?.close()
         } else {
             BKLog.d("数据库未打开")
