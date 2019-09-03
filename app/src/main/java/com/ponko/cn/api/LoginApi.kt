@@ -23,6 +23,9 @@ interface LoginApi {
     @POST("user/forgot/sms")
     fun forgetPasswordSms(@Query("phone") phone: String): Call<GeneralBean>
 
+    @POST("user/login/sms")
+    fun loginSms(@Query("phone") phone: String): Call<GeneralBean>
+
     ////////////////////////////////////
     ///        检查验证码相關         //
     ////////////////////////////////////
@@ -43,6 +46,14 @@ interface LoginApi {
     ////////////////////////////////////
     @POST("user/login")
     fun login(@Query("phone") phone: String?, @Query("password") password: String? = "", @Query("code") code: String = ""): Call<GeneralBean>
+
+    /**
+     * @param map phone 手机号码
+     *             code/password 选择一个（短信登录 / 账号密码登录）
+     *             deviceId 唯一设备号(曾经用游客身份登录过的注册带上)
+     */
+    @POST("user/login")
+    fun login2(@QueryMap map: Map<String, String>): Call<GeneralBean>
 
     /**
      * @param deviceId 设备唯一标识，游客模式到注册需要携带该字段
@@ -75,12 +86,12 @@ interface LoginApi {
      * /user/login/oauth/bind?type=wechat&phone=xxxxx&password=xxxxx&token=上面返回的unionId（鉴权Info）&code=短信验证码
      */
     @POST("user/login/oauth/bind")
-    fun wxbind(@Query("phone") phone: String?, @Query("password") password: String?, @Query("type") type: String = "wechat", @Query("token") unionId: String?=""): Call<GeneralBean>
+    fun wxbind(@Query("phone") phone: String?, @Query("password") password: String?, @Query("type") type: String = "wechat", @Query("token") unionId: String? = ""): Call<GeneralBean>
 
     /**
      * 微信绑定加注册
      */
-    fun wxbindAndRegirst(@Query("phone") phone: String?, @Query("password") password: String?, @Query("type") type: String = "wechat", @Query("token") unionId: String?="",@Query("code") code: String?=""): Call<GeneralBean>
+    fun wxbindAndRegirst(@Query("phone") phone: String?, @Query("password") password: String?, @Query("type") type: String = "wechat", @Query("token") unionId: String? = "", @Query("code") code: String? = ""): Call<GeneralBean>
 
     /**
      * 微信绑定

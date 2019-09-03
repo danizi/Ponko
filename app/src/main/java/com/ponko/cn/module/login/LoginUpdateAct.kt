@@ -2,22 +2,22 @@ package com.ponko.cn.module.login
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.ponko.cn.R
-import com.ponko.cn.utils.ActivityUtil
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
 import android.text.SpannableString
 import android.text.TextUtils
+import android.text.TextWatcher
+import android.view.View
 import android.widget.*
+import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
+import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.DialogUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.OnEnterListener
@@ -158,7 +158,8 @@ class LoginUpdateAct : PonkoBaseAct<Any>() {
                     DialogUtil.show(this@LoginUpdateAct, "提示", "修改成功，请重新登录", false, object : OnEnterListener {
                         override fun onEnter(dlg: AlertDialog) {
                             //ActivityUtil.startActivity(this@LoginUpdateAct, Intent(this@LoginUpdateAct, LoginAccountAct::class.java))
-                            ActivityUtil.clearTheStackStartActivity(this@LoginUpdateAct, Intent(this@LoginUpdateAct, LoginAccountAct::class.java))
+                            //ActivityUtil.clearTheStackStartActivity(this@LoginUpdateAct, Intent(this@LoginUpdateAct, LoginAccountAct::class.java))
+                            ActivityUtil.clearTheStackStartActivity(this@LoginUpdateAct, Intent(this@LoginUpdateAct, LoginAccountAndCodeAct::class.java))
                             dlg.dismiss()
                         }
                     }, null)

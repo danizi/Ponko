@@ -12,6 +12,7 @@ import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.bean.OauthBean
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.login.LoginAccountAct
+import com.ponko.cn.module.login.LoginAccountAndCodeAct
 import com.ponko.cn.module.login.LoginRegisterAct
 import com.ponko.cn.module.login.LoginWxAct
 import com.ponko.cn.utils.ActivityUtil
@@ -135,7 +136,8 @@ class LoginStartContract {
         }
 
         fun clickAccountLogin() {
-            ActivityUtil.startActivity(context, Intent(context, LoginAccountAct::class.java))
+            //ActivityUtil.startActivity(context, Intent(context, LoginAccountAct::class.java))
+            ActivityUtil.startActivity(context, Intent(context, LoginAccountAndCodeAct::class.java))
         }
 
         fun clickRegister() {

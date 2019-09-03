@@ -115,6 +115,10 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                 "收藏" -> {
                     ActivityUtil.startActivity(context, Intent(context, CollectAct::class.java))
                 }
+                "合伙人" -> {
+                    ToastUtil.show("合伙人")
+                    //ActivityUtil.startActivity(context, Intent(context, CollectAct::class.java))
+                }
                 "历史" -> {
                     ActivityUtil.startActivity(context, Intent(context, HistoryActivity::class.java))
                 }

@@ -13,6 +13,7 @@ import com.xm.lib.common.base.mvp.MvpActivity
 import com.xm.lib.common.log.BKLog
 
 
+@Deprecated("")
 class LoginAccountAct : MvpActivity<LoginAccountContract.Present>(), LoginAccountContract.View {
     companion object {
         private const val TAG = "LoginAccountAct"
