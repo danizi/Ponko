@@ -20,12 +20,14 @@ import com.ponko.cn.bean.Main2CBean
 import com.ponko.cn.bean.MyBean
 import com.ponko.cn.bean.StoreTaskBean
 import com.ponko.cn.constant.Constants
+import com.ponko.cn.constant.Constants.BASE_API
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.my.option.*
 import com.ponko.cn.module.my.option.store.StoreAct
 import com.ponko.cn.module.my.v1.option.store.IntegralExchangedClassAct
 import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v2.StudyContract2
+import com.ponko.cn.module.web.WebAct
 import com.ponko.cn.utils.ActivityUtil
 import com.ponko.cn.utils.AnimUtil
 import com.ponko.cn.utils.CacheUtil
@@ -116,7 +118,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                     ActivityUtil.startActivity(context, Intent(context, CollectAct::class.java))
                 }
                 "合伙人" -> {
-                    ToastUtil.show("合伙人")
+                    WebAct.start(context, "url","${BASE_API}web/agent","合伙人")
                     //ActivityUtil.startActivity(context, Intent(context, CollectAct::class.java))
                 }
                 "历史" -> {

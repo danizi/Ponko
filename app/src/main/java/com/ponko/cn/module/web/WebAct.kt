@@ -5,6 +5,7 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.net.http.SslError
 import android.os.Build
 import android.support.v7.app.AlertDialog
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
@@ -20,9 +22,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.google.gson.Gson
 import com.ponko.cn.R
-import com.ponko.cn.module.web.WebContract.V.PayViewHolder.Companion.javascriptPayGuide
-import com.ponko.cn.module.web.WebContract.V.PayViewHolder.Companion.javascriptPayProductid
-import com.ponko.cn.module.web.WebContract.V.ShareViewHolder.Companion.javascriptShare
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
 import com.ponko.cn.bean.*
@@ -31,6 +30,9 @@ import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
 import com.ponko.cn.module.my.option.InviteFriendRecordActivity
 import com.ponko.cn.module.my.option.acount.AddressActivity
+import com.ponko.cn.module.web.WebContract.V.PayViewHolder.Companion.javascriptPayGuide
+import com.ponko.cn.module.web.WebContract.V.PayViewHolder.Companion.javascriptPayProductid
+import com.ponko.cn.module.web.WebContract.V.ShareViewHolder.Companion.javascriptShare
 import com.ponko.cn.utils.*
 import com.ponko.cn.utils.CacheUtil.getToken
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
@@ -191,6 +193,17 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
         exchangeUI?.initEvent() //监听兑换按钮
         payUI?.initEvent()      //监听支付按钮
         shareUI?.initEvent()    //监听分享按钮 PS：在顶部栏右边触发
+        mainUI?.web?.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                //按返回键操作并且能回退网页
+                if (keyCode == KeyEvent.KEYCODE_BACK && mainUI?.web?.canGoBack()!!) {
+                    //后退
+                    mainUI?.web?.goBack()
+                    return@OnKeyListener true
+                }
+            }
+            false
+        })
     }
 
     override fun iniData() {
@@ -227,6 +240,7 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
         //payUI?.iniData(this)
         //shareUI?.iniData(this)
     }
+
 
     /**
      * 窗口UI
@@ -314,8 +328,20 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                     super.onReceivedTitle(view, title)
                 }
 
+                override fun onJsAlert(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean {
+                    val builder = AlertDialog.Builder(act!!)
+                    builder.setTitle("提示")
+                    builder.setMessage(message)
+                    val dlg = builder.create()
+                    dlg.show()
+                    result?.confirm()
+                    //return super.onJsAlert(view, url, message, result)
+                    return true
+                }
+
             }
             webView?.webViewClient = object : WebViewClient() {
+
                 @TargetApi(Build.VERSION_CODES.N)
                 override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                     view.loadUrl(request.url.toString())
@@ -324,13 +350,21 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
 
                 override fun onPageFinished(view: WebView, finishUrl: String) {
                     BKLog.d(TAG, "onPageFinished finished:$finishUrl")
+
                     view.loadUrl(javascriptShare)
                     view.loadUrl(javascriptPayProductid)
                     view.loadUrl(javascriptPayGuide)
-
-
                     super.onPageFinished(view, finishUrl)
                     progressBar?.visibility = View.GONE
+
+                    if (finishUrl.startsWith("tel:")) {
+                        web.loadUrl(webView?.url)
+                        val callPhone = finishUrl.replace("//", "")
+                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse(callPhone))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        act?.startActivity(intent)
+
+                    }
                 }
 
                 override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
@@ -450,6 +484,7 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                 heads["x-tradestudy-client-device"] = "android_phone"
                 heads["x-tradestudy-access-key-id"] = "c"
                 heads["x-tradestudy-access-token"] = getToken()!!
+                BKLog.e(TAG, "网页添加请求头:")
             } else {
                 BKLog.e(TAG, "非法地址$linkValue")
             }
@@ -955,6 +990,14 @@ class WebContract {
                     }
                     "JS_EXCHANGE" -> {
                         excahnge(link_type, link_value)
+                    }
+                    "JS_CALL" -> {
+                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$link_value"))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        act?.startActivity(intent)
+                    }
+                    "back" -> {
+                        act?.finish()
                     }
                     else -> {
                         goto(link_type, link_value)

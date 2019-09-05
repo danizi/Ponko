@@ -120,6 +120,17 @@ object CacheUtil {
     }
 
     /**
+     * 是否后台播放 0 后台播放 1 后台不能播放
+     */
+    fun putMediaBackground(s: String) {
+        SPUtil.put(PonkoApp.app, SP_FILE_NAME, "MediaBackground", s)
+    }
+
+    fun getMediaBackground(): String {
+        return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "MediaBackground", "1") as String
+    }
+
+    /**
      * 日志开关 0打开 1关闭
      */
     fun putLog(s: String) {

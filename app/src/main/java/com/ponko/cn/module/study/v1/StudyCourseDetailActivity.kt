@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import com.ponko.cn.R
-import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.CoursesDetailCBean
 import com.ponko.cn.bean.MediaBean
 import com.ponko.cn.module.common.PonkoBaseAct
@@ -15,6 +14,7 @@ import com.ponko.cn.module.media.MediaUitl
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.module.study.v1.constract.StudyCourseDetailContract
 import com.ponko.cn.utils.ActivityUtil
+import com.ponko.cn.utils.CacheUtil.getMediaBackground
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
 import com.xm.lib.media.attachment.OnPlayListItemClickListener
@@ -123,7 +123,14 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
     override fun onPause() {
         super.onPause()
-        viewHolder?.video?.onPause()
+        if (getMediaBackground() == "1") {
+            viewHolder?.video?.onPause()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewHolder?.video?.onResume()
     }
 
     override fun presenter(): StudyCourseDetailContract.Present {
@@ -163,7 +170,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
             p?.clickShare()
         }
         viewHolder?.expandList?.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
-            attachmentControl?.index = p?.twoToOne(coursesDetailCBean,groupPosition,childPosition)!!
+            attachmentControl?.index = p?.twoToOne(coursesDetailCBean, groupPosition, childPosition)!!
             p?.clickExpandListItem(parent, v, groupPosition, childPosition, id)!!
         }
 
@@ -180,7 +187,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
                 //更新下竖屏列表item
                 val (groupPosition, childPosition) = p?.oneToTwo(postion)!!
                 p?.updateExtendableListItem(groupPosition, childPosition)
-                BKLog.d("选中groupPosition:$groupPosition childPosition:$childPosition vid$vid" )
+                BKLog.d("选中groupPosition:$groupPosition childPosition:$childPosition vid$vid")
 
                 //设置标题
                 setTitle(coursesDetailCBean?.chapters!![groupPosition].sections[childPosition].name)

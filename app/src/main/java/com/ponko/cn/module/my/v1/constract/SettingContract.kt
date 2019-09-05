@@ -10,10 +10,12 @@ import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.utils.CacheUtil.getLog
+import com.ponko.cn.utils.CacheUtil.getMediaBackground
 import com.ponko.cn.utils.CacheUtil.getMediaType
 import com.ponko.cn.utils.CacheUtil.getRunqueues
 import com.ponko.cn.utils.CacheUtil.getStudyUI
 import com.ponko.cn.utils.CacheUtil.putLog
+import com.ponko.cn.utils.CacheUtil.putMediaBackground
 import com.ponko.cn.utils.CacheUtil.putMediaType
 import com.ponko.cn.utils.CacheUtil.putRunqueues
 import com.ponko.cn.utils.CacheUtil.putStudyUI
@@ -152,6 +154,25 @@ class SettingContract {
                                     dlg.dismiss()
                                 }
                             })
+                        }
+                    }
+                    "播放器是否后台播放" -> {
+                        list.add("是")
+                        list.add("否")
+                        //选中第几个
+                        val pos = getMediaBackground().toInt() - 1
+                        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, list)
+                        ui?.spinner?.adapter = adapter
+                        adapter.notifyDataSetChanged()
+                        ui?.spinner?.setSelection(pos)
+                        ui?.spinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                            }
+
+                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                putMediaBackground(position.toString())
+                            }
                         }
                     }
                     else -> {

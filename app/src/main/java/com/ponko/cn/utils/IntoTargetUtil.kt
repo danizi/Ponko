@@ -6,12 +6,9 @@ import android.content.Intent
 import android.text.TextUtils
 import com.ponko.cn.MainActivity
 import com.ponko.cn.app.PonkoApp
-import com.ponko.cn.module.web.WebAct
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.module.login.LoginStartAct
-import com.ponko.cn.module.my.option.InviteFriendActivity
 import com.ponko.cn.module.my.option.InviteFriendShareActivity
-import com.ponko.cn.module.my.option.RemindAct
 import com.ponko.cn.module.my.option.acount.AccountAct
 import com.ponko.cn.module.my.option.acount.PersonalActivity
 import com.ponko.cn.module.my.option.store.*
@@ -22,6 +19,7 @@ import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v1.CourseTypeLinearActivity
 import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
 import com.ponko.cn.module.study.v2.CourseTypeLinearActivityV2
+import com.ponko.cn.module.web.WebAct
 import com.xm.lib.common.log.BKLog
 
 @SuppressLint("StaticFieldLeak")
@@ -254,7 +252,11 @@ object IntoTargetUtil {
 
     private fun url(context: Context?, linkValue: String?) {
         BKLog.d(TAG, "普通网页 linkValue:$linkValue")
-        WebAct.start(context, "url", linkValue)
+        if (linkValue?.startsWith("http")!! || linkValue.startsWith("https")) {
+            WebAct.start(context, "url", linkValue, "", Intent.FLAG_ACTIVITY_NEW_TASK)
+        } else {
+            WebAct.start(context, "url", "${Constants.BASE_API}$linkValue", "", Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
     }
 
     private fun msg(linkValue: String?) {

@@ -37,6 +37,7 @@ class SettingActivity : RefreshLoadAct<SettingContract.Present, List<String>>() 
         data.add("视频分辨率")
         data.add("清除视频缓存")
         data.add("下载任务数量")
+        data.add("播放器是否后台播放")
         if (UI_DEBUG) {
             data.add("学习页面新旧版开关")
             data.add("日志开关")
