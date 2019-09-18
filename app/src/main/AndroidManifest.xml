@@ -246,7 +246,9 @@
         <activity android:name=".module.my.v1.option.store.IntegralExchangedClassAct" />
         <activity android:name=".module.my.v1.option.ReportActivity" />
         <activity android:name=".module.my.v1.option.PosterActivity" />
-        <activity android:name=".module.login.LoginAccountAndCodeAct"></activity>
+        <activity android:name=".module.login.LoginAccountAndCodeAct" />
+        <activity android:name=".module.common.pay.PayAct" />
+        <activity android:name=".module.common.share.ShareAct"></activity>
     </application>
 
 </manifest>

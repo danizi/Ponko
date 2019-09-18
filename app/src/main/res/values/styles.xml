@@ -35,5 +35,10 @@
         <!-- 是否使用背景半透明 -->
     </style>
 
+    <!-- CustomCheckBox theme -->
+    <style name="CustomCheckBoxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/selector_check</item>
+
+    </style>
 
 </resources>

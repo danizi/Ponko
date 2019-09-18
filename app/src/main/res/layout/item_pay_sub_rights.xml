@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    tools:ignore="HardcodedText,RtlSymmetry">
+
+    <TextView
+        android:id="@+id/tv_entrance_rights"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="15dp"
+        android:paddingLeft="15dp"
+        android:text="\n1.学籍有效期至2020年9月10日\n\n2.有效期内学习外贸口语课程全部内容包含更新内容\n\n3.赠送800积分，用于积分商城兑换\n"
+        android:textColor="#555555"
+        android:textSize="13sp" />
+
+</android.support.constraint.ConstraintLayout>

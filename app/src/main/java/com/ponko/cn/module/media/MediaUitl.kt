@@ -11,20 +11,17 @@ import android.widget.Toast
 import com.google.gson.Gson
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.*
-import com.ponko.cn.module.media.MediaUitl.fileSize
-import com.ponko.cn.module.media.MediaUitl.hls
 import com.ponko.cn.module.media.control.AttachmentControl
 import com.ponko.cn.utils.CacheUtil
 import com.ponko.cn.utils.CacheUtil.getPolycConfig
 import com.ponko.cn.utils.DialogUtil
 import com.ponko.cn.utils.ToastUtil
-import com.xm.lib.common.http.NetworkUtil
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.component.OnEnterListener
 import com.xm.lib.media.base.XmVideoView
 import okhttp3.*
-import java.io.IOException
 import org.json.JSONObject
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLConnection
@@ -140,9 +137,9 @@ object MediaUitl {
         BKLog.e(TAG, "本地日期:${sdf.format(date)}")
         BKLog.e(TAG, "服务器日期:${sdf.format(Date(serviceData))}")
         if (millionSeconds > serviceData) {
-            return serviceData.toString()
+            return millionSeconds.toString()
         }
-        return millionSeconds.toString()
+        return serviceData.toString()
 
     }
 

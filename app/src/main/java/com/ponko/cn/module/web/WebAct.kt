@@ -287,6 +287,15 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
             webSettings?.javaScriptEnabled = true  //支持js
             webSettings?.useWideViewPort = true  //
 
+            webSettings?.layoutAlgorithm = WebSettings.LayoutAlgorithm.NARROW_COLUMNS
+            webSettings?.useWideViewPort = true
+            webSettings?.loadWithOverviewMode = true
+            webSettings?.setGeolocationEnabled(true)
+            webSettings?.domStorageEnabled = true
+            webView?.requestFocus()
+            webView?.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
+
+
             webView?.requestFocusFromTouch()//支持获取手势焦点，输入用户名、密码或其他
             webSettings?.blockNetworkImage = false
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -344,13 +353,12 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
 
                 @TargetApi(Build.VERSION_CODES.N)
                 override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                    view.loadUrl(request.url.toString())
+                    view.loadUrl(request.url.toString(), heads(request.url.toString()))
                     return true
                 }
 
                 override fun onPageFinished(view: WebView, finishUrl: String) {
                     BKLog.d(TAG, "onPageFinished finished:$finishUrl")
-
                     view.loadUrl(javascriptShare)
                     view.loadUrl(javascriptPayProductid)
                     view.loadUrl(javascriptPayGuide)
@@ -983,6 +991,7 @@ class WebContract {
                 val link_value = linkBean.link.toString()
                 when (link_type) {
                     "JS_PAY" -> {
+
                         pay(link_type, link_value)
                     }
                     "JS_SHARE" -> {
@@ -1193,7 +1202,7 @@ class WebContract {
                                 absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
                                     override fun onSuccess() {
                                         BKLog.d("支付成功")
-                                        if (CacheUtil.getStudyUI() == "2"/*新版本*/) {
+                                        if (CacheUtil.getStudyUI() == "2"/*新版本*/ && !webView?.url?.contains("web/agent/info")!!) {
                                             DialogUtil.show(act, "提示", PonkoApp.main2CBean?.tips?.pay_success!!, false, object : OnEnterListener {
                                                 override fun onEnter(dlg: AlertDialog) {
                                                     dlg.dismiss()

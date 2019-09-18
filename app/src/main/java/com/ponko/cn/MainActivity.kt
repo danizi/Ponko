@@ -25,6 +25,7 @@ import com.ponko.cn.module.free.v2.FreeFrgV2
 import com.ponko.cn.module.interflow.frg.InterflowFrg
 import com.ponko.cn.module.media.AttachmentGesture
 import com.ponko.cn.module.my.v1.MyFrg
+import com.ponko.cn.module.common.pay.PayAct
 import com.ponko.cn.module.study.v1.StudyFrg
 import com.ponko.cn.module.study.v2.StudyFrg2
 import com.ponko.cn.utils.CacheUtil
@@ -116,6 +117,8 @@ class MainActivity : BaseActivity() {
         broadcastManager?.registerReceiver(Constants.ACTION_BOTTOM_MENU, bottomMenuReceiver)
         broadcastManager?.registerReceiver(Constants.ACTION_BOTTOM_TIP_SHOW, bottomMenuReceiver)
         broadcastManager?.registerReceiver(Constants.ACTION_BOTTOM_TIP_HIDE, bottomMenuReceiver)
+
+        startActivity(Intent(this, PayAct::class.java))
     }
 
     override fun onDestroy() {

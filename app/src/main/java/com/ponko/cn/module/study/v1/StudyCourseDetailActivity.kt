@@ -264,6 +264,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         val attachmentPre = viewHolder?.video?.getChildAt(0) as AttachmentPre
 //        val avatar = coursesDetailCBean?.chapters!![0].sections[0].avatar
 //        val vid = coursesDetailCBean.chapters!![0].sections[0].vid  //PS 游客模式vid获取不到
+        var pos = 0
         var avatar = ""
         var vid = ""
         var flag = false
@@ -274,6 +275,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
                     avatar = section.avatar
                     vid = section.vid
                     flag = true
+                    pos = section.progress_duration * 1000
                     break
                 }
             }
@@ -283,7 +285,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
         } else {
             coursesDetailCBean.isPossess
         }
-        attachmentPre.load(vid = vid, preUrl = avatar, isPay = isPay)      //todo 窗口有销毁的可能
+        attachmentPre.load(vid = vid, preUrl = avatar, isPay = isPay, pos = pos)      //todo 窗口有销毁的可能
     }
 
     override fun displayVideoExtendableList(myExtendableListAdp: StudyCourseDetailContract.V.MyExtendableListViewAdapter?) {
@@ -294,6 +296,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
     }
 
     override fun start(coursesDetailCBean: CoursesDetailCBean, vid: String, groupPosition: Int, childPosition: Int) {
+        val duration = coursesDetailCBean.chapters[groupPosition].sections[childPosition].duration.toInt() * 1000
         val progress = coursesDetailCBean.chapters[groupPosition].sections[childPosition].progress_duration * 1000
         val pos = p?.twoToOne(coursesDetailCBean, groupPosition, childPosition)
         BKLog.d("二维转一维数组-> 下标pos:$pos")

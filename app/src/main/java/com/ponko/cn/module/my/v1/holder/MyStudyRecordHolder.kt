@@ -39,7 +39,11 @@ class MyStudyRecordHolder(view: View) : BaseViewHolder(view) {
         }
         val historyRecordBean = d as RecordCBean.HistoryRecordBean
         val context = itemView.context
-        val p = (historyRecordBean.position.toFloat() * 100f / historyRecordBean.durationForSecond.toFloat()).toInt()
+        var p = (historyRecordBean.position.toFloat() * 100f / historyRecordBean.durationForSecond.toFloat()).toInt()
+        if (p > 100) {
+            p = 100
+        }
+
         Glide.with(context, historyRecordBean.avatar, viewHolder?.ivCover)
         viewHolder?.tvTitle?.text = historyRecordBean.sectionName
         viewHolder?.tvRecord?.text = "${TimeUtil.hhmmss(historyRecordBean.durationForSecond * 1000L)} | 已学习 $p %"

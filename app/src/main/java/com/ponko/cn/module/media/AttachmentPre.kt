@@ -31,6 +31,7 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
     private var ui: UI? = null
     var url: String? = ""
     var isPay: Boolean? = false
+    var pos: Int = 0
 
     init {
         observer = object : PlayerObserver {
@@ -47,10 +48,11 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
         Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ui?.ivPre)//加载图片
     }
 
-    fun load(vid: String?, preUrl: String?, isPay: Boolean) {
+    fun load(vid: String?, preUrl: String?, isPay: Boolean, pos: Int) {
         this.url = vid
         this.preUrl = preUrl
         this.isPay = isPay
+        this.pos = pos
         Glide.with(context).load(preUrl).error(R.mipmap.load_img_default).into(ui?.ivPre)//加载图片  //TODO You cannot start a load for a destroyed activity
     }
 
@@ -101,9 +103,10 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
             ui?.ivStart?.visibility = View.GONE
             ui?.pbLoading?.visibility = View.VISIBLE
             //获取播放地址
+
             MediaUitl.getM3u8Url(url, object : MediaUitl.OnPlayUrlListener {
                 override fun onSuccess(url: String, size: Int?) {
-                    xmVideoView?.start(url, true)
+                    xmVideoView?.start(url, true, pos)
                     xmVideoView?.bringChildToFront(this@AttachmentPre)
                 }
 
