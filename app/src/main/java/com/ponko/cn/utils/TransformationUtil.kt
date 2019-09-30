@@ -2,7 +2,6 @@ package com.ponko.cn.utils
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.request.target.ImageViewTarget
 
@@ -36,8 +35,20 @@ internal class TransformationUtil(private val target: ImageView) : ImageViewTarg
         target.layoutParams = params
 
         //
-        val parent = target.parent.parent.parent as ViewGroup
-        parent.layoutParams.height = imageViewHeight
+//        try {
+//            val parent = target.parent.parent.parent as ViewGroup
+//            parent.layoutParams.height = imageViewHeight
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+//        if(target.parent is ConstraintLayout && target.parent.parent is NestedScrollView){
+//            try {
+//                val parent = target.parent.parent as ViewGroup
+//                parent.layoutParams.height = (target.parent as ViewGroup).height
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
     }
 
     fun sy(resource: Bitmap): Float {

@@ -127,7 +127,7 @@ object CacheUtil {
     }
 
     fun getMediaBackground(): String {
-        return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "MediaBackground", "1") as String
+        return SPUtil.get(PonkoApp.app, SP_FILE_NAME, "MediaBackground", "0") as String
     }
 
     /**

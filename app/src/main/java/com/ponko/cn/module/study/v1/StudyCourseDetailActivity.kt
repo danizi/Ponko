@@ -123,7 +123,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
 
     override fun onPause() {
         super.onPause()
-        if (getMediaBackground() == "1") {
+        if (getMediaBackground() == "0") {
             viewHolder?.video?.onPause()
         }
     }

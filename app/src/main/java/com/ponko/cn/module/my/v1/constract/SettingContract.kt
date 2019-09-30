@@ -157,10 +157,10 @@ class SettingContract {
                         }
                     }
                     "播放器是否后台播放" -> {
-                        list.add("是")
                         list.add("否")
+                        list.add("是")
                         //选中第几个
-                        val pos = getMediaBackground().toInt() - 1
+                        val pos = getMediaBackground().toInt()
                         val adapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, list)
                         ui?.spinner?.adapter = adapter
                         adapter.notifyDataSetChanged()

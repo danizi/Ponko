@@ -7,8 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.ItemPaymentBean
-import com.ponko.cn.module.web.WebAct
+import com.ponko.cn.bean.ProductInfoCBean
 import com.xm.lib.common.base.rv.v2.BaseViewHolderV2
+import com.xm.lib.common.log.BKLog
 
 
 /**
@@ -23,23 +24,40 @@ class ItemPaymentVH(view: View, val listener: IPaymentListener?) : BaseViewHolde
             ui = UI.create(itemView)
         }
 
-        ui?.ivAliCheck?.isEnabled = true
-        ui?.ivWxCheck?.isEnabled = false
+        if (data is ItemPaymentBean) {
+            val itemPaymentBean = data as ItemPaymentBean
+            val listBeans = itemPaymentBean.list as ArrayList<ProductInfoCBean.ListBeanX.ListBean>
 
-        ui?.clWx?.setOnClickListener {
-            ui?.ivAliCheck?.isEnabled = true
-            ui?.ivWxCheck?.isEnabled = false
-            listener?.select(0)
-        }
-        ui?.clAli?.setOnClickListener {
-            ui?.ivWxCheck?.isEnabled = true
-            ui?.ivAliCheck?.isEnabled = false
-            listener?.select(1)
-        }
-        ui?.tvPayAgreement?.setOnClickListener {
-            WebAct.start(itemView.context, "url", "https://www.baidu.com/")
-        }
+            //设置标题
+            ui?.tvTitle?.text = itemPaymentBean.title
 
+            //设置默认选中支付
+            for (listBean in listBeans) {
+                when (listBean.name) {
+                    "微信支付" -> {
+                        ui?.ivWxCheck?.isEnabled = !listBean.defaultX
+                    }
+                    "支付宝支付" -> {
+                        ui?.ivAliCheck?.isEnabled = !listBean.defaultX
+                    }
+                }
+            }
+
+            //选中微信
+            ui?.clWx?.setOnClickListener {
+                ui?.ivAliCheck?.isEnabled = true
+                ui?.ivWxCheck?.isEnabled = false
+                listener?.select(0)
+            }
+            //选中阿里
+            ui?.clAli?.setOnClickListener {
+                ui?.ivWxCheck?.isEnabled = true
+                ui?.ivAliCheck?.isEnabled = false
+                listener?.select(1)
+            }
+        } else {
+            BKLog.d("data not ItemPaymentBean")
+        }
     }
 
     override fun onClick(v: View?) {
@@ -57,17 +75,7 @@ class ItemPaymentVH(view: View, val listener: IPaymentListener?) : BaseViewHolde
         }
     }
 
-    private class UI private constructor(
-            val tvTitle: TextView,
-            val divider: View,
-            val clWx: ConstraintLayout,
-            val ivWx: ImageView,
-            val ivWxCheck: ImageView,
-            val divider2: View,
-            val clAli: ConstraintLayout,
-            val ivAli: ImageView,
-            val ivAliCheck: ImageView,
-            val tvPayAgreement: TextView) {
+    private class UI private constructor(val tvTitle: TextView, val divider: View, val clWx: ConstraintLayout, val ivWx: ImageView, val ivWxCheck: ImageView, val divider2: View, val clAli: ConstraintLayout, val ivAli: ImageView, val ivAliCheck: ImageView) {
         companion object {
 
             fun create(rootView: View): UI {
@@ -80,8 +88,7 @@ class ItemPaymentVH(view: View, val listener: IPaymentListener?) : BaseViewHolde
                 val clAli = rootView.findViewById<View>(R.id.cl_ali) as ConstraintLayout
                 val ivAli = rootView.findViewById<View>(R.id.iv_ali) as ImageView
                 val ivAliCheck = rootView.findViewById<View>(R.id.iv_ali_check) as ImageView
-                val tvPayAgreement = rootView.findViewById<View>(R.id.tv_pay_agreement) as TextView
-                return UI(tvTitle, divider, clWx, ivWx, ivWxCheck, divider2, clAli, ivAli, ivAliCheck, tvPayAgreement)
+                return UI(tvTitle, divider, clWx, ivWx, ivWxCheck, divider2, clAli, ivAli, ivAliCheck)
             }
         }
     }

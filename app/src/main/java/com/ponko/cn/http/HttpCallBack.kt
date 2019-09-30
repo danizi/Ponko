@@ -37,13 +37,16 @@ abstract class HttpCallBack<T> : RetrofitClient.BaseCallback<T>() {
                         break
                     }
                 }
+                if (msg == "请检查您的网络...") {
+                    showErrorDlg("", msg)
+                }
             }
         }
     }
 
     private fun showErrorDlg(className: String, msg: String) {
         val isCancelable = !(msg == errorCodeMaps["InvalidAccessToken"] || msg == errorCodeMaps["RepeatOnline"] || msg == errorCodeMaps["InvalidPhoneCode"])
-        if(msg == errorCodeMaps["RepeatOnline"] && !CacheUtil.isUserTypeLogin()) return
+        if (msg == errorCodeMaps["RepeatOnline"] && !CacheUtil.isUserTypeLogin()) return
 
         DialogUtil.show(
                 PonkoApp.activityManager.getTopActivity()!!,

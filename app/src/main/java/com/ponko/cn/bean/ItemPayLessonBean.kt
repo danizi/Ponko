@@ -1,10 +1,7 @@
 package com.ponko.cn.bean
 
 class ItemPayLessonBean {
-    var subDatas = ArrayList<Any>()
-
-    init {
-        subDatas.add(Any())
-        subDatas.add(Any())
-    }
+    var header: ProductInfoCBean.HeaderBean? = null
+    var title:String="入学课程"
+    var list = ArrayList<Any>()
 }

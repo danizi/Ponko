@@ -117,5 +117,27 @@ public class OrderCBean {
         public void setTimestamp(String timestamp) {
             this.timestamp = timestamp;
         }
+
+        @Override
+        public String toString() {
+            return "WechatBean{" +
+                    "packageX='" + packageX + '\'' +
+                    ", appid='" + appid + '\'' +
+                    ", sign='" + sign + '\'' +
+                    ", partnerid='" + partnerid + '\'' +
+                    ", prepayid='" + prepayid + '\'' +
+                    ", noncestr='" + noncestr + '\'' +
+                    ", timestamp='" + timestamp + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "OrderCBean{" +
+                "wechat=" + wechat +
+                ", key='" + key + '\'' +
+                ", alipay='" + alipay + '\'' +
+                '}';
     }
 }

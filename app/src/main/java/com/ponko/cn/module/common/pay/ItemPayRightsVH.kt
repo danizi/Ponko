@@ -11,6 +11,7 @@ import com.ponko.cn.bean.ItemPayRightsBean
 import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
 import com.xm.lib.common.base.rv.v2.BaseRvAdapterV2
 import com.xm.lib.common.base.rv.v2.BaseViewHolderV2
+import com.xm.lib.common.log.BKLog
 
 /**
  * 入学权益ViewHolder
@@ -24,16 +25,29 @@ class ItemPayRightsVH(view: View) : BaseViewHolderV2(view) {
             ui = UI.create(itemView)
         }
         val ctx = itemView.context
-        val itemPayRightsBean = data as ItemPayRightsBean
+        if (data is ItemPayRightsBean) {
+            val itemPayRightsBean = data as ItemPayRightsBean
 
-        //设置嵌套RecyclerView数据，即购买课程
-        val adapter = BaseRvAdapterV2.Builder()
-                .addHolderFactory(ItemPayRightsSubVH.Factory())
-                .addDataResouce(itemPayRightsBean.subDatas)
-                .build()
-        ui?.rv?.layoutManager = LinearLayoutManager(ctx)
-        ui?.rv?.addItemDecoration(MyDividerItemDecoration.divider(ctx, DividerItemDecoration.VERTICAL,R.drawable.shape_question_diveder_1))
-        ui?.rv?.adapter = adapter
+            //设置标题
+            ui?.tvTitle?.text = itemPayRightsBean.title
+
+//            if (itemPayRightsBean.list.isEmpty()) {
+//                itemView.visibility = View.GONE
+//                return
+//            }
+
+            //设置嵌套RecyclerView数据，即购买课程
+            val adapter = BaseRvAdapterV2.Builder()
+                    .addHolderFactory(ItemPayRightsSubVH.Factory())
+                    .addDataResouce(itemPayRightsBean.list)
+                    .build()
+            ui?.rv?.isFocusableInTouchMode = false
+            ui?.rv?.layoutManager = LinearLayoutManager(ctx)
+            ui?.rv?.addItemDecoration(MyDividerItemDecoration.divider(ctx, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
+            ui?.rv?.adapter = adapter
+        } else {
+            BKLog.e("data not ItemPayRightsBean")
+        }
     }
 
     override fun onClick(v: View?) {

@@ -10,6 +10,15 @@ public class GeneralBean {
     private String url = "";
     private String id = "";
     private String message="";
+    private String msg="";
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 
     public String getMessage() {
         return message;

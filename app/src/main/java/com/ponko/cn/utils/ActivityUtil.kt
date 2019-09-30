@@ -33,5 +33,4 @@ object ActivityUtil {
             (context as Activity).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
     }
-
 }

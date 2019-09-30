@@ -28,6 +28,8 @@ import com.ponko.cn.bean.*
 import com.ponko.cn.constant.Constants.BASE_API
 import com.ponko.cn.http.HttpCallBack
 import com.ponko.cn.module.common.PonkoBaseAct
+import com.ponko.cn.module.common.pay.PayAct
+import com.ponko.cn.module.common.share.ShareAct
 import com.ponko.cn.module.my.option.InviteFriendRecordActivity
 import com.ponko.cn.module.my.option.acount.AddressActivity
 import com.ponko.cn.module.web.WebContract.V.PayViewHolder.Companion.javascriptPayGuide
@@ -51,6 +53,7 @@ import com.xm.lib.pay.wx.WxPay
 import com.xm.lib.share.AbsShare
 import com.xm.lib.share.ShareConfig
 import com.xm.lib.share.wx.WxShare
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
@@ -991,7 +994,6 @@ class WebContract {
                 val link_value = linkBean.link.toString()
                 when (link_type) {
                     "JS_PAY" -> {
-
                         pay(link_type, link_value)
                     }
                     "JS_SHARE" -> {
@@ -1007,6 +1009,16 @@ class WebContract {
                     }
                     "back" -> {
                         act?.finish()
+                    }
+                    "mp" -> {
+                        val intent = Intent(act, ShareAct::class.java)
+                        // 解析数据json串{"type": "type", "value": "slfjsdlkfjsldkf"}
+                        val jsonObject = JSONObject(link_value)
+                        val type = jsonObject.getString("type")
+                        val id = jsonObject.getString("value")
+                        intent.putExtra("type", type)
+                        intent.putExtra("id", id)
+                        ActivityUtil.startActivity(act, intent)
                     }
                     else -> {
                         goto(link_type, link_value)
@@ -1167,71 +1179,83 @@ class WebContract {
             @JavascriptInterface
             fun pay(payWay: String, productId: String) {
                 if (CacheUtil.isUserTypeLogin() || true) {
-                    AlertDialog.Builder(act!!).setItems(arrayOf("微信", "支付宝")) { dialog, which ->
+                    if (act == null) {
+                        BKLog.e("支付失败，activity is null")
+                        return
+                    }
 
-                        var absPay: AbsPay? = null
-                        var payWay = payWay
-                        when (which) {
-                            0 -> {
-                                payWay = "weiXin"
-                                absPay = WxPay(act)
-                                absPay.init(PayConfig.Builder().appid(APP_ID).build())
-                                BKLog.d("点击了微信支付")
-                            }
-                            1 -> {
-                                payWay = "alipay"
-                                absPay = AliPay(act)
-                                BKLog.d("点击了支付宝")
-                            }
-                        }
-                        PonkoApp.payApi?.createProductOrder(payWay, productId)?.enqueue(object : HttpCallBack<OrderCBean>() {
-                            override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
-                                val orderCBean = response?.body()
-                                orderCBean?.wechat
+                    if (TextUtils.isEmpty(productId)) {
+                        BKLog.e("支付失败，productId is null")
+                        return
+                    }
 
-                                var order = ""
-                                when (payWay) {
-                                    "weiXin" -> {
-                                        order = Gson().toJson(orderCBean?.wechat)
-                                    }
-                                    "alipay" -> {
-                                        order = orderCBean?.alipay!!
-                                    }
-                                }
+                    PayAct.star(act, productId)
 
-                                absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
-                                    override fun onSuccess() {
-                                        BKLog.d("支付成功")
-                                        if (CacheUtil.getStudyUI() == "2"/*新版本*/ && !webView?.url?.contains("web/agent/info")!!) {
-                                            DialogUtil.show(act, "提示", PonkoApp.main2CBean?.tips?.pay_success!!, false, object : OnEnterListener {
-                                                override fun onEnter(dlg: AlertDialog) {
-                                                    dlg.dismiss()
-                                                }
-                                            }, null)
-                                        }
-                                        act.runOnUiThread {
-                                            webView?.loadUrl("javascript:callback_pay_success()")
-                                        }
-                                    }
-
-                                    override fun onFailure() {
-                                        act.runOnUiThread {
-                                            webView?.loadUrl("javascript:callback_pay_failed()")
-                                        }
-                                        BKLog.d("支付失败")
-                                    }
-
-                                    override fun onCancel() {
-                                        act.runOnUiThread {
-                                            webView?.loadUrl("javascript:callback_pay_canceled()")
-                                        }
-                                        BKLog.d("支付取消")
-                                    }
-                                })
-                                dialog.dismiss()
-                            }
-                        })
-                    }.show()
+//                    AlertDialog.Builder(act!!).setItems(arrayOf("微信", "支付宝")) { dialog, which ->
+//
+//                        var absPay: AbsPay? = null
+//                        var payWay = payWay
+//                        when (which) {
+//                            0 -> {
+//                                payWay = "weiXin"
+//                                absPay = WxPay(act)
+//                                absPay.init(PayConfig.Builder().appid(APP_ID).build())
+//                                BKLog.d("点击了微信支付")
+//                            }
+//                            1 -> {
+//                                payWay = "alipay"
+//                                absPay = AliPay(act)
+//                                BKLog.d("点击了支付宝")
+//                            }
+//                        }
+//                        PonkoApp.payApi?.createProductOrder(payWay, productId)?.enqueue(object : HttpCallBack<OrderCBean>() {
+//                            override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
+//                                val orderCBean = response?.body()
+//                                orderCBean?.wechat
+//
+//                                var order = ""
+//                                when (payWay) {
+//                                    "weiXin" -> {
+//                                        order = Gson().toJson(orderCBean?.wechat)
+//                                    }
+//                                    "alipay" -> {
+//                                        order = orderCBean?.alipay!!
+//                                    }
+//                                }
+//
+//                                absPay?.pay(Channel.GENERAL, order, object : OnPayListener {
+//                                    override fun onSuccess() {
+//                                        BKLog.d("支付成功")
+//                                        if (CacheUtil.getStudyUI() == "2"/*新版本*/ && !webView?.url?.contains("web/agent/info")!!) {
+//                                            DialogUtil.show(act, "提示", PonkoApp.main2CBean?.tips?.pay_success!!, false, object : OnEnterListener {
+//                                                override fun onEnter(dlg: AlertDialog) {
+//                                                    dlg.dismiss()
+//                                                }
+//                                            }, null)
+//                                        }
+//                                        act.runOnUiThread {
+//                                            webView?.loadUrl("javascript:callback_pay_success()")
+//                                        }
+//                                    }
+//
+//                                    override fun onFailure() {
+//                                        act.runOnUiThread {
+//                                            webView?.loadUrl("javascript:callback_pay_failed()")
+//                                        }
+//                                        BKLog.d("支付失败")
+//                                    }
+//
+//                                    override fun onCancel() {
+//                                        act.runOnUiThread {
+//                                            webView?.loadUrl("javascript:callback_pay_canceled()")
+//                                        }
+//                                        BKLog.d("支付取消")
+//                                    }
+//                                })
+//                                dialog.dismiss()
+//                            }
+//                        })
+//                    }.show()
                 } else {
                     ToastUtil.show("亲，请先登录账号....")
                 }

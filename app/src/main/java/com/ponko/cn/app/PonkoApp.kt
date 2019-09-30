@@ -67,6 +67,7 @@ class PonkoApp : MultiDexApplication() {
         var adApi: AdApi? = null
         var payApi: PayApi? = null
         var searchApi: SearchApi? = null
+        var shareApi: ShareApi? = null
 
         /**
          * 数据库
@@ -223,6 +224,7 @@ class PonkoApp : MultiDexApplication() {
         adApi = retrofitClient?.retrofit?.create(AdApi::class.java)
         payApi = retrofitClient?.retrofit?.create(PayApi::class.java)
         searchApi = retrofitClient?.retrofit?.create(SearchApi::class.java)
+        shareApi = retrofitClient?.retrofit?.create(ShareApi::class.java)
     }
 
     private fun initActivityManager() {

@@ -111,10 +111,10 @@ class M3u8DownerTextAct : AppCompatActivity() {
     fun down(datas: ArrayList<CourseDbBean>) {
         for (course in datas.iterator()) {
 //            val m3u8DownTask = M3u8DownTask.Builder()
-//                    .vid(course.column_vid)
-//                    .m3u8(course.column_m3u8_url)
-//                    .name(course.column_title)
-//                    .fileSize(course.column_total.toLong())
+//                    .vid(type.column_vid)
+//                    .m3u8(type.column_m3u8_url)
+//                    .name(type.column_title)
+//                    .fileSize(type.column_total.toLong())
 //                    .build()
 //            m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
 
@@ -130,14 +130,14 @@ class M3u8DownerTextAct : AppCompatActivity() {
 
                     val m3u8DownTask = M3u8DownTask.Builder()
                             .vid(course.column_vid)
-                            .m3u8(m3u8/*course.column_m3u8_url*/)
+                            .m3u8(m3u8/*type.column_m3u8_url*/)
                             .name(course.column_title)
                             .fileSize(course.column_total.toLong())
                             .build()
                     m3u8DownManager?.newTasker(m3u8DownTask)?.enqueue(null)
 
                     //存入数据库
-                    //PonkoApp.courseDao?.update(course.column_vid,m3u8)
+                    //PonkoApp.courseDao?.update(type.column_vid,m3u8)
                 }
             })
         }

@@ -2,7 +2,6 @@ package com.ponko.cn.db.dao
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.icu.lang.UCharacter.JoiningGroup.PE
 import com.ponko.cn.db.CacheContract
 import com.ponko.cn.db.bean.CourseCollectSectionDbBean
 import com.xm.lib.common.log.BKLog

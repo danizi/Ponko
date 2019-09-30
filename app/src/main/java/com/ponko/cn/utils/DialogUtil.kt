@@ -19,7 +19,6 @@ import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.bean.GeneralBean
 import com.ponko.cn.constant.Constants
 import com.ponko.cn.http.HttpCallBack
-import com.ponko.cn.module.my.option.store.IntegralExchangedAct
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.xm.lib.common.log.BKLog
 import com.xm.lib.common.util.ScreenUtil
@@ -106,8 +105,8 @@ object DialogUtil {
     /**
      * 显示分享弹框
      */
-    fun showShareImg(context: Context?,bmp:Bitmap) {
-        if (bmp==null) {
+    fun showShareImg(context: Context?, bmp: Bitmap) {
+        if (bmp == null) {
             ToastUtil.show("分享图片为空。")
             return
         }
@@ -122,11 +121,11 @@ object DialogUtil {
             popWindow.dismiss()
         }
         flFriend.setOnClickListener {
-            wxShare?.shareImage(bmp,SendMessageToWX.Req.WXSceneSession)
+            wxShare?.shareImage(bmp, SendMessageToWX.Req.WXSceneSession)
             popWindow.dismiss()
         }
         flFriendMoment.setOnClickListener {
-            wxShare?.shareImage(bmp,SendMessageToWX.Req.WXSceneTimeline)
+            wxShare?.shareImage(bmp, SendMessageToWX.Req.WXSceneTimeline)
             popWindow.dismiss()
         }
         popWindow.ini(shareView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -192,6 +191,22 @@ object DialogUtil {
                 progressDialog = ProgressDialog(context)
                 progressDialog?.setMessage("请稍等，正在处理中...")
                 progressDialog?.setCanceledOnTouchOutside(true)
+            }
+            if (progressDialog?.isShowing == true) {
+                progressDialog?.dismiss()
+            }
+            progressDialog?.show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun showProcess(context: Context, msg: String, canceledOnTouchOutside: Boolean = true) {
+        try {
+            if (progressDialog == null) {
+                progressDialog = ProgressDialog(context)
+                progressDialog?.setMessage(msg)
+                progressDialog?.setCanceledOnTouchOutside(canceledOnTouchOutside)
             }
             if (progressDialog?.isShowing == true) {
                 progressDialog?.dismiss()
