@@ -6,14 +6,13 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.Toolbar
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.ponko.cn.R
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.Glide
 import com.ponko.cn.utils.TransformationUtil
 import com.xm.lib.common.base.mvp.MvpActivity
+import com.xm.lib.component.XmStateView
 
 
 /**
@@ -44,6 +43,9 @@ class ShareAct : MvpActivity<ShareContract.P>(), ShareContract.V {
     private var llFriend: LinearLayout? = null
     private var llFriendCircle: LinearLayout? = null
     private var llMiniProgram: LinearLayout? = null
+    private var rlState: RelativeLayout? = null
+    private var progress: ProgressBar? = null
+    private var tvError: TextView? = null
 
     override fun presenter(): ShareContract.P {
         return ShareContract.P(this, this)
@@ -55,6 +57,7 @@ class ShareAct : MvpActivity<ShareContract.P>(), ShareContract.V {
     override fun getLayoutId(): Int {
         return R.layout.activity_share
     }
+
 
     override fun findViews() {
         toolbar = findViewById<View>(R.id.toolbar) as Toolbar
@@ -73,6 +76,9 @@ class ShareAct : MvpActivity<ShareContract.P>(), ShareContract.V {
         llFriendCircle = findViewById<View>(R.id.ll_friend_circle) as LinearLayout
         llMiniProgram = findViewById<View>(R.id.ll_mini_program) as LinearLayout
 
+        rlState = findViewById(R.id.cl_state)
+        progress = findViewById(R.id.progress)
+        tvError = findViewById(R.id.tv_error)
     }
 
     override fun initDisplay() {
@@ -85,17 +91,20 @@ class ShareAct : MvpActivity<ShareContract.P>(), ShareContract.V {
 
     override fun iniEvent() {
         clCover?.setOnLongClickListener {
-            p?.longClickSaveCover(clCover)
+            p?.longClickSaveCover(clCover, tv1?.text.toString(), tv3?.text.toString())
             false
         }
         llFriend?.setOnClickListener {
-            p?.shareTo(clCover, 0)
+            p?.shareTo(clCover, 0, tv1?.text.toString(), tv3?.text.toString())
         }
         llFriendCircle?.setOnClickListener {
-            p?.shareTo(clCover, 1)
+            p?.shareTo(clCover, 1, tv1?.text.toString(), tv3?.text.toString())
         }
         llMiniProgram?.setOnClickListener {
-            p?.shareTo(clCover, 2)
+            p?.shareTo(clCover, 2, tv1?.text.toString(), tv3?.text.toString())
+        }
+        tvError?.setOnClickListener {
+            p?.reload()
         }
     }
 
@@ -126,4 +135,27 @@ class ShareAct : MvpActivity<ShareContract.P>(), ShareContract.V {
         tv23end?.text = end
         tv3?.text = title3
     }
+
+
+    override fun stateView(state: String, tip: String?) {
+        when (state) {
+            ShareContract.P.STATE_LOADING -> {
+                rlState?.visibility = View.VISIBLE
+                progress?.visibility = View.VISIBLE
+                tvError?.visibility = View.INVISIBLE
+            }
+            ShareContract.P.STATE_ERROR -> {
+                rlState?.visibility = View.VISIBLE
+                progress?.visibility = View.INVISIBLE
+                tvError?.visibility = View.VISIBLE
+
+            }
+            ShareContract.P.STATE_HIDE -> {
+                rlState?.visibility = View.INVISIBLE
+                progress?.visibility = View.INVISIBLE
+                tvError?.visibility = View.INVISIBLE
+            }
+        }
+    }
+
 }

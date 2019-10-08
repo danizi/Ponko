@@ -67,7 +67,6 @@ public class ShareCBean {
 
     public static class ParamsBean {
         /**
-         * summary : 测试课程描述
          * path : pages/detail/detail?id=cfd55eb0d37d11e99753010514587b60&rid=922c34b47ee211e5a95900163e000c35
          * websiteUrl : http://www.tradestudy.cn
          * avatar : http://cdn.tradestudy.cn/upload/product/20190416/cb7fb75516f33df96a19d96d35c6cbf7.jpg
@@ -83,14 +82,6 @@ public class ShareCBean {
         private int type;
         private String title;
         private String username;
-
-        public String getSummary() {
-            return summary;
-        }
-
-        public void setSummary(String summary) {
-            this.summary = summary;
-        }
 
         public String getPath() {
             return path;
