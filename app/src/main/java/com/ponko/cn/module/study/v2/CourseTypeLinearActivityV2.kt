@@ -90,7 +90,7 @@ class CourseTypeLinearActivityV2 : RefreshLoadAct<Any, CourseAllCBean>() {
 
             override fun onFailure(call: Call<CourseAllCBean>?, msg: String?) {
                 super.onFailure(call, msg)
-                requestRefreshFailure()
+                requestRefreshFailure(msg!!)
             }
         })
     }

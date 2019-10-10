@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewTreeObserver
 import com.ponko.cn.R
 import com.ponko.cn.bean.BindItemViewHolderBean
-import com.ponko.cn.utils.AnimUtil
 import com.ponko.cn.utils.BarUtil
 import com.ponko.cn.utils.ToastUtil
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
@@ -137,9 +136,9 @@ abstract class RefreshLoadAct<P, D> : PonkoBaseAct<P>() {
         }
     }
 
-    open fun requestRefreshFailure() {
+    open fun requestRefreshFailure(msg: String = "请求数据失败请重试....") {
         viewHolder?.srl?.finishRefresh(0)
-        viewHolder?.viewState?.showError("请求数据失败请重试....", View.OnClickListener {
+        viewHolder?.viewState?.showError(msg, View.OnClickListener {
             requestRefreshApi()
         })
     }

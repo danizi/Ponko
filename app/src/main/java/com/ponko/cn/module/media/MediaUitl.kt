@@ -136,11 +136,10 @@ object MediaUitl {
         val date = Date(millionSeconds)
         BKLog.e(TAG, "本地日期:${sdf.format(date)}")
         BKLog.e(TAG, "服务器日期:${sdf.format(Date(serviceData))}")
-        if (millionSeconds > serviceData) {
+        if (serviceData <= 0) {
             return millionSeconds.toString()
         }
         return serviceData.toString()
-
     }
 
     /**
@@ -157,7 +156,7 @@ object MediaUitl {
 //        }
         Thread(Runnable {
             try {
-                val timeUrl = URL("https://www.baidu.com")
+                val timeUrl = URL("http://www.ntsc.ac.cn")
                 val con = timeUrl.openConnection() as HttpURLConnection
                 con.readTimeout = 10000
                 con.connectTimeout = 10000
@@ -187,7 +186,7 @@ object MediaUitl {
                     override fun onFailure(call: Call, e: IOException) {
                         e.printStackTrace()
                         listener?.onFailure()
-                        ToastUtil.show("获取播放数据失败...")
+                        ToastUtil.show("获取播放数据失败:${e.message}...")
                     }
 
                     @Throws(IOException::class)
@@ -216,7 +215,7 @@ object MediaUitl {
             } catch (e: Exception) {
                 listener?.onFailure()
                 //Looper.prepare()
-                ToastUtil.show("获取视频信息失败，请检查您的网络。")
+                ToastUtil.show("获取视频信息失败:${e.message}")
                 //Looper.loop()
                 listener?.onFailure()
             }

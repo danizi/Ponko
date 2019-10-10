@@ -1,7 +1,11 @@
 package com.ponko.cn.module.media
 
 import android.content.Context
+import android.support.v7.widget.AppCompatImageButton
 import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
+import com.ponko.cn.module.media.control.AttachmentControl
 import com.xm.lib.media.R
 import com.xm.lib.media.attachment.BaseAttachmentView
 import com.xm.lib.media.base.IXmMediaPlayer
@@ -9,10 +13,6 @@ import com.xm.lib.media.base.XmVideoView
 import com.xm.lib.media.event.GestureObserver
 import com.xm.lib.media.event.PhoneStateObserver
 import com.xm.lib.media.event.PlayerObserver
-import android.widget.TextView
-import android.support.v7.widget.AppCompatImageButton
-import android.widget.ProgressBar
-import com.ponko.cn.module.media.control.AttachmentControl
 
 
 class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
@@ -22,8 +22,10 @@ class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
         observer = object : PlayerObserver {
             override fun onCompletion(mp: IXmMediaPlayer) {
                 super.onCompletion(mp)
-                xmVideoView?.bringChildToFront(this@AttachmentComplete)
-                this@AttachmentComplete.visibility = View.VISIBLE
+                //if (xmVideoView?.mediaPlayer?.getDuration() == xmVideoView?.mediaPlayer?.getCurrentPosition()) {
+                    xmVideoView?.bringChildToFront(this@AttachmentComplete)
+                    this@AttachmentComplete.visibility = View.VISIBLE
+                //}
             }
 
             override fun onPrepared(mp: IXmMediaPlayer) {

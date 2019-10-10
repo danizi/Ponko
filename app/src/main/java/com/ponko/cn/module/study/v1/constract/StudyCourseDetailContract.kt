@@ -6,7 +6,6 @@ import android.content.Intent
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
-import android.util.Half.toFloat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -746,8 +745,8 @@ class StudyCourseDetailContract {
                             }
 
                             override fun onFailure(call: Call<NetBean>?, msg: String?) {
-                                super.onFailure(call, msg)
-                                BKLog.d("上传视频进度失败")
+                                //super.onFailure(call, msg)
+                                BKLog.e("上传视频进度失败")
                             }
                         })
                     }
