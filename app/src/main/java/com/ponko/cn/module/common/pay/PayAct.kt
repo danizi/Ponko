@@ -95,6 +95,7 @@ class PayAct : MvpActivity<PayContract.P>(), PayContract.V {
                         p?.paymentSelect(type)
                     }
                 }))
+                .addHolderFactory(ItemCouponVH.Factory())
                 .addHolderFactory(ItemPayAgreementVH.Factory())
                 .addDataResouce(datas)
                 .build()

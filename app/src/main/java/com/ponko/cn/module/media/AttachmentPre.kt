@@ -103,18 +103,24 @@ class AttachmentPre(context: Context?, private var preUrl: String? = "") : BaseA
             ui?.ivStart?.visibility = View.GONE
             ui?.pbLoading?.visibility = View.VISIBLE
             //获取播放地址
+            if(TextUtils.isEmpty(url)){
+                return
+            }
+            if(url?.startsWith("http")!!||url?.startsWith("https")!!){
+                xmVideoView?.start(url, true, pos)
+                xmVideoView?.bringChildToFront(this@AttachmentPre)
+            }else{
+                MediaUitl.getM3u8Url(url, object : MediaUitl.OnPlayUrlListener {
+                    override fun onSuccess(url: String, size: Int?) {
+                        xmVideoView?.start(url, true, pos)
+                        xmVideoView?.bringChildToFront(this@AttachmentPre)
+                    }
 
-            MediaUitl.getM3u8Url(url, object : MediaUitl.OnPlayUrlListener {
-                override fun onSuccess(url: String, size: Int?) {
-                    xmVideoView?.start(url, true, pos)
-                    xmVideoView?.bringChildToFront(this@AttachmentPre)
-                }
-
-                override fun onFailure() {
-                    //ToastUtil.show("获取播放地址失败 - ")
-                }
-            })
-
+                    override fun onFailure() {
+                        //ToastUtil.show("获取播放地址失败 - ")
+                    }
+                })
+            }
         }
     }
 

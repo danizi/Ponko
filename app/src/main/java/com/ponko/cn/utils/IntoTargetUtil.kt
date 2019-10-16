@@ -1,8 +1,10 @@
 package com.ponko.cn.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import com.ponko.cn.MainActivity
 import com.ponko.cn.app.PonkoApp
@@ -19,8 +21,13 @@ import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v1.CourseTypeLinearActivity
 import com.ponko.cn.module.study.v1.StudyCourseDetailActivity
 import com.ponko.cn.module.study.v2.CourseTypeLinearActivityV2
+import com.ponko.cn.module.study.v2.MediaAct
 import com.ponko.cn.module.web.WebAct
 import com.xm.lib.common.log.BKLog
+import com.xm.lib.component.OnEnterListener
+import com.xm.lib.share.ShareConfig
+import com.xm.lib.share.wx.WxShare
+import org.json.JSONObject
 
 @SuppressLint("StaticFieldLeak")
 /**
@@ -111,6 +118,59 @@ object IntoTargetUtil {
             }
             linkType.equals("STUDY_HISTORY_LIST", true) -> {
                 reportHistory()
+            }
+            //
+            linkType.equals("logout", true) -> {
+                DialogUtil.show(context, "", "是否退出登录？", true, object : OnEnterListener {
+                    override fun onEnter(dlg: AlertDialog) {
+                        ActivityUtil.clearTheStackStartActivity(context, Intent(context, LoginStartAct::class.java))
+                    }
+                }, null)
+                BKLog.d("logout - value:$linkValue")
+            }
+
+            linkType.equals("exit", true) -> {
+                BKLog.d("exit - value:$linkValue")
+                //CacheUtil.clearUserInfo()
+                //System.exit(0)
+                val act = PonkoApp.activityManager.getTopActivity()
+                val intent = Intent(act, LoginStartAct::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                ActivityUtil.startActivity(act, intent)
+            }
+
+            linkType.equals("player", true) -> {
+                BKLog.d("player - value:$linkValue")
+                val intent = Intent(context, MediaAct::class.java)
+                val jsonObject = JSONObject(linkValue)
+                val url = jsonObject.getString("url")
+                val title = jsonObject.getString("title")
+                val auto_play = jsonObject.getBoolean("auto_play")
+                val position = jsonObject.getInt("position")
+                intent.putExtra("url", url)
+                intent.putExtra("title", title)
+                intent.putExtra("auto_play", auto_play)
+                intent.putExtra("position", position)
+                ActivityUtil.startActivity(context, intent)
+            }
+
+            linkType.equals("mp_call", true) -> {
+                BKLog.d("mp_call - value:$linkValue")
+                val share = WxShare(context as Activity)
+                share.init(ShareConfig.Builder().appid("").build())
+                val jsonObject = JSONObject(linkValue)
+                val username = jsonObject.getString("username")
+                val path = jsonObject.getString("path")
+                val type = jsonObject.getInt("type")
+                share.miniProgram(username, path, type)
+            }
+
+            linkType.equals("camera_album", true) -> {
+                BKLog.d("camera_album - value:$linkValue")
+                (context as Activity).runOnUiThread {
+                    CameraUtil2.showSelectDlg(context)
+                    //在context对应的窗口中调用 CameraUtil2.onActivityResult(...)方法
+                }
             }
         }
     }

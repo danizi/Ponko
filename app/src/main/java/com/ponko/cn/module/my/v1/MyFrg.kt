@@ -98,7 +98,7 @@ class MyFrg : RefreshLoadFrg<MyConstract.Present, ProfileCBean>(), MyConstract.V
         if (body != null) {
             data.add(body)
         }
-        data.add(MyBean.create())
+        data.add(MyBean.create(body?.menus))
         return data
     }
 }

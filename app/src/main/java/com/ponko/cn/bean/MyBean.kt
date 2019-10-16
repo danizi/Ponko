@@ -15,8 +15,8 @@ class MyBean(val listBeans: ArrayList<MyListBean>) {
                 R.mipmap.my_bk_ed_2,
                 R.mipmap.my_advisory_2,
                 R.mipmap.my_problem,
-                R.mipmap.me_check,
-                R.mipmap.my_partner
+                R.mipmap.me_check
+//                R.mipmap.my_partner
         )
         val des = arrayOf(
                 "积分商城",
@@ -29,18 +29,33 @@ class MyBean(val listBeans: ArrayList<MyListBean>) {
                 "已兑课程",
                 "咨询",
                 "常见问题",
-                "检查更新",
-                "合伙人"
+                "检查更新"
+//                "合伙人"
         )
 
-        fun create(): MyBean {
+        fun create(menus: MutableList<ProfileCBean.MenusBean>?): MyBean {
             val listBeans = ArrayList<MyListBean>()
             for (i in 0..(icons.size - 1)) {
                 listBeans.add(MyListBean(icons[i], des[i]))
+            }
+            if (menus != null) {
+                for (menu in menus) {
+                    val bean = MyListBean(-1, menu.name)
+                    bean.islocal = false
+                    bean.icon2 = menu.icon
+                    bean.link_type = menu.link_type
+                    bean.link_value = menu.link_value
+                    listBeans.add(bean)
+                }
             }
             return MyBean(listBeans)
         }
     }
 
-    class MyListBean(val icon: Int = 0, val des: String = "")
+    class MyListBean(val icon: Int = 0, val des: String = "") {
+        var islocal = true
+        var icon2: String = ""
+        var link_type: String = ""
+        var link_value: String = ""
+    }
 }

@@ -32,6 +32,11 @@ object CameraUtil2 {
     private var cameraUri: Uri? = null
 
     /**
+     * 是否裁剪
+     */
+    private var isCrop = true
+
+    /**
      * 显示选择弹框
      */
     @SuppressLint("CheckResult")
@@ -89,31 +94,58 @@ object CameraUtil2 {
             CameraUtil2.ALBUM_RESULT_CODE -> {
                 BKLog.d("相册结果")
                 if (data != null && data.data != null) {
-                    beginCrop(act, data.data!!)
+                    if (isCrop) {
+                        beginCrop(act, data.data!!)
+                    } else {
+                        handlePic(listener, act, resultCode, data)
+                    }
                     listener?.onAlbum()
                 }
             }
 
             CameraUtil2.CAMERA_RESULT_CODE -> {
                 BKLog.d("拍摄结果")
-                beginCrop(act, cameraUri!!)
+                if (isCrop) {
+                    beginCrop(act, cameraUri!!)
+                } else {
+                    handlePic(listener, act, resultCode, data!!)
+                }
+
                 listener?.onCamera()
             }
 
             Crop.REQUEST_CROP -> {
                 BKLog.d("裁剪结果")
                 if (data != null) {
-                    handleCrop(listener,act,resultCode, data)
+                    handleCrop(listener, act, resultCode, data)
                 }
+            }
+            Crop.REQUEST_PICK -> {
+                BKLog.d("获取结果")
+//                if (data != null) {
+//                    handlePic(listener, act, resultCode, data)
+//                }
             }
         }
     }
-    private fun handleCrop(listener: OnCameraListener?,act:Activity?,resultCode: Int, result: Intent) {
+
+    private fun handleCrop(listener: OnCameraListener?, act: Activity?, resultCode: Int, result: Intent) {
         if (resultCode == Activity.RESULT_OK) {
             val filePath = ImageUri.getPicturePath(act!!, getOutput(result))
             val bitmap = BitmapFactory.decodeFile(filePath)
-            BKLog.d("filePath:$filePath bitmap$bitmap")
-            listener?.onResult(filePath,bitmap)
+            BKLog.d("handleCrop filePath:$filePath bitmap$bitmap")
+            listener?.onResult(Crop.REQUEST_CROP, filePath, bitmap)
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            ToastUtil.show(Crop.getError(result).message)
+        }
+    }
+
+    private fun handlePic(listener: OnCameraListener?, act: Activity?, resultCode: Int, result: Intent) {
+        if (resultCode == Activity.RESULT_OK) {
+            val filePath = ImageUri.getPicturePath(act!!, getOutput(result))
+            val bitmap = BitmapFactory.decodeFile(filePath)
+            BKLog.d("handlePic filePath:$filePath bitmap$bitmap")
+            listener?.onResult(Crop.REQUEST_PICK, filePath, bitmap)
         } else if (resultCode == Crop.RESULT_ERROR) {
             ToastUtil.show(Crop.getError(result).message)
         }
@@ -145,7 +177,8 @@ interface OnCameraListener {
     /**
      * 裁剪成功
      */
-    fun onResult(filePath: String, bmp: Bitmap?)
+    fun onResult(type: Int, filePath: String, bmp: Bitmap?)
+
 }
 
 /**

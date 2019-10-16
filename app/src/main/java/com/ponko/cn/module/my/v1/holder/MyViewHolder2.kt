@@ -28,10 +28,7 @@ import com.ponko.cn.module.my.v1.option.store.IntegralExchangedClassAct
 import com.ponko.cn.module.my.v2.RemindActV2
 import com.ponko.cn.module.study.v2.StudyContract2
 import com.ponko.cn.module.web.WebAct
-import com.ponko.cn.utils.ActivityUtil
-import com.ponko.cn.utils.AnimUtil
-import com.ponko.cn.utils.CacheUtil
-import com.ponko.cn.utils.ToastUtil
+import com.ponko.cn.utils.*
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.tencent.bugly.beta.Beta
 import com.xm.lib.common.base.rv.v1.BaseRvAdapter
@@ -99,7 +96,11 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
         }
         val myListBean = d as MyBean.MyListBean
         val context = itemView.context
-        viewHolder?.iv?.setImageResource(myListBean.icon)
+        if (myListBean.islocal) {
+            viewHolder?.iv?.setImageResource(myListBean.icon)
+        } else {
+            Glide.with(context, myListBean.icon2, viewHolder?.iv)
+        }
         viewHolder?.tv?.text = myListBean.des
 
         //是否晃动提醒
@@ -118,7 +119,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                     ActivityUtil.startActivity(context, Intent(context, CollectAct::class.java))
                 }
                 "合伙人" -> {
-                    WebAct.start(context, "url","${BASE_API}web/agent","合伙人")
+                    WebAct.start(context, "url", "${BASE_API}web/agent", "合伙人")
                     //ActivityUtil.startActivity(context, Intent(context, CollectAct::class.java))
                 }
                 "历史" -> {
@@ -187,6 +188,9 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
                 }
                 "检查更新" -> {
                     Beta.checkUpgrade()
+                }
+                else -> {
+                    IntoTargetUtil.target(context, myListBean.link_type, myListBean.link_value)
                 }
             }
             BKLog.d("点击${myListBean.des}")

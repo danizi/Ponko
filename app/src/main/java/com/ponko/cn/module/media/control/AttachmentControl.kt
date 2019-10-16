@@ -229,37 +229,42 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
 
     override fun start(vid: String, progress: Int?, index: Int) {
         stop()
-        MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
-            override fun onFailure() {
-                BKLog.e("获取视频失败")
-                if (!NetworkUtil.isNetworkConnected(PonkoApp.app)) {
-                    DialogUtil.show(context!!, "提示", "播放失败，当前没有网络...", true, null, null)
+        if (vid.startsWith("http") || vid.startsWith("https")) {
+            xmVideoView?.start(vid, true, progress)
+        } else {
+            MediaUitl.getM3u8Url(vid, object : MediaUitl.OnPlayUrlListener {
+                override fun onFailure() {
+                    BKLog.e("获取视频失败")
+                    if (!NetworkUtil.isNetworkConnected(PonkoApp.app)) {
+                        DialogUtil.show(context!!, "提示", "播放失败，当前没有网络...", true, null, null)
+                    }
                 }
-            }
 
-            override fun onSuccess(url: String, size: Int?) {
-                if (!is3GNetTip && NetworkUtil.is3GNet(context) && (url.startsWith("http", true) || url.startsWith("https", true))) {
-                    DialogUtil.show(context, "提示", "当前使用是手机流量,是否继续播放？", true, object : OnEnterListener {
-                        override fun onEnter(dlg: AlertDialog) {
-                            is3GNetTip = true
-                            play(url)
-                            dlg.dismiss()
-                        }
-                    }, object : OnCancelListener {
-                        override fun onCancel(dlg: AlertDialog) {
-                            dlg.dismiss()
-                        }
-                    })
-                } else {
-                    play(url)
+                override fun onSuccess(url: String, size: Int?) {
+                    if (!is3GNetTip && NetworkUtil.is3GNet(context) && (url.startsWith("http", true) || url.startsWith("https", true))) {
+                        DialogUtil.show(context, "提示", "当前使用是手机流量,是否继续播放？", true, object : OnEnterListener {
+                            override fun onEnter(dlg: AlertDialog) {
+                                is3GNetTip = true
+                                play(url)
+                                dlg.dismiss()
+                            }
+                        }, object : OnCancelListener {
+                            override fun onCancel(dlg: AlertDialog) {
+                                dlg.dismiss()
+                            }
+                        })
+                    } else {
+                        play(url)
+                    }
                 }
-            }
 
-            private fun play(url: String) {
-                xmVideoView?.start(url, true, progress)
-                this@AttachmentControl.index = index
-            }
-        })
+                private fun play(url: String) {
+                    xmVideoView?.start(url, true, progress)
+                    this@AttachmentControl.index = index
+                }
+            })
+        }
+
     }
 
     override fun stop() {
@@ -284,7 +289,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
         index++
         if (info?.mediaInfos?.size!! > index) {
             val mediaBean = this.info?.mediaInfos!![index]
-            listener?.item(mediaBean.vid!!, mediaBean.progress_duration!!*1000/*秒转毫秒*/, null, index)
+            listener?.item(mediaBean.vid!!, mediaBean.progress_duration!! * 1000/*秒转毫秒*/, null, index)
             //start(mediaBean.vid!!, mediaBean.progress_duration, index)
         } else {
             ToastUtil.show("已经是最后一集了...")
@@ -337,13 +342,17 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
         //传递进度更新计时器轮询间隔时间
         ui?.progressTimerStart(period.toLong())
         //设置播放列表信息
-        ui?.setMediaInfo(this.info!!)
+        if (this.info != null) {
+            ui?.setMediaInfo(this.info!!)
+        }
         //设置播放列表item点击监听
         //(ui as LandscapeViewHolder).setPlayList(listener)
         ui?.setPlayList(listener)
         //选中列表中的那个一个item
 //        (ui as LandscapeViewHolder).selectPlayList(this.index)
-        ui?.selectPlayList(this.index)
+        if (this.info != null) {
+            ui?.selectPlayList(this.index)
+        }
         //设置标题
         ui?.setTitle(title)
     }

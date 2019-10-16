@@ -248,7 +248,11 @@
         <activity android:name=".module.my.v1.option.PosterActivity" />
         <activity android:name=".module.login.LoginAccountAndCodeAct" />
         <activity android:name=".module.common.pay.PayAct" />
-        <activity android:name=".module.common.share.ShareAct"></activity>
+        <activity android:name=".module.common.share.ShareAct" />
+        <activity
+            android:name=".module.study.v2.MediaAct"
+            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
+            android:launchMode="singleTask" />
     </application>
 
 </manifest>

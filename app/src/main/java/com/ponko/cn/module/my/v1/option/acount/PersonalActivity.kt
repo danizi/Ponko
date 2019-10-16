@@ -70,6 +70,8 @@ class PersonalActivity : PonkoBaseAct<Any>() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         CameraUtil2.onActivityResult(this, requestCode, resultCode, data, object : OnCameraListener {
+
+
             override fun onAlbum() {
                 DialogUtil.showProcess(this@PersonalActivity)
             }
@@ -78,7 +80,7 @@ class PersonalActivity : PonkoBaseAct<Any>() {
                 DialogUtil.showProcess(this@PersonalActivity)
             }
 
-            override fun onResult(filePath: String, bmp: Bitmap?) {
+            override fun onResult(type: Int,filePath: String, bmp: Bitmap?) {
                 BKLog.d("选取照片路径：$filePath")
                 //设置选取的头像
                 val circleImageView = viewHolder?.rvAccount?.getChildAt(0)?.findViewById<CircleImageView>(R.id.iv_head)

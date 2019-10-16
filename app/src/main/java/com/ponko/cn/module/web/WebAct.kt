@@ -5,6 +5,7 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Build
@@ -53,6 +54,7 @@ import com.xm.lib.pay.wx.WxPay
 import com.xm.lib.share.AbsShare
 import com.xm.lib.share.ShareConfig
 import com.xm.lib.share.wx.WxShare
+import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
@@ -244,6 +246,32 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
         //shareUI?.iniData(this)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (mainUI?.androidObj?.link_type.equals("camera_album")) {
+            CameraUtil2.onActivityResult(this, requestCode, resultCode, data, object : OnCameraListener {
+                override fun onAlbum() {
+                    DialogUtil.showProcess(this@WebAct)
+                }
+
+                override fun onCamera() {
+                    DialogUtil.showProcess(this@WebAct)
+                }
+                override fun onResult(type: Int, filePath: String, bmp: Bitmap?) {
+                    val json = JSONObject()
+                    json.put("type", "type")
+                    json.put("token", "token ")
+                    val urlbase64=com.xm.lib.component.CommonUtil.bitmapToBase64(bmp)
+                    json.put("value", urlbase64)
+                    val j = json.toString()
+                    BKLog.d("result:$j")
+                    mainUI?.web?.loadUrl("javascript:phone_callback($j)")
+                    DialogUtil.hideProcess()
+                }
+            })
+        }
+    }
+
 
     /**
      * 窗口UI
@@ -263,6 +291,7 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
             }
         }
 
+        var androidObj: WebContract.M.AndroidObj? = null
         private var url: String = ""
         private var tvBarRight: TextView? = null
         private var tvTitle: TextView? = null
@@ -294,7 +323,7 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
             webSettings?.useWideViewPort = true
             webSettings?.loadWithOverviewMode = true
             webSettings?.setGeolocationEnabled(true)
-            webSettings?.domStorageEnabled = true
+            webSettings?.domStorageEnabled = false
             webView?.requestFocus()
             webView?.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
 
@@ -350,7 +379,6 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                     //return super.onJsAlert(view, url, message, result)
                     return true
                 }
-
             }
             webView?.webViewClient = object : WebViewClient() {
 
@@ -393,7 +421,7 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
         /**
          * 设置数据
          */
-        @SuppressLint("AddJavascriptInterface")
+        @SuppressLint("AddJavascriptInterface", "JavascriptInterface")
         fun iniData(act: Activity? = null, exchangeViewHolder: WebContract.V.ExchangeViewHolder?, payViewHolder: WebContract.V.PayViewHolder?, shareViewHolder: WebContract.V.ShareViewHolder?) {
             if (act != null) {
                 this.act = act
@@ -460,7 +488,7 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                         }
                     }
                 }), javascriptInterfaceName)
-                web.addJavascriptInterface(WebContract.M.AndroidObj(act, web, null, object : WebContract.M.AndroidObj.JSCallback {
+                androidObj = WebContract.M.AndroidObj(act, web, null, object : WebContract.M.AndroidObj.JSCallback {
                     override fun onIsShowPayBtn(show: Boolean) {
                         if (show) {
                             payViewHolder?.btnPay?.visibility = View.GONE
@@ -468,7 +496,8 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                             payViewHolder?.btnPay?.visibility = View.VISIBLE
                         }
                     }
-                }), WebContract.M.AndroidObj.javascriptInterfaceName)
+                })
+                web.addJavascriptInterface(androidObj, WebContract.M.AndroidObj.javascriptInterfaceName)
             }
         }
 
@@ -980,6 +1009,8 @@ class WebContract {
              * 跳转
              */
             private var gotoObj: AndroidGotoObj? = null
+            var link_type: String = ""
+            var link_value: String = ""
 
             init {
                 payObj = AndroidPayObj(act, webView)
@@ -989,9 +1020,17 @@ class WebContract {
 
             @JavascriptInterface
             fun action(json: String?) {
+                BKLog.d("JSON:$json")
                 val linkBean = Gson().fromJson(json, LinkBean::class.java)
-                val link_type = linkBean.type
-                val link_value = linkBean.link.toString()
+                link_type = linkBean.type
+
+                val jArray = JSONArray()
+                jArray.put(linkBean.link)
+                if (jArray.length() > 0) {
+                    link_value = Gson().toJson(linkBean.link)
+                } else {
+                    link_value = linkBean.link.toString()
+                }
                 when (link_type) {
                     "JS_PAY" -> {
                         pay(link_type, link_value)
@@ -1052,11 +1091,12 @@ class WebContract {
             }
 
             private fun goto(link_type: String?, link_value: String?) {
-                if (!TextUtils.isEmpty(link_value)) {
-                    gotoObj?.goto(link_type, link_value!!)
-                } else {
-                    BKLog.e(TAG, "link_value is null")
-                }
+                gotoObj?.goto(link_type, link_value!!)
+//                if (!TextUtils.isEmpty(link_value)) {
+//                    gotoObj?.goto(link_type, link_value!!)
+//                } else {
+//                    BKLog.e(TAG, "link_value is null")
+//                }
             }
 
             private fun excahnge(link_type: String?, link_value: String?) {
