@@ -36,7 +36,7 @@ class ItemPayLessonVH(view: View) : BaseViewHolderV2(view) {
 
 
             //设置个人信息
-            Glide.with(ctx, itemPayLessonBean.header?.avatar, ui?.ivHead)
+            Glide.with(ctx, itemPayLessonBean.header?.avatar, ui?.ivHead,0)
             ui?.tvName?.text = itemPayLessonBean.header?.nickname
             ui?.tvPhone?.text = itemPayLessonBean.header?.phone
 

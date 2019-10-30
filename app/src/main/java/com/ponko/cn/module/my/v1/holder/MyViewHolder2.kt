@@ -99,7 +99,7 @@ class ViewHolder(view: View) : BaseViewHolder(view) {
         if (myListBean.islocal) {
             viewHolder?.iv?.setImageResource(myListBean.icon)
         } else {
-            Glide.with(context, myListBean.icon2, viewHolder?.iv)
+            Glide.with(context, myListBean.icon2, viewHolder?.iv, 0)
         }
         viewHolder?.tv?.text = myListBean.des
 

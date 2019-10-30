@@ -156,7 +156,7 @@ object CameraUtil2 {
      */
     private fun beginCrop(act: Activity?, source: Uri) {
         val destination = Uri.fromFile(File(act?.cacheDir, "ponko2"))
-        Crop.of(source, destination).withAspect(100, 100).start(act)
+        Crop.of(source, destination).withAspect(1280, 1280).start(act)
     }
 }
 

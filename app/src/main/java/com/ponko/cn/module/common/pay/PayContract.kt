@@ -65,16 +65,21 @@ class PayContract {
          * 显示登录页面对话框
          */
         fun showLoginTipDlg(s: String)
+
+        /**
+         * 设置按钮的描述
+         */
+        fun setBtnText(btn: String?)
     }
 
     class M {
 
-        fun requestPayApi(productId: String, callback: HttpCallBack<ProductInfoCBean>) {
-            PonkoApp.payApi?.productInfo(productId)?.enqueue(callback)
+        fun requestPayApi(productId: String, tid: String, callback: HttpCallBack<ProductInfoCBean>) {
+            PonkoApp.payApi?.productInfo(productId, tid)?.enqueue(callback)
         }
 
-        fun createProductOrder(productId: String, payWay: String, callback: HttpCallBack<OrderCBean>) {
-            PonkoApp.payApi?.createProductOrder(payWay, productId)?.enqueue(callback)
+        fun createProductOrder(productId: String, payWay: String, tid: String, callback: HttpCallBack<OrderCBean>) {
+            PonkoApp.payApi?.createProductOrder(payWay, productId, tid)?.enqueue(callback)
         }
 
         fun orderFinish(sn: String, callback: HttpCallBack<GeneralBean>) {
@@ -83,6 +88,8 @@ class PayContract {
     }
 
     class P(val context: Context?, val v: V?) {
+        private val TAG = "PayContract"
+        private var tid: String = ""
         private var payment = 0
         private var m = M()
         private var adapter: BaseRvAdapterV2? = null
@@ -162,16 +169,21 @@ class PayContract {
         fun clickPay() {
             if (CacheUtil.isUserTypeLogin()) {
                 checkProductId()
-                m.createProductOrder(productId, payWay, object : HttpCallBack<OrderCBean>() {
+                BKLog.d(TAG, "productId:$productId payWay:$payWay tid:$tid")
+                m.createProductOrder(productId, payWay, tid, object : HttpCallBack<OrderCBean>() {
                     override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
                         val orderCBean = response?.body()
+                        if (orderCBean?.alipay == null && orderCBean?.wechat == null) {
+                            check(orderCBean?.key, checkOrderDelayed5)
+                            return
+                        }
                         val order = getOrder(orderCBean)
-                        if (!TextUtils.isEmpty(order)) {
+                        if (order != "null" && !TextUtils.isEmpty(orderCBean.key)) {
                             BKLog.d("order:$order")
                             getPay()?.pay(Channel.GENERAL, order, object : OnPayListener {
                                 override fun onSuccess() {
                                     //ToastUtil.show("支付成功")
-                                    check(orderCBean?.key, checkOrderDelayed5)
+                                    check(orderCBean.key, checkOrderDelayed5)
                                 }
 
                                 override fun onFailure() {
@@ -183,7 +195,7 @@ class PayContract {
                                 }
                             })
                         } else {
-                            BKLog.e("订单参数为空，请检查下获取订单方法")
+                            BKLog.e("订单参数为空-key参数为空，请检查下获取订单方法")
                         }
                     }
 
@@ -232,13 +244,16 @@ class PayContract {
         /**
          * 刷新请求接口
          */
-        fun refresh() {
+        fun refresh(tid: String = "") {
             checkProductId()
-            m.requestPayApi(productId, object : HttpCallBack<ProductInfoCBean>() {
+            this.tid = ""
+            payment = 0
+            m.requestPayApi(productId, tid, object : HttpCallBack<ProductInfoCBean>() {
                 override fun onSuccess(call: Call<ProductInfoCBean>?, response: Response<ProductInfoCBean>?) {
                     //设置RecyclerView适配器
                     val data = getMultiTypeData(response)
                     v?.refreshRvData(data)
+                    v?.setBtnText(response?.body()?.btn)
                     BKLog.d("刷新数据成功")
                 }
 
@@ -250,6 +265,52 @@ class PayContract {
             })
         }
 
+        fun refreshTicket(tid: String, dataSource: ArrayList<Any>) {
+            checkProductId()
+            this.tid = tid
+            DialogUtil.showProcess(context!!)
+            m.requestPayApi(productId, tid, object : HttpCallBack<ProductInfoCBean>() {
+                override fun onSuccess(call: Call<ProductInfoCBean>?, response: Response<ProductInfoCBean>?) {
+                    //设置RecyclerView适配器
+                    val data = getMultiTypeData(response)
+
+                    for (d in data) {
+                        if (d is ItemPayCouponsBean) {
+                            d.list.clear()
+                            d.list.addAll(dataSource)
+                            break
+                        }
+                        if (d is ItemPaymentBean) {
+                            val name = if (payWay == "weiXin") {
+                                "微信支付"
+                            } else {
+                                "支付宝支付"
+                            }
+                            for (bean in d.list) {
+                                val j = (bean as ProductInfoCBean.ListBeanX.ListBean)
+                                j.defaultX = false
+                                if (j.name == name) {
+                                    j.defaultX = true
+                                }
+                            }
+                        }
+                    }
+
+                    v?.refreshRvData(data)
+                    v?.setBtnText(response?.body()?.btn)
+                    BKLog.d("刷新数据成功")
+                    DialogUtil.hideProcess()
+                }
+
+                override fun onFailure(call: Call<ProductInfoCBean>?, msg: String?) {
+                    super.onFailure(call, msg)
+                    v?.requestPayApiFailure(msg)
+                    v?.statePage(VIEW_STATE_ERROR)
+                    DialogUtil.hideProcess()
+                }
+            })
+        }
+
         private fun getMultiTypeData(body: Response<ProductInfoCBean>?): ArrayList<Any> {
             val dates = ArrayList<Any>()
             val productInfoCBean = body?.body()
@@ -257,6 +318,7 @@ class PayContract {
                 val itemPayLessonBean = ItemPayLessonBean()
                 val itemPayRightsBean = ItemPayRightsBean()
                 val itemPaymentBean = ItemPaymentBean()
+                val itemPayCouponsBean = ItemPayCouponsBean()
                 for (listBeanX in productInfoCBean.list) {
                     val type = listBeanX.type
                     when {
@@ -284,6 +346,16 @@ class PayContract {
                                 dates.add(itemPaymentBean)
                             }
                         }
+                        type.equals("ticket", true) -> {
+                            itemPayCouponsBean.title = listBeanX.title
+                            itemPayCouponsBean.isMoreHave = listBeanX.isMore_have
+                            itemPayCouponsBean.moreText = listBeanX.more_text
+                            itemPayCouponsBean.moreUrl = listBeanX.more_url
+                            itemPayCouponsBean.list.addAll(listBeanX.list)
+                            if (itemPayCouponsBean.list.isNotEmpty()) {
+                                dates.add(itemPayCouponsBean)
+                            }
+                        }
                     }
                 }
                 if (productInfoCBean.footer != null) {
@@ -300,14 +372,16 @@ class PayContract {
          */
         fun requestPayApi() {
             checkProductId()
+            this.tid = ""
             v?.statePage(VIEW_STATE_LOADING)
-            m.requestPayApi(productId, object : HttpCallBack<ProductInfoCBean>() {
+            m.requestPayApi(productId, this.tid, object : HttpCallBack<ProductInfoCBean>() {
                 override fun onSuccess(call: Call<ProductInfoCBean>?, response: Response<ProductInfoCBean>?) {
                     //设置RecyclerView适配器
                     val data = getMultiTypeData(response)
                     v?.setAdapter(data)
                     v?.requestPayApiSuccess(data)
                     v?.statePage(VIEW_STATE_HIDE)
+                    v?.setBtnText(response?.body()?.btn)
                 }
 
                 override fun onFailure(call: Call<ProductInfoCBean>?, msg: String?) {

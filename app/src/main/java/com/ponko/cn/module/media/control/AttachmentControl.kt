@@ -50,6 +50,8 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
      * 控制器View
      */
     var ui: ControlViewHolder? = null
+
+
     /**
      * 定时器周期时间，进度更新定时更新时间
      */
@@ -85,6 +87,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
         const val TAG = "AttachmentControl"
         const val PORTRAIT = "portrait"
         const val LANDSCAPE = "landscape"
+        var isShowTop = true
     }
 
     init {
@@ -315,6 +318,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
         addView(landscapeView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
         //创建控制器View ViewHolder
         ui = LandscapeViewHolder.create(landscapeView)
+        ui?.isShowTop=isShowTop
         //设置播放暂停资源
         ui?.playResID = R.mipmap.media_control_play
         ui?.pauseResID = R.mipmap.media_control_pause
@@ -366,6 +370,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
         addView(portraitView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
         //创建控制器View ViewHolder
         ui = PortraitViewHolder.create(portraitView)
+        ui?.isShowTop=isShowTop
         //设置播放暂停资源
         ui?.playResID = R.mipmap.media_control_play
         ui?.pauseResID = R.mipmap.media_control_pause
@@ -396,6 +401,14 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context), IAttac
 
     override fun showLoading() {
         ui?.showLoading()
+    }
+
+    fun showTop(){
+        ui?.showTop()
+    }
+
+    fun hideTop(){
+        ui?.hideTop()
     }
 
     override fun isShowControlView(): Boolean {

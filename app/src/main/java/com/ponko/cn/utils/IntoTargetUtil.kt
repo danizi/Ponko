@@ -157,7 +157,7 @@ object IntoTargetUtil {
             linkType.equals("mp_call", true) -> {
                 BKLog.d("mp_call - value:$linkValue")
                 val share = WxShare(context as Activity)
-                share.init(ShareConfig.Builder().appid("").build())
+                share.init(ShareConfig.Builder().appid(Constants.APP_ID).build())
                 val jsonObject = JSONObject(linkValue)
                 val username = jsonObject.getString("username")
                 val path = jsonObject.getString("path")

@@ -14,13 +14,14 @@ interface PayApi {
      */
     @PUT("order")
     fun createProductOrder(@Query("payWay") payWay: String,
-                           @Query("productId") productId: String): Call<OrderCBean>
+                           @Query("productId") productId: String,
+                           @Query("tid") tid: String): Call<OrderCBean>
 
     /**
      * 订单信息
      */
     @GET("product/info")
-    fun productInfo(@Query("id") productId: String): Call<ProductInfoCBean>
+    fun productInfo(@Query("id") productId: String, @Query("tid") tid: String=""): Call<ProductInfoCBean>
 
     /**
      * 查询订单是否完成

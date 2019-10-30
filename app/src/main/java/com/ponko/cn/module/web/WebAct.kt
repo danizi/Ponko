@@ -22,6 +22,8 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
+import com.google.gson.internal.LinkedTreeMap
 import com.ponko.cn.R
 import com.ponko.cn.app.PonkoApp
 import com.ponko.cn.app.PonkoApp.Companion.APP_ID
@@ -257,11 +259,12 @@ open class WebAct : PonkoBaseAct<WebContract.Present>(), WebContract.V {
                 override fun onCamera() {
                     DialogUtil.showProcess(this@WebAct)
                 }
+
                 override fun onResult(type: Int, filePath: String, bmp: Bitmap?) {
                     val json = JSONObject()
                     json.put("type", "type")
                     json.put("token", "token ")
-                    val urlbase64=com.xm.lib.component.CommonUtil.bitmapToBase64(bmp)
+                    val urlbase64 = com.xm.lib.component.CommonUtil.bitmapToBase64(bmp)
                     json.put("value", urlbase64)
                     val j = json.toString()
                     BKLog.d("result:$j")
@@ -844,7 +847,7 @@ class WebContract {
                             }
                         }
                         DialogUtil.showProcess(act!!)
-                        PonkoApp.payApi?.createProductOrder(payWay, payProductId)?.enqueue(object : HttpCallBack<OrderCBean>() {
+                        PonkoApp.payApi?.createProductOrder(payWay, payProductId, "")?.enqueue(object : HttpCallBack<OrderCBean>() {
                             override fun onSuccess(call: Call<OrderCBean>?, response: Response<OrderCBean>?) {
 
                                 val orderCBean = response?.body()
@@ -1023,13 +1026,12 @@ class WebContract {
                 BKLog.d("JSON:$json")
                 val linkBean = Gson().fromJson(json, LinkBean::class.java)
                 link_type = linkBean.type
-
-                val jArray = JSONArray()
-                jArray.put(linkBean.link)
-                if (jArray.length() > 0) {
-                    link_value = Gson().toJson(linkBean.link)
+                link_value = if (linkBean.link is LinkedTreeMap<*, *>) {
+                    BKLog.d("linkBean.link is jsonStr")
+                    Gson().toJson(linkBean.link)
                 } else {
-                    link_value = linkBean.link.toString()
+                    BKLog.d("linkBean.link not jsonStr")
+                    linkBean.link.toString()
                 }
                 when (link_type) {
                     "JS_PAY" -> {

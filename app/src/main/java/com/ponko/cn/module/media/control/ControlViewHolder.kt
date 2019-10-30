@@ -42,6 +42,10 @@ abstract class ControlViewHolder : IDisplay, IControlViewHolder {
      */
     var isClick = false
     /**
+     * 是否显示顶部
+     */
+    var isShowTop = true
+    /**
      * 保存用户拖动进度 单位:%
      */
     var progress = 0
@@ -94,7 +98,11 @@ abstract class ControlViewHolder : IDisplay, IControlViewHolder {
 
     override fun showControlView() {
         rootView?.visibility = View.VISIBLE
-        showTop()
+        if (isShowTop) {
+            showTop()
+        }else{
+            hideTop()
+        }
         showBottom()
         showPlayList()
         isControlViewShow = true

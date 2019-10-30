@@ -110,6 +110,7 @@ class StudyCourseDetailActivity : PonkoBaseAct<StudyCourseDetailContract.Present
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         p?.uploadVideoProgress(viewHolder?.video)
+        AttachmentControl.isShowTop = true
     }
 
     /**

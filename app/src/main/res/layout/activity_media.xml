@@ -7,6 +7,26 @@
     android:background="@color/black"
     tools:context=".module.study.v2.MediaAct">
 
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@null"
+        android:padding="12dp"
+        android:src="@mipmap/white_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
+        app:layout_constraintStart_toEndOf="@+id/iv_back"
+        app:layout_constraintTop_toTopOf="@+id/iv_back" />
+
     <com.xm.lib.media.base.XmVideoView
         android:id="@+id/video"
         android:layout_width="match_parent"

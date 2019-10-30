@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.ponko.cn.R
 import com.ponko.cn.bean.ItemPayCouponsBean
+import com.ponko.cn.module.web.WebAct
 import com.xm.lib.common.base.rv.decoration.MyDividerItemDecoration
 import com.xm.lib.common.base.rv.v2.BaseRvAdapterV2
 import com.xm.lib.common.base.rv.v2.BaseViewHolderV2
@@ -16,9 +17,11 @@ import com.xm.lib.common.log.BKLog
 /**
  * 折扣劵VH
  */
-class ItemCouponVH(val view: View) : BaseViewHolderV2(view) {
+class ItemCouponVH(val view: View, private val listener: ItemCouponSubVH.IItemCouponListener) : BaseViewHolderV2(view) {
 
     private var ui: UI? = null
+
+    private var adapter: BaseRvAdapterV2? = null
 
     override fun onBind(data: Any) {
         if (ui == null) {
@@ -31,16 +34,31 @@ class ItemCouponVH(val view: View) : BaseViewHolderV2(view) {
             //设置标题
             ui?.tvTitle?.text = itemPayCouponsBean.title
 
-            //设置嵌套RecyclerView数据，即购买课程
-            val adapter = BaseRvAdapterV2.Builder()
-                    .addHolderFactory(ItemCouponSubVH.Factory())
-                    .addDataResouce(itemPayCouponsBean.list)
-                    .build()
-            ui?.rv?.isFocusableInTouchMode = false
-            ui?.rv?.layoutManager = LinearLayoutManager(ctx)
-            ui?.rv?.addItemDecoration(MyDividerItemDecoration.divider(ctx, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
-            ui?.rv?.adapter = adapter
+            //更多是否显示
+            if (itemPayCouponsBean.isMoreHave) {
+                ui?.tvMore?.visibility = View.VISIBLE
+                ui?.tvMore?.text = itemPayCouponsBean.moreText
+                ui?.tvMore?.setOnClickListener {
+                    WebAct.start(ctx, "url", itemPayCouponsBean.moreUrl)
+                }
+            } else {
+                ui?.tvMore?.visibility = View.INVISIBLE
+            }
 
+            //设置嵌套RecyclerView数据，即购买课程
+            if (adapter == null) {
+                adapter = BaseRvAdapterV2.Builder()
+                        .addHolderFactory(ItemCouponSubVH.Factory(listener))
+                        .addDataResouce(itemPayCouponsBean.list)
+                        .build()
+                ui?.rv?.isFocusableInTouchMode = false
+                ui?.rv?.layoutManager = LinearLayoutManager(ctx)
+                ui?.rv?.addItemDecoration(MyDividerItemDecoration.divider(ctx, DividerItemDecoration.VERTICAL, R.drawable.shape_question_diveder_1))
+                ui?.rv?.adapter = adapter
+            }else{
+                adapter?.getDataSource()?.clear()
+                adapter?.getDataSource()?.addAll(itemPayCouponsBean.list)
+            }
         } else {
             BKLog.e("data not ItemPayCouponsBean")
         }
@@ -50,9 +68,9 @@ class ItemCouponVH(val view: View) : BaseViewHolderV2(view) {
 
     }
 
-    class Factory : BaseViewHolderV2.Factory() {
+    class Factory(private val listener: ItemCouponSubVH.IItemCouponListener) : BaseViewHolderV2.Factory() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolderV2 {
-            return ItemCouponVH(getView(parent.context, parent, R.layout.item_pay_coupon))
+            return ItemCouponVH(getView(parent.context, parent, R.layout.item_pay_coupon), listener)
         }
 
         override fun getItemViewType(): Pair<Class<*>, String> {
@@ -60,14 +78,15 @@ class ItemCouponVH(val view: View) : BaseViewHolderV2(view) {
         }
     }
 
-    private class UI private constructor(val tvTitle: TextView, val divider: View, val rv: RecyclerView) {
+    private class UI private constructor(val tvTitle: TextView, val tvMore: TextView, val divider: View, val rv: RecyclerView) {
         companion object {
 
             fun create(rootView: View): UI {
                 val tvTitle = rootView.findViewById<View>(R.id.tv_title) as TextView
+                val tvMore = rootView.findViewById<View>(R.id.tv_more) as TextView
                 val divider = rootView.findViewById(R.id.divider) as View
                 val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
-                return UI(tvTitle, divider, rv)
+                return UI(tvTitle, tvMore, divider, rv)
             }
         }
     }

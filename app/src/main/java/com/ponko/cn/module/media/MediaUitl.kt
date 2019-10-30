@@ -198,15 +198,20 @@ object MediaUitl {
                             listener?.onSuccess(Gson().fromJson(tempResponse, VideoInfoCBean::class.java))
                         } else {
                             Looper.prepare()
-                            DialogUtil.show(PonkoApp.activityManager.getTopActivity()!!, "请求参数", "" +
-                                    "获取播放信息失败，请联系技术人员处理。\n" +
-                                    "请求参数:$url?format=$format&ptime=$ptime&vid=$vid&sign=$sign\n" +
-                                    "错误信息:$tempResponse" +
-                                    "", false, object : OnEnterListener {
+                            DialogUtil.show(PonkoApp.activityManager.getTopActivity()!!, "提示", "播放失败，请检查手机系统时间是否与网络同步。", false, object : OnEnterListener {
                                 override fun onEnter(dlg: AlertDialog) {
                                     dlg.dismiss()
                                 }
                             }, null)
+//                            DialogUtil.show(PonkoApp.activityManager.getTopActivity()!!, "请求参数", "" +
+//                                    "获取播放信息失败，请联系技术人员处理。\n" +
+//                                    "请求参数:$url?format=$format&ptime=$ptime&vid=$vid&sign=$sign\n" +
+//                                    "错误信息:$tempResponse" +
+//                                    "", false, object : OnEnterListener {
+//                                override fun onEnter(dlg: AlertDialog) {
+//                                    dlg.dismiss()
+//                                }
+//                            }, null)
                             Looper.loop()
                             listener?.onFailure()
                         }

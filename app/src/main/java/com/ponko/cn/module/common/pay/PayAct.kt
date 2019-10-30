@@ -25,7 +25,6 @@ import com.xm.lib.component.OnEnterListener
  */
 class PayAct : MvpActivity<PayContract.P>(), PayContract.V {
 
-
     private var toolbar: Toolbar? = null
     private var rvAdapter: BaseRvAdapterV2? = null
     private var srl: SwipeRefreshLayout? = null
@@ -95,17 +94,24 @@ class PayAct : MvpActivity<PayContract.P>(), PayContract.V {
                         p?.paymentSelect(type)
                     }
                 }))
-                .addHolderFactory(ItemCouponVH.Factory())
+                .addHolderFactory(ItemCouponVH.Factory(object : ItemCouponSubVH.IItemCouponListener {
+                    override fun select(tid: String, dataSource: ArrayList<Any>, adapter: BaseRvAdapterV2?) {
+                        //p?.refresh(tid)
+                        p?.refreshTicket(tid, dataSource)
+                        couponAdapter = adapter
+                    }
+                }))
                 .addHolderFactory(ItemPayAgreementVH.Factory())
-                .addDataResouce(datas)
                 .build()
         rv?.adapter = rvAdapter
     }
 
+    var couponAdapter: BaseRvAdapterV2? = null
     override fun refreshRvData(data: ArrayList<Any>) {
         rvAdapter?.getDataSource()?.clear()
         rvAdapter?.getDataSource()?.addAll(data)
         rvAdapter?.notifyDataSetChanged()
+        couponAdapter?.notifyDataSetChanged()
     }
 
     override fun requestPayApiSuccess(data: ArrayList<Any>) {
@@ -144,5 +150,9 @@ class PayAct : MvpActivity<PayContract.P>(), PayContract.V {
                 ActivityUtil.startActivity(this@PayAct, Intent(this@PayAct, LoginStartAct::class.java))
             }
         }, null)
+    }
+
+    override fun setBtnText(btn: String?) {
+        btnPay?.text = btn
     }
 }
